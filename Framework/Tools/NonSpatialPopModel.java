@@ -151,7 +151,7 @@ public abstract class NonSpatialPopModel {
             if (currPops[i] > 0) {
                 double deathProb = GetDeathProb(i, currPops,totalPop);
                 if (deathProb < 0||deathProb>1) {
-                    throw new IllegalStateException("death prob must be >=0! and <=1! deathProb: " + deathProb);
+                    throw new IllegalStateException("death prob must be >=0! and <=1! DEATH_PROB: " + deathProb);
                 }
                 double birthProb = GetBirthProb(i, currPops,totalPop);
                 if (birthProb < 0||birthProb>1) {

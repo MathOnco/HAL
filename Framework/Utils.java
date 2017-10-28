@@ -1003,6 +1003,51 @@ public final class Utils {
         }
         return ct;
     }
+    static public int[] RingHood(double innerRadius,double outerRadius) {
+        if(innerRadius<=outerRadius){
+            throw new IllegalArgumentException("inner radius must be less than outer radius");
+        }
+        double distSqInner = innerRadius * innerRadius;
+        double distSqOuter = outerRadius * outerRadius;
+        int min = (int) Math.floor(-outerRadius);
+        int max = (int) Math.ceil(outerRadius);
+        int[] retLong = new int[((max + 1 - min) * (max + 1 - min)) * 2];
+        int ct = 0;
+        for (int x = min; x <= max; x++) {
+            for (int y = min; y <= max; y++) {
+                double distSq=Utils.DistSquared(0, 0, x, y);
+                if (distSq >= distSqInner&&distSq<=distSqOuter) {
+                    retLong[ct * 2] = x;
+                    retLong[ct * 2 + 1] = y;
+                    ct++;
+                }
+            }
+        }
+        int[] ret = new int[ct * 2];
+        System.arraycopy(retLong, 0, ret, 0, ret.length);
+        return ret;
+    }
+    static public int RingHood(double innerRadius,double outerRadius, int[] returnCoords) {
+        if(innerRadius<=outerRadius){
+            throw new IllegalArgumentException("inner radius must be less than outer radius");
+        }
+        double distSqInner = innerRadius * innerRadius;
+        double distSqOuter = outerRadius * outerRadius;
+        int min = (int) Math.floor(-outerRadius);
+        int max = (int) Math.ceil(outerRadius);
+        int ct = 0;
+        for (int x = min; x <= max; x++) {
+            for (int y = min; y <= max; y++) {
+                double distSq=Utils.DistSquared(0, 0, x, y);
+                if (distSq >= distSqInner&&distSq<=distSqOuter) {
+                    returnCoords[ct * 2] = x;
+                    returnCoords[ct * 2 + 1] = y;
+                    ct++;
+                }
+            }
+        }
+        return ct;
+    }
 
     /**
      * Returns the coordinates of all squares whose centers lie within a rectangle of the provided radius, centered on (0,0)
