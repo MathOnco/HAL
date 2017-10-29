@@ -2,7 +2,7 @@ package Framework.GridsAndAgents;
 
 import java.io.Serializable;
 
-abstract class GridBase implements Serializable{
+public abstract class GridBase implements Serializable{
     int tick;
     public GridBase(){
     }

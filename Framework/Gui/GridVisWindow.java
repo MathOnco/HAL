@@ -7,14 +7,14 @@ import Framework.Interfaces.GuiCloseAction;
  */
 public class GridVisWindow extends GuiGridVis{
     private GuiWindow win;
-    public GridVisWindow(String title,int xDim,int yDim, int scaleFactor, boolean main, boolean active) {
+    public GridVisWindow(String title,int xDim,int yDim, int scaleFactor, boolean killOnClose, boolean active) {
         super(xDim,yDim,scaleFactor,active);
-        win=new GuiWindow(title, main, active);
+        win=new GuiWindow(title, killOnClose, active);
         RunGui();
     }
-    public GridVisWindow(String title,int xDim,int yDim, int scaleFactor, boolean main) {
+    public GridVisWindow(String title,int xDim,int yDim, int scaleFactor, boolean killOnClose) {
         super(xDim,yDim,scaleFactor,true);
-        win=new GuiWindow(title, main);
+        win=new GuiWindow(title, killOnClose);
         RunGui();
     }
     public GridVisWindow(String title,int xDim,int yDim, int scaleFactor) {
@@ -27,13 +27,13 @@ public class GridVisWindow extends GuiGridVis{
         win=new GuiWindow("Grid Vis", true);
         RunGui();
     }
-    public GridVisWindow(String title,int xDim,int yDim, int scaleFactor, boolean main, GuiCloseAction closeAction, boolean active) {
+    public GridVisWindow(String title,int xDim,int yDim, int scaleFactor, boolean killOnClose, GuiCloseAction closeAction, boolean active) {
         super(xDim,yDim,scaleFactor,active);
-        win=new GuiWindow(title, main, closeAction, active);
+        win=new GuiWindow(title, killOnClose, closeAction, active);
     }
-    public GridVisWindow(String title,int xDim,int yDim, int scaleFactor, boolean main, GuiCloseAction closeAction) {
+    public GridVisWindow(String title,int xDim,int yDim, int scaleFactor, boolean killOnClose, GuiCloseAction closeAction) {
         super(xDim,yDim,scaleFactor,true);
-        win=new GuiWindow(title, main, closeAction, true);
+        win=new GuiWindow(title, killOnClose, closeAction, true);
         RunGui();
     }
     private void RunGui(){

@@ -18,7 +18,7 @@ public interface TreatableTumor extends SerializableModel {
     double GetBurden();//returns the tumor burden, compared to max burden in game
     double GetMaxTox();//if the tox goes over this, the player loses
     double GetMaxBurden();//if the burden goes over this, the player loses
-    String[] GetSwitchNames();//gets the names of all switches that the model needs
-    boolean AllowMultiswitch();//does the model allow multiple visualization switches to be set simultaneously?
+//    String[] GetSwitchNames();//gets the names of all switches that the model needs
+//    boolean AllowMultiswitch();//does the model allow multiple visualization switches to be set simultaneously?
 }
 

@@ -1,4 +1,5 @@
 package Framework.GridsAndAgents;
+import Framework.Interfaces.Coords3DSetArray;
 import Framework.Utils;
 //import AgentFramework.Utils;
 
@@ -6,7 +7,7 @@ import Framework.Utils;
 import java.io.Serializable;
 import java.util.Arrays;
 
-import static Framework.Tools.Internal.PDEequations.*;
+import static Framework.Tools.PDEequations.*;
 
 /**
  * PDEGrid3D class facilitates 2D diffusion with two arrays of doubles called fields
@@ -177,6 +178,38 @@ public class PDEGrid3D extends Grid3Ddouble implements Serializable{
                 maxDif=Math.max(maxDif,Math.abs((field[i]- compareTo[i])/ field[i]));
             }
         return maxDif;
+    }
+
+    public void Advection(double xVel,double yVel,double zVel,double boundaryVal){
+        for (int x = 0; x < xDim; x++) {
+            for (int y = 0; y < yDim; y++) {
+                for (int z = 0; z < zDim; z++) {
+                    Advection3D1stOrder(x,y,z,field,swapField,xDim,yDim,zDim,xVel,yVel,zVel,true,boundaryVal);
+                }
+            }
+        }
+        SwapFields();
+    }
+    public void Advection(double[] xVels,double[] yVels,double zVel,double boundaryVal){
+        for (int x = 0; x < xDim; x++) {
+            for (int y = 0; y < yDim; y++) {
+                for (int z = 0; z < zDim; z++) {
+                    Advection3D1stOrder(x,y,z,field,swapField,xDim,yDim,zDim,xVels[I(x,y,z)],yVels[I(x,y,z)],zVel,true,boundaryVal);
+                }
+            }
+        }
+        SwapFields();
+    }
+    public void Advection(Coords3DSetArray CoordsToVel, double boundaryVal,double[]scratch){
+        for (int x = 0; x < xDim; x++) {
+            for (int y = 0; y < yDim; y++) {
+                for (int z = 0; z < zDim; z++) {
+                    CoordsToVel.SetArray(x,y,z,scratch);
+                    Advection3D1stOrder(x,y,z,field,swapField,xDim,yDim,zDim,scratch[0],scratch[1],scratch[2],true,boundaryVal);
+                }
+            }
+        }
+        SwapFields();
     }
 
     public double MaxDifInternal(){

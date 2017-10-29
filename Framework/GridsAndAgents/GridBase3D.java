@@ -5,7 +5,7 @@ import Framework.Utils;
 /**
  * Created by bravorr on 5/17/17.
  */
-abstract class GridBase3D extends GridBase{
+public abstract class GridBase3D extends GridBase{
     public final int xDim;
     public final int yDim;
     public final int zDim;

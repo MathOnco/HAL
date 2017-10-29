@@ -1,6 +1,7 @@
 package Framework.GridsAndAgents;
 
 import Framework.Interfaces.DoubleToDouble;
+import Framework.Tools.PDEequations;
 import Framework.Utils;
 
 import java.io.Serializable;
@@ -187,7 +188,39 @@ public class Grid2Ddouble extends GridBase2D implements Serializable{
         }
         return sb.toString();
     }
+    public double GradientX(int x,int y){
+        double left=PDEequations.DisplacedX2D(x-1,y,field,xDim,yDim,x,false,0,wrapX);
+        double right=PDEequations.DisplacedX2D(x+1,y,field,xDim,yDim,x,false,0,wrapX);
+        return right-left;
+    }
 
+    public double GradientY(int x,int y){
+        double down=PDEequations.DisplacedY2D(x,y-1,field,xDim,yDim,y,false,0,wrapY);
+        double up=PDEequations.DisplacedY2D(x,y+1,field,xDim,yDim,y,false,0,wrapY);
+        return up-down;
+    }
+    public double GradientX(int x,int y,boolean wrapX){
+        double left=PDEequations.DisplacedX2D(x-1,y,field,xDim,yDim,x,false,0,wrapX);
+        double right=PDEequations.DisplacedX2D(x+1,y,field,xDim,yDim,x,false,0,wrapX);
+        return right-left;
+    }
+
+    public double GradientY(int x,int y,boolean wrapY){
+        double down=PDEequations.DisplacedY2D(x,y-1,field,xDim,yDim,y,false,0,wrapY);
+        double up=PDEequations.DisplacedY2D(x,y+1,field,xDim,yDim,y,false,0,wrapY);
+        return up-down;
+    }
+    public double GradientX(int x,int y,double boundaryCond){
+        double left=PDEequations.DisplacedX2D(x-1,y,field,xDim,yDim,x,true,boundaryCond,wrapX);
+        double right=PDEequations.DisplacedX2D(x+1,y,field,xDim,yDim,x,true,boundaryCond,wrapX);
+        return right-left;
+    }
+
+    public double GradientY(int x,int y,double boundaryCond){
+        double down=PDEequations.DisplacedY2D(x,y-1,field,xDim,yDim,y,true,boundaryCond,wrapY);
+        double up=PDEequations.DisplacedY2D(x,y+1,field,xDim,yDim,y,true,boundaryCond,wrapY);
+        return up-down;
+    }
 //    public Grid2Ddouble DotProduct(Grid2Ddouble rightMatrix){
 //        if(yDim!=rightMatrix.xDim){
 //            throw new IllegalArgumentException("xDim of this and yDim of other must match! this.xDim: "+xDim+" other.yDim: "+yDim);

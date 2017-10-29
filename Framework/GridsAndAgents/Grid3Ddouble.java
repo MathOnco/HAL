@@ -1,5 +1,6 @@
 package Framework.GridsAndAgents;
 
+import Framework.Tools.PDEequations;
 import Framework.Utils;
 
 import java.io.Serializable;
@@ -94,6 +95,54 @@ public class Grid3Ddouble extends GridBase3D implements Serializable{
             tot+= field[i];
         }
         return tot/length;
+    }
+    public double GradientX(int x,int y,int z){
+        double left= PDEequations.DisplacedX3D(x-1,y,z,field,xDim,yDim,zDim,x,false,0,wrapX);
+        double right=PDEequations.DisplacedX3D(x+1,y,z,field,xDim,yDim,zDim,x,false,0,wrapX);
+        return right-left;
+    }
+
+    public double GradientY(int x,int y,int z){
+        double down=PDEequations.DisplacedY3D(x,y-1,z,field,xDim,yDim,zDim,y,false,0,wrapY);
+        double up=PDEequations.DisplacedY3D(x,y+1,z,field,xDim,yDim,zDim,y,false,0,wrapY);
+        return up-down;
+    }
+    public double GradientZ(int x,int y,int z){
+        double in=PDEequations.DisplacedY3D(x,y,z-1,field,xDim,yDim,zDim,z,false,0,wrapY);
+        double out=PDEequations.DisplacedY3D(x,y,z+1,field,xDim,yDim,zDim,z,false,0,wrapY);
+        return out-in;
+    }
+    public double GradientX(int x,int y,int z,boolean wrapX){
+        double left=PDEequations.DisplacedX3D(x-1,y,z,field,xDim,yDim,zDim,x,false,0,wrapX);
+        double right=PDEequations.DisplacedX3D(x+1,y,z,field,xDim,yDim,zDim,x,false,0,wrapX);
+        return right-left;
+    }
+
+    public double GradientY(int x,int y,int z,boolean wrapY){
+        double down=PDEequations.DisplacedY3D(x,y-1,z,field,xDim,yDim,zDim,y,false,0,wrapY);
+        double up=PDEequations.DisplacedY3D(x,y+1,z,field,xDim,yDim,zDim,y,false,0,wrapY);
+        return up-down;
+    }
+    public double GradientZ(int x,int y,int z,boolean wrapZ){
+        double down=PDEequations.DisplacedY3D(x,y,z-1,field,xDim,yDim,zDim,z,false,0,wrapZ);
+        double up=PDEequations.DisplacedY3D(x,y,z+1,field,xDim,yDim,zDim,z,false,0,wrapZ);
+        return up-down;
+    }
+    public double GradientX(int x,int y,int z,double boundaryCond){
+        double left=PDEequations.DisplacedX3D(x-1,y,z,field,xDim,yDim,zDim,x,true,boundaryCond,wrapX);
+        double right=PDEequations.DisplacedX3D(x+1,y,z,field,xDim,yDim,zDim,x,true,boundaryCond,wrapX);
+        return right-left;
+    }
+
+    public double GradientY(int x,int y,int z,double boundaryCond){
+        double down=PDEequations.DisplacedY3D(x,y-1,z,field,xDim,yDim,zDim,y,true,boundaryCond,wrapY);
+        double up=PDEequations.DisplacedY3D(x,y+1,z,field,xDim,yDim,zDim,y,true,boundaryCond,wrapY);
+        return up-down;
+    }
+    public double GradientZ(int x,int y,int z,double boundaryCond){
+        double down=PDEequations.DisplacedY3D(x,y,z-1,field,xDim,yDim,zDim,z,true,boundaryCond,wrapZ);
+        double up=PDEequations.DisplacedY3D(x,y,z+1,field,xDim,yDim,zDim,z,true,boundaryCond,wrapZ);
+        return up-down;
     }
 
 }

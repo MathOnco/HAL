@@ -6,7 +6,7 @@ import Framework.Utils;
 import java.io.Serializable;
 import java.util.Arrays;
 
-import static Framework.Tools.Internal.PDEequations.*;
+import static Framework.Tools.PDEequations.*;
 
 
 /**
@@ -36,7 +36,7 @@ public class PDEGrid2D extends Grid2Ddouble implements Serializable{
 //        return intermediateScratch;
 //    }
 
-    public void EnsureScratch(){
+    void EnsureScratch(){
         if(scratch==null){
             scratch=new double[Math.max(xDim,yDim)*2+4];
         }
@@ -112,17 +112,6 @@ public class PDEGrid2D extends Grid2Ddouble implements Serializable{
     }
 
 
-
-    public double GradientX(int centerX,int centerY){
-        double x1=centerX+1<xDim? Get(centerX+1,centerY): Get(centerX,centerY);
-        double x2=centerX-1>=0? Get(centerX-1,centerY): Get(centerX,centerY);
-        return x1-x2;
-    }
-    public double GradientY(int centerX,int centerY){
-        double y1=centerY+1<yDim? Get(centerX,centerY+1): Get(centerX,centerY);
-        double y2=centerY-1>=0? Get(centerX,centerY-1): Get(centerX,centerY);
-        return y1-y2;
-    }
 
     /**
      * gets the prev field value at the specified coordinates

@@ -20,7 +20,7 @@ class SrcOrSink extends AgentSQ2Dunstackable<PDEexample>{
         this.type=type;
     }
     void Reaction(){
-        G().diff.Set(Isq(),type== PDEexample.SRC?1:0);
+        G().diff.Set(Isq(),type==PDEexample.SRC?1:0);
     }
 }
 
@@ -33,7 +33,11 @@ public class PDEexample extends AgentGrid2D<SrcOrSink> {
         diff=new PDEGrid2D(x,y);
     }
     public void Setup(int nSinks,int sinkDist){
-        NewAgentSQ(xDim/2,yDim/2).Init(SRC);//create source
+        for (int x = xDim/2; x < xDim/2+3; x++) {
+            for (int y = yDim/2; y < yDim/2+3; y++) {
+                NewAgentSQ(x, y).Init(SRC);//create source
+            }
+        }
         int[]sinkIs=Utils.GenIndicesArray(length);
         Utils.Shuffle(sinkIs,rn);//shuffle sink placement locations
         int sinksPlaced=0;
@@ -57,14 +61,14 @@ public class PDEexample extends AgentGrid2D<SrcOrSink> {
             srcOrSink.Reaction();
         }
         diff.Advection(advectionX,advectionY);
-        diff.DiffusionADI((Math.sin(stepI*1.0/1000)+1)*0.12);
+        diff.Diffusion((Math.sin(stepI*1.0/250)+1)*0.12);
     }
     public void Draw(GuiGridVis visSrcSinks,GuiGridVis visDiff){
         for (SrcOrSink srcOrSink : this) {
             visSrcSinks.SetPix(srcOrSink.Isq(),srcOrSink.type);//draw sources and sinks
         }
         for (int i = 0; i < length; i++) {//length of the Grid
-            visDiff.SetPix(i,SetAlpha(HeatMapRGB(diff.Get(i)*4),0.3));
+            visDiff.SetPix(i,SetAlpha(HeatMapRGB(diff.Get(i)*4),diff.Get(i)*4));
         }
     }
 
@@ -74,7 +78,7 @@ public class PDEexample extends AgentGrid2D<SrcOrSink> {
         GuiGridVis visDiff=new GuiGridVis(x,y,scale);
         visCells.AddAlphaGrid(visDiff);//facilitates alpha blending
         PDEexample ex=new PDEexample(x,y);
-        ex.Setup(10,10);
+        ex.Setup(100,10);
         int i=0;
         while(true){
             visCells.TickPause(0);//slows down simulation for presentation

@@ -1903,60 +1903,8 @@ public final class Utils {
     public static boolean InDim(double Dim, double Val) {
         return Val >= 0 && Val < Dim;
     }
-    public static double GetDisplaced(int x,int y,double[] vals,int xDim,int yDim,int fallbackX,int fallbackY,boolean boundaryCond,double boundaryValue,boolean wrapX,boolean wrapY){
-        boolean inX=InDim(xDim,x);
-        boolean inY=InDim(yDim,y);
-        if(inX&&inY){
-            return vals[x*yDim+y];
-        }
-        if(boundaryCond){
-            return boundaryValue;
-        }
-        if(!inX&&wrapX){
-            x=ModWrap(x,xDim);
-        }
-        else{
-            x=fallbackX;
-        }
-        if(!inY&&wrapY){
-            y=ModWrap(y,yDim);
-        }
-        else{
-            y=fallbackY;
-        }
-        return vals[x*yDim+y];
-    }
-    public static double GetDisplacedX(int x,int y,double[] vals,int xDim,int yDim,int fallbackX,boolean boundaryCond,double boundaryValue,boolean wrapX){
-        if(InDim(xDim,x)){
-            return vals[x*yDim+y];
-        }
-        if(boundaryCond){
-            return boundaryValue;
-        }
-        if(wrapX){
-            x=ModWrap(x,xDim);
-        }
-        else{
-            x=fallbackX;
-        }
-        return vals[x*yDim+y];
-    }
-    public static double GetDisplacedY(int x,int y,double[] vals,int xDim,int yDim,int fallbackY,boolean boundaryCond,double boundaryValue,boolean wrapY){
-        if(InDim(yDim,y)){
-            return vals[x*yDim+y];
-        }
-        if(boundaryCond){
-            return boundaryValue;
-        }
-        if(wrapY){
-            y=ModWrap(y,yDim);
-        }
-        else{
-            y=fallbackY;
-        }
-        return vals[x*yDim+y];
-    }
-    public static double GradientX(double[] vals, int xDim, int yDim, int centerX, int centerY, boolean boundaryCond, double boundaryValue, boolean wrapX) {
+
+    public static double GradientX2D(double[] vals, int xDim, int yDim, int centerX, int centerY, boolean boundaryCond, double boundaryValue, boolean wrapX) {
         double xP1, xM1;
         if (InDim(xDim, centerX + 1)) {
             xP1 = vals[(centerX + 1) * yDim + centerY];
@@ -1979,7 +1927,7 @@ public final class Utils {
         return xP1 - xM1;
     }
 
-    public static double GradientY(double[] vals, int xDim, int yDim, int centerX, int centerY, boolean boundaryCond, double boundaryValue, boolean wrapY) {
+    public static double GradientY2D(double[] vals, int xDim, int yDim, int centerX, int centerY, boolean boundaryCond, double boundaryValue, boolean wrapY) {
         double yP1, yM1;
         if (InDim(yDim, centerY + 1)) {
             yP1 = vals[centerX * yDim + (centerY + 1)];

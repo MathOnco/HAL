@@ -121,7 +121,7 @@ public class SphericalAgent3D<A extends SphericalAgent3D,G extends AgentGrid3D<A
     }
 
     public void ForceMove(boolean wrapX,boolean wrapY,boolean wrapZ){
-        MoveSafe(Xpt()+xVel,Ypt()+yVel,Zpt()+zVel,wrapX,wrapY,wrapZ);
+        MoveSafePT(Xpt()+xVel,Ypt()+yVel,Zpt()+zVel,wrapX,wrapY,wrapZ);
     }
     public void ApplyFriction(double frictionConst){
         xVel*=frictionConst;
@@ -140,7 +140,7 @@ public class SphericalAgent3D<A extends SphericalAgent3D,G extends AgentGrid3D<A
     }
 
     public void ForceMove(){
-        MoveSafe(Xpt()+xVel,Ypt()+yVel,Zpt()+zVel,G().wrapX,G().wrapY,G().wrapZ);
+        MoveSafePT(Xpt()+xVel,Ypt()+yVel,Zpt()+zVel,G().wrapX,G().wrapY,G().wrapZ);
     }
 
     public A Divide(double divRadius,double[] scratchCoordArr,Random rn,boolean wrapX,boolean wrapY,boolean wrapZ){
@@ -148,7 +148,7 @@ public class SphericalAgent3D<A extends SphericalAgent3D,G extends AgentGrid3D<A
             RandomPointOnSphereEdge(divRadius, scratchCoordArr, rn);
         }
         A child=(G().NewAgentPTSafe(Xpt()+scratchCoordArr[0],Ypt()+scratchCoordArr[1],Zpt()+scratchCoordArr[2],Xpt(),Ypt(),Zpt(),wrapX,wrapY,wrapZ));
-        MoveSafe(Xpt()-scratchCoordArr[0],Ypt()-scratchCoordArr[1],Zpt()-scratchCoordArr[2],wrapX,wrapY,wrapZ);
+        MoveSafePT(Xpt()-scratchCoordArr[0],Ypt()-scratchCoordArr[1],Zpt()-scratchCoordArr[2],wrapX,wrapY,wrapZ);
         return child;
     }
     public A Divide(double divRadius,double[] scratchCoordArr,Random rn){
@@ -156,7 +156,7 @@ public class SphericalAgent3D<A extends SphericalAgent3D,G extends AgentGrid3D<A
             RandomPointOnSphereEdge(divRadius, scratchCoordArr, rn);
         }
         A child=(G().NewAgentPTSafe(Xpt()+scratchCoordArr[0],Ypt()+scratchCoordArr[1],Zpt()+scratchCoordArr[2],Xpt(),Ypt(),Zpt(),G().wrapX,G().wrapY,G().wrapZ));
-        MoveSafe(Xpt()-scratchCoordArr[0],Ypt()-scratchCoordArr[1],Zpt()-scratchCoordArr[2],G().wrapX,G().wrapY,G().wrapZ);
+        MoveSafePT(Xpt()-scratchCoordArr[0],Ypt()-scratchCoordArr[1],Zpt()-scratchCoordArr[2],G().wrapX,G().wrapY,G().wrapZ);
         return child;
     }
 }

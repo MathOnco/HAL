@@ -149,7 +149,7 @@ public class AgentPT3D<T extends AgentGrid3D> extends AgentBaseSpatial<T> {
     }
 
 
-    public void MoveSafe(double newX,double newY,double newZ,boolean wrapX,boolean wrapY,boolean wrapZ) {
+    public void MoveSafePT(double newX, double newY, double newZ, boolean wrapX, boolean wrapY, boolean wrapZ) {
         if(!alive){
             throw new RuntimeException("Attempting to move dead agent!");
         }
@@ -174,7 +174,7 @@ public class AgentPT3D<T extends AgentGrid3D> extends AgentBaseSpatial<T> {
         }
         MovePT(newX,newY,newZ);
     }
-    public void MoveSafe(double newX,double newY,double newZ) {
+    public void MoveSafePT(double newX, double newY, double newZ) {
         if(!alive){
             throw new RuntimeException("Attempting to move dead agent!");
         }

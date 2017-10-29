@@ -2,6 +2,9 @@ package Framework.GridsAndAgents;
 
 import java.util.ArrayList;
 
+import static Framework.Utils.InDim;
+import static Framework.Utils.ModWrap;
+
 /**
  * extend the AgentSQ3D class if you want agents that exist on a 3D discrete lattice
  * with the possibility of stacking multiple agents on the same typeGrid square
@@ -155,15 +158,68 @@ public class AgentSQ3Dunstackable<T extends AgentGrid3D> extends AgentBaseSpatia
     }
 
     @Override
-    public void MoveSQ(int iNext) {
+    public void MoveSQ(int i) {
+        if(!alive){
+            throw new RuntimeException("Attempting to move dead agent!");
+        }
         RemSQ();
-        xSq=myGrid.ItoX(iNext);
-        ySq=myGrid.ItoY(iNext);
-        zSq=myGrid.ItoZ(iNext);
-        iSq=iNext;
-        AddSQ(iNext);
+        xSq=myGrid.ItoX(i);
+        ySq=myGrid.ItoY(i);
+        zSq=myGrid.ItoZ(i);
+        iSq=i;
+        AddSQ(i);
     }
 
+    public void MoveSafePT(int newX, int newY, int newZ, boolean wrapX, boolean wrapY, boolean wrapZ) {
+        if(!alive){
+            throw new RuntimeException("Attempting to move dead agent!");
+        }
+        if (G().In(newX, newY, newZ)) {
+            MoveSQ(newX, newY, newZ);
+            return;
+        }
+        if (wrapX) {
+            newX = ModWrap(newX, G().xDim);
+        } else if (!InDim(G().xDim, newX)) {
+            newX = Xsq();
+        }
+        if (wrapY) {
+            newY = ModWrap(newY, G().yDim);
+        } else if (!InDim(G().yDim, newY)) {
+            newY = Ysq();
+        }
+        if (wrapZ) {
+            newZ = ModWrap(newZ, G().zDim);
+        } else if (!InDim(G().zDim, newZ)) {
+            newZ = Zsq();
+        }
+        MoveSQ(newX,newY,newZ);
+    }
+    public void MoveSafePT(int newX, int newY, int newZ) {
+        if(!alive){
+            throw new RuntimeException("Attempting to move dead agent!");
+        }
+        if (G().In(newX, newY, newZ)) {
+            MoveSQ(newX, newY, newZ);
+            return;
+        }
+        if (G().wrapX) {
+            newX = ModWrap(newX, G().xDim);
+        } else if (!InDim(G().xDim, newX)) {
+            newX = Xsq();
+        }
+        if (G().wrapY) {
+            newY = ModWrap(newY, G().yDim);
+        } else if (!InDim(G().yDim, newY)) {
+            newY = Ysq();
+        }
+        if (G().wrapZ) {
+            newZ = ModWrap(newZ, G().zDim);
+        } else if (!InDim(G().zDim, newZ)) {
+            newZ = Zsq();
+        }
+        MoveSQ(newX,newY,newZ);
+    }
     @Override
     void Setup(double i) {
 
