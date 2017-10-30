@@ -26,7 +26,7 @@ public class Vis2DOpenGL{
     final public int yDim;
     TickTimer tt=new TickTimer();
     final float[]circlPtsDefault= Utils.GenCirclePoints(1,20);
-    public Vis2DOpenGL(int xPix, int yPix, int xDim, int yDim, String title, boolean active) {
+    public Vis2DOpenGL(String title, int xPix, int yPix, int xDim, int yDim, boolean active) {
         this.active=active;
         this.xPix=xPix;
         this.yPix=yPix;
@@ -47,7 +47,7 @@ public class Vis2DOpenGL{
             glMatrixMode(GL_MODELVIEW);
         }
     }
-    public Vis2DOpenGL(int xPix, int yPix, int xDim, int yDim, String title) {
+    public Vis2DOpenGL(String title, int xPix, int yPix, int xDim, int yDim) {
         this.active=true;
         this.xPix=xPix;
         this.yPix=yPix;

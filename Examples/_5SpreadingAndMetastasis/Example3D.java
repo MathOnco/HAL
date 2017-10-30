@@ -4,9 +4,7 @@ import Framework.GridsAndAgents.AgentSQ3D;
 import Framework.GridsAndAgents.Grid2Ddouble;
 import Framework.GridsAndAgents.PDEGrid3D;
 import Framework.Gui.GridVisWindow;
-import Framework.Gui.GuiGridVis;
 import Framework.Gui.Vis3DOpenGL;
-import Framework.Utils;
 
 import java.util.LinkedList;
 import java.util.Random;
@@ -174,7 +172,7 @@ public class Example3D extends AgentGrid3D<ExCell3D> {
             ex.DiffStep();
         }
         GridVisWindow visResource=new GridVisWindow(x,y,5);
-        Vis3DOpenGL vis=new Vis3DOpenGL(1000,1000,x,y,z,"TumorVis");
+        Vis3DOpenGL vis=new Vis3DOpenGL("TumorVis", 1000,1000,x,y,z);
         while (!vis.CheckClosed()){
             ex.StepAll();
             ex.DrawCells(vis);

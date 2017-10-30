@@ -37,7 +37,7 @@ public class Vis3DOpenGL{
     Camera camera;
     private static int BLACK=RGB(0,0,0),WHITE=RGB(1,1,1);
 
-    public Vis3DOpenGL(int xPix, int yPix, int xDim, int yDim, int zDim, String title, boolean active) {
+    public Vis3DOpenGL(String title, int xPix, int yPix, int xDim, int yDim, int zDim, boolean active) {
         camera=new Camera();
         this.active = active;
         int maxDim = Math.max(xDim, yDim);
@@ -71,7 +71,7 @@ public class Vis3DOpenGL{
             //glTranslatef(transXY, transXY, transZ);
         }
     }
-    public Vis3DOpenGL(int xPix, int yPix, int xDim, int yDim, int zDim, String title) {
+    public Vis3DOpenGL(String title, int xPix, int yPix, int xDim, int yDim, int zDim) {
         this.active = true;
         maxDim = Math.max(xDim, yDim);
         this.xDim = xDim;

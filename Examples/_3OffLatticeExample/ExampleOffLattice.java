@@ -72,7 +72,7 @@ public class ExampleOffLattice extends AgentGrid2D<CellOL> {
         //to record output, call the constructor with an output filename
         ExampleOffLattice ex=new ExampleOffLattice(x,y,"PopOut.csv");
         //ExampleOffLattice ex=new ExampleOffLattice(x,y);
-        Vis2DOpenGL vis=new Vis2DOpenGL(1000,1000,x,y,"Off Lattice Example");
+        Vis2DOpenGL vis=new Vis2DOpenGL("Off Lattice Example", 1000,1000,x,y);
         ex.Setup(50,5,0.5);
         while(ex.GetTick()<10000&&!vis.CheckClosed()) {//check for click on close button on window
             vis.TickPause(0);

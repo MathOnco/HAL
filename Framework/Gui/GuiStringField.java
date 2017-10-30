@@ -9,7 +9,7 @@ import java.util.ArrayList;
 /**
  * a menu item that takes string input
  */
-public class StringParam extends JTextField implements Framework.Interfaces.MenuItem,GuiComp {
+public class GuiStringField extends JTextField implements Framework.Interfaces.MenuItem,GuiComp {
     String labelText;
     public JLabel label;
     int compX;
@@ -21,7 +21,7 @@ public class StringParam extends JTextField implements Framework.Interfaces.Menu
      * @param label the label of the menuString
      * @param initVal the starting value of the menuString
      */
-    public StringParam( String label, String initVal){
+    public GuiStringField(String label, String initVal){
         super(10);
         this.initVal=initVal;
         nCols=10;
@@ -38,7 +38,7 @@ public class StringParam extends JTextField implements Framework.Interfaces.Menu
      * @param compX the width on the gui GridBagLayout
      * @param compY the height on the gui GridBagLayout
      */
-    public StringParam(String label, String initVal, int nCols, int compX, int compY){
+    public GuiStringField(String label, String initVal, int nCols, int compX, int compY){
         super(nCols);
         this.initVal=initVal;
         this.nCols=nCols;
@@ -49,11 +49,11 @@ public class StringParam extends JTextField implements Framework.Interfaces.Menu
     }
 
     /**
-     * sets the foreground and background of the StringParam
+     * sets the foreground and background of the GuiStringField
      * @param foregroundColor color of the text if null the GuiWindow color will be used
      * @param backgroundColor color of the background, if null the GuiWindow color will be used
      */
-    public StringParam SetColor(Color foregroundColor, Color backgroundColor){
+    public GuiStringField SetColor(Color foregroundColor, Color backgroundColor){
         if(backgroundColor!=null){
             setOpaque(true);
             setBackground(backgroundColor);
@@ -68,7 +68,7 @@ public class StringParam extends JTextField implements Framework.Interfaces.Menu
         return this;
     }
 
-    public StringParam SetColor(int foregroundColor, int backgroundColor){
+    public GuiStringField SetColor(int foregroundColor, int backgroundColor){
         SetColor(new Color(foregroundColor),new Color(backgroundColor));
         return this;
     }

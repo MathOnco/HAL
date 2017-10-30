@@ -395,7 +395,7 @@ public class GuiGridVis implements GuiComp{
         if(xs.length<2){
             throw new IllegalArgumentException("arrays too short, must define at least 2 points! length: "+xs.length);
         }
-        if(startPoint<0||startPoint>xs.length||endPoint<0||endPoint>xs.length/2||startPoint>=endPoint-1){
+        if(startPoint<0||startPoint>xs.length||endPoint<0||endPoint>xs.length||startPoint>=endPoint-1){
             throw new IllegalArgumentException("invalid startPoint or endPoint for plotting "+xs.length+" points! startPoint: "+startPoint+" endPoint: "+endPoint);
         }
         for (int i = startPoint; i < endPoint-1; i++) {
@@ -412,7 +412,7 @@ public class GuiGridVis implements GuiComp{
         if(xs.length<2){
             throw new IllegalArgumentException("arrays too short, must define at least 2 points! length: "+xs.length);
         }
-        if(startPoint<0||startPoint>xs.length||endPoint<0||endPoint>xs.length/2||startPoint>=endPoint-1){
+        if(startPoint<0||startPoint>xs.length||endPoint<0||endPoint>xs.length||startPoint>=endPoint-1){
             throw new IllegalArgumentException("invalid startPoint or endPoint for plotting "+xs.length+" points! startPoint: "+startPoint+" endPoint: "+endPoint);
         }
         for (int i = startPoint; i < endPoint-1; i++) {
