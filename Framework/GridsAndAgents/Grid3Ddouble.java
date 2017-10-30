@@ -108,8 +108,8 @@ public class Grid3Ddouble extends GridBase3D implements Serializable{
         return up-down;
     }
     public double GradientZ(int x,int y,int z){
-        double in=PDEequations.DisplacedY3D(x,y,z-1,field,xDim,yDim,zDim,z,false,0,wrapY);
-        double out=PDEequations.DisplacedY3D(x,y,z+1,field,xDim,yDim,zDim,z,false,0,wrapY);
+        double in=PDEequations.DisplacedZ3D(x,y,z-1,field,xDim,yDim,zDim,z,false,0,wrapY);
+        double out=PDEequations.DisplacedZ3D(x,y,z+1,field,xDim,yDim,zDim,z,false,0,wrapY);
         return out-in;
     }
     public double GradientX(int x,int y,int z,boolean wrapX){
@@ -124,8 +124,8 @@ public class Grid3Ddouble extends GridBase3D implements Serializable{
         return up-down;
     }
     public double GradientZ(int x,int y,int z,boolean wrapZ){
-        double down=PDEequations.DisplacedY3D(x,y,z-1,field,xDim,yDim,zDim,z,false,0,wrapZ);
-        double up=PDEequations.DisplacedY3D(x,y,z+1,field,xDim,yDim,zDim,z,false,0,wrapZ);
+        double down=PDEequations.DisplacedZ3D(x,y,z-1,field,xDim,yDim,zDim,z,false,0,wrapZ);
+        double up=PDEequations.DisplacedZ3D(x,y,z+1,field,xDim,yDim,zDim,z,false,0,wrapZ);
         return up-down;
     }
     public double GradientX(int x,int y,int z,double boundaryCond){
@@ -140,8 +140,8 @@ public class Grid3Ddouble extends GridBase3D implements Serializable{
         return up-down;
     }
     public double GradientZ(int x,int y,int z,double boundaryCond){
-        double down=PDEequations.DisplacedY3D(x,y,z-1,field,xDim,yDim,zDim,z,true,boundaryCond,wrapZ);
-        double up=PDEequations.DisplacedY3D(x,y,z+1,field,xDim,yDim,zDim,z,true,boundaryCond,wrapZ);
+        double down=PDEequations.DisplacedZ3D(x,y,z-1,field,xDim,yDim,zDim,z,true,boundaryCond,wrapZ);
+        double up=PDEequations.DisplacedZ3D(x,y,z+1,field,xDim,yDim,zDim,z,true,boundaryCond,wrapZ);
         return up-down;
     }
 

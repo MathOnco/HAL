@@ -20,7 +20,7 @@ class SrcOrSink extends AgentSQ2Dunstackable<PDEexample>{
         this.type=type;
     }
     void Reaction(){
-        G().diff.Set(Isq(),type==PDEexample.SRC?1:0);
+        G().diff.Set(Isq(),type==PDEexample.SRC?1:0);//set the local concentration to 1 if source, 0 if sink
     }
 }
 
@@ -30,7 +30,7 @@ public class PDEexample extends AgentGrid2D<SrcOrSink> {
     Random rn=new Random();
     public PDEexample(int x, int y) {
         super(x, y, SrcOrSink.class,true,true);
-        diff=new PDEGrid2D(x,y);
+        diff=new PDEGrid2D(x,y);//we add a PDEGrid to store the concentration of our diffusible
     }
     public void Setup(int nSinks,int sinkDist){
         for (int x = xDim/2; x < xDim/2+3; x++) {
@@ -47,15 +47,15 @@ public class PDEexample extends AgentGrid2D<SrcOrSink> {
                 NewAgentSQ(sinkI).Init(SINK);//create sink
                 sinksPlaced++;
                 if(sinksPlaced==nSinks){
-                    IncTick(); //IncTick called to make sources and sinks appear
+                    IncTick(); //IncTick called to make sources and sinks appear during iteration
                     return;
                 }
             }
         }
-        IncTick();
+        IncTick();//in case we never place enough sinks, we still call IncTick to make sure they appear during iteration
     }
     public void Step(int stepI){
-        double advectionX=Math.sin(stepI*1.0/1000)*0.2;
+        double advectionX=Math.sin(stepI*1.0/1000)*0.2;//sine and cosine based on timestep cause circular advection
         double advectionY=Math.cos(stepI*1.0/1000)*0.2;
         for (SrcOrSink srcOrSink : this) {
             srcOrSink.Reaction();

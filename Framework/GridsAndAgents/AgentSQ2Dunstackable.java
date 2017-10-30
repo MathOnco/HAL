@@ -2,6 +2,9 @@ package Framework.GridsAndAgents;
 
 import java.util.ArrayList;
 
+import static Framework.Utils.InDim;
+import static Framework.Utils.ModWrap;
+
 /**
  * extend the AgentSQ2Dunstackable class if you want agents that exist on a 2D discrete lattice
  * without the possibility of stacking multiple agents on the same typeGrid square
@@ -116,6 +119,44 @@ public class AgentSQ2Dunstackable<T extends AgentGrid2D> extends AgentBaseSpatia
         this.iSq=iNewPos;
     }
 
+    public void MoveSafeSQ(int newX,int newY){
+        if(!alive){
+            throw new RuntimeException("Attempting to move dead agent");
+        }
+        if (G().In(newX, newY)) {
+            MoveSQ(newX, newY);
+            return;
+        }
+        if (G().wrapX) {
+            newX = ModWrap(newX, G().xDim);
+        } else if (!InDim(G().xDim, newX)) {
+            newX = Xsq();
+        }
+        if (G().wrapY) {
+            newY = ModWrap(newY, G().yDim);
+        } else if (!InDim(G().yDim, newY))
+            newY = Ysq();
+        MoveSQ(newX,newY);
+    }
+    public void MoveSafeSQ(int newX,int newY,boolean wrapX,boolean wrapY){
+        if(!alive){
+            throw new RuntimeException("Attempting to move dead agent");
+        }
+        if (G().In(newX, newY)) {
+            MoveSQ(newX, newY);
+            return;
+        }
+        if (wrapX) {
+            newX = ModWrap(newX, G().xDim);
+        } else if (!InDim(G().xDim, newX)) {
+            newX = Xsq();
+        }
+        if (wrapY) {
+            newY = ModWrap(newY, G().yDim);
+        } else if (!InDim(G().yDim, newY))
+            newY = Ysq();
+        MoveSQ(newX,newY);
+    }
     /**
      * Gets the xDim coordinate of the square that the agent occupies
      */

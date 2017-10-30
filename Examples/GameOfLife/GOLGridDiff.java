@@ -37,7 +37,7 @@ public class GOLGridDiff extends PDEGrid2D {
         }
     }
     public void Run(GuiWindow win){
-        for (int t = 0; t < runTicks; t++) {
+        while(GetTick() < runTicks) {
             int totalPop=0;
             for (int x = 0; x < xDim; x++) {
                 for (int y = 0; y < yDim; y++) {

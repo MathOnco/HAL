@@ -190,11 +190,11 @@ public class PDEGrid3D extends Grid3Ddouble implements Serializable{
         }
         SwapFields();
     }
-    public void Advection(double[] xVels,double[] yVels,double zVel,double boundaryVal){
+    public void Advection(double[] xVels,double[] yVels,double[] zVels,double boundaryVal){
         for (int x = 0; x < xDim; x++) {
             for (int y = 0; y < yDim; y++) {
                 for (int z = 0; z < zDim; z++) {
-                    Advection3D1stOrder(x,y,z,field,swapField,xDim,yDim,zDim,xVels[I(x,y,z)],yVels[I(x,y,z)],zVel,true,boundaryVal);
+                    Advection3D1stOrder(x,y,z,field,swapField,xDim,yDim,zDim,xVels[I(x,y,z)],yVels[I(x,y,z)],zVels[I(x,y,z)],true,boundaryVal);
                 }
             }
         }
@@ -206,6 +206,37 @@ public class PDEGrid3D extends Grid3Ddouble implements Serializable{
                 for (int z = 0; z < zDim; z++) {
                     CoordsToVel.SetArray(x,y,z,scratch);
                     Advection3D1stOrder(x,y,z,field,swapField,xDim,yDim,zDim,scratch[0],scratch[1],scratch[2],true,boundaryVal);
+                }
+            }
+        }
+        SwapFields();
+    }
+    public void Advection(double xVel,double yVel,double zVel){
+        for (int x = 0; x < xDim; x++) {
+            for (int y = 0; y < yDim; y++) {
+                for (int z = 0; z < zDim; z++) {
+                    Advection3D1stOrder(x,y,z,field,swapField,xDim,yDim,zDim,xVel,yVel,zVel,false,0);
+                }
+            }
+        }
+        SwapFields();
+    }
+    public void Advection(double[] xVels,double[] yVels,double[] zVels){
+        for (int x = 0; x < xDim; x++) {
+            for (int y = 0; y < yDim; y++) {
+                for (int z = 0; z < zDim; z++) {
+                    Advection3D1stOrder(x,y,z,field,swapField,xDim,yDim,zDim,xVels[I(x,y,z)],yVels[I(x,y,z)],zVels[I(x,y,z)],false,0);
+                }
+            }
+        }
+        SwapFields();
+    }
+    public void Advection(Coords3DSetArray CoordsToVel,double[]scratch){
+        for (int x = 0; x < xDim; x++) {
+            for (int y = 0; y < yDim; y++) {
+                for (int z = 0; z < zDim; z++) {
+                    CoordsToVel.SetArray(x,y,z,scratch);
+                    Advection3D1stOrder(x,y,z,field,swapField,xDim,yDim,zDim,scratch[0],scratch[1],scratch[2],false,0);
                 }
             }
         }

@@ -15,6 +15,7 @@ public class FileIO {
     public final BufferedWriter writer;
     public final DataOutputStream writerBin;
     public final DataInputStream readerBin;
+    boolean isClosed=false;
 
     /**
      * @param fileName name of the file to read from or write to
@@ -62,6 +63,10 @@ public class FileIO {
         this.writer =writer;
         this.writerBin =writerBin;
         this.readerBin =readerBin;
+    }
+
+    public boolean IsClosed(){
+        return isClosed;
     }
 
     //READ FUNCTIONS
@@ -559,6 +564,7 @@ public class FileIO {
      */
     public void Close() {
         try {
+            this.isClosed=true;
             if(ReadWriteAppend=='r') {
                 if (binary) {
                     readerBin.close();

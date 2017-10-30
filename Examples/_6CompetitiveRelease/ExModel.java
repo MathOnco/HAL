@@ -5,6 +5,7 @@ import Framework.GridsAndAgents.PDEGrid2D;
 import Framework.Gui.GridVisWindow;
 import Framework.GridsAndAgents.AgentSQ2Dunstackable;
 import Framework.Gui.GuiGridVis;
+import Framework.Tools.FileIO;
 
 import java.util.Random;
 
@@ -30,23 +31,30 @@ public class ExModel extends AgentGrid2D<ExCell> {
 
     public static void main(String[] args) {
         int x = 100, y = 100, visScale = 8, tumorRad = 10, msPause = 0;
+        String outputName="";
         double resistantProp = 0.5;
         GridVisWindow win = new GridVisWindow("Competitive Release", x*3, y, visScale);
-        //ExModel model = new ExModel(x, y, new Random());
         ExModel[] models = new ExModel[3];
+        FileIO popsOut=outputName==""?null:new FileIO(outputName,"w");
         for (int i = 0; i < models.length; i++) {
             models[i]=new ExModel(x,y,new Random(0));
             models[i].InitTumor(tumorRad, resistantProp);
         }
-        models[0].DRUG_DURATION =0;
-        models[1].DRUG_DURATION =200;
+        models[0].DRUG_DURATION =0;//no drug
+        models[1].DRUG_DURATION =models[1].DRUG_PERIOD;//constant drug
         //Main run loop
         while (models[0].GetTick() < 10000) {
+            win.TickPause(msPause);
             for (int i = 0; i < models.length; i++) {
-                win.TickPause(msPause);
                 models[i].ModelStep();
                 models[i].DrawModel(win,i);
             }
+            if(popsOut!=null){
+                popsOut.Write(models[0].GetPop()+","+models[1].GetPop()+","+models[2].GetPop()+"\n");
+            }
+        }
+        if(popsOut!=null){
+            popsOut.Close();
         }
         win.Dispose();
     }

@@ -13,14 +13,14 @@ import static Framework.Utils.RGB256;
 
 class CellOL extends SphericalAgent2D<CellOL,ExampleOffLattice>{
     int type;
-    double forceSum;
+    double forceSum;//used with contact inhibition calculation
     public void Init(int color){
         this.type =color;
         this.radius=G().RADIUS;
     }
     double ForceCalc(double overlap){
         if(overlap<0) {
-            return 0;
+            return 0;//if cells aren't actually overlapping, then there is no force response
         }
         return Math.pow(G().FORCE_SCALER*overlap,G().FORCE_EXPONENT);
     }
@@ -46,10 +46,12 @@ class CellOL extends SphericalAgent2D<CellOL,ExampleOffLattice>{
 public class ExampleOffLattice extends AgentGrid2D<CellOL> {
     static final int WHITE=RGB256(248,255,252), PURPLE =RGB256(77,0,170), PINK =RGB256(222,0,109),CYTOPLASM=RGB256(191,156,147);
     double RADIUS=0.5;
-    double FORCE_EXPONENT=2;
+
+    double FORCE_EXPONENT=2;//these constants have been found to be rather stable, but tweak them and see what happens!
     double FORCE_SCALER=0.7;
     double FRICTION=0.5;
-    double PURP_DIV_BIAS =0.01;
+
+    double PURP_DIV_BIAS =0.01;//grid holds onto phenotype differences, if drift were included these would probably be moved to individual cells.
     double PINK_DIV_BIAS =0.02;
     double PURP_INHIB_WEIGHT =0.015;
     double PINK_INHIB_WEIGHT =0.05;
@@ -72,16 +74,13 @@ public class ExampleOffLattice extends AgentGrid2D<CellOL> {
         //ExampleOffLattice ex=new ExampleOffLattice(x,y);
         Vis2DOpenGL vis=new Vis2DOpenGL(1000,1000,x,y,"Off Lattice Example");
         ex.Setup(50,5,0.5);
-        for (int i = 0; i < 10000; i++) {
-            if(vis.CheckClosed()){
-                break;
-            }
+        while(ex.GetTick()<10000&&!vis.CheckClosed()) {//check for click on close button on window
             vis.TickPause(0);
             ex.StepCells();
             ex.DrawCells(vis);
         }
         if(ex.out!=null){
-            ex.out.Close();
+            ex.out.Close();//be sure to call Close when finished writing output to make sure everything is recorded.
         }
         vis.Dispose();
     }
@@ -106,10 +105,10 @@ public class ExampleOffLattice extends AgentGrid2D<CellOL> {
     }
     public void StepCells(){
         for (CellOL cell : this) {
-            cell.CalcMove();
+            cell.CalcMove();//calculation of forces before any agents move, for simultaneous movement
         }
         for (CellOL cell : this) {
-            cell.MoveDiv();
+            cell.MoveDiv();//movement and division
         }
         if(out!=null){
             //if an output file has been generated, write to it

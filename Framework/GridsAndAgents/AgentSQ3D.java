@@ -169,7 +169,7 @@ public class AgentSQ3D<T extends AgentGrid3D> extends AgentBaseSpatial<T>{
         iSq=iNext;
         AddSQ(iNext);
     }
-    public void MoveSafePT(int newX, int newY, int newZ, boolean wrapX, boolean wrapY, boolean wrapZ) {
+    public void MoveSafeSQ(int newX, int newY, int newZ, boolean wrapX, boolean wrapY, boolean wrapZ) {
         if(!alive){
             throw new RuntimeException("Attempting to move dead agent!");
         }
@@ -194,7 +194,7 @@ public class AgentSQ3D<T extends AgentGrid3D> extends AgentBaseSpatial<T>{
         }
         MoveSQ(newX,newY,newZ);
     }
-    public void MoveSafePT(int newX, int newY, int newZ) {
+    public void MoveSafeSQ(int newX, int newY, int newZ) {
         if(!alive){
             throw new RuntimeException("Attempting to move dead agent!");
         }

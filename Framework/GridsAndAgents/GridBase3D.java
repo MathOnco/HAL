@@ -18,6 +18,9 @@ public abstract class GridBase3D extends GridBase{
         yDim=y;
         zDim=z;
         length=x*y*z;
+        this.wrapX=wrapX;
+        this.wrapY=wrapY;
+        this.wrapZ=wrapZ;
     }
     public int WrapI(int x, int y, int z){
         //wraps Coords to proper index

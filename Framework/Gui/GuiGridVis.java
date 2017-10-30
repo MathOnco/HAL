@@ -69,6 +69,13 @@ public class GuiGridVis implements GuiComp{
     protected BufferedImage scaledBuff;
     protected Graphics2D scaledG;
     final int[] data;
+    TickTimer tickTimer=new TickTimer();
+
+    public void TickPause(int millis){
+        if(active){
+            tickTimer.TickPause(millis);
+        }
+    }
 
     /**
      * @param gridW width of the GuiGridVis in pixels
@@ -496,16 +503,6 @@ public class GuiGridVis implements GuiComp{
 
     }
 
-    public void DrawGridDiff(PDEGrid2D drawMe, double min, double max){
-        if(active) {
-            double range = max - min;
-            for (int x = 0; x < drawMe.xDim; x++) {
-                for (int y = 0; y < drawMe.yDim; y++) {
-                    SetPix(x, y,Utils.HeatMapRGB((drawMe.Get(x, y) - min) / range));
-                }
-            }
-        }
-    }
     public void DrawGridDiff(PDEGrid2D drawMe, DoubleToInt ColorFn){
         if(active) {
             for (int x = 0; x < drawMe.xDim; x++) {
@@ -515,200 +512,7 @@ public class GuiGridVis implements GuiComp{
             }
         }
     }
-    public void DrawGridDiffBound(PDEGrid2D drawMe, double min, double max){
-        if(active) {
-            double range = max - min;
-            for (int x = 0; x < drawMe.xDim; x++) {
-                for (int y = 0; y < drawMe.yDim; y++) {
-                    SetPix(x, y,Utils.HeatMapRGB((drawMe.Get(x, y) - min) / range));
-                }
-            }
-        }
-    }
-    public void DrawGridDiffBound(PDEGrid2D drawMe, double min, double max, String colorOrder){
-        if(active) {
-            double range = max - min;
-            for (int x = 0; x < drawMe.xDim; x++) {
-                for (int y = 0; y < drawMe.yDim; y++) {
-                    double val = (drawMe.Get(x, y) - min) / range;
-                    if(active) {
-                        val = Utils.Bound(val, 0, 1);
-                        float c1 = (float) Math.min(1, val * 4);
-                        float c2 = 0;
-                        float c3 = 0;
-                        if (val > 0.25) {
-                            c2 = (float) Math.min(1, (val - 0.25) * 2);
-                        }
-                        if (val > 0.75) {
-                            c3 = (float) Math.min(1, (val - 0.75) * 4);
-                        }
-                        switch (colorOrder) {
-                            case "rgb":
-                                SetPix(x, y,Utils.RGB((double) c1, (double) c2, (double) c3));
-                                break;
-                            case "rbg":
-                                SetPix(x, y,Utils.RGB((double) c1, (double) c3, (double) c2));
-                                break;
-                            case "grb":
-                                SetPix(x, y,Utils.RGB((double) c2, (double) c1, (double) c3));
-                                break;
-                            case "gbr":
-                                SetPix(x, y,Utils.RGB((double) c3, (double) c1, (double) c2));
-                                break;
-                            case "brg":
-                                SetPix(x, y,Utils.RGB((double) c2, (double) c3, (double) c1));
-                                break;
-                            case "bgr":
-                                SetPix(x, y,Utils.RGB((double) c3, (double) c2, (double) c1));
-                                break;
-                            default:
-                                SetPix(x, y,Utils.RGB((double) c1, (double) c2, (double) c3));
-                                System.out.println("Invalid colorOrder string passed to SetColorHeat:" + colorOrder + "\ncolorOrder String must be some permutation of the characters 'r','g','b'");
-                                break;
-                        }
-                    }
-                }
-            }
-        }
-    }
-    public void DrawGridDiffXY(PDEGrid3D drawMe, double min, double max, String colorOrder){
-        if(active) {
-            double range = max - min;
-            for (int x = 0; x < drawMe.xDim; x++) {
-                for (int y = 0; y < drawMe.yDim; y++) {
-                    double sum = 0;
-                    for (int z = 0; z < drawMe.zDim; z++) {
-                        sum += (drawMe.Get(x, y, z) - min) / range;
-                    }
-                    float c1 = (float) Math.min(1, sum / drawMe.zDim * 4);
-                    float c2 = 0;
-                    float c3 = 0;
-                    if (sum / drawMe.zDim > 0.25) {
-                        c2 = (float) Math.min(1, (sum / drawMe.zDim - 0.25) * 2);
-                    }
-                    if (sum / drawMe.zDim > 0.75) {
-                        c3 = (float) Math.min(1, (sum / drawMe.zDim - 0.75) * 4);
-                    }
-                    switch (colorOrder) {
-                        case "rgb":
-                            SetPix(x, y,Utils.RGB((double) c1, (double) c2, (double) c3));
-                            break;
-                        case "rbg":
-                            SetPix(x, y,Utils.RGB((double) c1, (double) c3, (double) c2));
-                            break;
-                        case "grb":
-                            SetPix(x, y,Utils.RGB((double) c2, (double) c1, (double) c3));
-                            break;
-                        case "gbr":
-                            SetPix(x, y,Utils.RGB((double) c3, (double) c1, (double) c2));
-                            break;
-                        case "brg":
-                            SetPix(x, y,Utils.RGB((double) c2, (double) c3, (double) c1));
-                            break;
-                        case "bgr":
-                            SetPix(x, y,Utils.RGB((double) c3, (double) c2, (double) c1));
-                            break;
-                        default:
-                            SetPix(x, y,Utils.RGB((double) c1, (double) c2, (double) c3));
-                            System.out.println("Invalid colorOrder string passed to SetColorHeat:" + colorOrder + "\ncolorOrder String must be some permutation of the characters 'r','g','b'");
-                            break;
-                    }
-                }
-            }
-        }
-    }
-    public void DrawGridDiffYZ(PDEGrid3D drawMe, double min, double max, String colorOrder){
-        if(active) {
-            double range = max - min;
-            for (int y = 0; y < drawMe.yDim; y++) {
-                for (int z = 0; z < drawMe.zDim; z++) {
-                    double sum = 0;
-                    for (int x = 0; x < drawMe.xDim; x++) {
-                        sum += (drawMe.Get(x, y, z) - min) / range;
-                    }
-                    float c1 = (float) Math.min(1, sum / drawMe.xDim * 4);
-                    float c2 = 0;
-                    float c3 = 0;
-                    if (sum / drawMe.xDim > 0.25) {
-                        c2 = (float) Math.min(1, (sum / drawMe.xDim - 0.25) * 2);
-                    }
-                    if (sum / drawMe.xDim > 0.75) {
-                        c3 = (float) Math.min(1, (sum / drawMe.xDim - 0.75) * 4);
-                    }
-                    switch (colorOrder) {
-                        case "rgb":
-                            SetPix(y, z,Utils.RGB((double) c1, (double) c2, (double) c3));
-                            break;
-                        case "rbg":
-                            SetPix(y, z,Utils.RGB((double) c1, (double) c3, (double) c2));
-                            break;
-                        case "grb":
-                            SetPix(y, z,Utils.RGB((double) c2, (double) c1, (double) c3));
-                            break;
-                        case "gbr":
-                            SetPix(y, z,Utils.RGB((double) c3, (double) c1, (double) c2));
-                            break;
-                        case "brg":
-                            SetPix(y, z,Utils.RGB((double) c2, (double) c3, (double) c1));
-                            break;
-                        case "bgr":
-                            SetPix(y, z,Utils.RGB((double) c3, (double) c2, (double) c1));
-                            break;
-                        default:
-                            SetPix(y, z,Utils.RGB((double) c1, (double) c2, (double) c3));
-                            System.out.println("Invalid colorOrder string passed to SetColorHeat:" + colorOrder + "\ncolorOrder String must be some permutation of the characters 'r','g','b'");
-                            break;
-                    }
-                }
-            }
-        }
-    }
-    public void DrawGridDiffXZ(PDEGrid3D drawMe, double min, double max, String colorOrder){
-        if(active) {
-            double range = max - min;
-            for (int x = 0; x < drawMe.xDim; x++) {
-                for (int z = 0; z < drawMe.zDim; z++) {
-                    double sum = 0;
-                    for (int y = 0; y < drawMe.yDim; y++) {
-                        sum += (drawMe.Get(x, y, z) - min) / range;
-                    }
-                    float c1 = (float) Math.min(1, sum / drawMe.xDim * 4);
-                    float c2 = 0;
-                    float c3 = 0;
-                    if (sum / drawMe.xDim > 0.25) {
-                        c2 = (float) Math.min(1, (sum / drawMe.xDim - 0.25) * 2);
-                    }
-                    if (sum / drawMe.xDim > 0.75) {
-                        c3 = (float) Math.min(1, (sum / drawMe.xDim - 0.75) * 4);
-                    }
-                    switch (colorOrder) {
-                        case "rgb":
-                            SetPix(x, z,Utils.RGB((double) c1, (double) c2, (double) c3));
-                            break;
-                        case "rbg":
-                            SetPix(x, z,Utils.RGB((double) c1, (double) c3, (double) c2));
-                            break;
-                        case "grb":
-                            SetPix(x, z,Utils.RGB((double) c2, (double) c1, (double) c3));
-                            break;
-                        case "gbr":
-                            SetPix(x, z,Utils.RGB((double) c3, (double) c1, (double) c2));
-                            break;
-                        case "brg":
-                            SetPix(x, z,Utils.RGB((double) c2, (double) c3, (double) c1));
-                            break;
-                        case "bgr":
-                            SetPix(x, z,Utils.RGB((double) c3, (double) c2, (double) c1));
-                            break;
-                        default:
-                            SetPix(x, z,Utils.RGB((double) c1, (double) c2, (double) c3));
-                            System.out.println("Invalid colorOrder string passed to SetColorHeat:" + colorOrder + "\ncolorOrder String must be some permutation of the characters 'r','g','b'");
-                            break;
-                    }
-                }
-            }
-        }
-    }
+
     public void DrawGridDiffXY(PDEGrid3D drawMe, DoubleToInt ColorFn){
         if(active) {
             for (int x = 0; x < drawMe.xDim; x++) {
@@ -730,7 +534,7 @@ public class GuiGridVis implements GuiComp{
                     for (int x = 0; x < drawMe.xDim; x++) {
                         sum += drawMe.Get(x, y, z);
                     }
-                    SetPix(y, z, ColorFn.DoubleToInt(sum/drawMe.zDim));
+                    SetPix(y, z, ColorFn.DoubleToInt(sum/drawMe.xDim));
                 }
             }
         }
@@ -743,55 +547,13 @@ public class GuiGridVis implements GuiComp{
                     for (int y = 0; y < drawMe.yDim; y++) {
                         sum += drawMe.Get(x, y, z);
                     }
-                    SetPix(x, z, ColorFn.DoubleToInt(sum / drawMe.xDim));
-                }
-            }
-        }
-    }
-    public void DrawGridDiffXY(PDEGrid3D drawMe, double min, double max){
-        if(active) {
-            double range = max - min;
-            for (int x = 0; x < drawMe.xDim; x++) {
-                for (int y = 0; y < drawMe.yDim; y++) {
-                    double sum = 0;
-                    for (int z = 0; z < drawMe.zDim; z++) {
-                        sum += (drawMe.Get(x, y, z) - min) / range;
-                    }
-                    SetPix(x, y,Utils.HeatMapRGB(sum / drawMe.zDim));
-                }
-            }
-        }
-    }
-    public void DrawGridDiffYZ(PDEGrid3D drawMe, double min, double max){
-        if(active) {
-            double range = max - min;
-            for (int y = 0; y < drawMe.yDim; y++) {
-                for (int z = 0; z < drawMe.zDim; z++) {
-                    double sum = 0;
-                    for (int x = 0; x < drawMe.xDim; x++) {
-                        sum += (drawMe.Get(x, y, z) - min) / range;
-                    }
-                    SetPix(y, z,Utils.HeatMapRGB(sum / drawMe.xDim));
-                }
-            }
-        }
-    }
-    public void DrawGridDiffXZ(PDEGrid3D drawMe, double min, double max){
-        if(active) {
-            double range = max - min;
-            for (int x = 0; x < drawMe.xDim; x++) {
-                for (int z = 0; z < drawMe.zDim; z++) {
-                    double sum = 0;
-                    for (int y = 0; y < drawMe.yDim; y++) {
-                        sum += (drawMe.Get(x, y, z) - min) / range;
-                    }
-                    SetPix(x, z,Utils.HeatMapRGB(sum / drawMe.xDim));
+                    SetPix(x, z, ColorFn.DoubleToInt(sum / drawMe.yDim));
                 }
             }
         }
     }
 
-    public <Q extends AgentBaseSpatial,T extends AgentGrid2D<Q>>void DrawAgents(T drawMe, AgentToColorInt<Q> ColorFn, int bkColor){
+    public <Q extends AgentBaseSpatial,T extends AgentGrid2D<Q>>void DrawAgents(T drawMe, AgentToColorInt<Q> ColorFn, int backgroundColor){
         if(active) {
             for (int x = 0; x < drawMe.xDim; x++) {
                 for (int y = 0; y < drawMe.yDim; y++) {
@@ -799,7 +561,7 @@ public class GuiGridVis implements GuiComp{
                     if (a != null) {
                         SetPix(x, y, ColorFn.AgentToColor(a));
                     } else {
-                        SetPix(x, y, bkColor);
+                        SetPix(x, y, backgroundColor);
                     }
                 }
             }
@@ -837,14 +599,13 @@ public class GuiGridVis implements GuiComp{
             }
         }
     }
-    public <Q extends AgentBaseSpatial,T extends AgentGrid3D<Q>>void DrawClosestAgentsXY(T drawMe, AgentToColorInt<Q> ColorFn, double bkR, double bkG, double bkB){
+    public <Q extends AgentBaseSpatial,T extends AgentGrid3D<Q>>void DrawClosestAgentsXY(T drawMe, AgentToColorInt<Q> ColorFn, int backgroundColor){
         if(active) {
-            int bkColor = Utils.RGB(bkR, bkG, bkB);
             for (int x = 0; x < drawMe.xDim; x++) {
                 for (int y = 0; y < drawMe.yDim; y++) {
                     for (int z = 0; z <= drawMe.zDim; z++) {
                         if (z == drawMe.zDim) {
-                            SetPix(x, y, bkColor);
+                            SetPix(x, y, backgroundColor);
                         } else {
                             Q a = drawMe.GetAgent(x, y, z);
                             if (a != null) {
@@ -857,14 +618,14 @@ public class GuiGridVis implements GuiComp{
             }
         }
     }
-    public <Q extends AgentBaseSpatial,T extends AgentGrid3D<Q>>void DrawClosestAgentsXZ(T drawMe, AgentToColorInt<Q> ColorFn, double bkR, double bkG, double bkB){
+
+    public <Q extends AgentBaseSpatial,T extends AgentGrid3D<Q>>void DrawClosestAgentsXZ(T drawMe, AgentToColorInt<Q> ColorFn, int backgroundColor){
         if(active) {
-            int bkColor = Utils.RGB(bkR, bkG, bkB);
             for (int x = 0; x < drawMe.xDim; x++) {
                 for (int z = 0; z < drawMe.zDim; z++) {
                     for (int y = 0; y <= drawMe.yDim; y++) {
                         if (y == drawMe.yDim) {
-                            SetPix(x, z, bkColor);
+                            SetPix(x, z, backgroundColor);
                         } else {
                             Q a = drawMe.GetAgent(x, y, z);
                             if (a != null) {
@@ -877,14 +638,13 @@ public class GuiGridVis implements GuiComp{
             }
         }
     }
-    public <Q extends AgentBaseSpatial,T extends AgentGrid3D<Q>>void DrawClosestAgentsYZ(T drawMe, AgentToColorInt<Q> ColorFn, double bkR, double bkG, double bkB){
+    public <Q extends AgentBaseSpatial,T extends AgentGrid3D<Q>>void DrawClosestAgentsYZ(T drawMe, AgentToColorInt<Q> ColorFn, int backgroundColor){
         if(active) {
-            int bkColor = Utils.RGB(bkR, bkG, bkB);
             for (int y = 0; y < drawMe.yDim; y++) {
                 for (int z = 0; z < drawMe.zDim; z++) {
                     for (int x = 0; x <= drawMe.xDim; x++) {
                         if (x == drawMe.yDim) {
-                            SetPix(y, z, bkColor);
+                            SetPix(y, z, backgroundColor);
                         } else {
                             Q a = drawMe.GetAgent(x, y, z);
                             if (a != null) {
@@ -897,14 +657,13 @@ public class GuiGridVis implements GuiComp{
             }
         }
     }
-    public <Q extends AgentBaseSpatial,T extends AgentGrid3D<Q>>void DrawFurthestAgentsXY(T drawMe, AgentToColorInt<Q> ColorFn, double bkR, double bkG, double bkB){
+    public <Q extends AgentBaseSpatial,T extends AgentGrid3D<Q>>void DrawFurthestAgentsXY(T drawMe, AgentToColorInt<Q> ColorFn, int backgroundColor){
         if(active) {
-            int bkColor = Utils.RGB(bkR, bkG, bkB);
             for (int x = 0; x < drawMe.xDim; x++) {
                 for (int y = 0; y < drawMe.yDim; y++) {
                     for (int z = drawMe.zDim-1; z >= -1; z++) {
                         if (z == -1) {
-                            SetPix(x, y, bkColor);
+                            SetPix(x, y, backgroundColor);
                         } else {
                             Q a = drawMe.GetAgent(x, y, z);
                             if (a != null) {
@@ -917,14 +676,13 @@ public class GuiGridVis implements GuiComp{
             }
         }
     }
-    public <Q extends AgentBaseSpatial,T extends AgentGrid3D<Q>>void DrawFurthestAgentsXZ(T drawMe, AgentToColorInt<Q> ColorFn, double bkR, double bkG, double bkB){
+    public <Q extends AgentBaseSpatial,T extends AgentGrid3D<Q>>void DrawFurthestAgentsXZ(T drawMe, AgentToColorInt<Q> ColorFn, int backgroundColor){
         if(active) {
-            int bkColor = Utils.RGB(bkR, bkG, bkB);
             for (int x = 0; x < drawMe.xDim; x++) {
                 for (int z = 0; z < drawMe.zDim; z++) {
                     for (int y = drawMe.yDim-1; y >= -1; y++) {
                         if (y == -1) {
-                            SetPix(x, z, bkColor);
+                            SetPix(x, z, backgroundColor);
                         } else {
                             Q a = drawMe.GetAgent(x, y, z);
                             if (a != null) {
@@ -937,9 +695,8 @@ public class GuiGridVis implements GuiComp{
             }
         }
     }
-    public <Q extends AgentBaseSpatial,T extends AgentGrid3D<Q>>void DrawFurthestAgentsYZ(T drawMe, AgentToColorInt<Q> ColorFn, double bkR, double bkG, double bkB){
+    public <Q extends AgentBaseSpatial,T extends AgentGrid3D<Q>>void DrawFurthestAgentsYZ(T drawMe, AgentToColorInt<Q> ColorFn, int backgroundColor){
         if(active) {
-            int bkColor = Utils.RGB(bkR, bkG, bkB);
             for (int y = 0; y < drawMe.yDim; y++) {
                 for (int z = 0; z < drawMe.zDim; z++) {
                     for (int x = drawMe.xDim-1; x >= 0; x++) {
@@ -1043,49 +800,6 @@ public class GuiGridVis implements GuiComp{
             }
         }
     }
-//    public <Q extends AgentBaseSpatial,T extends AgentGrid3D<Q>>void DrawAgentDensityXY(T drawMe,int maxDensity,String colorOrder){
-//        int[]densities=new int[drawMe.xDim*drawMe.yDim];
-//        for (Q agent : drawMe) {
-//            int i=agent.Isq();
-//        }
-//        if(active) {
-//            for (int x = 0; x < drawMe.xDim; x++) {
-//                for (int y = 0; y < drawMe.yDim; y++) {
-//                    int sum = 0;
-//                    for (int z = 0; z < drawMe.zDim; z++) {
-////                        sum += drawMe.PopAt(x, y, z);
-//                    }
-//                    SetColorHeatBound(x, y, sum * 1.0 / maxDensity,colorOrder);
-//                }
-//            }
-//        }
-//    }
-//    public <Q extends AgentBaseSpatial,T extends AgentGrid3D<Q>>void DrawAgentDensityXZ(T drawMe,int maxDensity,String colorOrder){
-//        if(active) {
-//            for (int x = 0; x < drawMe.xDim; x++) {
-//                for (int z = 0; z < drawMe.zDim; z++) {
-//                    int sum = 0;
-//                    for (int y = 0; y < drawMe.yDim; y++) {
-////                        sum += drawMe.PopAt(x, y, z);
-//                    }
-//                    SetColorHeatBound(x, z, sum * 1.0 / maxDensity,colorOrder);
-//                }
-//            }
-//        }
-//    }
-//    public <Q extends AgentBaseSpatial,T extends AgentGrid3D<Q>>void DrawAgentDensityYZ(T drawMe,int maxDensity,String colorOrder){
-//        if(active) {
-//            for (int y = 0; y < drawMe.yDim; y++) {
-//                for (int z = 0; z < drawMe.zDim; z++) {
-//                    int sum = 0;
-//                    for (int x = 0; x < drawMe.xDim; x++) {
-////                        sum += drawMe.PopAt(x, y, z);
-//                    }
-//                    SetColorHeatBound(y, z, sum * 1.0 / maxDensity,colorOrder);
-//                }
-//            }
-//        }
-//    }
 
     void SetupScaledBuff(){
         if(scaledBuff==null||scaledBuff.getHeight()!=panel.scaleX *yDim||scaledBuff.getWidth()!=panel.scaleX *xDim) {

@@ -40,9 +40,6 @@ public class GridVisWindow extends GuiGridVis{
         win.AddCol(0, this);
         win.RunGui();
     }
-    public void TickPause(int millis){
-        win.TickPause(millis);
-    }
     public void Dispose(){
         win.Dispose();
     }

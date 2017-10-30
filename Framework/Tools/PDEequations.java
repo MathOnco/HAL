@@ -386,7 +386,7 @@ public class PDEequations {
     }
 
     public static void Advection3D1stOrder(int x,int y,int z,final double[]inGrid,final double[]outGrid,int xDim,int yDim,int zDim,double xVel,double yVel,double zVel,boolean boundaryCond,double boundaryValue){
-        int i=x*yDim*zDim+y*zDim+y;
+        int i=x*yDim*zDim+y*zDim+z;
         double xFlux=0;
         double yFlux=0;
         double zFlux=0;
@@ -404,10 +404,10 @@ public class PDEequations {
             yFlux=yVel*(DisplacedY3D(x,y+1,z,inGrid,xDim,yDim,zDim,-1,boundaryCond,boundaryValue,true)-prev);
         }
         if(zVel>0){
-            zFlux=yVel*(prev- DisplacedZ3D(x,y,z-1,inGrid,xDim,yDim,zDim,-1,boundaryCond,boundaryValue,true));
+            zFlux=zVel*(prev- DisplacedZ3D(x,y,z-1,inGrid,xDim,yDim,zDim,-1,boundaryCond,boundaryValue,true));
         }
         if(zVel<0){
-            zFlux=yVel*(DisplacedZ3D(x,y,z+1,inGrid,xDim,yDim,zDim,-1,boundaryCond,boundaryValue,true)-prev);
+            zFlux=zVel*(DisplacedZ3D(x,y,z+1,inGrid,xDim,yDim,zDim,-1,boundaryCond,boundaryValue,true)-prev);
         }
         outGrid[i]=inGrid[i]-xFlux-yFlux-zFlux;
     }
@@ -740,18 +740,18 @@ public class PDEequations {
         }
         return vals[x*yDim*zDim+y*zDim+z];
     }
-    public static double DisplacedZ3D(int x, int y, int z, double[] vals, int xDim, int yDim, int zDim, int fallbackZ, boolean boundaryCond, double boundaryValue, boolean wrapY){
-        if(InDim(yDim,y)){
+    public static double DisplacedZ3D(int x, int y, int z, double[] vals, int xDim, int yDim, int zDim, int fallbackZ, boolean boundaryCond, double boundaryValue, boolean wrapZ){
+        if(InDim(zDim,z)){
             return vals[x*yDim*zDim+y*zDim+z];
         }
         if(boundaryCond){
             return boundaryValue;
         }
-        if(wrapY){
-            y=ModWrap(y,yDim);
+        if(wrapZ){
+            z=ModWrap(z,zDim);
         }
         else{
-            y=fallbackZ;
+            z=fallbackZ;
         }
         return vals[x*yDim*zDim+y*zDim+z];
     }
