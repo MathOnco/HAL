@@ -1,7 +1,6 @@
 package LEARN_HERE.Agents;
 
 import Framework.GridsAndAgents.AgentSQ2Dunstackable;
-import Models.Raf.BirthDeathAgent2D;
 import Framework.Gui.GridVisWindow;
 import Framework.GridsAndAgents.AgentGrid2D;
 import Framework.Gui.GuiGridVis;
@@ -17,18 +16,11 @@ import static Framework.Utils.*;
 class Cell extends AgentSQ2Dunstackable<BirthDeath> {
     int color;
 
-    public double GetDeathProb() {
-        return 0.1;
-    }
-
-    public double GetBirthProb() {
-        return 0.2;
-    }
     public void Step() {
-        if (G().rn.nextDouble() < GetDeathProb()) {
+        if (G().rn.nextDouble() < G().DEATH_PROB) {
             Dispose();
         }
-        if (G().rn.nextDouble() < GetBirthProb()) {
+        if (G().rn.nextDouble() < G().BIRTH_PROB) {
             int nOptions = G().HoodToEmptyIs(G().mooreHood, G().hoodIs, Xsq(), Ysq());
             if (nOptions > 0) {
                 int newColor=color;
