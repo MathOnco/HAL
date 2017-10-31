@@ -24,6 +24,13 @@ public class AgentBase <T extends GridBase> implements Serializable{
     public int Age(){
         return myGrid.tick-birthTick;
     }
+    //note, BirthTick function will now return a value relative to the new age!
+    public void SetAge(int newAge){
+        if(newAge<0){
+            throw new IllegalArgumentException("Can't set age of an agent to less than 0! Age:"+newAge);
+        }
+        this.birthTick=myGrid.tick+newAge;
+    }
 
     /**
      * Returns the tick at which the cell was born
