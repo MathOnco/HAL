@@ -380,6 +380,14 @@ public final class Utils {
         sb.append(arr[end - 1]);
         return sb.toString();
     }
+    public double Interpolate(double bottomLeft,double bottomRight,double topLeft,double topRight,double x,double y){
+        if(x<0||x>1||y<0||y>1){
+            throw new IllegalArgumentException("x and y for interpolation must be between 0 and 1 x: "+x+" y: "+y);
+        }
+        double bottom =(bottomRight-bottomLeft)*x+bottomLeft;
+        double top =(topRight-topLeft)*x+topLeft;
+        return (top-bottom)*y+bottom;
+    }
 
     public static int GetBit(int v, int i) {
         return v >> i % 1;
