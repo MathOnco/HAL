@@ -1,11 +1,12 @@
 package Framework.GridsAndAgents;
 
 import Framework.Interfaces.AgentStepFunction;
-import Framework.Utils;
+import Framework.Rand;
+import Framework.Util;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Random;
+import java.util.List;
 
 /**
  * Extend the Grid2unstackable class if you want a 2D lattice with one or more agents per typeGrid square
@@ -104,13 +105,13 @@ public class AgentGrid2D<T extends AgentBaseSpatial> extends GridBase2D implemen
             return NewAgentPT(newX, newY);
         }
         if (wrapX) {
-            newX = Utils.ModWrap(newX, xDim);
-        } else if (!Utils.InDim(xDim, newX)) {
+            newX = Util.ModWrap(newX, xDim);
+        } else if (!Util.InDim(xDim, newX)) {
             newX = fallbackX;
         }
         if (wrapY) {
-            newY = Utils.ModWrap(newY, yDim);
-        } else if (!Utils.InDim(yDim, newY))
+            newY = Util.ModWrap(newY, yDim);
+        } else if (!Util.InDim(yDim, newY))
             newY = fallbackY;
         return NewAgentPT(newX,newY);
     }
@@ -119,13 +120,13 @@ public class AgentGrid2D<T extends AgentBaseSpatial> extends GridBase2D implemen
             return NewAgentPT(newX, newY);
         }
         if (wrapX) {
-            newX = Utils.ModWrap(newX, xDim);
-        } else if (!Utils.InDim(xDim, newX)) {
+            newX = Util.ModWrap(newX, xDim);
+        } else if (!Util.InDim(xDim, newX)) {
             newX = fallbackX;
         }
         if (wrapY) {
-            newY = Utils.ModWrap(newY, yDim);
-        } else if (!Utils.InDim(yDim, newY))
+            newY = Util.ModWrap(newY, yDim);
+        } else if (!Util.InDim(yDim, newY))
             newY = fallbackY;
         return NewAgentPT(newX,newY);
     }
@@ -141,7 +142,7 @@ public class AgentGrid2D<T extends AgentBaseSpatial> extends GridBase2D implemen
      * do not call this while in the middle of iteration
      * @param rn the Random number generator to be used
      */
-    public void ShuffleAgents(Random rn){
+    public void ShuffleAgents(Rand rn){
         agents.ShuffleAgents(rn);
     }
 
@@ -194,16 +195,16 @@ public class AgentGrid2D<T extends AgentBaseSpatial> extends GridBase2D implemen
         for (int xSq = (int)Math.floor(x-rad); xSq <(int)Math.ceil(x+rad) ; xSq++) {
             for (int ySq = (int)Math.floor(y-rad); ySq <(int)Math.ceil(y+rad) ; ySq++) {
                 int retX=xSq; int retY=ySq;
-                boolean inX=Utils.InDim(xDim,retX);
-                boolean inY=Utils.InDim(yDim,retY);
+                boolean inX= Util.InDim(xDim,retX);
+                boolean inY= Util.InDim(yDim,retY);
                 if((!wrapX&&!inX)||(!wrapY&&!inY)){
                     continue;
                 }
                 if(wrapX&&!inX){
-                    retX=Utils.ModWrap(retX,xDim);
+                    retX= Util.ModWrap(retX,xDim);
                 }
                 if(wrapY&&!inY){
-                    retY=Utils.ModWrap(retY,yDim);
+                    retY= Util.ModWrap(retY,yDim);
                 }
                 GetAgents(retAgentList, I(retX,retY));
             }
@@ -214,16 +215,16 @@ public class AgentGrid2D<T extends AgentBaseSpatial> extends GridBase2D implemen
         for (int xSq = (int)Math.floor(x-rad); xSq <(int)Math.ceil(x+rad) ; xSq++) {
             for (int ySq = (int)Math.floor(y-rad); ySq <(int)Math.ceil(y+rad) ; ySq++) {
                 int retX=xSq; int retY=ySq;
-                boolean inX=Utils.InDim(xDim,retX);
-                boolean inY=Utils.InDim(yDim,retY);
+                boolean inX= Util.InDim(xDim,retX);
+                boolean inY= Util.InDim(yDim,retY);
                 if((!wrapX&&!inX)||(!wrapY&&!inY)){
                     continue;
                 }
                 if(wrapX&&!inX){
-                    retX=Utils.ModWrap(retX,xDim);
+                    retX= Util.ModWrap(retX,xDim);
                 }
                 if(wrapY&&!inY){
-                    retY=Utils.ModWrap(retY,yDim);
+                    retY= Util.ModWrap(retY,yDim);
                 }
                 GetAgents(retAgentList, I(retX,retY));
             }
@@ -235,12 +236,12 @@ public class AgentGrid2D<T extends AgentBaseSpatial> extends GridBase2D implemen
      * do not call this while in the middle of iteration
      * @param rn the Random number generator to be used
      */
-    public void CleanShuffInc(Random rn){
+    public void CleanShuffInc(Rand rn){
         CleanAgents();
         ShuffleAgents(rn);
         IncTick();
     }
-    public void ShuffInc(Random rn){
+    public void ShuffInc(Rand rn){
         ShuffleAgents(rn);
         IncTick();
     }
@@ -259,7 +260,8 @@ public class AgentGrid2D<T extends AgentBaseSpatial> extends GridBase2D implemen
 //        //gets population count at location
 //        return counts[i];
 //    }
-    public ArrayList<T> AllAgents(){return (ArrayList<T>)this.agents.GetAllAgents();}
+    public List<T> _AllAgents(){return (List<T>)this.agents.GetAllAgents();}
+    public List<T> _AllDeads(){return (List<T>)this.agents.GetAllDeads();}
 
     /**
      * appends to the provided arraylist all agents on the square at the specified coordinates
@@ -293,9 +295,17 @@ public class AgentGrid2D<T extends AgentBaseSpatial> extends GridBase2D implemen
         }
         tick=0;
     }
+    public void ResetHard(){
+        IncTick();
+        for (T a : this) {
+            a.Dispose();
+        }
+        this.agents.Reset();
+        tick=0;
+    }
     public void MultiThreadAgents(int nThreads, AgentStepFunction<T> StepFunction){
         int last=agents.iLastAlive;
-        Utils.MultiThread(nThreads,nThreads,(iThread)->{
+        Util.MultiThread(nThreads,nThreads,(iThread)->{
             ArrayList<T> agents=this.agents.agents;
             int start=iThread/nThreads*last;
             int end=(iThread+1)/nThreads*last;

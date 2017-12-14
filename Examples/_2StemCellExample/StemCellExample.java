@@ -3,12 +3,12 @@ import Framework.GridsAndAgents.AgentSQ2Dunstackable;
 import Framework.GridsAndAgents.AgentGrid2D;
 import Framework.Gui.*;
 import Framework.Tools.FileIO;
-import Framework.Utils;
+import Framework.Rand;
+import Framework.Util;
 
 import java.util.Arrays;
-import java.util.Random;
 
-import static Framework.Utils.RGB;
+import static Framework.Util.RGB;
 
 class CACell extends AgentSQ2Dunstackable<StemCellCA> {
     int divs;
@@ -39,7 +39,7 @@ class CACell extends AgentSQ2Dunstackable<StemCellCA> {
     void Divide(int iChildLoc) {
         boolean stemChild=false;
         int divsChild=divs;
-        if(stem&&G().rn.nextDouble()<G().STEM_DIV_PROB){ stemChild=true; }
+        if(stem&&G().rn.Double()<G().STEM_DIV_PROB){ stemChild=true; }
         else{ divsChild--; }
         G().NewAgentSQ(iChildLoc).Init(divsChild,stemChild);//create a new cell and initialize it
         if(!stem) {
@@ -50,12 +50,12 @@ class CACell extends AgentSQ2Dunstackable<StemCellCA> {
     void Step(){
         G().cellCts[stem?0:1]++;//add 1 to either 0th or 1st entry, depending on whether cell is stem
         //random death
-        if(G().rn.nextDouble()<G().DEATH_PROB){
+        if(G().rn.Double()<G().DEATH_PROB){
             Die();
             return;
         }
         //check if division event will occur
-        if(G().rn.nextDouble()<G().DIV_PROB){
+        if(G().rn.Double()<G().DIV_PROB){
             //get moore neighborhood around cell, ignores indices that fall outside the bounds of the model
             int checkLen=HoodToIs(G().mooreHood,G().localIs);
             int openings=0;
@@ -75,7 +75,7 @@ class CACell extends AgentSQ2Dunstackable<StemCellCA> {
                     return;
                 }
                 //choose a random location to divide into
-                int divI=G().divIs[G().rn.nextInt(openings)];
+                int divI=G().divIs[G().rn.Int(openings)];
                 Divide(divI);
             }
         }
@@ -92,17 +92,17 @@ class StemCellCA extends AgentGrid2D<CACell> {
     //value containers used in cell division function
     final int[] divIs=new int[8];
     final int[] localIs=new int[8];
-    final int[] mooreHood= Utils.MooreHood(false);
+    final int[] mooreHood= Util.MooreHood(false);
     final int[] cellCts=new int[2];
     int RUN_DURATION;
     int TICK_PAUSE;
     FileIO outFile;
 
-    GuiGridVis vis;
+    GuiGrid vis;
     GuiLabel tickLabel;
     GuiLabel popLabel;
-    final Random rn;
-    public void Init(double DIV_PROB,double DEATH_PROB,double STEM_DIV_PROB,int MAX_DIVS,int TICK_PAUSE,int RUN_DURATION,String outFileName,boolean record,GuiGridVis vis,GuiLabel tickLabel,GuiLabel popLabel,GuiWindow win){
+    final Rand rn;
+    public void Init(double DIV_PROB, double DEATH_PROB, double STEM_DIV_PROB, int MAX_DIVS, int TICK_PAUSE, int RUN_DURATION, String outFileName, boolean record, GuiGrid vis, GuiLabel tickLabel, GuiLabel popLabel, GuiWindow win){
         this.Reset();
         this.DIV_PROB =DIV_PROB;
         this.DEATH_PROB =DEATH_PROB;
@@ -128,7 +128,7 @@ class StemCellCA extends AgentGrid2D<CACell> {
                 c.Step();
             }
             if(outFile!=null&&!outFile.IsClosed()){
-                outFile.Write(Utils.ArrToString(cellCts,",")+"\n");
+                outFile.Write(Util.ArrToString(cellCts,",")+"\n");
             }
             //increments tick, cleans and shuffles the agentlist
             CleanShuffInc(rn);
@@ -143,13 +143,13 @@ class StemCellCA extends AgentGrid2D<CACell> {
     StemCellCA(int xDim, int yDim){
         //typeGrid constructor, passes the agent class which is used to make agents when NewAgentPT is called
         super(xDim,yDim,CACell.class,true,true);
-        rn=new Random();
+        rn=new Rand();
     }
     public static void main(String[] args){
         //main menu gui defined
         GuiWindow win=new GuiWindow("StemCellCA menu",true);
         //ParamSet stores all menu options
-        win.AddCol(0, new GuiFileChooserField("OUTPUT_FILE","data.csv").SetColor(RED,BLACK));
+        win.AddCol(0, new GuiFileChooserField("OUTPUT_FILE","buf.csv").SetColor(RED,BLACK));
         win.AddCol(0, new GuiDoubleField("DIV_PROB",1.0/24,0,1).SetColor(WHITE, BLACK));
         win.AddCol(0, new GuiDoubleField("DEATH_PROB",1.0/1000,0,1).SetColor(WHITE, BLACK));
         win.AddCol(1, new GuiDoubleField("STEM_DIV_PROB",7.0/10,0,1).SetColor(WHITE, BLACK));
@@ -159,7 +159,7 @@ class StemCellCA extends AgentGrid2D<CACell> {
         //Run button definition, includes run button action
         win.SetColor(BLACK);
         final StemCellCA runGrid=new StemCellCA(200,200);
-        GuiGridVis vis=new GuiGridVis(runGrid.xDim,runGrid.yDim,5,2,1,true);
+        GuiGrid vis=new GuiGrid(runGrid.xDim,runGrid.yDim,5,2,1,true);
         GuiLabel tickLabel=new GuiLabel("TimeStep                       ");
         GuiLabel popLabel=new GuiLabel("Population                       ");
         win.AddCol(0,new GuiBoolField("Record",false).SetColor(RED,WHITE));

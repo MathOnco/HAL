@@ -26,13 +26,13 @@ public class AgentBase <T extends GridBase> implements Serializable{
     }
     //note, BirthTick function will now return a value relative to the new age!
     public void SetAge(int newAge){
-        if(Age()==0){
-            throw new IllegalStateException("Can't set age of newly born agent, as this can cause undefined behavior during iteration! wait until next timestep!");
-        }
         if(newAge<0){
             throw new IllegalArgumentException("Can't set age of an agent to less than 0! Age:"+newAge);
         }
         this.birthTick=myGrid.tick+newAge;
+    }
+    public int _GetAgentListIndex(){
+        return iList;
     }
 
     /**

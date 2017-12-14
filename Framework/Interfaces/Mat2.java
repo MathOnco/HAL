@@ -1,6 +1,6 @@
 package Framework.Interfaces;
 
-import Framework.Utils;
+import Framework.Util;
 
 /**
  * Created by rafael on 7/3/17.
@@ -34,7 +34,7 @@ public interface Mat2 {
         if (In(x, y)) {
             return I(x, y);
         }
-        return I(Utils.ModWrap(x, Xdim()), Utils.ModWrap(y, Ydim()));
+        return I(Util.ModWrap(x, Xdim()), Util.ModWrap(y, Ydim()));
     }
 
     /**
@@ -63,10 +63,10 @@ public interface Mat2 {
         return (int) (x * Ydim() + y);
     }
     default double DistSq(double x1, double y1, double x2, double y2, boolean wrapX, boolean wrapY){
-        return Utils.DistSquared(x1,y1,x2,y2, Xdim(), Ydim(), wrapX,wrapY);
+        return Util.DistSquared(x1,y1,x2,y2, Xdim(), Ydim(), wrapX,wrapY);
     }
     default double DistSq(double x1, double y1, double x2, double y2){
-        return Utils.DistSquared(x1,y1,x2,y2, Xdim(), Ydim(), WrapX(),WrapY());
+        return Util.DistSquared(x1,y1,x2,y2, Xdim(), Ydim(), WrapX(),WrapY());
     }
     /**
      * writes into ret the coordinates of SQs with the centerX and centerY coordinates added
@@ -86,16 +86,16 @@ public interface Mat2 {
         for(int i=0;i<SQs.length/2;i++) {
             int x = SQs[i * 2] + centerX;
             int y = SQs[i * 2 + 1] + centerY;
-            if (!Utils.InDim(Xdim(), x)) {
+            if (!Util.InDim(Xdim(), x)) {
                 if (wrapX) {
-                    x = Utils.ModWrap(x, Xdim());
+                    x = Util.ModWrap(x, Xdim());
                 } else {
                     continue;
                 }
             }
-            if (!Utils.InDim(Ydim(), y)) {
+            if (!Util.InDim(Ydim(), y)) {
                 if (wrapY) {
-                    y = Utils.ModWrap(y, Ydim());
+                    y = Util.ModWrap(y, Ydim());
                 } else {
                     continue;
                 }
@@ -112,16 +112,16 @@ public interface Mat2 {
         for(int i=0;i<SQs.length/2;i++) {
             int x = SQs[i * 2] + centerX;
             int y = SQs[i * 2 + 1] + centerY;
-            if (!Utils.InDim(Xdim(), x)) {
+            if (!Util.InDim(Xdim(), x)) {
                 if (WrapX()) {
-                    x = Utils.ModWrap(x, Xdim());
+                    x = Util.ModWrap(x, Xdim());
                 } else {
                     continue;
                 }
             }
-            if (!Utils.InDim(Ydim(), y)) {
+            if (!Util.InDim(Ydim(), y)) {
                 if (WrapY()) {
-                    y = Utils.ModWrap(y, Ydim());
+                    y = Util.ModWrap(y, Ydim());
                 } else {
                     continue;
                 }

@@ -1,6 +1,6 @@
 package Framework.GridsAndAgents;
 
-import Framework.Utils;
+import Framework.Util;
 
 import java.io.Serializable;
 import java.text.DecimalFormat;
@@ -59,7 +59,7 @@ public class Grid2Dlong extends GridBase2D implements Serializable{
      */
     public void BoundAll(long min, long max){
         for(int i=0;i<length;i++){
-            field[i]= Utils.Bound(field[i],min,max);
+            field[i]= Util.Bound(field[i],min,max);
         }
     }
 

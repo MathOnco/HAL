@@ -6,7 +6,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import static Framework.Utils.*;
+import static Framework.Util.*;
 
 
 /**

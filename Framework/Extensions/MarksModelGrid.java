@@ -2,12 +2,11 @@ package Framework.Extensions;
 
 import Framework.GridsAndAgents.AgentGrid2D;
 import Framework.GridsAndAgents.PDEGrid2D;
-import Framework.Gui.GuiGridVis;
-import Framework.Utils;
+import Framework.Gui.GuiGrid;
+import Framework.Rand;
+import Framework.Util;
 
-import java.util.Random;
-
-import static Framework.Utils.*;
+import static Framework.Util.*;
 
 /**
  * Created by bravorr on 6/28/17.
@@ -23,7 +22,7 @@ public class MarksModelGrid<T extends MarksModelCell> extends AgentGrid2D<T> {
     static public  int[] MOORE_NEIGHBORHOOD = MooreHood(false);
     public  int[] moveIs=new int[8];
 
-     public  Random rn=new Random();
+     public Rand rn=new Rand();
     //Stores all constant values and global functions
     //GENERAL CONSTANTS
      public  double GRID_SIZE=20f;
@@ -100,7 +99,7 @@ public class MarksModelGrid<T extends MarksModelCell> extends AgentGrid2D<T> {
         vesselPosToCheck= CircleHood(true, MIN_SPACING);
         vesselPosIs=new int[vesselPosToCheck.length/2];
     }
-    public MarksModelGrid(int x,int y,Class<T> classObj,Random rn){
+    public MarksModelGrid(int x, int y, Class<T> classObj, Rand rn){
         super(x,y,classObj);
         this.rn=rn;
         oxygen = new PDEGrid2D(xDim, yDim);
@@ -123,7 +122,7 @@ public class MarksModelGrid<T extends MarksModelCell> extends AgentGrid2D<T> {
         int actualVessels = MakeVessels(expectedVessels);
         //System.out.println("expectedVessels: "+expectedVessels+"acutalVessels: "+actualVessels);
         int[] ret= GenIndicesArray(xDim * yDim);
-        Shuffle(ret, xDim * yDim, (int)((xDim * yDim) * propCells), rn);
+        rn.Shuffle(ret, xDim * yDim, (int)((xDim * yDim) * propCells));
         int randomIs[] = ret;
         for (int i = 0; i <(int)(xDim * yDim) * propCells; i++) {
             int RandomGridI = randomIs[i];
@@ -193,10 +192,10 @@ public class MarksModelGrid<T extends MarksModelCell> extends AgentGrid2D<T> {
     public void NewVessels(int count){
         int nIs=GetAngioIs();
         if(nIs>count) {
-            Utils.Shuffle(angioIs, nIs, count, rn);
+            rn.Shuffle(angioIs, nIs, count);
         }
         else{
-            Utils.Shuffle(angioIs, nIs, nIs-1, rn);
+            rn.Shuffle(angioIs, nIs, nIs-1);
         }
         for(int i=0;i<count;i++){
             AddVessel(angioIs[i]);
@@ -219,7 +218,7 @@ public class MarksModelGrid<T extends MarksModelCell> extends AgentGrid2D<T> {
     public int MakeVessels(int expectedVessels) {
         int nVessels=0;
         int[] ret= GenIndicesArray(length);
-        Shuffle(ret, length, length, rn);
+        rn.Shuffle(ret, length, length);
         int[] Is= ret;
         for (int i = 0; i < length; i++) {
             if(!CheckVesselsNearby(Is[i])){
@@ -278,7 +277,7 @@ public class MarksModelGrid<T extends MarksModelCell> extends AgentGrid2D<T> {
     }
 
     //can draw all 3 diffusibles simultaneously, one for every color channel
-    public void DrawMicroEnv(GuiGridVis vis, boolean drawGlucose, boolean drawProtons, boolean drawOxygen) {
+    public void DrawMicroEnv(GuiGrid vis, boolean drawGlucose, boolean drawProtons, boolean drawOxygen) {
         for (int x = 0; x < xDim; x++) {
             for (int y = 0; y < yDim; y++) {
                 float r = 0;
@@ -291,32 +290,32 @@ public class MarksModelGrid<T extends MarksModelCell> extends AgentGrid2D<T> {
                     b = (float) (oxygen.Get(x, y) / OXYGEN_VESSEL_CONC);
                 }
                 if (drawProtons) {
-                    g = (float) ((Utils.ProtonsToPh(protons.Get(x, y)) - 6) / 1.4f);
+                    g = (float) ((Util.ProtonsToPh(protons.Get(x, y)) - 6) / 1.4f);
                 }
                 vis.SetPix(x, y, RGB(r, g, b));
             }
         }
     }
     //can only draw one diffusible at a time
-    public void DrawMicroEnvHeat(GuiGridVis vis, boolean drawGlucose, boolean drawProtons, boolean drawOxygen) {
+    public void DrawMicroEnvHeat(GuiGrid vis, boolean drawGlucose, boolean drawProtons, boolean drawOxygen) {
         for (int x = 0; x < xDim; x++) {
             for (int y = 0; y < yDim; y++) {
                 float r = 0;
                 float g = 0;
                 float b = 0;
                 if (drawGlucose) {
-                    vis.SetPix(x, y,Utils.HeatMapRGB(glucose.Get(x,y)/ GLUCOSE_VESSEL_CONC));
+                    vis.SetPix(x, y, Util.HeatMapRGB(glucose.Get(x,y)/ GLUCOSE_VESSEL_CONC));
                 }
                 else if (drawOxygen) {
-                    vis.SetPix(x, y,Utils.HeatMapRGB(oxygen.Get(x, y) / OXYGEN_VESSEL_CONC));
+                    vis.SetPix(x, y, Util.HeatMapRGB(oxygen.Get(x, y) / OXYGEN_VESSEL_CONC));
                 }
                 else if (drawProtons) {
-                    vis.SetPix(x, y,Utils.HeatMapRGB((Utils.ProtonsToPh(protons.Get(x, y)) - 6) / 1.4f));
+                    vis.SetPix(x, y, Util.HeatMapRGB((Util.ProtonsToPh(protons.Get(x, y)) - 6) / 1.4f));
                 }
             }
         }
     }
-    public void DrawCells(GuiGridVis vis) {
+    public void DrawCells(GuiGrid vis) {
         for (int x = 0; x < xDim; x++) {
             for (int y = 0; y < yDim; y++) {
                 MarksModelCell c = GetAgent(x, y);
@@ -325,10 +324,10 @@ public class MarksModelGrid<T extends MarksModelCell> extends AgentGrid2D<T> {
                         if (c.IsVessel()) {
                             vis.SetPix(x, y, RGB((double) 0, (double) 1, (double) 1));
                         } else if (c.isCancer) {
-                            double acidPhenoScaled = Utils.Rescale0to1(c.acidResistancePheno, MAX_ACID_RESIST_PHENO, MIN_ACID_RESIST_PHENO);
-                            double glycoPhenoScaled = Utils.Rescale0to1(c.glycolysisPheno, MIN_GLYCOLYTIC_PHENO, MAX_GLYCOLYTIC_PHENO);
-                            //double acidPhenoScaled = Utils.Rescale0to1(c.acidResistancePheno, MAX_ACID_RESIST_PHENO, MIN_ACID_RESIST_PHENO);
-                            //double glycoPhenoScaled = Utils.Rescale0to1((double) Math.log(c.glycolysisPheno), (double) Math.log(MIN_GLYCOLYTIC_PHENO + 0.001), (double) Math.log(MAX_GLYCOLYTIC_PHENO));
+                            double acidPhenoScaled = Util.Scale0to1(c.acidResistancePheno, MAX_ACID_RESIST_PHENO, MIN_ACID_RESIST_PHENO);
+                            double glycoPhenoScaled = Util.Scale0to1(c.glycolysisPheno, MIN_GLYCOLYTIC_PHENO, MAX_GLYCOLYTIC_PHENO);
+                            //double acidPhenoScaled = Util.Scale0to1(c.acidResistancePheno, MAX_ACID_RESIST_PHENO, MIN_ACID_RESIST_PHENO);
+                            //double glycoPhenoScaled = Util.Scale0to1((double) Math.log(c.glycolysisPheno), (double) Math.log(MIN_GLYCOLYTIC_PHENO + 0.001), (double) Math.log(MAX_GLYCOLYTIC_PHENO));
                             vis.SetPix(x, y, RGB((float) (1 - acidPhenoScaled)*0.8f+0.2f, (float) (glycoPhenoScaled)*0.8f+0.2f, (float) 0));
                             //vis.SetBound(xDim, yDim, 1, 0, 1);
                         } else {
@@ -344,12 +343,12 @@ public class MarksModelGrid<T extends MarksModelCell> extends AgentGrid2D<T> {
             }
         }
     }
-    public void DrawPheno(GuiGridVis vis){
+    public void DrawPheno(GuiGrid vis){
         vis.Clear(RGB((double) 0, (double) 0, (double) 0));
         for (MarksModelCell c : this) {
             if(c.isCancer&&c.IsAlive()){
-                double acidPhenoScaled = Utils.Rescale0to1(c.acidResistancePheno, MAX_ACID_RESIST_PHENO, MIN_ACID_RESIST_PHENO);
-                double glycoPhenoScaled = Utils.Rescale0to1(c.glycolysisPheno, MIN_GLYCOLYTIC_PHENO, MAX_GLYCOLYTIC_PHENO);
+                double acidPhenoScaled = Util.Scale0to1(c.acidResistancePheno, MAX_ACID_RESIST_PHENO, MIN_ACID_RESIST_PHENO);
+                double glycoPhenoScaled = Util.Scale0to1(c.glycolysisPheno, MIN_GLYCOLYTIC_PHENO, MAX_GLYCOLYTIC_PHENO);
                 //double xDraw= Bound(acidPhenoScaled,0,1);
                 //double yDraw= Bound(glycoPhenoScaled,0,1);
                 vis.SetPix((int)((glycoPhenoScaled)*(vis.xDim-1)), (int)((1-acidPhenoScaled)*(vis.yDim-1)), RGB((float)(1 - acidPhenoScaled)*0.8f+0.2f, (float)(glycoPhenoScaled)*0.8f+0.2f, (float) 0));

@@ -1,14 +1,14 @@
 package Examples.GameOfLife;
 
 import Framework.GridsAndAgents.PDEGrid2D;
-import Framework.Gui.GuiGridVis;
+import Framework.Gui.GuiGrid;
 import Framework.Gui.GuiLabel;
 import Framework.Gui.GuiWindow;
 
 import java.util.Random;
 
-import static Framework.Utils.MooreHood;
-import static Framework.Utils.RGB;
+import static Framework.Util.MooreHood;
+import static Framework.Util.RGB;
 
 /**
  * Created by rafael on 4/16/17.
@@ -17,12 +17,12 @@ public class GOLGridDiff extends PDEGrid2D {
     static final int RED=RGB(1,0,0),BLACK=RGB(0,0,0);
     final int[]mooreHood;
     final int[]neighborIs;
-    final GuiGridVis vis;
+    final GuiGrid vis;
     final GuiLabel popLbl;
     final GuiLabel tickLbl;
     final int runTicks;
     final int refreshRateMS;
-    GOLGridDiff(int x, int y, double livingProb, int runTicks, int refreshRateMS, GuiGridVis vis, GuiLabel popLbl, GuiLabel tickLbl){
+    GOLGridDiff(int x, int y, double livingProb, int runTicks, int refreshRateMS, GuiGrid vis, GuiLabel popLbl, GuiLabel tickLbl){
         super(x,y);
         this.vis=vis;
         mooreHood=MooreHood(false);
@@ -73,7 +73,7 @@ public class GOLGridDiff extends PDEGrid2D {
         int runTicks=10000000;
         int refreshRate=0;
         GuiWindow gui=new GuiWindow("GOL with GridDiff",true);
-        GuiGridVis vis=new GuiGridVis(xDim,yDim,scaleFactor,2,1, true);
+        GuiGrid vis=new GuiGrid(xDim,yDim,scaleFactor,2,1, true);
         GuiLabel popLbl=new GuiLabel("Population:                0",1,1);
         GuiLabel tickLbl=new GuiLabel("GetTick:               0",1,1);
 

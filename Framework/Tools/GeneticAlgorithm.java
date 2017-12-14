@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import static Framework.Utils.*;
+import static Framework.Util.*;
 
 /**
  * Created by rafael on 4/8/17.

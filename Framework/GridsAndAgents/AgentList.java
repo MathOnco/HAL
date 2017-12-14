@@ -2,6 +2,7 @@ package Framework.GridsAndAgents;
 
 import Framework.Interfaces.AgentToString;
 import Framework.Tools.FileIO;
+import Framework.Rand;
 
 
 import java.io.Serializable;
@@ -27,6 +28,12 @@ class AgentList <T extends AgentBase> implements Iterable<T>,Serializable{
         this.iLastAlive=-1;
         this.pop=0;
         this.myGrid=myGrid;
+    }
+    void Reset(){
+        this.agents.clear();
+        this.deads.clear();
+        this.iLastAlive=-1;
+        this.pop=0;
     }
     void SetupConstructor(Class<T> type){
         this.builder=type.getDeclaredConstructors()[0];
@@ -81,6 +88,9 @@ class AgentList <T extends AgentBase> implements Iterable<T>,Serializable{
     List<T> GetAllAgents(){
         return Collections.unmodifiableList(this.agents);//will contain dead agents and newly born agents
     }
+    List<T> GetAllDeads(){
+        return Collections.unmodifiableList(this.deads);//will contain dead agents and newly born agents
+    }
 
     public void PopToCSV(FileIO out, AgentToString strFn){
         for (T agent : this) {
@@ -131,10 +141,10 @@ class AgentList <T extends AgentBase> implements Iterable<T>,Serializable{
             return ret;
         }
     }
-    public void ShuffleAgents(Random rn){
+    public void ShuffleAgents(Rand rn){
         //shuffles the agents list (Don't run during agent iteration)
         for(int iSwap1 = iLastAlive; iSwap1>0; iSwap1--){
-            int iSwap2=rn.nextInt(iSwap1+1);
+            int iSwap2=rn.Int(iSwap1+1);
             T swap1=agents.get(iSwap1);
             T swap2=agents.get(iSwap2);
             swap1.iList = iSwap2;

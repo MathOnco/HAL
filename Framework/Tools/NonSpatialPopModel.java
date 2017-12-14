@@ -1,15 +1,15 @@
 package Framework.Tools;
 
 
-import Framework.Gui.GuiGridVis;
-import Framework.Utils;
+import Framework.Gui.GuiGrid;
+import Framework.Rand;
+import Framework.Util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Random;
 
-import static Framework.Utils.CategorialColor;
-import static Framework.Utils.RGB;
+import static Framework.Util.CategorialColor;
+import static Framework.Util.RGB;
 
 /**
  * Created by Rafael on 10/10/2017.
@@ -22,13 +22,12 @@ public abstract class NonSpatialPopModel {
     private final long[][]moranTransitionPopsFinal;
     private final ArrayList<ArrayList<double[]>> moranTransitions;
     private int step;
-    private Binomial bn;
-    private Random rn;
+    public final Rand rn;
     private boolean initialized=false;
     private int drawStep;
     private long totalPop;
 
-    public NonSpatialPopModel(long[]initPops,Random rn){
+    public NonSpatialPopModel(long[]initPops,Rand rn){
         this.pops=new long[2][];
         this.pops[0]=initPops;
         for (int i = 0; i < initPops.length; i++) {
@@ -37,8 +36,7 @@ public abstract class NonSpatialPopModel {
             }
         }
         this.pops[1]=new long[initPops.length];
-        this.bn=new Binomial();
-        this.rn=new Random();
+        this.rn=rn;
         moranTransitions = new ArrayList<>();
         for (int i = 0; i < pops[0].length; i++) {
             moranTransitions.add(new ArrayList<>());
@@ -53,7 +51,7 @@ public abstract class NonSpatialPopModel {
     public long[]GetPops(){
         return pops[step%2];
     }
-    public long[]GetNextPops(){
+    public long[] GetPrevPops(){
         return pops[1-step%2];
     }
     public abstract double GetBirthProb(int iPop,long[]currPops,long totalPop);
@@ -97,7 +95,7 @@ public abstract class NonSpatialPopModel {
             }
         }
     }
-    public void DrawPops(GuiGridVis vis,int[]colors,long maxPop){
+    public void DrawPops(GuiGrid vis, int[]colors, long maxPop){
         long[]currPops=GetPops();
         if(colors.length<currPops.length+1){
             throw new IllegalArgumentException("need a color for each pop color, number of colors: "+colors.length+" number of pops: "+pops.length);
@@ -117,7 +115,7 @@ public abstract class NonSpatialPopModel {
         }
         drawStep++;
     }
-    public void DrawPops(GuiGridVis vis,long maxPop){
+    public void DrawPops(GuiGrid vis, long maxPop){
         long[]currPops=GetPops();
         if(currPops.length>19){
             throw new IllegalArgumentException("need a color for each pop color, number of colors: "+20+" number of pops: "+pops.length);
@@ -139,12 +137,13 @@ public abstract class NonSpatialPopModel {
             Initialize();
         }
         long[]currPops=GetPops();
-        long[]nextPops=GetNextPops();
+        long[]nextPops= GetPrevPops();
 
         Arrays.fill(nextPops,0);//clear the next timestep array
 
-        totalPop=Utils.SumArray(currPops);
+        totalPop= Util.SumArray(currPops);
         if(totalPop==0){
+            step++;
             return totalPop;
         }
         for (int i = 0; i < currPops.length; i++) {
@@ -157,8 +156,8 @@ public abstract class NonSpatialPopModel {
                 if (birthProb < 0||birthProb>1) {
                     throw new IllegalStateException("birth prob must be >=0! and <=1! birthProb: " + birthProb);
                 }
-                long nDeaths = bn.SampleLong(currPops[i], deathProb, rn);
-                long nBirths = bn.SampleLong(currPops[i], birthProb, rn);
+                long nDeaths = rn.Binomial(currPops[i], deathProb);
+                long nBirths = rn.Binomial(currPops[i], birthProb);
                 long nMuts = 0;
 
                 if (nBirths != 0) {
@@ -166,9 +165,9 @@ public abstract class NonSpatialPopModel {
                     if (mutProb < 0||mutProb>1) {
                         throw new IllegalStateException("mut prob must be >=0! and <=1! MUT_PROB: " + mutProb);
                     }
-                    nMuts = bn.SampleLong(nBirths, mutProb, rn);
+                    nMuts = rn.Binomial(nBirths, mutProb);
                     if (nMuts > 0) {
-                        Utils.Multinomial(moranTransitionsFinal[i], nMuts, bn, moranTransitionPopsFinal[i], rn);
+                        rn.Multinomial(moranTransitionsFinal[i], nMuts,  moranTransitionPopsFinal[i]);
                         for (int j = 0; j < moranToIndicesFinal[i].length; j++) {
                             nextPops[moranToIndicesFinal[i][j]] += moranTransitionPopsFinal[i][j];
                         }

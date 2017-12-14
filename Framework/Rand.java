@@ -1,0 +1,323 @@
+package Framework;
+
+import Framework.Tools.Binomial;
+import Framework.Tools.Gaussian;
+import Framework.Tools.SplittableRN;
+
+import java.awt.*;
+import java.io.Serializable;
+import java.util.SplittableRandom;
+
+import static Framework.Util.DOUBLE_EPSILON;
+import static Framework.Util.DistSquared;
+import static Framework.Util.Norm;
+
+/**
+ * Created by Rafael on 11/16/2017.
+ */
+public class Rand implements Serializable{
+    public final SplittableRN rn;
+    public final Gaussian gn;
+    public final Binomial bn;
+    public Rand(long seed) {
+        this.rn=new SplittableRN(seed);
+        this.gn=new Gaussian();
+        this.bn=new Binomial();
+    }
+    public Rand() {
+        this.rn=new SplittableRN();
+        this.gn=new Gaussian();
+        this.bn=new Binomial();
+    }
+    public int Int(int bound){
+        return rn.nextInt(bound);
+    }
+    public double Double(double bound){
+        return rn.nextDouble(bound);
+    }
+    public double Double(){
+        return rn.nextDouble();
+    }
+    public long Long(int bound){
+        return rn.nextLong();
+    }
+    public boolean Bool(){
+        return rn.nextBoolean();
+    }
+    public long Binomial(long n,double p){
+        return bn.SampleLong(n,p,this);
+    }
+    public int Binomial(int n,double p){
+        return bn.SampleInt(n,p,this);
+    }
+    public double Gaussian(double mean,double stdDev){
+        return gn.Sample(mean,stdDev,this);
+    }
+    public void Multinomial(double[] probabilities, int n, int[] ret) {
+        double pSum = 1;
+        if(probabilities.length==1){
+            ret[0]=n;
+            return;
+        }
+        for (int i = 0; i < probabilities.length; i++) {
+            int ni = bn.SampleInt(n, probabilities[i] / pSum,this);
+            ret[i] = ni;
+            n -= ni;
+            pSum -= probabilities[i];
+        }
+        if (Math.abs(pSum - 1) > DOUBLE_EPSILON) {
+            throw new IllegalArgumentException("Multinomial probabilities array must sum to 1");
+        }
+    }
+
+    public void Multinomial(double[] probabilities, int n, int[] ret, int lenProbsToUse) {
+        double pSum = 1;
+        if(lenProbsToUse==1){
+            ret[0]=n;
+            return;
+        }
+        for (int i = 0; i < lenProbsToUse; i++) {
+            if(probabilities[i]==1){
+                ret[i]=n;
+                return;
+            }
+            int ni = bn.SampleInt(n, probabilities[i] / pSum,this);
+            ret[i] = ni;
+            n -= ni;
+            pSum -= probabilities[i];
+        }
+        if (Math.abs(pSum - 1) > DOUBLE_EPSILON) {
+            throw new IllegalArgumentException("Multinomial probabilities array must sum to 1");
+        }
+    }
+
+    //TODO: multinomial is slow for low probs...
+    public void Multinomial(double[] probabilities, long n, long[] ret) {
+        double pSum = 1;
+        if(probabilities.length==1){
+            ret[0]=n;
+            return;
+        }
+        for (int i = 0; i < probabilities.length; i++) {
+            if(probabilities[i]==1){
+                ret[i]=n;
+                return;
+            }
+            if(probabilities[i]!=0) {
+                long ni = bn.SampleLong(n, probabilities[i] / pSum, this);
+                ret[i] = ni;
+                n -= ni;
+                pSum -= probabilities[i];
+            }
+        }
+//        if (Math.abs(pSum - 1) > DOUBLE_EPSILON) {
+//            throw new IllegalArgumentException("Multinomial probabilities array must sum to 1");
+//        }
+    }
+
+    public void Multinomial(double[] probabilities, long n, long[] ret, int lenProbsToUse) {
+        double pSum = 1;
+        if(lenProbsToUse==1){
+            ret[0]=n;
+            return;
+        }
+        for (int i = 0; i < lenProbsToUse; i++) {
+            if(probabilities[i]==1){
+                ret[i]=n;
+                return;
+            }
+            long ni = bn.SampleLong(n, probabilities[i] / pSum,this);
+            ret[i] = ni;
+            n -= ni;
+            pSum -= probabilities[i];
+        }
+        if (Math.abs(pSum - 1) > DOUBLE_EPSILON) {
+            throw new IllegalArgumentException("Multinomial probabilities array must sum to 1");
+        }
+    }
+
+    /**
+     * gets a random point on the surface of a sphere centered at 0,0,0, with the provided radius. the x,y,z coords are put in the double[] ret
+     */
+    public void RandomPointOnSphereEdge(double radius, double[] ret) {
+        double x = gn.Sample(0, radius, this);
+        double y = gn.Sample(0, radius, this);
+        double z = gn.Sample(0, radius, this);
+        double norm = Norm(x, y, z);
+        ret[0] = (x * radius) / norm;
+        ret[1] = (y * radius) / norm;
+        ret[2] = (z * radius) / norm;
+    }
+
+    public void RandomPointInSphere(double radius, double[] ret) {
+        do {
+            ret[0] = rn.nextDouble();
+            ret[1] = rn.nextDouble();
+            ret[2] = rn.nextDouble();
+        } while (DistSquared(ret[0], ret[1], ret[2], 0.5, 0.5, 0.5) > 0.25);
+        double retScale = radius * 2;
+        ret[0] = (ret[0] - 0.5) * retScale;
+        ret[1] = (ret[1] - 0.5) * retScale;
+        ret[2] = (ret[2] - 0.5) * retScale;
+    }
+
+    /**
+     * gets a random point on the surface of a circle centered at 0,0, with the provided radius. the x,y coords are put in the double[] ret
+     */
+    public void RandomPointOnCircleEdge(double radius, double[] ret) {
+        double x = gn.Sample(0, radius, this);
+        double y = gn.Sample(0, radius, this);
+        double norm = Norm(x, y);
+        ret[0] = (x * radius) / norm;
+        ret[1] = (y * radius) / norm;
+    }
+
+    public void RandomPointInCircle(double radius, double[] ret) {
+        double r = Math.sqrt(rn.nextDouble()) * radius;
+        double a = rn.nextDouble() * Math.PI * 2;
+        ret[0] = r * Math.cos(a);
+        ret[1] = r * Math.sin(a);
+    }
+
+
+    //OTHER COORDINATE FUNCTIONS
+
+
+    //MATH FUNCTIONS
+
+    /**
+     * Samples a discrete random variable from the probabilities provided
+     *
+     * @param probs an array of probabilities. should sum to 1
+     * @return the index of the probability bin that was sampled
+     */
+    public int RandomVariable(double[] probs) {
+        double rand = rn.nextDouble();
+        for (int i = 0; i < probs.length; i++) {
+            rand -= probs[i];
+            if (rand <= 0) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public int RandomVariable(double[] probs, int start, int end) {
+        double rand = rn.nextDouble();
+        for (int i = start; i < end; i++) {
+            rand -= probs[i];
+            if (rand <= 0) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public int RandomVariable(double[] probs, double rand, int start, int end) {
+        for (int i = start; i < end; i++) {
+            rand -= probs[i];
+            if (rand <= 0) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Fills out with random doubles between min and max inclusive
+     *  @param out the array the random doubles should be written to. the length of the input array defines the number of doubles to be generated
+     */
+    public void RandomDS(double[] out, double min, double max) {
+        for (int i = 0; i < out.length; i++) {
+            out[i] = rn.nextDouble() * (max - min) + min;
+        }
+    }
+
+    /**
+     * Fills out with random integers between min (inclusive) and max (exclusive)
+     *  @param out the array the random doubles should be written to. the length of the input array defines the number of doubles to be generated
+     */
+    public void RandomIS(int[] out, int min, int max) {
+        for (int i = 0; i < out.length; i++) {
+            out[i] = rn.nextInt(max - min) + min;
+        }
+    }
+    /**
+     * Shuffles an array of integers
+     *
+     * @param arr          array to be shuffled
+     * @param sampleSize number of elements from array that shuffling can swapField
+     * @param numberOfShuffles        number of elements that will be shuffled, should not exceed lenToShuffle
+     */
+    public void Shuffle(int[] arr, int sampleSize, int numberOfShuffles) {
+        for (int i = 0; i < numberOfShuffles; i++) {
+            int iSwap = rn.nextInt(sampleSize - i) + i;
+            int swap = arr[iSwap];
+            arr[iSwap] = arr[i];
+            arr[i] = swap;
+        }
+    }
+
+    public void Shuffle(int[] arr) {
+        for (int i = 0; i < arr.length; i++) {
+            int iSwap = rn.nextInt(arr.length - i) + i;
+            int swap = arr[iSwap];
+            arr[iSwap] = arr[i];
+            arr[i] = swap;
+        }
+    }
+
+    /**
+     * Shuffles an array of doubles
+     *
+     * @param arr          array to be shuffled
+     * @param sampleSize number of elements from array that shuffling can swapField
+     * @param numberOfShuffles        number of elements that will be shuffled, should not exceed lenToShuffle
+     */
+    public void Shuffle(double[] arr, int sampleSize, int numberOfShuffles) {
+        for (int i = 0; i < numberOfShuffles; i++) {
+            int iSwap = rn.nextInt(sampleSize - i) + i;
+            double swap = arr[iSwap];
+            arr[iSwap] = arr[i];
+            arr[i] = swap;
+        }
+    }
+
+    public void Shuffle(double[] arr, Rand rn) {
+        for (int i = 0; i < arr.length; i++) {
+            int iSwap = rn.Int(arr.length - i) + i;
+            double swap = arr[iSwap];
+            arr[iSwap] = arr[i];
+            arr[i] = swap;
+        }
+    }
+
+    /**
+     * Shuffles an array of objects
+     *
+     * @param arr          array to be shuffled
+     * @param sampleSize number of elements from array that shuffling can swapField
+     * @param numberOfShuffles        number of elements that will be shuffled, should not exceed lenToShuffle
+     */
+    public void Shuffle(Object[] arr, int sampleSize, int numberOfShuffles) {
+        for (int i = 0; i < numberOfShuffles; i++) {
+            int iSwap = rn.nextInt(sampleSize - i) + i;
+            Object swap = arr[iSwap];
+            arr[iSwap] = arr[i];
+            arr[i] = swap;
+        }
+    }
+
+    public void Shuffle(Object[] arr) {
+        for (int i = 0; i < arr.length; i++) {
+            int iSwap = rn.nextInt(arr.length - i) + i;
+            Object swap = arr[iSwap];
+            arr[iSwap] = arr[i];
+            arr[i] = swap;
+        }
+    }
+    public int UniformDist(int min,int max){
+        return rn.nextInt(max-min)+min;
+    }
+
+}

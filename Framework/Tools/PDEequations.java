@@ -1,5 +1,5 @@
 package Framework.Tools;
-import static Framework.Utils.*;
+import static Framework.Util.*;
 
 /**
  * Created by Rafael on 10/14/2017.

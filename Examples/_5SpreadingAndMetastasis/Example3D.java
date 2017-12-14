@@ -3,14 +3,14 @@ import Framework.GridsAndAgents.AgentGrid3D;
 import Framework.GridsAndAgents.AgentSQ3D;
 import Framework.GridsAndAgents.Grid2Ddouble;
 import Framework.GridsAndAgents.PDEGrid3D;
-import Framework.Gui.GridVisWindow;
-import Framework.Gui.Vis3DOpenGL;
+import Framework.Gui.GridWindow;
+import Framework.Gui.Window3DOpenGL;
+import Framework.Rand;
 
 import java.util.LinkedList;
-import java.util.Random;
 
 import static Examples._5SpreadingAndMetastasis.Example3D.*;
-import static Framework.Utils.*;
+import static Framework.Util.*;
 
 class ExCell3D extends AgentSQ3D<Example3D>{
     int type;
@@ -22,20 +22,20 @@ class ExCell3D extends AgentSQ3D<Example3D>{
         type= TUMOR;
     }
     boolean Metastasis(){
-        return G().oxygen.Get(Isq())>G().METASTASIS_CONC&&G().rn.nextDouble()<G().METASTASIS_PROB;
+        return G().oxygen.Get(Isq())>G().METASTASIS_CONC&&G().rn.Double()<G().METASTASIS_PROB;
     }
     void Metabolism(){
         switch (type){
             case VESSEL: G().oxygen.Set(Isq(),G().VESSEL_CONC); break; //vessel source
-            case TUMOR: G().oxygen.Mul(Isq(),G().TUMOR_METABOLISM_RATE); break; //instead of simple multiplication, Utils.MichaelisMenten may be more appropriate
+            case TUMOR: G().oxygen.Mul(Isq(),G().TUMOR_METABOLISM_RATE); break; //instead of simple multiplication, Util.MichaelisMenten may be more appropriate
         }
     }
     boolean Death(){
         double resVal=G().oxygen.Get(Isq());
-        return resVal<G().DEATH_CONC && G().rn.nextDouble()<(1.0-resVal/G().DEATH_CONC);
+        return resVal<G().DEATH_CONC && G().rn.Double()<(1.0-resVal/G().DEATH_CONC);
     }
     boolean Divide(){
-        return G().rn.nextDouble()<G().oxygen.Get(Isq());
+        return G().rn.Double()<G().oxygen.Get(Isq());
     }
     void CellStep(){
         if(type== TUMOR){
@@ -47,15 +47,15 @@ class ExCell3D extends AgentSQ3D<Example3D>{
             if(Divide()){
                 int nDivOpts=HoodToEmptyIs(G().vnHood,G().divIs);//get indices of empty locations in 3D Von Neumann neighborhood around cell
                 if(nDivOpts>1){
-                    G().NewAgentSQ(G().divIs[G().rn.nextInt(nDivOpts)]).InitTumor();
+                    G().NewAgentSQ(G().divIs[G().rn.Int(nDivOpts)]).InitTumor();
                 }
             }
             if(Metastasis()){//choose random vessel location to metastasize to
                 Dispose();//kill cell that has entered the vessel
-                int whichVessel=G().rn.nextInt(G().vessels.size());//get a random vessel position
+                int whichVessel=G().rn.Int(G().vessels.size());//get a random vessel position
                 int nMetOpts=G().vessels.get(whichVessel).HoodToEmptyIs(G().vnHood,G().divIs);//get any open positions around a particular vessel location
                 if(nMetOpts>1){
-                    G().NewAgentSQ(G().divIs[G().rn.nextInt(nMetOpts)]).InitTumor();//create and initialize a new cell to model successful metastasis
+                    G().NewAgentSQ(G().divIs[G().rn.Int(nMetOpts)]).InitTumor();//create and initialize a new cell to model successful metastasis
                 }
             }
         }
@@ -76,7 +76,7 @@ public class Example3D extends AgentGrid3D<ExCell3D> {
     int[]vnHood=VonNeumannHood3D(false);//3D von neuman neighborhood is of the form [x1,y1,z1,x2,y2,z2...]
     int[]divIs=new int[vnHood.length/3];//since 3D coordinates are 3x more numbers than indices. used in local neighborhood calculation
     PDEGrid3D oxygen;
-    Random rn=new Random();
+    Rand rn=new Rand();
     LinkedList<ExCell3D> vessels=new LinkedList<>();//used to make metastasis more efficient (and as an example)
     public Example3D(int x, int y, int z) {
         super(x, y, z, ExCell3D.class);
@@ -95,7 +95,7 @@ public class Example3D extends AgentGrid3D<ExCell3D> {
             cell.CellStep();
         }
         if(countTumor==0){//ensure that the model is seeded
-            int placeLoc=rn.nextInt(length);
+            int placeLoc=rn.Int(length);
             if(GetAgent(placeLoc)==null){
                 NewAgentSQ(placeLoc).InitTumor();
             }
@@ -110,7 +110,7 @@ public class Example3D extends AgentGrid3D<ExCell3D> {
         int[]vesselSpacingHood=CircleHood(false,vesselSpacingMin);
         int[]markIs=new int[vesselSpacingHood.length/2]; //shuffle an array of all indices, so we search them in random order
         int[]indicesToTry=GenIndicesArray(openSpots.length);
-        Shuffle(indicesToTry,rn);
+        rn.Shuffle(indicesToTry);
         int vesselCt=0;
         for (int i : indicesToTry) {
             if(openSpots.Get(i)==0){
@@ -127,7 +127,7 @@ public class Example3D extends AgentGrid3D<ExCell3D> {
         }
         return vesselCt;
     }
-    public void DrawCells(Vis3DOpenGL vis){
+    public void DrawCells(Window3DOpenGL vis){
         vis.Clear(BACKGROUND_COLOR);//used to clear gui
         for (ExCell3D cellOrVessel : this) {
             switch (cellOrVessel.type){
@@ -149,7 +149,7 @@ public class Example3D extends AgentGrid3D<ExCell3D> {
     }
     public void GenCells(int initPopSize){
         int[]indicesToTry=GenIndicesArray(length);
-        Shuffle(indicesToTry,rn);
+        rn.Shuffle(indicesToTry);
         int nCreated=0;
         for (int i = 0; i < length; i++) {
             //check if position is empty before dropping cell
@@ -171,8 +171,8 @@ public class Example3D extends AgentGrid3D<ExCell3D> {
         for (int i = 0; i < 100; i++) {
             ex.DiffStep();
         }
-        GridVisWindow visResource=new GridVisWindow(x,y,5);
-        Vis3DOpenGL vis=new Vis3DOpenGL("TumorVis", 1000,1000,x,y,z);
+        GridWindow visResource=new GridWindow(x,y,5);
+        Window3DOpenGL vis=new Window3DOpenGL("TumorVis", 1000,1000,x,y,z);
         while (!vis.CheckClosed()){
             ex.StepAll();
             ex.DrawCells(vis);

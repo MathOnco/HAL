@@ -4,9 +4,11 @@ package Framework.Tools;//
 //
 
 
-import java.util.Random;
+import Framework.Rand;
 
-public class Binomial {
+import java.io.Serializable;
+
+public class Binomial implements Serializable {
     protected int n;
     protected double p;
     private int n_last = -1;
@@ -107,7 +109,78 @@ public class Binomial {
         }
         else return stirlingCorrection[(int) k];
     }
+    public long rk_binomial_inversion(long n, double p, Rand rn){
+        /*
+         see rk_binomial_inversion at
+         https://github.com/numpy/numpy/blob/master/numpy/random/mtrand/distributions.c
+         for use when p*n < 30
+          */
 
+        double q, qn, np, px, U;
+        long X, bound;
+
+        q = 1.0 - p;
+        qn = Math.exp(n * Math.log(q));
+        np = n*p;
+        bound = (long)Math.min(n, np + 10.0*Math.sqrt(np*q + 1));
+
+        X = 0;
+        px = qn;
+
+        U = rn.Double();
+        while (U > px)
+        {
+            X++;
+            if (X > bound)
+            {
+                X = 0;
+                px = qn;
+                U = rn.Double();
+            } else
+            {
+                U -= px;
+                px  = ((n-X+1) * p * px)/(X*q);
+            }
+        }
+        return X;
+
+    }
+    public int rk_binomial_inversion(int n, double p, Rand rn){
+        /*
+         see rk_binomial_inversion at
+         https://github.com/numpy/numpy/blob/master/numpy/random/mtrand/distributions.c
+         for use when p*n < 30
+          */
+
+        double q, qn, np, px, U;
+        int X, bound;
+
+        q = 1.0 - p;
+        qn = Math.exp(n * Math.log(q));
+        np = n*p;
+        bound = (int)Math.min(n, np + 10.0*Math.sqrt(np*q + 1));
+
+        X = 0;
+        px = qn;
+
+        U = rn.Double();
+        while (U > px)
+        {
+            X++;
+            if (X > bound)
+            {
+                X = 0;
+                px = qn;
+                U = rn.Double();
+            } else
+            {
+                U -= px;
+                px  = ((n-X+1) * p * px)/(X*q);
+            }
+        }
+        return X;
+
+    }
     private static double logFactorial(int k) {
         if (k >= 30) {
         double  r, rr;
@@ -125,7 +198,7 @@ public class Binomial {
             return logFactorials[k];
         }
 }
-    public long SampleLong(long n, double p,Random rn) {
+    public long ColtLong(long n, double p, Rand rn) {
         if(p==1){
             return n;
         }
@@ -175,12 +248,12 @@ public class Binomial {
         if(this.np < 10.0D) {
             K = 0;
             double pk = this.p0;
-            U = rn.nextDouble();
+            U = rn.Double();
 
             while(U > pk) {
                 ++K;
                 if(K > this.bL) {
-                    U = rn.nextDouble();
+                    U = rn.Double();
                     K = 0;
                     pk = this.p0;
                 } else {
@@ -194,8 +267,8 @@ public class Binomial {
             while(true) {
                 double V;
                 while(true) {
-                    V = rn.nextDouble();
-                    if((U = rn.nextDouble() * this.p4) <= this.p1) {
+                    V = rn.Double();
+                    if((U = rn.Double() * this.p4) <= this.p1) {
                         K = (long)(this.xm - U + this.p1 * V);
                         return p > 0.5D?n - K:K;
                     }
@@ -272,16 +345,13 @@ public class Binomial {
             return p > 0.5D?n - K:K;
         }
     }
-    public int SampleInt(Random rn){
-        return SampleInt(this.n_last,this.p_last,rn);
+    public int ColtInt(Rand rn){
+        return ColtInt(this.n_last,this.p_last,rn);
     }
-    public long SampleLong(Random rn){
-        return SampleLong(this.n_lastL,this.p_last,rn);
+    public long ColtLong(Rand rn){
+        return ColtLong(this.n_lastL,this.p_last,rn);
     }
-    public int SampleInt(int n, double p,Random rn) {
-        if(p==1){
-            return n;
-        }
+    public int ColtInt(int n, double p, Rand rn) {
         double C1_3 = 0.3333333333333333D;
         double C5_8 = 0.625D;
         double C1_6 = 0.16666666666666666D;
@@ -328,12 +398,12 @@ public class Binomial {
         if(this.np < 10.0D) {
             K = 0;
             double pk = this.p0;
-            U = rn.nextDouble();
+            U = rn.Double();
 
             while(U > pk) {
                 ++K;
                 if(K > this.b) {
-                    U = rn.nextDouble();
+                    U = rn.Double();
                     K = 0;
                     pk = this.p0;
                 } else {
@@ -347,8 +417,8 @@ public class Binomial {
             while(true) {
                 double V;
                 while(true) {
-                    V = rn.nextDouble();
-                    if((U = rn.nextDouble() * this.p4) <= this.p1) {
+                    V = rn.Double();
+                    if((U = rn.Double() * this.p4) <= this.p1) {
                         K = (int)(this.xm - U + this.p1 * V);
                         return p > 0.5D?n - K:K;
                     }
@@ -424,6 +494,41 @@ public class Binomial {
 
             return p > 0.5D?n - K:K;
         }
+    }
+    public int SampleInt(int n, double p, Rand rn){
+        if(p==1){
+            return n;
+        }
+        if(p==0){
+            return 0;
+        }
+        if(p<0.5&&n*p<30){
+            return rk_binomial_inversion(n,p,rn);
+        }
+        if(p>0.5&&n*p<30){
+            return n-rk_binomial_inversion(n,p,rn);
+        }
+        else{
+            return ColtInt(n,p,rn);
+        }
+    }
+    public long SampleLong(long n, double p, Rand rn){
+        if(p==1){
+            return n;
+        }
+        if(p==0){
+            return 0;
+        }
+        if(p<0.5&&n*p<30){
+            return rk_binomial_inversion(n,p,rn);
+        }
+        if(p>0.5&&n*p<30){
+            return n-rk_binomial_inversion(n,p,rn);
+        }
+        else{
+            return ColtLong(n,p,rn);
+        }
+
     }
 
     public void SetNandPInt(int n, double p) {

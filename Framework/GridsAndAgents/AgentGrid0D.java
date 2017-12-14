@@ -1,12 +1,10 @@
 package Framework.GridsAndAgents;
 
 import Framework.Interfaces.AgentStepFunction;
-import Framework.Utils;
+import Framework.Rand;
+import Framework.Util;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Extend the Grid2unstackable class if you want a 2D lattice with at most one agent per typeGrid square
@@ -41,7 +39,7 @@ public class AgentGrid0D<T extends Agent0D> extends GridBase implements Iterable
      * do not call this while in the middle of iteration
      * @param rn the Random number generator to be used
      */
-    public void ShuffleAgents(Random rn){
+    public void ShuffleAgents(Rand rn){
         agents.ShuffleAgents(rn);
     }
 
@@ -58,13 +56,13 @@ public class AgentGrid0D<T extends Agent0D> extends GridBase implements Iterable
      * do not call this while in the middle of iteration
      * @param rn the Random number generator to be used
      */
-    public void CleanShuffInc(Random rn){
+    public void CleanShuffInc(Rand rn){
         agents.CleanAgents();
         agents.ShuffleAgents(rn);
         IncTick();
     }
 
-    public void ShuffInc(Random rn){
+    public void ShuffInc(Rand rn){
         agents.ShuffleAgents(rn);
         IncTick();
     }
@@ -80,7 +78,7 @@ public class AgentGrid0D<T extends Agent0D> extends GridBase implements Iterable
 
     public void MultiThreadAgents(int nThreads, AgentStepFunction<T> StepFunction){
         int last=agents.iLastAlive;
-        Utils.MultiThread(nThreads,nThreads,(iThread)->{
+        Util.MultiThread(nThreads,nThreads,(iThread)->{
             ArrayList<T> agents=this.agents.agents;
             int start=iThread/nThreads*last;
             int end=(iThread+1)/nThreads*last;

@@ -13,7 +13,7 @@ public class RandomNumberList {
     public RandomNumberList(int initialCapacity,int sizeExponent,Random rn){
         this.rn=rn;
         if(initialCapacity<=0){
-            throw new IllegalArgumentException("random number list should be seeded with positive CAPACITY");
+            throw new IllegalArgumentException("random number list should be seeded with positive CAPACITY_POP");
         }
         GenRands(initialCapacity);
     }

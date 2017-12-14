@@ -2,15 +2,14 @@ package Examples._6CompetitiveRelease;
 
 import Framework.GridsAndAgents.AgentGrid2D;
 import Framework.GridsAndAgents.PDEGrid2D;
-import Framework.Gui.GridVisWindow;
+import Framework.Gui.GridWindow;
 import Framework.GridsAndAgents.AgentSQ2Dunstackable;
-import Framework.Gui.GuiGridVis;
+import Framework.Gui.GuiGrid;
 import Framework.Tools.FileIO;
-
-import java.util.Random;
+import Framework.Rand;
 
 import static Examples._6CompetitiveRelease.ExModel.*;
-import static Framework.Utils.*;
+import static Framework.Util.*;
 
 public class ExModel extends AgentGrid2D<ExCell> {
     //model constants
@@ -19,11 +18,11 @@ public class ExModel extends AgentGrid2D<ExCell> {
             DRUG_DURATION = 40, DRUG_DIFF_RATE = 2, DRUG_UPTAKE = 0.91, DRUG_DEATH = 0.2, DRUG_BOUNDARY_VAL = 1.0;
     //internal model objects
     public PDEGrid2D drug;
-    public Random rn;
+    public Rand rn;
     public int[] divHood = MooreHood(false);
     public int[] divIs = new int[divHood.length / 2];
 
-    public ExModel(int xDim, int yDim, Random rn) {
+    public ExModel(int xDim, int yDim, Rand rn) {
         super(xDim, yDim, ExCell.class);
         this.rn = rn;
         drug = new PDEGrid2D(xDim, yDim);
@@ -31,19 +30,18 @@ public class ExModel extends AgentGrid2D<ExCell> {
 
     public static void main(String[] args) {
         int x = 100, y = 100, visScale = 8, tumorRad = 10, msPause = 0;
-        String outputName="";
         double resistantProp = 0.5;
-        GridVisWindow win = new GridVisWindow("Competitive Release", x*3, y, visScale);
+        GridWindow win = new GridWindow("Competitive Release", x*3, y, visScale);
         ExModel[] models = new ExModel[3];
-        FileIO popsOut=outputName==""?null:new FileIO(outputName,"w");
+        FileIO popsOut=args.length==0?null:new FileIO(args[0],"w");
         for (int i = 0; i < models.length; i++) {
-            models[i]=new ExModel(x,y,new Random(0));
+            models[i]=new ExModel(x,y,new Rand(0));
             models[i].InitTumor(tumorRad, resistantProp);
         }
         models[0].DRUG_DURATION =0;//no drug
         models[1].DRUG_DURATION =models[1].DRUG_PERIOD;//constant drug
         //Main run loop
-        while (models[0].GetTick() < 10000) {
+        while (models[0].GetTick() <= 10000) {
             win.TickPause(msPause);
             for (int i = 0; i < models.length; i++) {
                 models[i].ModelStep();
@@ -51,6 +49,9 @@ public class ExModel extends AgentGrid2D<ExCell> {
             }
             if(popsOut!=null){
                 popsOut.Write(models[0].GetPop()+","+models[1].GetPop()+","+models[2].GetPop()+"\n");
+            }
+            if((models[0].GetTick()-1)%2500==0) {
+                win.ToPNG("ModelsTick" + (models[0].GetTick()-1)+".png");
             }
         }
         if(popsOut!=null){
@@ -66,7 +67,7 @@ public class ExModel extends AgentGrid2D<ExCell> {
         int cellsToPlace = HoodToEmptyIs(circleCoords, cellIs, xDim / 2, yDim / 2);
         //place a new tumor cell at each index
         for (int i = 0; i < cellsToPlace; i++) {
-            NewAgentSQ(cellIs[i]).type = rn.nextDouble() < resistantProb ? RESISTANT : SENSITIVE;
+            NewAgentSQ(cellIs[i]).type = rn.Double() < resistantProb ? RESISTANT : SENSITIVE;
         }
     }
 
@@ -83,7 +84,7 @@ public class ExModel extends AgentGrid2D<ExCell> {
         CleanShuffInc(rn);
     }
 
-    public void DrawModel(GuiGridVis vis,int iModel) {
+    public void DrawModel(GuiGrid vis, int iModel) {
         for (int i = 0; i < length; i++) {
             ExCell drawMe = GetAgent(i);
             //if the cell does not exist, draw the drug concentration
@@ -98,15 +99,15 @@ class ExCell extends AgentSQ2Dunstackable<ExModel> {
         //Consumption of Drug
         G().drug.Mul(Isq(), G().DRUG_UPTAKE);
         //Chance of Death, depends on resistance and drug concentration
-        if (G().rn.nextDouble() < G().DEATH_PROB + (type == RESISTANT ? 0 : G().drug.Get(Isq()) * G().DRUG_DEATH)) {
+        if (G().rn.Double() < G().DEATH_PROB + (type == RESISTANT ? 0 : G().drug.Get(Isq()) * G().DRUG_DEATH)) {
             Dispose();
         }
         //Chance of Division, depends on resistance
-        else if (G().rn.nextDouble() < (type == RESISTANT ? G().DIV_PROB_RES : G().DIV_PROB)) {
+        else if (G().rn.Double() < (type == RESISTANT ? G().DIV_PROB_RES : G().DIV_PROB)) {
             int nEmptySpaces = HoodToEmptyIs(G().divHood, G().divIs);
             //If any empty spaces exist, randomly choose one and create a daughter cell there
             if (nEmptySpaces > 0) {
-                G().NewAgentSQ(G().divIs[G().rn.nextInt(nEmptySpaces)]).type = this.type;
+                G().NewAgentSQ(G().divIs[G().rn.Int(nEmptySpaces)]).type = this.type;
             }
         }
     }

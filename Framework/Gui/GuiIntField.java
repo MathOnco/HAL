@@ -1,7 +1,7 @@
 package Framework.Gui;
 
 import Framework.Interfaces.*;
-import Framework.Utils;
+import Framework.Util;
 
 import javax.swing.*;
 import java.awt.*;
@@ -94,14 +94,14 @@ public class GuiIntField extends JFormattedTextField implements Framework.Interf
      * sets the value of the GuiIntField to the string provided
      */
     @Override
-    public void Set(String val) { this.setText(Integer.toString(Utils.Bound(Integer.parseInt(val),min,max))); }
+    public void Set(String val) { this.setText(Integer.toString(Util.Bound(Integer.parseInt(val),min,max))); }
 
     /**
      * ignore
      */
     @Override
     public String Get() {
-        String val=Integer.toString(Utils.Bound(Integer.parseInt(this.getText()),min,max));
+        String val=Integer.toString(Util.Bound(Integer.parseInt(this.getText()),min,max));
         this.Set(val);
         return val;
     }

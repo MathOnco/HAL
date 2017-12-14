@@ -4,11 +4,12 @@ import Framework.GridsAndAgents.AgentPT2D;
 import Framework.GridsAndAgents.AgentGrid2D;
 import Framework.Interfaces.OverlapForceResponse;
 import Framework.Interfaces.OverlapNeighborForceResponse;
+import Framework.Tools.Gaussian;
+import Framework.Rand;
 
 import java.util.ArrayList;
-import java.util.Random;
 
-import static Framework.Utils.*;
+import static Framework.Util.*;
 
 /**
  * Created by bravorr on 6/26/17.
@@ -141,17 +142,17 @@ public class SphericalAgent2D<A extends SphericalAgent2D,G extends AgentGrid2D<A
     public void ForceMove() {
         MoveSafePT(Xpt() + xVel, Ypt() + yVel, G().wrapX, G().wrapY);
     }
-    public A Divide(double divRadius, double[] scratchCoordArr, Random rn, boolean wrapX, boolean wrapY){
+    public A Divide(double[] scratchCoordArr, Rand rn, double divRadius, Gaussian gaussianGen, boolean wrapX, boolean wrapY){
         if(rn!=null){
-            RandomPointOnCircleEdge(divRadius, scratchCoordArr, rn);
+            rn.RandomPointOnCircleEdge(divRadius, scratchCoordArr);
         }
         A child=G().NewAgentPTSafe(Xpt()+scratchCoordArr[0],Ypt()+scratchCoordArr[1],Xpt(),Ypt(),wrapX,wrapY);
         MoveSafePT(Xpt()-scratchCoordArr[0],Ypt()-scratchCoordArr[1],wrapX,wrapY);
         return child;
     }
-    public A Divide(double divRadius, double[] scratchCoordArr, Random rn){
+    public A Divide(double divRadius, double[] scratchCoordArr, Rand rn, Gaussian gaussianGen){
         if(rn!=null){
-            RandomPointOnCircleEdge(divRadius, scratchCoordArr, rn);
+            rn.RandomPointOnCircleEdge(divRadius, scratchCoordArr);
         }
         A child=G().NewAgentPTSafe(Xpt()+scratchCoordArr[0],Ypt()+scratchCoordArr[1],Xpt(),Ypt(),G().wrapX,G().wrapY);
         MoveSafePT(Xpt()-scratchCoordArr[0],Ypt()-scratchCoordArr[1],G().wrapX,G().wrapY);

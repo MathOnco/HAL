@@ -3,15 +3,14 @@ package Examples._4PDEexample;
 import Framework.GridsAndAgents.AgentGrid2D;
 import Framework.GridsAndAgents.AgentSQ2Dunstackable;
 import Framework.GridsAndAgents.PDEGrid2D;
-import Framework.Gui.GridVisWindow;
-import Framework.Gui.GuiGridVis;
-import Framework.Utils;
+import Framework.Gui.GridWindow;
+import Framework.Gui.GuiGrid;
+import Framework.Rand;
+import Framework.Util;
 
-import java.util.Random;
-
-import static Framework.Utils.HeatMapRGB;
-import static Framework.Utils.RGB;
-import static Framework.Utils.SetAlpha;
+import static Framework.Util.HeatMapRGB;
+import static Framework.Util.RGB;
+import static Framework.Util.SetAlpha;
 
 
 class SrcOrSink extends AgentSQ2Dunstackable<PDEexample>{
@@ -27,7 +26,7 @@ class SrcOrSink extends AgentSQ2Dunstackable<PDEexample>{
 public class PDEexample extends AgentGrid2D<SrcOrSink> {
     public static int SRC=RGB(0,1,0),SINK=RGB(0,1,1);
     PDEGrid2D diff;
-    Random rn=new Random();
+    Rand rn=new Rand();
     public PDEexample(int x, int y) {
         super(x, y, SrcOrSink.class,true,true);
         diff=new PDEGrid2D(x,y);//we add a PDEGrid to store the concentration of our diffusible
@@ -38,8 +37,8 @@ public class PDEexample extends AgentGrid2D<SrcOrSink> {
                 NewAgentSQ(x, y).Init(SRC);//create source
             }
         }
-        int[]sinkIs=Utils.GenIndicesArray(length);
-        Utils.Shuffle(sinkIs,rn);//shuffle sink placement locations
+        int[]sinkIs= Util.GenIndicesArray(length);
+        rn.Shuffle(sinkIs);
         int sinksPlaced=0;
         for (int i = 0; i < sinkIs.length; i++) {
             int sinkI=sinkIs[i];
@@ -63,7 +62,7 @@ public class PDEexample extends AgentGrid2D<SrcOrSink> {
         diff.Advection(advectionX,advectionY);
         diff.Diffusion((Math.sin(stepI*1.0/250)+1)*0.12);
     }
-    public void Draw(GuiGridVis visSrcSinks,GuiGridVis visDiff){
+    public void Draw(GuiGrid visSrcSinks, GuiGrid visDiff){
         for (SrcOrSink srcOrSink : this) {
             visSrcSinks.SetPix(srcOrSink.Isq(),srcOrSink.type);//draw sources and sinks
         }
@@ -74,8 +73,8 @@ public class PDEexample extends AgentGrid2D<SrcOrSink> {
 
     public static void main(String[] args) {
         int x=400,y=400,scale=2;
-        GridVisWindow visCells=new GridVisWindow(x,y,scale);
-        GuiGridVis visDiff=new GuiGridVis(x,y,scale);
+        GridWindow visCells=new GridWindow(x,y,scale);
+        GuiGrid visDiff=new GuiGrid(x,y,scale);
         visCells.AddAlphaGrid(visDiff);//facilitates alpha blending
         PDEexample ex=new PDEexample(x,y);
         ex.Setup(100,10);

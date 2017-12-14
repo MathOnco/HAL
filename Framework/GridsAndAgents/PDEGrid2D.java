@@ -1,7 +1,7 @@
 package Framework.GridsAndAgents;
 import Framework.Interfaces.Coords2DSetArray;
 import Framework.Interfaces.GridDiff2MultiThreadFunction;
-import Framework.Utils;
+import Framework.Util;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -46,6 +46,14 @@ public class PDEGrid2D extends Grid2Ddouble implements Serializable{
 
     public void DiffusionADI(double diffRate){
         EnsureScratch();
+        DiffusionADI2(true, field, swapField,scratch,xDim,yDim,diffRate/2,false,0);
+        SwapFields();
+        DiffusionADI2(false, field, swapField,scratch,xDim,yDim,diffRate/2,false,0);
+        SwapFields();
+        adiOrder=!adiOrder;
+    }
+    public void DiffusionADIChangeOrder(double diffRate){
+        EnsureScratch();
         DiffusionADI2(adiX^adiOrder, field, swapField,scratch,xDim,yDim,diffRate/2,false,0);
         adiX=!adiX;
         SwapFields();
@@ -54,21 +62,17 @@ public class PDEGrid2D extends Grid2Ddouble implements Serializable{
         SwapFields();
         adiOrder=!adiOrder;
     }
-    public void DiffusionADIxFirst(double diffRate,boolean boundaryCond,double boundaryValue){
-        EnsureScratch();
-        DiffusionADI2(true, field, swapField,scratch,xDim,yDim,diffRate/2,boundaryCond,boundaryValue);
-        SwapFields();
-        DiffusionADI2(false, field, swapField,scratch,xDim,yDim,diffRate/2,boundaryCond,boundaryValue);
-        SwapFields();
-    }
-    public void DiffusionADIyFirst(double diffRate,boolean boundaryCond,double boundaryValue){
-        EnsureScratch();
-        DiffusionADI2(false, field, swapField,scratch,xDim,yDim,diffRate/2,boundaryCond,boundaryValue);
-        SwapFields();
-        DiffusionADI2(true, field, swapField,scratch,xDim,yDim,diffRate/2,boundaryCond,boundaryValue);
-        SwapFields();
-    }
     public void DiffusionADI(double diffRate,double boundaryValue){
+        EnsureScratch();
+        DiffusionADI2(adiX^adiOrder, field, swapField,scratch,xDim,yDim,diffRate/2,true,boundaryValue);
+        adiX=!adiX;
+        SwapFields();
+        DiffusionADI2(adiX^adiOrder, field, swapField,scratch,xDim,yDim,diffRate/2,true,boundaryValue);
+        adiX=!adiX;
+        SwapFields();
+        adiOrder=!adiOrder;
+    }
+    public void DiffusionADIChangeOrder(double diffRate,double boundaryValue){
         EnsureScratch();
         DiffusionADI2(adiX^adiOrder, field, swapField,scratch,xDim,yDim,diffRate/2,true,boundaryValue);
         adiX=!adiX;
@@ -156,7 +160,7 @@ public class PDEGrid2D extends Grid2Ddouble implements Serializable{
      */
     public void BoundAllSwap(double min, double max){
         for(int i=0;i<length;i++){
-            swapField[i]= Utils.Bound(swapField[i],min,max);
+            swapField[i]= Util.Bound(swapField[i],min,max);
         }
     }
     /**
@@ -419,16 +423,6 @@ public class PDEGrid2D extends Grid2Ddouble implements Serializable{
         }
         SwapFields();
     }
-    public void MultiThread(int nThreads, GridDiff2MultiThreadFunction UpdateFun){
-        Utils.MultiThread(nThreads,nThreads,(iThread)->{
-            int iStart=iThread/nThreads*length;
-            int iEnd=(iThread+1)/nThreads*length;
-            for (int i = iStart; i < iEnd; i++) {
-                UpdateFun.GridDiff2MulitThreadFunction(ItoX(i),ItoY(i),i);
-            }
-        });
-        SwapFields();
-    }
     public void Diffusion(double diffRate, boolean wrapX, boolean wrapY){
         if(diffRate>0.25){
             throw new IllegalArgumentException("Diffusion rate above stable maximum value of 0.25 value: "+diffRate);
@@ -511,25 +505,25 @@ public class PDEGrid2D extends Grid2Ddouble implements Serializable{
      */
   //  public void DiffSwapInc(double diffRate,boolean boundaryCond,double boundaryValue,boolean wrapX,boolean wrapY){
   //      //NOTE: EXPLICIT DIFFUSION WILL ONLY BE STABLE IF diffRate <= 1/4
-  //      Utils.Diffusion2(field, swapField,xDim,yDim,diffRate,boundaryCond,boundaryValue,wrapX,wrapY);
+  //      Util.Diffusion2(field, swapField,xDim,yDim,diffRate,boundaryCond,boundaryValue,wrapX,wrapY);
   //      SwapFields();
   //      IncTick();
   //  }
   //  public void DiffSwapInc(double diffRate,boolean boundaryCond,double boundaryValue){
   //      //NOTE: EXPLICIT DIFFUSION WILL ONLY BE STABLE IF diffRate <= 1/4
-  //      Utils.Diffusion2(field, swapField,xDim,yDim,diffRate,boundaryCond,boundaryValue,wrapX,wrapY);
+  //      Util.Diffusion2(field, swapField,xDim,yDim,diffRate,boundaryCond,boundaryValue,wrapX,wrapY);
   //      SwapFields();
   //      IncTick();
   //  }
   //  public void DiffSwapInc1(double diffRate,boolean boundaryCond,double boundaryValue,boolean wrapX,boolean wrapY){
   //      //NOTE: EXPLICIT DIFFUSION WILL ONLY BE STABLE IF diffRate <= 1/4
-  //      Utils.Diffusion(field, swapField,xDim,yDim,diffRate,boundaryCond,boundaryValue,wrapX,wrapY);
+  //      Util.Diffusion(field, swapField,xDim,yDim,diffRate,boundaryCond,boundaryValue,wrapX,wrapY);
   //      SwapFields();
   //      IncTick();
   //  }
   //  public void DiffSwapInc1(double diffRate,boolean boundaryCond,double boundaryValue){
   //      //NOTE: EXPLICIT DIFFUSION WILL ONLY BE STABLE IF diffRate <= 1/4
-  //      Utils.Diffusion(field, swapField,xDim,yDim,diffRate,boundaryCond,boundaryValue,wrapX,wrapY);
+  //      Util.Diffusion(field, swapField,xDim,yDim,diffRate,boundaryCond,boundaryValue,wrapX,wrapY);
   //      SwapFields();
   //      IncTick();
   //  }
@@ -592,7 +586,7 @@ public class PDEGrid2D extends Grid2Ddouble implements Serializable{
     }
 
 
-    public double MaxDifSwap(double[] compareTo){
+    public double MaxDif(double[] compareTo){
         double maxDif=0;
             for(int i = 0; i< field.length; i++){
                 maxDif=Math.max(maxDif,Math.abs(field[i]- compareTo[i]));
@@ -604,7 +598,7 @@ public class PDEGrid2D extends Grid2Ddouble implements Serializable{
         if(maxDifscratch==null){
             maxDifscratch=new double[length];
         }
-        double ret= MaxDifSwap(maxDifscratch);
+        double ret= MaxDif(maxDifscratch);
         System.arraycopy(GetField(),0,maxDifscratch,0,length);
         return ret;
     }
@@ -629,4 +623,14 @@ public class PDEGrid2D extends Grid2Ddouble implements Serializable{
         }
     }
 
+    public void MultiThread(int nThreads, GridDiff2MultiThreadFunction UpdateFun){
+        Util.MultiThread(nThreads,nThreads,(iThread)->{
+            int iStart=iThread/nThreads*length;
+            int iEnd=(iThread+1)/nThreads*length;
+            for (int i = iStart; i < iEnd; i++) {
+                UpdateFun.GridDiff2MulitThreadFunction(ItoX(i),ItoY(i),i);
+            }
+        });
+        SwapFields();
+    }
 }

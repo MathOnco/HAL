@@ -1,9 +1,9 @@
 package Framework.Extensions.MarkModel_II.MarkModelDrugs;
 
-import Framework.Utils;
+import Framework.Util;
 
 import static Framework.Extensions.MarkModel_II.MarkModel_II.ACID;
-import static Framework.Utils.PhToProtons;
+import static Framework.Util.PhToProtons;
 
 /**
  * Created by Rafael on 10/25/2017.
@@ -12,7 +12,7 @@ public class Bicarb extends Drug{
     private double DRUG_TO_PH=0.0666;
 
     protected Bicarb( MarkModelPlusDrugs myModel) {
-        super("Bicarb",true, myModel, Utils.RGB256(23,114,70),MarkModelPlusDrugs.BICARB);
+        super("Bicarb",true, myModel, Util.RGB256(23,114,70),MarkModelPlusDrugs.BICARB);
     }
 
     @Override

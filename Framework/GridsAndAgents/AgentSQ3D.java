@@ -1,9 +1,11 @@
 package Framework.GridsAndAgents;
 
+import Framework.Interfaces.Coords3DToAction;
+
 import java.util.ArrayList;
 
-import static Framework.Utils.InDim;
-import static Framework.Utils.ModWrap;
+import static Framework.Util.InDim;
+import static Framework.Util.ModWrap;
 
 /**
  * extend the AgentSQ3D class if you want agents that exist on a 3D discrete lattice
@@ -79,6 +81,10 @@ public class AgentSQ3D<T extends AgentGrid3D> extends AgentBaseSpatial<T>{
         this.iSq=iNewPos;
         AddSQ(iNewPos);
     }
+    public int HoodToAction(int[]neighborhood, Coords3DToAction Action){
+        return G().HoodToAction(neighborhood,Xsq(),Ysq(),Zsq(),Action);
+    }
+
     public int HoodToIs(int[]neighborhood,int[]retIs){
         return G().HoodToIs(neighborhood,retIs,this.Xsq(),this.Ysq(),this.Zsq());
     }

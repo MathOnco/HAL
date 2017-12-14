@@ -1,11 +1,11 @@
 package Examples.GameOfLife;
 import Framework.Tools.FileIO;
-import Framework.Utils;
+import Framework.Util;
 
 import java.util.ArrayList;
 import java.util.Random;
 
-import static Framework.Utils.*;
+import static Framework.Util.*;
 
 /**
  * Created by mark on 7/7/17.
@@ -45,7 +45,7 @@ public class GOLSweepEx {
         //after all runs finish, we loop through the array of ReturnVals objects and write out their data
         FileIO out=new FileIO("SweepResults.csv","w");
         for (ReturnVals ret : runOutputs) {
-            out.Write(ret.startLivingProb+","+Utils.ArrToString(ret.pops,",")+"\n");//first entry is the starting prob of living cells
+            out.Write(ret.startLivingProb+","+ Util.ArrToString(ret.pops,",")+"\n");//first entry is the starting prob of living cells
         }
         out.Close();
     }

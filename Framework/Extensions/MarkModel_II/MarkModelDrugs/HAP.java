@@ -1,6 +1,6 @@
 package Framework.Extensions.MarkModel_II.MarkModelDrugs;
 
-import Framework.Utils;
+import Framework.Util;
 
 /**
  * Created by Rafael on 10/25/2017.
@@ -9,7 +9,7 @@ public class HAP extends Drug{
     RAP rap;
 
     public HAP(MarkModelPlusDrugs myModel) {
-        super("HAP",true,myModel, Utils.RGB256(217,100,78),MarkModelPlusDrugs.HAP);
+        super("HAP",true,myModel, Util.RGB256(217,100,78),MarkModelPlusDrugs.HAP);
         DIFF_RATE_BASE=1.1E2;
 
     }

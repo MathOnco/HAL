@@ -1,8 +1,10 @@
 package Framework.GridsAndAgents;
 
+import Framework.Interfaces.Coords3DToAction;
+
 import java.util.ArrayList;
 
-import static Framework.Utils.*;
+import static Framework.Util.*;
 
 /**
  * extend the AgentPT3D class if you want agents that exist on a 3D continuous lattice
@@ -76,6 +78,10 @@ public class AgentPT3D<T extends AgentGrid3D> extends AgentBaseSpatial<T> {
         }
         myGrid.grid[i]=this;
     }
+    public int HoodToAction(int[]neighborhood, Coords3DToAction Action){
+        return G().HoodToAction(neighborhood,Xsq(),Ysq(),Zsq(),Action);
+    }
+
     public int HoodToIs(int[]neighborhood,int[]retIs){
         return G().HoodToIs(neighborhood,retIs,this.Xsq(),this.Ysq(),this.Zsq());
     }

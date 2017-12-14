@@ -1,6 +1,6 @@
 package Framework.Interfaces;
 
-import Framework.Utils;
+import Framework.Util;
 
 /**
  * Created by rafael on 7/3/17.
@@ -94,23 +94,23 @@ public interface Mat3 {
             int x = SQs[i * 3] + centerX;
             int y = SQs[i * 3 + 1] + centerY;
             int z = SQs[i * 3 + 2] + centerZ;
-            if (!Utils.InDim(Xdim(), x)) {
+            if (!Util.InDim(Xdim(), x)) {
                 if (wrapX) {
-                    x = Utils.ModWrap(x, Xdim());
+                    x = Util.ModWrap(x, Xdim());
                 } else {
                     continue;
                 }
             }
-            if (!Utils.InDim(Ydim(), y)) {
+            if (!Util.InDim(Ydim(), y)) {
                 if (wrapY) {
-                    y = Utils.ModWrap(y, Ydim());
+                    y = Util.ModWrap(y, Ydim());
                 } else {
                     continue;
                 }
             }
-            if (!Utils.InDim(Zdim(), z)) {
+            if (!Util.InDim(Zdim(), z)) {
                 if (wrapZ) {
-                    z = Utils.ModWrap(z, Ydim());
+                    z = Util.ModWrap(z, Ydim());
                 } else {
                     continue;
                 }
@@ -128,23 +128,23 @@ public interface Mat3 {
             int x = SQs[i * 3] + centerX;
             int y = SQs[i * 3 + 1] + centerY;
             int z = SQs[i * 3 + 2] + centerZ;
-            if (!Utils.InDim(Xdim(), x)) {
+            if (!Util.InDim(Xdim(), x)) {
                 if (WrapX()) {
-                    x = Utils.ModWrap(x, Xdim());
+                    x = Util.ModWrap(x, Xdim());
                 } else {
                     continue;
                 }
             }
-            if (!Utils.InDim(Ydim(), y)) {
+            if (!Util.InDim(Ydim(), y)) {
                 if (WrapY()) {
-                    y = Utils.ModWrap(y, Ydim());
+                    y = Util.ModWrap(y, Ydim());
                 } else {
                     continue;
                 }
             }
-            if (!Utils.InDim(Zdim(), z)) {
+            if (!Util.InDim(Zdim(), z)) {
                 if (WrapZ()) {
-                    z = Utils.ModWrap(z, Ydim());
+                    z = Util.ModWrap(z, Ydim());
                 } else {
                     continue;
                 }
@@ -155,10 +155,10 @@ public interface Mat3 {
         return ptCt;
     }
     default double DistSq(double x1, double y1, double z1, double x2, double y2, double z2, boolean wrapX, boolean wrapY, boolean wrapZ){
-        return Utils.DistSquared(x1,y1,z1,x2,y2,z2,Xdim(),Ydim(),Zdim(),wrapX,wrapY,wrapZ);
+        return Util.DistSquared(x1,y1,z1,x2,y2,z2,Xdim(),Ydim(),Zdim(),wrapX,wrapY,wrapZ);
     }
     default double DistSq(double x1, double y1, double z1, double x2, double y2, double z2){
-        return Utils.DistSquared(x1,y1,z1,x2,y2,z2,Xdim(),Ydim(),Zdim(),WrapX(),WrapY(),WrapZ());
+        return Util.DistSquared(x1,y1,z1,x2,y2,z2,Xdim(),Ydim(),Zdim(),WrapX(),WrapY(),WrapZ());
     }
 
 }

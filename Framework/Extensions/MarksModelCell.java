@@ -1,9 +1,9 @@
 package Framework.Extensions;
 
 import Framework.GridsAndAgents.AgentSQ2Dunstackable;
-import Framework.Utils;
+import Framework.Util;
 
-import static Framework.Utils.*;
+import static Framework.Util.*;
 
 public class MarksModelCell <A extends MarksModelCell,G extends MarksModelGrid<A>> extends AgentSQ2Dunstackable<G> {
     public double glycolysisPheno;
@@ -19,7 +19,7 @@ public class MarksModelCell <A extends MarksModelCell,G extends MarksModelGrid<A
         this.glycolysisPheno = glycolysisPheno;
         this.acidResistancePheno = acidResistance;
         this.isCancer = cancer;
-        cellCycleTime = G().MIN_CELL_CYCLE_TIME + G().rn.nextDouble() * G().MIN_CELL_CYCLE_TIME;
+        cellCycleTime = G().MIN_CELL_CYCLE_TIME + G().rn.Double() * G().MIN_CELL_CYCLE_TIME;
         if (isVessel) {
             VesselDegredationCount = G().VESSEL_STABILITY;
         } else {
@@ -74,8 +74,8 @@ public class MarksModelCell <A extends MarksModelCell,G extends MarksModelGrid<A
                 iMoveOpt += 1;
             }
         }
-        if (iMoveOpt > 0 && (isCancer || iMoveOpt > G().EMPTY_SQUARES_FOR_DIV)) {// + Utils.Gaussian(0, DIV_NOISE_STD_DEV))) {
-            int iRand = iMoveOpt > 1 ? G().rn.nextInt(iMoveOpt) : 0;
+        if (iMoveOpt > 0 && (isCancer || iMoveOpt > G().EMPTY_SQUARES_FOR_DIV)) {// + Util.Gaussian(0, DIV_NOISE_STD_DEV))) {
+            int iRand = iMoveOpt > 1 ? G().rn.Int(iMoveOpt) : 0;
             int iChosen = G().moveIs[iRand];
             if (isCancer) {
                 MarksModelCell amIVessel = (MarksModelCell) G().GetAgent(iChosen);
@@ -107,13 +107,13 @@ public class MarksModelCell <A extends MarksModelCell,G extends MarksModelGrid<A
         if (IsAlive()) {
             if (!IsVessel()) {
                 //random death
-                if (G().rn.nextFloat() < G().NORMAL_DEATH_PROB) {
+                if (G().rn.Double() < G().NORMAL_DEATH_PROB) {
                     Die(G().APOPTOTIC_REMOVE_PROB);
                     return true;
                 }
                 double pH = ProtonsToPh(G().protons.Get(Isq()));
                 //check acid death
-                if (pH < acidResistancePheno && G().rn.nextFloat() < G().POOR_CONDITION_DEATH_RATE) {
+                if (pH < acidResistancePheno && G().rn.Double() < G().POOR_CONDITION_DEATH_RATE) {
                     Die(G().APOPTOTIC_REMOVE_PROB);
                     return true;
                 }
@@ -126,7 +126,7 @@ public class MarksModelCell <A extends MarksModelCell,G extends MarksModelGrid<A
             else{ return true;}
         }
         else {
-            if (G().rn.nextFloat() < deathRemainProb) {
+            if (G().rn.Double() < deathRemainProb) {
                 Dispose();
             }
             return true;
@@ -161,7 +161,7 @@ public class MarksModelCell <A extends MarksModelCell,G extends MarksModelGrid<A
                 //System.out.println("o2Rate:"+o2Rate/OXYGEN_MAX_RATE);
                 //System.out.println("o2Rate:"+o2Rate);
                 double maxGlycolysisRate = glycolysisPheno * G().MAX_ATP_PRODUCTION / 2;// + 27 * o2Rate / 10;
-                double gluRate = -Utils.MichaelisMenten(G().glucose.Get(i), maxGlycolysisRate, G().GLUCOSE_HALF_RATE_CONC);
+                double gluRate = -Util.MichaelisMenten(G().glucose.Get(i), maxGlycolysisRate, G().GLUCOSE_HALF_RATE_CONC);
                 //System.out.println("gluRate:"+gluRate/maxGlycolysisRate);
                 //System.out.println("gluRate:"+gluRate);
                 atp = -(2 * gluRate + ((27 * o2Rate) / 5));

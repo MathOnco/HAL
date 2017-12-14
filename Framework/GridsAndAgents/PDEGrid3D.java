@@ -1,7 +1,7 @@
 package Framework.GridsAndAgents;
 import Framework.Interfaces.Coords3DSetArray;
-import Framework.Utils;
-//import AgentFramework.Utils;
+import Framework.Util;
+//import AgentFramework.Util;
 
 
 import java.io.Serializable;
@@ -116,7 +116,7 @@ public class PDEGrid3D extends Grid3Ddouble implements Serializable{
      */
     public void BoundAllSwap(double min, double max){
         for(int i=0;i<length;i++){
-            swapField[i]= Utils.Bound(swapField[i],min,max);
+            swapField[i]= Util.Bound(swapField[i],min,max);
         }
     }
     /**
@@ -154,11 +154,11 @@ public class PDEGrid3D extends Grid3Ddouble implements Serializable{
 //        if(scratch==null){
 //            scratch=new double[Math.max(Math.max(xDim,yDim),zDim)*2];
 //        }
-//        Utils.DiffusionADI3(0,field,swapField,scratch,xDim,yDim,zDim,diffRate/3);
+//        Util.DiffusionADI3(0,field,swapField,scratch,xDim,yDim,zDim,diffRate/3);
 //        SwapFields();
-//        Utils.DiffusionADI3(1,field,swapField,scratch,xDim,yDim,zDim,diffRate/3);
+//        Util.DiffusionADI3(1,field,swapField,scratch,xDim,yDim,zDim,diffRate/3);
 //        SwapFields();
-//        Utils.DiffusionADI3(2,field,swapField,scratch,xDim,yDim,zDim,diffRate/3);
+//        Util.DiffusionADI3(2,field,swapField,scratch,xDim,yDim,zDim,diffRate/3);
 //        SwapFields();
 //    }
 

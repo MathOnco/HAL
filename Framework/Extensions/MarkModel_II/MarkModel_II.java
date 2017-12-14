@@ -2,14 +2,14 @@ package Framework.Extensions.MarkModel_II;
 
 import Framework.GridsAndAgents.AgentGrid2D;
 import Framework.GridsAndAgents.PDEGrid2D;
-import Framework.Gui.GuiGridVis;
+import Framework.Gui.GuiGrid;
 import Framework.Interfaces.DoubleToColor;
-import Framework.Utils;
+import Framework.Rand;
+import Framework.Util;
 
 import java.util.LinkedList;
-import java.util.Random;
 
-import static Framework.Utils.*;
+import static Framework.Util.*;
 
 public class MarkModel_II<A extends MarkCell_II> extends AgentGrid2D<A> {
     //WTF VARS
@@ -22,10 +22,10 @@ public class MarkModel_II<A extends MarkCell_II> extends AgentGrid2D<A> {
     public double EPS=2E-52;
 
     //CELL TYPE ENUM
-    public static int NORMAL = 1, TUMOR = 2, VESSEL = 3, DEAD = 4;
+    public static int NORMAL = 1, TUMOR = 2, VESSEL = 3, DEAD = 4, BLACK=RGB(0,0,0), WHITE=RGB(1,1,1), GREY=RGB(0.5,0.5,0.5);
 
     //DRAW COLORS
-    public static int NORMAL_COLOR=RGB(0,0,1),VESSEL_COLOR=RGB(1,0,0), APOP_COLOR =RGB(0.5,0,0.5),NECRO_COLOR=RGB(0.2,0.2,0.2),EMPTY_COLOR=RGB(0,0,0);
+    public static int NORMAL_COLOR=RGB(0,0,1),VESSEL_COLOR=RGB(1,1,1), APOP_COLOR =RGB(0.5,0,0.5),NECRO_COLOR=RGB(0.2,0.2,0.2),EMPTY_COLOR=RGB(0,0,0);
     public static final int DEFAULT_SIDE_LEN=76;
 
     //TIME AND SPACE SCALES
@@ -52,7 +52,7 @@ public class MarkModel_II<A extends MarkCell_II> extends AgentGrid2D<A> {
     public double HYPOX_ZONE_SIZE=100;
     public double ANGIO_PROB=0.5;
     public int VESSEL_HP_MAX = 20;
-    public double ANGIO_RATE = 0.3;
+    public double ANGIO_RATE = 0.5;
     public double VESSEL_EDGE_MAX_DIST=1;//no vessels this close to the edge
     public double VESSEL_DEGRADATION_RATE_BASE=1;
 
@@ -78,6 +78,7 @@ public class MarkModel_II<A extends MarkCell_II> extends AgentGrid2D<A> {
     public double DIFF_RATE_GLUCOSE = 500;
     public double HALF_MAX_CONC_GLUCOSE = 0.03;//for michaelis menten
     public double VESSEL_GLUC = 5;
+    public double BOUNDARY_GLUCOSE;
 
     //ACID
     public double DIFF_RATE_PROTON = 1080;
@@ -101,7 +102,7 @@ public class MarkModel_II<A extends MarkCell_II> extends AgentGrid2D<A> {
     public static int OXYGEN = 0, GLUCOSE = 1, ACID = 2, N_DIFFS = 3;
 
     //OTHER OBJECTS
-    public Random rn;
+    public Rand rn;
     public PDEGrid2D[] diffs;
     public double[] vesselConcs;
     public double[] diffRates;
@@ -132,13 +133,29 @@ public class MarkModel_II<A extends MarkCell_II> extends AgentGrid2D<A> {
     public double VESSEL_SPACING_MEAN;
     public double VESSEL_DEGRADATION_RATE;
 
-    public MarkModel_II(int x, int y, boolean reflectiveBoundary,boolean setupConstants,Class<A> classObj,Random rn) {
+    public MarkModel_II(int x, int y, boolean reflectiveBoundary, boolean setupConstants, Class<A> classObj, Rand rn) {
         super(x, y, classObj);
         this.rn=rn;
         this.REFLECTIVE_BOUNDARY = reflectiveBoundary;
         if(setupConstants) {
             SetupConstants();
         }
+    }
+
+    public double GetGlycRate(double pheno) {
+        return Math.exp(pheno * Math.log(MAX_PHENO_GLYC));
+    }
+
+    public double GetAcidResistPH(double pheno) {
+        return ScaleMinToMax(pheno, NORMAL_PHENO_ACID_RESIST, MAX_PHENO_ACID_RESIST);
+    }
+
+    public double GetGlycPheno(double glycRate) {
+        return Math.log10(glycRate) / Math.log10(MAX_PHENO_GLYC);
+    }
+
+    public double GetAcidResistPheno(double acidResistPH) {
+        return Scale0to1(acidResistPH, NORMAL_PHENO_ACID_RESIST, MAX_PHENO_ACID_RESIST);
     }
     public void CalcVesselDegradationRate(){
         VESSEL_DEGRADATION_RATE=VESSEL_DEGRADATION_RATE_BASE*CELL_TIMESTEP;
@@ -147,10 +164,10 @@ public class MarkModel_II<A extends MarkCell_II> extends AgentGrid2D<A> {
         return ArrayMax(diffRates);
     }
     public void SetupConstants(){
-        DEATH_PROB_NORM_COND=Utils.ProbScale(DEATH_PROB_NORM_COND_BASE, CELL_TIMESTEP);
-        DEATH_PROB_POOR_COND = Utils.ProbScale(DEATH_PROB_POOR_COND_BASE, CELL_TIMESTEP);
-        DISPOSE_PROB_NECRO=Utils.ProbScale(DISPOSE_PROB_NECRO_BASE,CELL_TIMESTEP);
-        DISPOSE_PROB_APOP=Utils.ProbScale(DISPOSE_PROB_APOP_BASE,CELL_TIMESTEP);
+        DEATH_PROB_NORM_COND= Util.ProbScale(DEATH_PROB_NORM_COND_BASE, CELL_TIMESTEP);
+        DEATH_PROB_POOR_COND = Util.ProbScale(DEATH_PROB_POOR_COND_BASE, CELL_TIMESTEP);
+        DISPOSE_PROB_NECRO= Util.ProbScale(DISPOSE_PROB_NECRO_BASE,CELL_TIMESTEP);
+        DISPOSE_PROB_APOP= Util.ProbScale(DISPOSE_PROB_APOP_BASE,CELL_TIMESTEP);
         VESSEL_SPACING_MIN=VESSEL_SPACING_MIN_BASE/SQUARE_DIAM;
         VESSEL_SPACING_MEAN=VESSEL_SPACING_MEAN_BASE/SQUARE_DIAM;
         ATP_TARGET = 29 * MAX_CONSUMPTION_O2 / 5;
@@ -187,6 +204,9 @@ public class MarkModel_II<A extends MarkCell_II> extends AgentGrid2D<A> {
         if(boundaryConds==null) {
             boundaryConds = new double[N_DIFFS];
         }
+        boundaryConds[OXYGEN]=BOUNDARY_O2;
+        boundaryConds[ACID]=BOUNDARY_ACID;
+        boundaryConds[GLUCOSE]=DIFF_RATE_GLUCOSE;
         if(hypoxicIs==null) {
             hypoxicIs = new int[GetDiff(OXYGEN).length];
         }
@@ -207,12 +227,12 @@ public class MarkModel_II<A extends MarkCell_II> extends AgentGrid2D<A> {
         return ct;
     }
 
-    public int InitVessels() {
+    public int SetupVessels() {
         //place vessels using circle packing, so no vessels are within VESSEL_SPACING_MIN
         int[] vesselCheck = CircleHood(true, VESSEL_SPACING_MIN);
         int[] circleIs = new int[vesselCheck.length / 2];
         int[] ret= GenIndicesArray(length);
-        Shuffle(ret, length, length, rn);
+        rn.Shuffle(ret, length, length);
         int[] indices = ret;
         int nVesselsRequested = (int) (length / VESSEL_SPACING_MEAN*VESSEL_SPACING_MEAN);
         int nVesselsPlaced = 0;
@@ -243,17 +263,17 @@ public class MarkModel_II<A extends MarkCell_II> extends AgentGrid2D<A> {
         //randomly distribute cells with proportion startProp
         for (int i = 0; i < length; i++) {
             if (GetAgent(i) == null) {
-                if (rn.nextDouble() < startProp) {
+                if (rn.Double() < startProp) {
                     MarkCell_II c = NewAgentSQ(i);
                     c.InitNormal();
                     //initialize cells with random cell cycle progress
-                    c.cycleRemaining=c.cycleRemaining*rn.nextDouble();
+                    c.cycleRemaining=c.cycleRemaining*rn.Double();
                 }
             }
         }
     }
 
-    public boolean Angiogenesis() {
+    public void Angiogenesis() {
         //find hypoxic areas
         int nHypox = 0;
         PDEGrid2D oxygen = GetDiff(OXYGEN);
@@ -265,17 +285,18 @@ public class MarkModel_II<A extends MarkCell_II> extends AgentGrid2D<A> {
                     nHypox++;
                 }
             }
-        if (rn.nextDouble() < (nHypox * ANGIO_RATE*CELL_TIMESTEP) / nPossible) {
-            //replace cell or empty space at random position in hypoxic zone with new vessel
-            Shuffle(hypoxicIs, nHypox, 1, rn);
-            MarkCell_II occupant = GetAgent(hypoxicIs[0]);
-            if (occupant == null) {
-                occupant = NewAgentSQ(hypoxicIs[0]);
+            int nNewVessels=(int)(nHypox/100.0+0.5);
+        rn.Shuffle(hypoxicIs, nHypox, nNewVessels);
+        for (int i = 0; i < nNewVessels; i++) {
+            if (rn.Double() < ANGIO_RATE*CELL_TIMESTEP) {
+                //replace cell or empty space at random position in hypoxic zone with new vessel
+                MarkCell_II occupant = GetAgent(hypoxicIs[i]);
+                if (occupant == null) {
+                    occupant = NewAgentSQ(hypoxicIs[i]);
+                }
+                occupant.InitVessel();
             }
-            occupant.InitVessel();
-            return true;
         }
-        return false;
     }
 
     public void SetupTumor(double startRad, double startGlycPheno, double startAcidResistPheno) {
@@ -286,12 +307,12 @@ public class MarkModel_II<A extends MarkCell_II> extends AgentGrid2D<A> {
         for (int i = 0; i < nCells; i++) {
             MarkCell_II c = GetAgent(coordIs[i]);
             if (c.type == NORMAL) {
-                c.InitTumor(startGlycPheno, startAcidResistPheno, rn.nextDouble());
+                c.InitTumor(startGlycPheno, startAcidResistPheno, rn.Double());
             }
         }
     }
 
-    public int InitDiffs() {
+    public int SetupBoundaryConds() {
         IncTick();//make sure cells/vessels are present
         if (REFLECTIVE_BOUNDARY) {
             return SteadyStateDiff(false,ADI_MIN_STEPS, ADI_MAX_STEPS_START);
@@ -367,7 +388,7 @@ public class MarkModel_II<A extends MarkCell_II> extends AgentGrid2D<A> {
         return step;
     }
 
-    public void DrawCells(GuiGridVis drawHere){
+    public void DrawCells(GuiGrid drawHere){
         for (int i = 0; i < length; i++) {
             MarkCell_II c=GetAgent(i);
             if(c==null) {
@@ -377,13 +398,13 @@ public class MarkModel_II<A extends MarkCell_II> extends AgentGrid2D<A> {
             }
         }
     }
-    public void DrawAllDiffs(GuiGridVis acidVis,GuiGridVis oxygenVis,GuiGridVis glucoseVis){
+    public void DrawAllDiffs(GuiGrid acidVis, GuiGrid oxygenVis, GuiGrid glucoseVis){
         DrawAcid(acidVis);
         DrawOxygen(oxygenVis);
         DrawGlucose(glucoseVis);
 
     }
-    public void DrawOxygen(GuiGridVis oxygenVis){
+    public void DrawOxygen(GuiGrid oxygenVis){
         double min=diffs[OXYGEN].GetMin();
         double max=diffs[OXYGEN].GetMax();
         DrawDiff(oxygenVis,OXYGEN,(val)->{
@@ -391,7 +412,22 @@ public class MarkModel_II<A extends MarkCell_II> extends AgentGrid2D<A> {
             return HeatMapBGR(val,0,VESSEL_O2);
         });
     }
-    public void DrawGlucose(GuiGridVis glucoseVis){
+    public void DrawOxygenMinMaxAngio(GuiGrid oxygenVis){
+
+        DrawDiff(oxygenVis,OXYGEN,(val)->{
+            if(val>HYPOX_ANGIO_ZONE_MAX){
+                return WHITE;
+            }
+            else if(val<HYPOX_ANGIO_ZONE_MIN){
+                return BLACK;
+            }
+            else{
+                return GREY;
+            }
+            //return HeatMapBGR(val,min,max);
+        });
+    }
+    public void DrawGlucose(GuiGrid glucoseVis){
         double min=diffs[GLUCOSE].GetMin();
         double max=diffs[GLUCOSE].GetMax();
         DrawDiff(glucoseVis,GLUCOSE,(val)->{
@@ -399,15 +435,15 @@ public class MarkModel_II<A extends MarkCell_II> extends AgentGrid2D<A> {
             //return HeatMapRGB(val,min,max);
         });
     }
-    public void DrawAcid(GuiGridVis acidVis){
+    public void DrawAcid(GuiGrid acidVis){
         double min=ProtonsToPh(diffs[ACID].GetMax());
         double max=ProtonsToPh(diffs[ACID].GetMin());
         DrawDiff(acidVis,ACID,(val)->{
             return HeatMapGRB(ProtonsToPh(val),VESSEL_PH,NORMAL_PHENO_ACID_RESIST);
-            //return HeatMapGRB(1-Rescale0to1(ProtonsToPh(val),min,max));
+            //return HeatMapGRB(1-Scale0to1(ProtonsToPh(val),min,max));
         });
     }
-    public void DrawDiff(GuiGridVis drawHere,int iDiff, DoubleToColor ColorFun){
+    public void DrawDiff(GuiGrid drawHere, int iDiff, DoubleToColor ColorFun){
         PDEGrid2D drawMe=diffs[iDiff];
             for (int x = 0; x < drawMe.xDim; x++) {
                 for (int y = 0; y < drawMe.yDim; y++) {
@@ -415,7 +451,7 @@ public class MarkModel_II<A extends MarkCell_II> extends AgentGrid2D<A> {
                 }
             }
     }
-    public void DrawPhenos(GuiGridVis drawHere){
+    public void DrawPhenos(GuiGrid drawHere){
         for (int x = 0; x < drawHere.xDim; x++) {
             for (int y = 0; y < drawHere.yDim; y++) {
                 drawHere.SetPix(x,y,CbCrPlaneColor(y*1.0/yDim,x*1.0/xDim));
@@ -423,7 +459,7 @@ public class MarkModel_II<A extends MarkCell_II> extends AgentGrid2D<A> {
         }
         for (MarkCell_II c : this) {
             if(c.type ==TUMOR){
-                drawHere.SetPix((int)(c.GetAcidResistPheno(c.acidResistPH)*yDim),(int)(c.GetGlycPheno(c.glycRate)*xDim),EMPTY_COLOR);
+                drawHere.SetPix((int)(c.GetGlycPheno(c.glycRate)*(xDim-1)),(int)(c.GetAcidResistPheno(c.acidResistPH)*(yDim-1)),EMPTY_COLOR);
             }
         }
     }
@@ -450,10 +486,10 @@ public class MarkModel_II<A extends MarkCell_II> extends AgentGrid2D<A> {
         }
     }
 
-    public void InitAll(double startDensity,double tumorRad) {
-        InitVessels();
+    public void SetupAll(double startDensity, double tumorRad) {
+        SetupVessels();
         SetupTissue(startDensity);
-        InitDiffs();
+        SetupBoundaryConds();
         SetupTumor(tumorRad, NORMAL_PHENO_GLYC, NORMAL_PHENO_ACID_RESIST);
         IncTick();
     }
@@ -463,7 +499,7 @@ public class MarkModel_II<A extends MarkCell_II> extends AgentGrid2D<A> {
         System.out.println("Glucose:");
         System.out.println(GetDiff(GLUCOSE).ToMatrixString("\t", 4));
         System.out.println("Acid:");
-        System.out.println(GetDiff(ACID).ToMatrixString("\t", Utils::ProtonsToPh, 4));
+        System.out.println(GetDiff(ACID).ToMatrixString("\t", Util::ProtonsToPh, 4));
         if (!REFLECTIVE_BOUNDARY) {
             System.out.println("Oxygen BC:" + boundaryConds[OXYGEN]);
         }

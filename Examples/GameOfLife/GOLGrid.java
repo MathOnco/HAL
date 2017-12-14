@@ -2,14 +2,14 @@ package Examples.GameOfLife;
 
 import Framework.GridsAndAgents.AgentGrid2D;
 import Framework.GridsAndAgents.AgentSQ2Dunstackable;
-import Framework.Gui.GuiGridVis;
+import Framework.Gui.GuiGrid;
 import Framework.Gui.GuiLabel;
 import Framework.Gui.GuiWindow;
 
 import java.util.Random;
 
 import static Examples.GameOfLife.GOLGrid.*;
-import static Framework.Utils.*;
+import static Framework.Util.*;
 
 /**
  * Created by rafael on 4/16/17.
@@ -46,14 +46,14 @@ class GOLAgent extends AgentSQ2Dunstackable<GOLGrid> {
 
 public class GOLGrid extends AgentGrid2D<GOLAgent> {
     public int liveCt;
-    final GuiGridVis vis;
+    final GuiGrid vis;
     final int[] neighborIs;
     final int[] mooreHood;
     final int runTicks;
     final int refreshRateMS;
     final static int LIVE = RGB(1,0,0);
     final static int DEAD = RGB(0,0,0);
-    GOLGrid(int x, int y, double livingProb, int runTicks, int refreshRateMS, GuiGridVis vis){
+    GOLGrid(int x, int y, double livingProb, int runTicks, int refreshRateMS, GuiGrid vis){
         super(x,y,GOLAgent.class,true,true);
         this.vis=vis;
         Random rn=new Random();
@@ -92,7 +92,7 @@ public class GOLGrid extends AgentGrid2D<GOLAgent> {
         GuiWindow gui=new GuiWindow("GOL with Agents",true);
         GuiLabel tickCt=new GuiLabel("Tick:______________");
         GuiLabel popCt=new GuiLabel("Population:________________");
-        GuiGridVis vis=new GuiGridVis(xDim,yDim,1,2,1);
+        GuiGrid vis=new GuiGrid(xDim,yDim,1,2,1);
         gui.AddCol(0, tickCt);
         gui.AddCol(1, popCt);
         gui.AddCol(0, vis);

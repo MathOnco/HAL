@@ -1,10 +1,10 @@
 package Framework.Extensions;
 
 import Framework.GridsAndAgents.PDEGrid2D;
-import Framework.Gui.GuiGridVis;
+import Framework.Gui.GuiGrid;
+import Framework.Rand;
 
-import java.util.Random;
-import static Framework.Utils.*;
+import static Framework.Util.*;
 
 /**
  * Created by rafael on 8/27/17.
@@ -33,7 +33,7 @@ public abstract class PayoffMatrixGame extends SpatialGameCanonical {
         if(singleUpdate){ types.Set(idTo,types.Get(idFrom)); }
         else { types.SetSwap(idTo, types.Get(idFrom)); }
     }
-    public void DrawTypes(GuiGridVis vis, int[]colors){
+    public void DrawTypes(GuiGrid vis, int[]colors){
         if(colors.length!=nTypes){
             throw new IllegalArgumentException("colors array has incorrect length");
         }
@@ -81,22 +81,22 @@ public abstract class PayoffMatrixGame extends SpatialGameCanonical {
         return out;
     }
 
-    public void SetupRandom(Random rn,double[] probs){
+    public void SetupRandom(Rand rn, double[] probs){
         if(probs.length!=nTypes){
             throw new IllegalArgumentException("probs array has incorrect length");
         }
         SumTo1(probs);
         for (int i = 0; i < length; i++) {
-            types.Set(i,RandomVariable(probs,rn));
+            types.Set(i, rn.RandomVariable(probs));
         }
     }
-    public void DefaultStep(Random rn){
+    public void DefaultStep(Rand rn){
         if(singleUpdate){
-            StepOne(rn);
+            StepOne();
             IncTick();
         }
         else{
-            StepAll(rn);
+            StepAll();
             types.SwapInc();
         }
     }

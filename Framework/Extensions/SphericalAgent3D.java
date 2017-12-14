@@ -4,11 +4,11 @@ import Framework.GridsAndAgents.AgentGrid3D;
 import Framework.GridsAndAgents.AgentPT3D;
 import Framework.Interfaces.OverlapForceResponse;
 import Framework.Interfaces.OverlapNeighborForceResponse;
+import Framework.Rand;
 
 import java.util.ArrayList;
-import java.util.Random;
 
-import static Framework.Utils.*;
+import static Framework.Util.*;
 
 /**
  * Created by bravorr on 6/26/17.
@@ -143,17 +143,17 @@ public class SphericalAgent3D<A extends SphericalAgent3D,G extends AgentGrid3D<A
         MoveSafePT(Xpt()+xVel,Ypt()+yVel,Zpt()+zVel,G().wrapX,G().wrapY,G().wrapZ);
     }
 
-    public A Divide(double divRadius,double[] scratchCoordArr,Random rn,boolean wrapX,boolean wrapY,boolean wrapZ){
+    public A Divide(double divRadius, double[] scratchCoordArr, Rand rn, boolean wrapX, boolean wrapY, boolean wrapZ){
         if(rn!=null){
-            RandomPointOnSphereEdge(divRadius, scratchCoordArr, rn);
+            rn.RandomPointOnSphereEdge(divRadius, scratchCoordArr);
         }
         A child=(G().NewAgentPTSafe(Xpt()+scratchCoordArr[0],Ypt()+scratchCoordArr[1],Zpt()+scratchCoordArr[2],Xpt(),Ypt(),Zpt(),wrapX,wrapY,wrapZ));
         MoveSafePT(Xpt()-scratchCoordArr[0],Ypt()-scratchCoordArr[1],Zpt()-scratchCoordArr[2],wrapX,wrapY,wrapZ);
         return child;
     }
-    public A Divide(double divRadius,double[] scratchCoordArr,Random rn){
+    public A Divide(double divRadius, double[] scratchCoordArr, Rand rn){
         if(rn!=null){
-            RandomPointOnSphereEdge(divRadius, scratchCoordArr, rn);
+            rn.RandomPointOnSphereEdge(divRadius, scratchCoordArr);
         }
         A child=(G().NewAgentPTSafe(Xpt()+scratchCoordArr[0],Ypt()+scratchCoordArr[1],Zpt()+scratchCoordArr[2],Xpt(),Ypt(),Zpt(),G().wrapX,G().wrapY,G().wrapZ));
         MoveSafePT(Xpt()-scratchCoordArr[0],Ypt()-scratchCoordArr[1],Zpt()-scratchCoordArr[2],G().wrapX,G().wrapY,G().wrapZ);

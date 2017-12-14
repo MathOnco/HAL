@@ -2,9 +2,9 @@ package Framework.Extensions.MarkModel_II.MarkModelDrugs;
 
 import Framework.Extensions.MarkModel_II.MarkModel_II;
 import Framework.Extensions.ModuleManager;
+import Framework.Rand;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 public class MarkModelPlusDrugs extends MarkModel_II<DrugCell> implements ModuleManager{
     public static int CHEMO=0,HAP=1,RAP=2,BICARB=3,ANTI_ANGIO=4,VESSEL_STABILIZER=5,NUM_DRUGS=6;
@@ -14,7 +14,7 @@ public class MarkModelPlusDrugs extends MarkModel_II<DrugCell> implements Module
     ArrayList<Drug>drugs=new ArrayList<>();
     ArrayList<Drug>diffusingDrugs=new ArrayList<>();
     private int _numPropsInternal =0;
-    public MarkModelPlusDrugs(int x, int y, boolean reflectiveBoundary, boolean setupConstants,Random rn) {
+    public MarkModelPlusDrugs(int x, int y, boolean reflectiveBoundary, boolean setupConstants, Rand rn) {
         super(x, y, reflectiveBoundary, setupConstants, DrugCell.class,rn);
         for (int i = 0; i < drugIDs.length; i++) {
             drugIDs[i]=-1;//deactivated by default

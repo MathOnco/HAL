@@ -1,10 +1,10 @@
 package Framework.Extensions.MarkModel_II;
 
 import Framework.GridsAndAgents.AgentSQ2Dunstackable;
+import Framework.Rand;
 
-import java.util.Random;
-
-import static Framework.Utils.*;
+import static Framework.Extensions.MarkModel_II.MarkModel_II.TUMOR;
+import static Framework.Util.*;
 
 /**
  * Created by Rafael on 10/10/2017.
@@ -47,10 +47,10 @@ public class MarkCell_II<A extends MarkCell_II,G extends MarkModel_II<A>> extend
     }
 
     public A InitTumor(double glycRate, double acidResistPH,double startCycleTime) {
-        this.type = MarkModel_II.TUMOR;
+        this.type = TUMOR;
         this.glycRate=glycRate;
         this.acidResistPH=acidResistPH;
-        this.drawColor = CbCrPlaneColor(GetGlycPheno(glycRate),GetAcidResistPheno(acidResistPH));
+        this.drawColor = CbCrPlaneColor(GetAcidResistPheno(acidResistPH),GetGlycPheno(glycRate));
         cycleRemaining=startCycleTime;
         return (A) this;
     }
@@ -81,28 +81,28 @@ public class MarkCell_II<A extends MarkCell_II,G extends MarkModel_II<A>> extend
         this.disposeProb = disposeProb;
     }
     public double GetGlycRate(double pheno) {
-        return Math.exp(pheno * Math.log(G().MAX_PHENO_GLYC));
+        return G().GetGlycRate(pheno);
     }
 
     public double GetAcidResistPH(double pheno) {
-        return RescaleMinToMax(pheno, G().NORMAL_PHENO_ACID_RESIST, G().MAX_PHENO_ACID_RESIST);
+        return G().GetAcidResistPH(pheno);
     }
 
     public double GetGlycPheno(double glycRate) {
-        return Math.log10(glycRate) / Math.log10(G().MAX_PHENO_GLYC);
+        return G().GetGlycPheno(glycRate);
     }
 
     public double GetAcidResistPheno(double acidResistPH) {
-        return Rescale0to1(acidResistPH, G().NORMAL_PHENO_ACID_RESIST, G().MAX_PHENO_ACID_RESIST);
+        return G().GetAcidResistPheno(acidResistPH);
     }
 
-    public A Mutate(Random rn) {
+    public A Mutate(Rand rn) {
         //uniform for acid resist, exponential for glycolytic
-        double newGlycPheno=Bound(GetGlycPheno(glycRate) + (rn.nextDouble() * 2 - 1) * G().MUT_RATE_GLYC, 0, 1);
-        double newAcidResistPheno=Bound(GetAcidResistPheno(acidResistPH) + (rn.nextDouble() * 2 - 1) * G().MUT_RATE_ACID_RESIST, 0, 1);
+        double newGlycPheno=Bound(GetGlycPheno(glycRate) + (rn.Double() * 2 - 1) * G().MUT_RATE_GLYC, 0, 1);
+        double newAcidResistPheno=Bound(GetAcidResistPheno(acidResistPH) + (rn.Double() * 2 - 1) * G().MUT_RATE_ACID_RESIST, 0, 1);
         glycRate=GetGlycRate(newGlycPheno);
         acidResistPH= GetAcidResistPH(newAcidResistPheno);
-        drawColor = CbCrPlaneColor(newGlycPheno,newAcidResistPheno);
+        drawColor = CbCrPlaneColor(newAcidResistPheno,newGlycPheno);
         return (A) this;
     }
     public boolean AttemptDivideTumor(){
@@ -122,7 +122,7 @@ public class MarkCell_II<A extends MarkCell_II,G extends MarkModel_II<A>> extend
             }
         }
         if (nOptions > 0) {
-            int chosenI = G().hoodIs[G().rn.nextInt(nOptions)];
+            int chosenI = G().hoodIs[G().rn.Int(nOptions)];
             //division of tumor cell
             MarkCell_II c=Divide(chosenI);
             if(c==null){
@@ -133,12 +133,12 @@ public class MarkCell_II<A extends MarkCell_II,G extends MarkModel_II<A>> extend
             cycleRemaining = 1;
             return true;
         } else if (nVessels > 0) {
-            MarkCell_II degradeMe = G().GetAgent(G().vesselIs[G().rn.nextInt(nOptions)]);
+            MarkCell_II degradeMe = G().GetAgent(G().vesselIs[G().rn.Int(nVessels)]);
             if (degradeMe != null) {
-                degradeMe.disposeProb-=G().VESSEL_DEGRADATION_RATE;
+                degradeMe.disposeProb-=G().VESSEL_DEGRADATION_RATE*G().CELL_TIMESTEP;
                 if (degradeMe.disposeProb <= 0) {
                     //vessel degraded
-                    degradeMe.Die(-1);
+                    degradeMe.Die(G().DISPOSE_PROB_APOP);
                 }
             }
         }
@@ -148,9 +148,9 @@ public class MarkCell_II<A extends MarkCell_II,G extends MarkModel_II<A>> extend
     public boolean AttemptDivideNormal() {
         //look for open positions to divide into
         int nEmpty = HoodToEmptyIs(G().normalHood, G().hoodIs);
-        if (nEmpty + G().rn.nextDouble() * G().NORMAL_EMPTY_DIV_WIGGLE > G().NORMAL_EMPTY_DIV_REQ) {
+        if (nEmpty + G().rn.Double() * G().NORMAL_EMPTY_DIV_WIGGLE > G().NORMAL_EMPTY_DIV_REQ) {
             //division of normal cell
-            int chosenI = G().hoodIs[G().rn.nextInt(nEmpty)];
+            int chosenI = G().hoodIs[G().rn.Int(nEmpty)];
             MarkCell_II c=Divide(chosenI);
             if(c==null){
                 return false;
@@ -168,21 +168,25 @@ public class MarkCell_II<A extends MarkCell_II,G extends MarkModel_II<A>> extend
         double glycMult=Math.min(1,G().GLYC_CYCLE_COST*-GetGlycPheno(glycRate)+1);
         return G().CELL_TIMESTEP*acidRMult*glycMult* 24/G().MIN_CELL_CYCLE_TIME*(Math.atan((availableATPprop-G().ATP_HALF_MAX)*2)/Math.PI+0.5);
     }
-    public void CellStep(Random rn) {
+    public void CellStep(Rand rn) {
         //TODO may want to return an int that maps to an event code system for the sake of display
         if (type == MarkModel_II.DEAD) {
             //possibly dispose of dead cells
-            if (rn.nextDouble() < disposeProb) {
+            if (rn.Double() < disposeProb) {
                 Dispose();
             }
         } else if (type != MarkModel_II.VESSEL) {
             //Random Death Check
-            if (rn.nextDouble() < G().DEATH_PROB_NORM_COND) {
+            if (rn.Double() < G().DEATH_PROB_NORM_COND) {
                 Die(G().DISPOSE_PROB_APOP);
                 return;
             }
             //Acid Death Check
-            if (ProtonsToPh(GetConc(MarkModel_II.ACID)) < acidResistPH && rn.nextDouble() < G().DEATH_PROB_POOR_COND) {
+            if(type==TUMOR){
+//                System.out.println(acidResistPH);
+                //System.out.println(ProtonsToPh(GetConc(Model.ACID)));
+            }
+            if (ProtonsToPh(GetConc(MarkModel_II.ACID)) < acidResistPH && rn.Double() < G().DEATH_PROB_POOR_COND) {
                 Die(G().DISPOSE_PROB_APOP);
                 return;
             }
@@ -199,7 +203,7 @@ public class MarkCell_II<A extends MarkCell_II,G extends MarkModel_II<A>> extend
             cycleRemaining -= GetCellCycleDecrement();
             if (cycleRemaining <= 0) {
                 //Cycle Complete -> Attempt Prolif
-                if(type== MarkModel_II.TUMOR){
+                if(type== TUMOR){
                     AttemptDivideTumor();
                 }else {
                     AttemptDivideNormal();

@@ -1,9 +1,11 @@
 package Framework.GridsAndAgents;
 
+import Framework.Interfaces.Coords2DToAction;
+
 import java.util.ArrayList;
 
-import static Framework.Utils.InDim;
-import static Framework.Utils.ModWrap;
+import static Framework.Util.InDim;
+import static Framework.Util.ModWrap;
 
 /**
  * extend the AgentSQ2Dunstackable class if you want agents that exist on a 2D discrete lattice
@@ -17,6 +19,9 @@ public class AgentSQ2Dunstackable<T extends AgentGrid2D> extends AgentBaseSpatia
     int ySq;
 
     public void SwapPosition(AgentBaseSpatial other){
+        if(this.Isq()==other.Isq()){
+            return;
+        }
         if(!alive||!other.alive){
             throw new RuntimeException("attempting to move dead agent");
         }
@@ -27,8 +32,8 @@ public class AgentSQ2Dunstackable<T extends AgentGrid2D> extends AgentBaseSpatia
         int iNewOther=Isq();
         other.RemSQ();
         this.RemSQ();
-        other.MoveSQ(iNewOther);
-        this.MoveSQ(iNew);
+        other.Setup(iNewOther);
+        this.Setup(iNew);
     }
     void Setup(double i){
         Setup((int)i);
@@ -81,7 +86,9 @@ public class AgentSQ2Dunstackable<T extends AgentGrid2D> extends AgentBaseSpatia
         }
         myGrid.grid[iSq]=this;
     }
-
+    public int HoodToAction(int[]neighborhood, Coords2DToAction Action){
+        return G().HoodToAction(neighborhood,Xsq(),Ysq(),Action);
+    }
     public int HoodToIs(int[]neighborhood,int[]retIs){
         return G().HoodToIs(neighborhood,retIs,this.Xsq(),this.Ysq());
     }

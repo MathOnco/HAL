@@ -20,5 +20,12 @@ public abstract class GridBase implements Serializable{
     public void IncTick(){
         tick+=1;
     }
-}
+    public void JumpToTick(int tick){
+        if(tick<this.tick){
+            throw new IllegalStateException("tick argument: "+tick+" is less than current tick: "+this.tick+" Can't jump back in time, as it will make agent ages negative, try calling Reset() instead!");
+        }
+        this.tick=tick;
+    }
+
+    }
 

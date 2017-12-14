@@ -2,7 +2,7 @@ package Framework.GridsAndAgents;
 
 import Framework.Interfaces.DoubleToDouble;
 import Framework.Tools.PDEequations;
-import Framework.Utils;
+import Framework.Util;
 
 import java.io.Serializable;
 import java.text.DecimalFormat;
@@ -61,7 +61,7 @@ public class Grid2Ddouble extends GridBase2D implements Serializable{
      */
     public void BoundAll(double min, double max){
         for(int i=0;i<length;i++){
-            field[i]= Utils.Bound(field[i],min,max);
+            field[i]= Util.Bound(field[i],min,max);
         }
     }
 
@@ -221,34 +221,4 @@ public class Grid2Ddouble extends GridBase2D implements Serializable{
         double up=PDEequations.DisplacedY2D(x,y+1,field,xDim,yDim,y,true,boundaryCond,wrapY);
         return up-down;
     }
-//    public Grid2Ddouble DotProduct(Grid2Ddouble rightMatrix){
-//        if(yDim!=rightMatrix.xDim){
-//            throw new IllegalArgumentException("xDim of this and yDim of other must match! this.xDim: "+xDim+" other.yDim: "+yDim);
-//        }
-//        Grid2Ddouble out=new Grid2Ddouble(xDim,rightMatrix.yDim);
-//        for (int x = 0; x < xDim; x++) {
-//            for (int y = 0; y < rightMatrix.yDim; y++) {
-//                //fill in values by dot product
-//                for (int i = 0; i < yDim; i++) {
-//                    out.Add(x,y,Get(i,y)*rightMatrix.Get(x,i));
-//                }
-//            }
-//        }
-//        return out;
-//    }
-//    public Grid2Ddouble DotProductT(Grid2Ddouble rightMatrixToTranspose){
-//        if(yDim!=rightMatrixToTranspose.yDim){
-//            throw new IllegalArgumentException("xDim of this and xDim of other must match! this.xDim: "+xDim+" other.xDim: "+yDim);
-//        }
-//        Grid2Ddouble out=new Grid2Ddouble(xDim,rightMatrixToTranspose.yDim);
-//        for (int x = 0; x < xDim; x++) {
-//            for (int y = 0; y < rightMatrixToTranspose.xDim; y++) {
-//                //fill in values by dot product
-//                for (int i = 0; i < yDim; i++) {
-//                    out.Add(x,y,Get(i,y)*rightMatrixToTranspose.Get(i,x));
-//                }
-//            }
-//        }
-//        return out;
-//    }
 }

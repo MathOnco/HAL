@@ -2,7 +2,8 @@ package Framework.Extensions;
 
 import Framework.Gui.*;
 import Framework.Interfaces.TreatableTumor;
-import Framework.Utils;
+import Framework.Tools.KeyRecorder;
+import Framework.Util;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -10,37 +11,19 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.*;
 
-import static Framework.Utils.*;
+import static Framework.Util.*;
 
 /**
  * Created by Rafael on 9/26/2017.
  */
 /*
 TODO:
-[ ] add optional gui boolean button bar
-[ ] unset chosenstarts when appropriate
-[X] make alpha ggv and allow merging them
-[ ] UI overhaul[
-    [X]map everything to keys
-    [X]fix pause bug
-    [X]add undo functionality and button
-    [X]add clear functionality and button
-    [X]make tox and burden display as bars at top rather than %s
-    [X]add setall buttons to treatments
-    [X]add Reset button?
-    [X]speed control
-    [ ]add reset button
-    [X]add SetAll
- Bugs:
-    [X]final score display broken
-    [ ]reset goes to step 1 and not step 0
-    [X]gui rattles on startup?
-
- Feature Requests:
-    [ ]add startGif and stopGif functionality
-]
-
-[X]gui formatting (labels at top)
+[ ] add option selector
+    description:{
+        sorta combo-boxlike,
+        first is always none,
+        others are picking a specific value
+        when the model runs over a previously chosen thing, it will be overridden by the last selection
 
 */
 
@@ -74,29 +57,6 @@ class StateDebugger{
     }
 }
 
-class KeyRecorder{
-    boolean[]keys=new boolean[525];
-    boolean KeyPress(char keyCode){
-        if(keyCode<keys.length) {
-            boolean ret = !keys[keyCode];
-            keys[keyCode] = true;
-            return ret;
-        }
-        return false;
-    }
-    boolean KeyRelease(char keyCode){
-        if(keyCode<keys.length) {
-            boolean ret = keys[keyCode];
-            keys[keyCode] = false;
-            return ret;
-        }
-        return false;
-    }
-    boolean IsPressed(char keyCode){
-        return keys[keyCode];
-    }
-}
-
 class TreatmentBar {
     final int index;
     final ClinicianSim myLab;
@@ -117,6 +77,7 @@ class TreatmentBar {
         setAllBtn=new GuiButton("SetBlock Line",1,1,false,(e)->{
             myLab.SavePlansToUndo();
             SetLine();
+            myLab.AdjustDrawState(index);
         });
         chosenStart=-1;
         chosenIntensity=1;
@@ -130,6 +91,7 @@ class TreatmentBar {
             public void mousePressed(MouseEvent e) {
                 chosenIntensity = intensitySelect.ClickX(e);
                 DrawIntensityLine();
+                myLab.AdjustDrawState(index);
             }
         }, null, null);
         treatline.AddListeners(new MouseAdapter() {
@@ -152,6 +114,7 @@ class TreatmentBar {
                     myLab.UnsetChosenStarts(-1);
                 }
                 myLab.DrawTreatline(index);
+                myLab.AdjustDrawState(index);
             }
         },null,null);
     }
@@ -190,7 +153,7 @@ class TreatmentBar {
     }
 }
 
-class SectionalGGV extends GuiGridVis{
+class SectionalGGV extends GuiGrid {
     final int entryX;
     final int entryY;
     public SectionalGGV(int gridW, int gridH, int entryX, int entryY, int compX, int compY) {
@@ -217,12 +180,13 @@ class SectionalGGV extends GuiGridVis{
 public class ClinicianSim extends GuiWindow{
     //GUI CONSTANTS
     final private static int PLAY=0,SET_START=1,SET_END=2;
-    final GuiLabel treatScoreLbl=new GuiLabel("Tolerable Toxicity:              %");
-    final GuiLabel burdenScoreLbl=new GuiLabel("Tolerable Burden:                %");
+    final GuiLabel treatScoreLbl=new GuiLabel("Tolerable Toxicity:________________%");
+    final GuiLabel visLbl=new GuiLabel("Default_View______________________________________",4,1);
+    final GuiLabel burdenScoreLbl=new GuiLabel("Tolerable Burden:________________%");
     final SectionalGGV treatScoreBar;
     final SectionalGGV burdenScoreBar;
-    final GuiLabel totalScoreLbl=new GuiLabel("-                  score:                     -");
-    final GuiLabel winLbl =new GuiLabel("keep playing...                     -");
+    final GuiLabel totalScoreLbl=new GuiLabel("__________________score:____________________");
+    final GuiLabel winLbl =new GuiLabel("keep playing...______________________");
     final int maxIntensity;
     final int nTreatments;
     final int nSteps;
@@ -237,6 +201,7 @@ public class ClinicianSim extends GuiWindow{
     final double maxTox;
     final double[]treatVals;
     //final boolean multiSwitch;
+    final boolean redrawOnSelectionSwitch;
 
     //GUI STATE
     boolean paused;
@@ -252,11 +217,13 @@ public class ClinicianSim extends GuiWindow{
     boolean[] switchVals;
     int step;
     int pauseStep;
+    int iLastMainSelected=-1;
+    int iLastSelected=-1;
 
     //GUI COMPONENTS
     TreatableTumor myModel;
-    final GuiGridVis vis;
-    final GuiGridVis alphaVis;
+    final GuiGrid vis;
+    final GuiGrid alphaVis;
     final SectionalGGV timeline;
     final SectionalGGV speedControl;
     //final SectionalGGV treatline;
@@ -266,7 +233,7 @@ public class ClinicianSim extends GuiWindow{
     final GuiButton setAllButton;
     final GuiButton resetButton;
     //final GuiComboBoxField treatmentSelect;
-    //final GuiGridVis intensitySelect;
+    //final GuiGrid intensitySelect;
     final ParamSet guiState;
     final TreatmentBar[]bars;
     //final GuiBoolField[]guiSwitches;
@@ -274,13 +241,14 @@ public class ClinicianSim extends GuiWindow{
 
     //EXTRA
     float[] colorScratch=new float[3];
-    public ClinicianSim(TreatableTumor myModel, int nSteps, int stateSaveFreq, int visScale, int timeScaleX, int barScaleY, int intensityScaleX, int stepMSmin, int stepMSmax) {
+    public ClinicianSim(TreatableTumor myModel, int nSteps, int stateSaveFreq, int visScale, int timeScaleX, int barScaleY, int intensityScaleX, int stepMSmin, int stepMSmax,boolean redrawOnTreatmentSwitch,boolean quickStart) {
         super("Clinician Simulator",true,true);
         this.stepMSmin=stepMSmin;
         this.stepMSmax=stepMSmax;
         this.stepMS=stepMSmin;
         this.myModel =myModel;
         this.stateSaveFreq=stateSaveFreq;
+        this.redrawOnSelectionSwitch =redrawOnTreatmentSwitch;
         //this.multiSwitch=myModel.AllowMultiswitch();
         treatNames =myModel.GetTreatmentNames();
         nTreatments=treatNames.length;
@@ -296,7 +264,7 @@ public class ClinicianSim extends GuiWindow{
         //switchVals=new boolean[nSwitches];
         float[]hsbScratch=new float[3];
         for (int i = 0; i < nTreatments; i++) {
-            Utils.ColorToHSB(treatColors[i],hsbScratch);
+            Util.ColorToHSB(treatColors[i],hsbScratch);
             treatHues[i]=hsbScratch[0];
         }
         maxBurden=myModel.GetMaxBurden();
@@ -321,8 +289,15 @@ public class ClinicianSim extends GuiWindow{
 
         guiState=new ParamSet();
 
-        vis=new GuiGridVis(myModel.VisPixX(),myModel.VisPixY(),visScale,4,1);
-        alphaVis=new GuiGridVis(myModel.VisPixX(),myModel.VisPixY(),visScale,4,1);
+        vis=new GuiGrid(myModel.VisPixX(),myModel.VisPixY(),visScale,4,1);
+        vis.AddListeners(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                AdjustDrawState(-1);
+            }
+        },null,null);
+        int alphaVisScale=myModel.AlphaGridScaleFactor();
+        alphaVis=new GuiGrid(myModel.VisPixX()/alphaVisScale,myModel.VisPixY()/alphaVisScale,alphaVisScale*visScale,4,1);
         vis.AddAlphaGrid(alphaVis);
         for (int i = 0; i < alphaVis.length; i++) {
             alphaVis.SetPix(i, RGBA((double) 0, (double) 0, (double) 0, (double) 0));
@@ -332,7 +307,9 @@ public class ClinicianSim extends GuiWindow{
             TogglePause();
         });
         paused=false;
-        TogglePause();
+        if(!quickStart) {
+            TogglePause();
+        }
         undoButton =new GuiButton("Undo [U]",2,1,false,(e)->{
             LoadUndo();
         });
@@ -388,6 +365,7 @@ public class ClinicianSim extends GuiWindow{
         //    }
         //}
         AddCol(0,vis);
+        AddCol(0,visLbl);
         AddCol(1,new GuiLabel("Tumor Burden",2,1));
         AddCol(1,new GuiLabel("Treatment Toxicity",2,1));
         AddCol(0,setAllButton);
@@ -442,7 +420,7 @@ public class ClinicianSim extends GuiWindow{
         DrawIntensityLines();
         DrawTimeline();
         DrawTreatlines();
-        myModel.Draw(vis,alphaVis,switchVals);
+        myModel.Draw(vis,alphaVis,iLastSelected,visLbl,treatVals);
     }
     void ColorSpeedBar(int pos){
         for (int i = 0; i < speedControl.xDim; i++) {
@@ -454,6 +432,22 @@ public class ClinicianSim extends GuiWindow{
             }
         }
 
+    }
+    void AdjustDrawState(int selectionIndex){
+        int iPrev=iLastSelected;
+        if(selectionIndex>=0){//chose a treatment
+            iLastSelected=selectionIndex;
+        }
+        else{//chose main window
+            if(iLastSelected>=0) {
+                iLastSelected = iLastMainSelected;
+            }else{
+                iLastSelected-=1;
+            }
+        }
+        if(iPrev!=iLastSelected&&redrawOnSelectionSwitch){
+            myModel.Draw(vis,alphaVis,iLastSelected,visLbl,treatVals);
+        }
     }
 
     int GetMode(){
@@ -567,7 +561,7 @@ public class ClinicianSim extends GuiWindow{
         pauseStep=-1;
         SetPauseText();
     }
-    //treatment intensities fill a CAPACITY
+    //treatment intensities fill a CAPACITY_POP
     public void CheckValidModel(){
         if(treatNames.length==0){
             throw new IllegalStateException("treatment names must have nonzero length");
@@ -713,7 +707,7 @@ public class ClinicianSim extends GuiWindow{
             pauseStep=jumpStep;
         }
         DrawTimeline();
-        myModel.Draw(vis,alphaVis,switchVals);
+        myModel.Draw(vis,alphaVis,iLastSelected,visLbl,treatVals);
     }
     public void RunNextStep() {
         for (int i = 0; i < nTreatments; i++) {
@@ -750,7 +744,7 @@ public class ClinicianSim extends GuiWindow{
         if (step == pauseStep && !paused) {
             this.TogglePause();
         }
-        myModel.Draw(vis, alphaVis,switchVals);
+        myModel.Draw(vis, alphaVis,iLastSelected,visLbl,treatVals);
         burdens[step] = myModel.GetBurden();
         toxs[step] = myModel.GetTox();
         DrawTimeline();
@@ -772,7 +766,6 @@ public class ClinicianSim extends GuiWindow{
     public void RunModel(){
         while(true){
             if(!paused){
-                //BUG: running next step without instantiating
                 RunNextStep();
             }
             else{

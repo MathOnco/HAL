@@ -1,7 +1,7 @@
 package Framework.GridsAndAgents;
 
 import Framework.Tools.PDEequations;
-import Framework.Utils;
+import Framework.Util;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -67,7 +67,7 @@ public class Grid3Ddouble extends GridBase3D implements Serializable{
      */
     public void BoundAll(double min, double max){
         for(int i=0;i<length;i++){
-            field[i]= Utils.Bound(field[i],min,max);
+            field[i]= Util.Bound(field[i],min,max);
         }
     }
     /**

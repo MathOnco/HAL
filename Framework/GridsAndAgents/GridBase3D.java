@@ -1,6 +1,7 @@
 package Framework.GridsAndAgents;
 
-import Framework.Utils;
+import Framework.Interfaces.Coords3DToAction;
+import Framework.Util;
 
 /**
  * Created by bravorr on 5/17/17.
@@ -25,7 +26,7 @@ public abstract class GridBase3D extends GridBase{
     public int WrapI(int x, int y, int z){
         //wraps Coords to proper index
         if(In(x,y,z)) { return I(x,y,z);}
-        return I(Utils.ModWrap(x,xDim),Utils.ModWrap(y,yDim),Utils.ModWrap(z,zDim));
+        return I(Util.ModWrap(x,xDim), Util.ModWrap(y,yDim), Util.ModWrap(z,zDim));
     }
 
     /**
@@ -103,23 +104,23 @@ public abstract class GridBase3D extends GridBase{
             int x = hood[i * 3] + centerX;
             int y = hood[i * 3 + 1] + centerY;
             int z = hood[i * 3 + 2] + centerZ;
-            if (!Utils.InDim(xDim, x)) {
+            if (!Util.InDim(xDim, x)) {
                 if (wrapX) {
-                    x = Utils.ModWrap(x, xDim);
+                    x = Util.ModWrap(x, xDim);
                 } else {
                     continue;
                 }
             }
-            if (!Utils.InDim(yDim, y)) {
+            if (!Util.InDim(yDim, y)) {
                 if (wrapY) {
-                    y = Utils.ModWrap(y, yDim);
+                    y = Util.ModWrap(y, yDim);
                 } else {
                     continue;
                 }
             }
-            if (!Utils.InDim(zDim, z)) {
+            if (!Util.InDim(zDim, z)) {
                 if (wrapZ) {
-                    z = Utils.ModWrap(z, zDim);
+                    z = Util.ModWrap(z, zDim);
                 } else {
                     continue;
                 }
@@ -137,28 +138,63 @@ public abstract class GridBase3D extends GridBase{
             int x = hood[i * 3] + centerX;
             int y = hood[i * 3 + 1] + centerY;
             int z = hood[i * 3 + 2] + centerZ;
-            if (!Utils.InDim(xDim, x)) {
+            if (!Util.InDim(xDim, x)) {
                 if (wrapX) {
-                    x = Utils.ModWrap(x, xDim);
+                    x = Util.ModWrap(x, xDim);
                 } else {
                     continue;
                 }
             }
-            if (!Utils.InDim(yDim, y)) {
+            if (!Util.InDim(yDim, y)) {
                 if (wrapY) {
-                    y = Utils.ModWrap(y, yDim);
+                    y = Util.ModWrap(y, yDim);
                 } else {
                     continue;
                 }
             }
-            if (!Utils.InDim(zDim, z)) {
+            if (!Util.InDim(zDim, z)) {
                 if (wrapZ) {
-                    z = Utils.ModWrap(z, zDim);
+                    z = Util.ModWrap(z, zDim);
                 } else {
                     continue;
                 }
             }
             ret[ptCt]= I(x,y,z);
+            ptCt++;
+        }
+        return ptCt;
+    }
+
+    public int HoodToAction(int[] hood, int centerX, int centerY, int centerZ, Coords3DToAction Action) {
+        //moves coordinates to be around origin
+        //if any of the coordinates are outside the bounds, they will not be added
+        int ptCt = 0;
+        for (int i = 0; i < hood.length / 3; i++) {
+            int x = hood[i * 3] + centerX;
+            int y = hood[i * 3 + 1] + centerY;
+            int z = hood[i * 3 + 2] + centerZ;
+            if (!Util.InDim(xDim, x)) {
+                if (wrapX) {
+                    x = Util.ModWrap(x, xDim);
+                } else {
+                    continue;
+                }
+            }
+            if (!Util.InDim(yDim, y)) {
+                if (wrapY) {
+                    y = Util.ModWrap(y, yDim);
+                } else {
+                    continue;
+                }
+            }
+            if (!Util.InDim(zDim, z)) {
+                if (wrapZ) {
+                    z = Util.ModWrap(z, zDim);
+                } else {
+                    continue;
+                }
+            }
+            Action.Action(x,y,z);
             ptCt++;
         }
         return ptCt;
@@ -172,23 +208,23 @@ public abstract class GridBase3D extends GridBase{
             int x = coords[i * 3];
             int y = coords[i * 3 + 1];
             int z = coords[i * 3 + 2];
-            if (!Utils.InDim(xDim, x)) {
+            if (!Util.InDim(xDim, x)) {
                 if (wrapX) {
-                    x = Utils.ModWrap(x, xDim);
+                    x = Util.ModWrap(x, xDim);
                 } else {
                     continue;
                 }
             }
-            if (!Utils.InDim(yDim, y)) {
+            if (!Util.InDim(yDim, y)) {
                 if (wrapY) {
-                    y = Utils.ModWrap(y, yDim);
+                    y = Util.ModWrap(y, yDim);
                 } else {
                     continue;
                 }
             }
-            if (!Utils.InDim(zDim, z)) {
+            if (!Util.InDim(zDim, z)) {
                 if (wrapZ) {
-                    z = Utils.ModWrap(z, zDim);
+                    z = Util.ModWrap(z, zDim);
                 } else {
                     continue;
                 }
@@ -206,23 +242,23 @@ public abstract class GridBase3D extends GridBase{
             int x = coords[i * 3];
             int y = coords[i * 3 + 1];
             int z = coords[i * 3 + 2];
-            if (!Utils.InDim(xDim, x)) {
+            if (!Util.InDim(xDim, x)) {
                 if (wrapX) {
-                    x = Utils.ModWrap(x, xDim);
+                    x = Util.ModWrap(x, xDim);
                 } else {
                     continue;
                 }
             }
-            if (!Utils.InDim(yDim, y)) {
+            if (!Util.InDim(yDim, y)) {
                 if (wrapY) {
-                    y = Utils.ModWrap(y, yDim);
+                    y = Util.ModWrap(y, yDim);
                 } else {
                     continue;
                 }
             }
-            if (!Utils.InDim(zDim, z)) {
+            if (!Util.InDim(zDim, z)) {
                 if (wrapZ) {
-                    z = Utils.ModWrap(z, zDim);
+                    z = Util.ModWrap(z, zDim);
                 } else {
                     continue;
                 }
@@ -233,10 +269,10 @@ public abstract class GridBase3D extends GridBase{
         return ptCt;
     }
     public double DistSq(double x1, double y1, double z1, double x2, double y2, double z2, boolean wrapX, boolean wrapY, boolean wrapZ){
-        return Utils.DistSquared(x1,y1,z1,x2,y2,z2,xDim,yDim,zDim,wrapX,wrapY,wrapZ);
+        return Util.DistSquared(x1,y1,z1,x2,y2,z2,xDim,yDim,zDim,wrapX,wrapY,wrapZ);
     }
     public double DistSq(double x1, double y1, double z1, double x2, double y2, double z2){
-        return Utils.DistSquared(x1,y1,z1,x2,y2,z2,xDim,yDim,zDim,wrapX,wrapY,wrapZ);
+        return Util.DistSquared(x1,y1,z1,x2,y2,z2,xDim,yDim,zDim,wrapX,wrapY,wrapZ);
     }
     public int[]BoundaryIs(){
         int[] ret=new int[(xDim*yDim+xDim*zDim+yDim*zDim)*2];
