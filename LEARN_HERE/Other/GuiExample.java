@@ -2,7 +2,7 @@ package LEARN_HERE.Other;
 
 import Framework.Gui.*;
 
-import static Framework.Utils.RGB;
+import static Framework.Util.RGB;
 
 /**
  * Created by Rafael on 10/30/2017.

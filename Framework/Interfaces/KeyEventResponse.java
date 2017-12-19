@@ -6,6 +6,6 @@ import java.awt.event.KeyEvent;
  * Created by Rafael on 10/6/2017.
  */
 @FunctionalInterface
-public interface KeyEventFun {
+public interface KeyEventResponse {
     void RunEvent(KeyEvent e);
 }

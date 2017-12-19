@@ -8,6 +8,7 @@ import Framework.Util;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import static Framework.Util.Bound;
 import static Framework.Util.CategorialColor;
 import static Framework.Util.RGB;
 
@@ -15,7 +16,7 @@ import static Framework.Util.RGB;
  * Created by Rafael on 10/10/2017.
  */
 public abstract class NonSpatialPopModel {
-    final static int TO_INDEX=0,WEIGHT=1,PROBABILITY=2,BLACK=RGB(0,0,0);
+    final static int TO_INDEX=0,WEIGHT=1,PROBABILITY=2,BLACK=RGB(0,0,0),BLUE=RGB(0,0,1);
     private final long[][]pops;
     private final double[][]moranTransitionsFinal;
     private final int[][]moranToIndicesFinal;
@@ -117,18 +118,16 @@ public abstract class NonSpatialPopModel {
     }
     public void DrawPops(GuiGrid vis, long maxPop){
         long[]currPops=GetPops();
-        if(currPops.length>19){
-            throw new IllegalArgumentException("need a color for each pop color, number of colors: "+20+" number of pops: "+pops.length);
-        }
         int iCol=GetStep()%vis.xDim;
         for (int i = 0; i < vis.yDim; i++) {
             //clear the column
             vis.SetPix(iCol,i,BLACK);
         }
-        vis.SetPix(iCol,(int)((totalPop*1.0*vis.yDim)/maxPop),CategorialColor(0));
+        vis.SetPix(iCol,Bound((int)((totalPop*1.0*vis.yDim)/maxPop),0,vis.yDim-1),BLUE);
         for (int i = 0; i < currPops.length; i++) {
             if(currPops[i]<maxPop){
-                vis.SetPix(iCol,(int)((currPops[i]*1.0*vis.yDim)/maxPop),CategorialColor(i+1));
+                vis.SetPix(iCol,Bound((int)((currPops[i]*1.0*vis.yDim)/maxPop),0,vis.yDim-1),
+                        Util.HeatMapRGB((i+2.0)/(currPops.length+2.0)));
             }
         }
     }

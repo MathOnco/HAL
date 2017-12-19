@@ -33,7 +33,7 @@ public class GuiWindow{
     final GuiCloseAction closeAction;
     final TickTimer tt=new TickTimer();
     KeyboardFocusManager keyManager;
-    KeyEventFun EventResponse;
+    KeyEventResponse EventResponse;
     final ParamSet params;
     /**
      * @param title the title that will appear at the top of the window
@@ -298,7 +298,7 @@ public class GuiWindow{
         }
     }
 
-    public void AddKeyListener(KeyEventFun EventResponse){
+    public void AddKeyListener(KeyEventResponse EventResponse){
         this.EventResponse=EventResponse;
         keyManager=KeyboardFocusManager.getCurrentKeyboardFocusManager();
         GuiWindow win=this;

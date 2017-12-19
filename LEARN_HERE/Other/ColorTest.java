@@ -1,9 +1,6 @@
 package LEARN_HERE.Other;
 
-import Framework.Gui.GridVisWindow;
-import Framework.Gui.GuiGridVis;
-
-import static Framework.Utils.*;
+import static Framework.Util.*;
 
 /**
  * Created by rafael on 7/4/17.

@@ -468,15 +468,12 @@ public class GuiGrid implements GuiComp{
     public int ClickYsq(MouseEvent e){
         return (yDim-1)-e.getY()/ scale;
     };
-    public void AddListeners(MouseListener mouseListener, MouseMotionListener motionListener, KeyListener keyListener){
+    public void AddMouseListeners(MouseListener mouseListener, MouseMotionListener motionListener){
         if(mouseListener!=null) {
             this.panel.addMouseListener(mouseListener);
         }
         if(motionListener!=null) {
             this.panel.addMouseMotionListener(motionListener);
-        }
-        if(keyListener!=null) {
-            this.panel.addKeyListener(keyListener);
         }
     }
 

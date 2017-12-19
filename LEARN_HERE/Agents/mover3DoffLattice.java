@@ -2,13 +2,12 @@ package LEARN_HERE.Agents;
 
 import Framework.GridsAndAgents.AgentGrid3D;
 import Framework.GridsAndAgents.AgentPT3D;
-import Framework.Gui.GridVisWindow;
-import Framework.Gui.Vis3DOpenGL;
-import Framework.Utils;
+import Framework.Gui.GridWindow;
+import Framework.Gui.Window3DOpenGL;
+import Framework.Rand;
+import Framework.Util;
 
-import java.util.Random;
-
-import static Framework.Utils.RGB;
+import static Framework.Util.RGB;
 
 /**
  * Created by Rafael on 10/29/2017.
@@ -27,19 +26,19 @@ public class mover3DoffLattice extends AgentGrid3D<MoveAgentoffLattice> {
         int RED=RGB(1,0,0);
 
         mover3DoffLattice test=new mover3DoffLattice(10,10,10);
-        Vis3DOpenGL win3D=new Vis3DOpenGL("3D",500,500,test.xDim,test.yDim,test.zDim);
-        GridVisWindow win2D=new GridVisWindow("2D",test.xDim,test.yDim,20);
+        Window3DOpenGL win3D=new Window3DOpenGL("3D",500,500,test.xDim,test.yDim,test.zDim);
+        GridWindow win2D=new GridWindow("2D",test.xDim,test.yDim,20);
         MoveAgentoffLattice ourHero=test.NewAgentSQ(5,5,5);
-        Random rn=new Random();
+        Rand rn=new Rand();
         double[]moveCoordScratch=new double[3];
 
         for (int i = 0; i < 10000; i++) {
             win2D.TickPause(10);
-            Utils.RandomPointInSphere(0.2,moveCoordScratch,rn);
+            rn.RandomPointInSphere(0.2,moveCoordScratch);
             ourHero.MoveSafePT(ourHero.Xpt()+moveCoordScratch[0],ourHero.Ypt()+moveCoordScratch[1],ourHero.Zpt()+moveCoordScratch[2]);//random movement
 
             win2D.Clear(BLUE);
-            win2D.SetPix(ourHero.Xsq(),ourHero.Ysq(),Utils.HeatMapRGB(ourHero.Zsq(),0,test.zDim));//draw 2d
+            win2D.SetPix(ourHero.Xsq(),ourHero.Ysq(), Util.HeatMapRGB(ourHero.Zsq(),0,test.zDim));//draw 2d
 
             win3D.Clear(BLUE);
             win3D.Circle(ourHero.Xpt(),ourHero.Ypt(),ourHero.Zpt(),0.5,RED);//draw 3d

@@ -1,15 +1,15 @@
 package LEARN_HERE.Other;
 
-import Framework.Gui.Vis3DOpenGL;
+import Framework.Gui.Window3DOpenGL;
 
-import static Framework.Utils.*;
+import static Framework.Util.*;
 
 /**
  * Created by bravorr on 6/16/17.
  */
 class Vis3Dtest {
     public static void main(String[] args) {
-        Vis3DOpenGL v3d=new Vis3DOpenGL("testing", 640,480,10,10,10, true);
+        Window3DOpenGL v3d=new Window3DOpenGL("testing", 640,480,10,10,10, true);
         float[] circ=GenCirclePoints(0.5f,100);
         while(!v3d.CheckClosed()) {
             v3d.TickPause(0);

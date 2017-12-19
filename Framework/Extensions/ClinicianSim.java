@@ -86,15 +86,15 @@ class TreatmentBar {
         myLab.AddCol(1, nameLbl);
         myLab.AddCol(2, setAllBtn);
         myLab.AddCol(3, treatline);
-        intensitySelect.AddListeners(new MouseAdapter() {
+        intensitySelect.AddMouseListeners(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
                 chosenIntensity = intensitySelect.ClickX(e);
                 DrawIntensityLine();
                 myLab.AdjustDrawState(index);
             }
-        }, null, null);
-        treatline.AddListeners(new MouseAdapter() {
+        }, null);
+        treatline.AddMouseListeners(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
                 //UNSET OTHER CHOSENSTARTS
@@ -116,7 +116,7 @@ class TreatmentBar {
                 myLab.DrawTreatline(index);
                 myLab.AdjustDrawState(index);
             }
-        },null,null);
+        },null);
     }
 
     public void SetLine(){
@@ -290,12 +290,12 @@ public class ClinicianSim extends GuiWindow{
         guiState=new ParamSet();
 
         vis=new GuiGrid(myModel.VisPixX(),myModel.VisPixY(),visScale,4,1);
-        vis.AddListeners(new MouseAdapter() {
+        vis.AddMouseListeners(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
                 AdjustDrawState(-1);
             }
-        },null,null);
+        },null);
         int alphaVisScale=myModel.AlphaGridScaleFactor();
         alphaVis=new GuiGrid(myModel.VisPixX()/alphaVisScale,myModel.VisPixY()/alphaVisScale,alphaVisScale*visScale,4,1);
         vis.AddAlphaGrid(alphaVis);
@@ -328,7 +328,7 @@ public class ClinicianSim extends GuiWindow{
         });
         speedControl=new SectionalGGV(nSteps*timeScaleX/4,1,1,barScaleY,2,1);
         ColorSpeedBar(speedControl.xDim);
-        speedControl.AddListeners(new MouseAdapter() {
+        speedControl.AddMouseListeners(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 int pos=speedControl.ClickX(e)+1;
@@ -336,7 +336,7 @@ public class ClinicianSim extends GuiWindow{
                 ColorSpeedBar(pos);
                 stepMS=stepMSmax-(int)((stepMSmax-stepMSmin)*frac);
             }
-        },null,null);
+        },null);
         clearButton =new GuiButton("Clear [C]",false,(e)->{
             SavePlansToUndo();
             UpdateAfterTreatmentChange();
@@ -402,7 +402,7 @@ public class ClinicianSim extends GuiWindow{
             }
         });
 
-        timeline.AddListeners(new MouseAdapter() {
+        timeline.AddMouseListeners(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
                 int clickStep=timeline.ClickX(e);
@@ -413,7 +413,7 @@ public class ClinicianSim extends GuiWindow{
                 }
                 //JumpStep(timeline.ClickX(e));
             }
-        },null,null);
+        },null);
         saves[0]=SaveState();
         toxs[0]=myModel.GetTox();
         burdens[0]=myModel.GetBurden();

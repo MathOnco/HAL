@@ -1,6 +1,7 @@
 package Framework.Gui;
 
 import Framework.Interfaces.GuiCloseAction;
+import Framework.Interfaces.KeyEventResponse;
 
 /**
  * Created by Rafael on 9/5/2017.
@@ -39,6 +40,9 @@ public class GridWindow extends GuiGrid {
     private void RunGui(){
         win.AddCol(0, this);
         win.RunGui();
+    }
+    public void AddKeyListener(KeyEventResponse EventResponse){
+        win.AddKeyListener(EventResponse);
     }
     public void Dispose(){
         win.Dispose();

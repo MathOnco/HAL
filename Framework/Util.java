@@ -1708,6 +1708,17 @@ public final class Util {
         }
         return false;
     }
+    public static double[] MatVecMul(final double[] mat,final double[] vec,double[]out){
+        final int nCols=vec.length;
+        final int nRows=mat.length/nCols;
+        for (int y = 0; y < nRows; y++) {
+            out[y]=mat[y*nCols]*vec[0];
+            for (int x = 1; x < nCols; x++) {
+                out[y]+=mat[y*nCols+x]*vec[x];
+            }
+        }
+        return out;
+    }
 
     public static void MultiThread(int nRuns, int nThreads, ParallelFunction RunFun) {
         ArrayList<SweepRun> runners = new ArrayList<>(nRuns);

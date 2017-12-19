@@ -1,13 +1,12 @@
 package LEARN_HERE.Agents;
 
 import Framework.GridsAndAgents.AgentSQ2Dunstackable;
-import Framework.Gui.GridVisWindow;
+import Framework.Gui.GridWindow;
 import Framework.GridsAndAgents.AgentGrid2D;
-import Framework.Gui.GuiGridVis;
+import Framework.Gui.GuiGrid;
+import Framework.Rand;
 
-import java.util.Random;
-
-import static Framework.Utils.*;
+import static Framework.Util.*;
 
 /**
  * Created by Rafael on 9/5/2017.
@@ -17,17 +16,17 @@ class Cell extends AgentSQ2Dunstackable<BirthDeath> {
     int color;
 
     public void Step() {
-        if (G().rn.nextDouble() < G().DEATH_PROB) {
+        if (G().rn.Double() < G().DEATH_PROB) {
             Dispose();
         }
-        if (G().rn.nextDouble() < G().BIRTH_PROB) {
+        if (G().rn.Double() < G().BIRTH_PROB) {
             int nOptions = G().HoodToEmptyIs(G().mooreHood, G().hoodIs, Xsq(), Ysq());
             if (nOptions > 0) {
                 int newColor=color;
-                newColor=SetRed(newColor,GetRed(newColor)+G().rn.nextDouble()*0.1-0.05);
-                newColor=SetGreen(newColor,GetGreen(newColor)+G().rn.nextDouble()*0.1-0.05);
-                newColor=SetBlue(newColor,GetBlue(newColor)+G().rn.nextDouble()*0.1-0.05);
-                G().NewAgentSQ(G().hoodIs[G().rn.nextInt(nOptions)]).color=newColor;
+                newColor=SetRed(newColor,GetRed(newColor)+G().rn.Double()*0.1-0.05);
+                newColor=SetGreen(newColor,GetGreen(newColor)+G().rn.Double()*0.1-0.05);
+                newColor=SetBlue(newColor,GetBlue(newColor)+G().rn.Double()*0.1-0.05);
+                G().NewAgentSQ(G().hoodIs[G().rn.Int(nOptions)]).color=newColor;
             }
         }
     }
@@ -38,7 +37,7 @@ public class BirthDeath extends AgentGrid2D<Cell> {
     int BLACK=RGB(0,0,0);
     double DEATH_PROB=0.1;
     double BIRTH_PROB=0.2;
-    Random rn=new Random();
+    Rand rn=new Rand();
     int[]mooreHood=MooreHood(false);
     int[]hoodIs=new int[mooreHood.length];
     public BirthDeath(int x, int y, Class<Cell>cellClass) {
@@ -52,7 +51,7 @@ public class BirthDeath extends AgentGrid2D<Cell> {
             NewAgentSQ(Is[i]).color=GREY;
         }
     }
-    public void Step(GuiGridVis vis) {
+    public void Step(GuiGrid vis) {
         for (Cell c : this) {
             c.Step();
         }
@@ -65,7 +64,7 @@ public class BirthDeath extends AgentGrid2D<Cell> {
 
 
     public static void main(String[] args) {
-        GridVisWindow win=new GridVisWindow(100,100,10);
+        GridWindow win=new GridWindow(100,100,10);
         BirthDeath t=new BirthDeath(100,100,Cell.class);
         t.Setup(10);
         for (int i = 0; i < 100000; i++) {

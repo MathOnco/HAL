@@ -1,11 +1,11 @@
 package LEARN_HERE.Diffusbiles;
 
 import Framework.GridsAndAgents.PDEGrid2D;
-import Framework.Gui.GuiGridVis;
+import Framework.Gui.GuiGrid;
 import Framework.Gui.GuiLabel;
 import Framework.Gui.GuiWindow;
 import Framework.Gui.TickTimer;
-import Framework.Utils;
+import Framework.Util;
 
 /**
  * Created by rafael on 7/18/17.
@@ -20,8 +20,8 @@ public class ReactionDiffusion2D {
         //set up gui
         TickTimer trt=new TickTimer();
         GuiWindow win=new GuiWindow("2D Diffusion Testing",true);
-        GuiGridVis v1=new GuiGridVis(x,y,visScale);
-        GuiGridVis v2=new GuiGridVis(x,y,visScale);
+        GuiGrid v1=new GuiGrid(x,y,visScale);
+        GuiGrid v2=new GuiGrid(x,y,visScale);
         win.AddCol(0, new GuiLabel("advection"));
         win.AddCol(0, v1);
         win.AddCol(1, new GuiLabel("diffusion"));
@@ -46,8 +46,8 @@ public class ReactionDiffusion2D {
             //diffusion
             g2.DiffusionADI(0.01);
             //draw results
-            v1.DrawGridDiff(g1, Utils::HeatMapRGB);
-            v2.DrawGridDiff(g2, Utils::HeatMapRGB);
+            v1.DrawGridDiff(g1, Util::HeatMapRGB);
+            v2.DrawGridDiff(g2, Util::HeatMapRGB);
         }
         win.Dispose();
     }

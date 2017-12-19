@@ -29,7 +29,7 @@ public class AgentBase <T extends GridBase> implements Serializable{
         if(newAge<0){
             throw new IllegalArgumentException("Can't set age of an agent to less than 0! Age:"+newAge);
         }
-        this.birthTick=myGrid.tick+newAge;
+        this.birthTick=myGrid.tick-newAge;
     }
     public int _GetAgentListIndex(){
         return iList;
@@ -45,7 +45,7 @@ public class AgentBase <T extends GridBase> implements Serializable{
     /**
      * Returns whether the agent is alive or has been disposed
      */
-    public boolean Alive(){
+    public boolean IsAlive(){
         return alive;
     }
 

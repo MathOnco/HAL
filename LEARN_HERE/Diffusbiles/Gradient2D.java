@@ -1,7 +1,7 @@
 package LEARN_HERE.Diffusbiles;
 
 import Framework.GridsAndAgents.PDEGrid2D;
-import Framework.Gui.GuiGridVis;
+import Framework.Gui.GuiGrid;
 
 /**
  * Created by Rafael on 10/29/2017.
@@ -9,7 +9,7 @@ import Framework.Gui.GuiGridVis;
 public class Gradient2D {
     public static void main(String[] args) {
         int xD=10,yD=10;
-        GuiGridVis vis=new GuiGridVis(xD,yD,10);
+        GuiGrid vis=new GuiGrid(xD,yD,10);
         PDEGrid2D diff=new PDEGrid2D(xD,yD);
             for (int y = 0; y < diff.yDim; y++) {
                 double setVal=y*1.0/diff.xDim;

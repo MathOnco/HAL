@@ -2,9 +2,9 @@ package LEARN_HERE.Agents;
 
 import Framework.GridsAndAgents.AgentGrid3D;
 import Framework.GridsAndAgents.AgentSQ3Dunstackable;
-import Framework.Gui.GridVisWindow;
-import Framework.Gui.Vis3DOpenGL;
-import Framework.Utils;
+import Framework.Gui.GridWindow;
+import Framework.Gui.Window3DOpenGL;
+import Framework.Util;
 
 import java.util.Random;
 
@@ -21,12 +21,12 @@ public class Mover3D extends AgentGrid3D<MoveAgent> {
     }
 
     public static void main(String[] args) {
-        int BLACK= Utils.RGB(0,0,0);
-        int WHITE= Utils.RGB(1,1,1);
+        int BLACK= Util.RGB(0,0,0);
+        int WHITE= Util.RGB(1,1,1);
 
         Mover3D test=new Mover3D(10,10,10);
-        Vis3DOpenGL win3D=new Vis3DOpenGL("3D",500,500,test.xDim,test.yDim,test.zDim);
-        GridVisWindow win2D=new GridVisWindow("2D",test.xDim,test.yDim,20);
+        Window3DOpenGL win3D=new Window3DOpenGL("3D",500,500,test.xDim,test.yDim,test.zDim);
+        GridWindow win2D=new GridWindow("2D",test.xDim,test.yDim,20);
         MoveAgent ourHero=test.NewAgentSQ(5,5,5);
         Random rn=new Random();
 
@@ -35,7 +35,7 @@ public class Mover3D extends AgentGrid3D<MoveAgent> {
             ourHero.MoveSafeSQ(ourHero.Xsq()+(rn.nextInt(3)-1),ourHero.Ysq()+(rn.nextInt(3)-1),ourHero.Zsq()+(rn.nextInt(3)-1));//random movement
 
             win2D.Clear(BLACK);
-            win2D.SetPix(ourHero.Xsq(),ourHero.Ysq(),Utils.HeatMapRGB(ourHero.Zsq(),0,test.zDim));//draw 2d
+            win2D.SetPix(ourHero.Xsq(),ourHero.Ysq(), Util.HeatMapRGB(ourHero.Zsq(),0,test.zDim));//draw 2d
 
             win3D.Clear(BLACK);
             win3D.Circle(ourHero.Xsq(),ourHero.Ysq(),ourHero.Zsq(),0.5,WHITE);//draw 3d
