@@ -1,6 +1,7 @@
 package Framework.GridsAndAgents;
 
-import Framework.Interfaces.Coords2DToAction;
+import Framework.Interfaces.CoordsAction;
+import Framework.Interfaces.IndexAction;
 import Framework.Interfaces.Coords2DToBool;
 import Framework.Util;
 
@@ -164,7 +165,33 @@ public abstract class GridBase2D extends GridBase{
         return ptCt;
     }
 
-    public int HoodToAction(int[] coords, int centerX, int centerY, Coords2DToAction Action){
+    public int HoodAction(int[] coords, int centerX, int centerY, IndexAction Action){
+        //moves coordinates to be around origin
+        //if any of the coordinates are outside the bounds, they will not be added
+        int ptCt=0;
+        for(int i=0;i<coords.length/2;i++) {
+            int x = coords[i * 2] + centerX;
+            int y = coords[i * 2 + 1] + centerY;
+            if (!Util.InDim(xDim, x)) {
+                if (wrapX) {
+                    x = Util.ModWrap(x, xDim);
+                } else {
+                    continue;
+                }
+            }
+            if (!Util.InDim(yDim, y)) {
+                if (wrapY) {
+                    y = Util.ModWrap(y, yDim);
+                } else {
+                    continue;
+                }
+            }
+            Action.Action(I(x,y));
+            ptCt++;
+        }
+        return ptCt;
+    }
+    public int HoodAction(int[] coords, int centerX, int centerY, CoordsAction Action){
         //moves coordinates to be around origin
         //if any of the coordinates are outside the bounds, they will not be added
         int ptCt=0;
@@ -190,7 +217,33 @@ public abstract class GridBase2D extends GridBase{
         }
         return ptCt;
     }
-    public int CoordsToAction(int[] coords,boolean wrapX,boolean wrapY,Coords2DToAction Action){
+    public int CoordsAction(int[] coords,boolean wrapX,boolean wrapY,IndexAction Action){
+        //moves coordinates to be around origin
+        //if any of the coordinates are outside the bounds, they will not be added
+        int ptCt=0;
+        for(int i=0;i<coords.length/2;i++) {
+            int x = coords[i * 2];
+            int y = coords[i * 2 + 1];
+            if (!Util.InDim(xDim, x)) {
+                if (wrapX) {
+                    x = Util.ModWrap(x, xDim);
+                } else {
+                    continue;
+                }
+            }
+            if (!Util.InDim(yDim, y)) {
+                if (wrapY) {
+                    y = Util.ModWrap(y, yDim);
+                } else {
+                    continue;
+                }
+            }
+            Action.Action(I(x,y));
+            ptCt++;
+        }
+        return ptCt;
+    }
+    public int CoordsAction(int[] coords,boolean wrapX,boolean wrapY,CoordsAction Action){
         //moves coordinates to be around origin
         //if any of the coordinates are outside the bounds, they will not be added
         int ptCt=0;

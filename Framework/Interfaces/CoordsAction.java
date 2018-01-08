@@ -1,6 +1,6 @@
 package Framework.Interfaces;
 
 @FunctionalInterface
-public interface Coords2DToAction {
+public interface CoordsAction {
     void Action(int x,int y);
 }

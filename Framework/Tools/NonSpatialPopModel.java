@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import static Framework.Util.Bound;
-import static Framework.Util.CategorialColor;
 import static Framework.Util.RGB;
 
 /**
@@ -140,7 +139,7 @@ public abstract class NonSpatialPopModel {
 
         Arrays.fill(nextPops,0);//clear the next timestep array
 
-        totalPop= Util.SumArray(currPops);
+        totalPop= Util.ArraySum(currPops);
         if(totalPop==0){
             step++;
             return totalPop;

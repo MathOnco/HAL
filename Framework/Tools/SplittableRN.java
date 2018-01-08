@@ -25,6 +25,8 @@ package Framework.Tools;
  * questions.
  */
 
+import Framework.Interfaces.RNG;
+
 import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.Spliterator;
@@ -91,7 +93,7 @@ import java.util.stream.StreamSupport;
  * @author  Doug Lea
  * @since   1.8
  */
-public final class SplittableRN implements Serializable{
+public final class SplittableRN implements Serializable,RNG {
 
     /*
      * Implementation Overview.
@@ -447,7 +449,7 @@ public final class SplittableRN implements Serializable{
      *         (inclusive) and the bound (exclusive)
      * @throws IllegalArgumentException if {@code bound} is not positive
      */
-    public int nextInt(int bound) {
+    public int Int(int bound) {
         if (bound <= 0)
             throw new IllegalArgumentException(BadBound);
         // Specialize internalNextInt for origin 0
@@ -499,7 +501,7 @@ public final class SplittableRN implements Serializable{
      *         (inclusive) and the bound (exclusive)
      * @throws IllegalArgumentException if {@code bound} is not positive
      */
-    public long nextLong(long bound) {
+    public long Long(long bound) {
         if (bound <= 0)
             throw new IllegalArgumentException(BadBound);
         // Specialize internalNextLong for origin 0
@@ -540,7 +542,7 @@ public final class SplittableRN implements Serializable{
      * @return a pseudorandom {@code double} value between zero
      *         (inclusive) and one (exclusive)
      */
-    public double nextDouble() {
+    public double Double() {
         return (mix64(nextSeed()) >>> 11) * DOUBLE_UNIT;
     }
 
@@ -553,7 +555,7 @@ public final class SplittableRN implements Serializable{
      *         (inclusive) and the bound (exclusive)
      * @throws IllegalArgumentException if {@code bound} is not positive
      */
-    public double nextDouble(double bound) {
+    public double Double(double bound) {
         if (!(bound > 0.0))
             throw new IllegalArgumentException(BadBound);
         double result = (mix64(nextSeed()) >>> 11) * DOUBLE_UNIT * bound;
@@ -583,7 +585,7 @@ public final class SplittableRN implements Serializable{
      *
      * @return a pseudorandom {@code boolean} value
      */
-    public boolean nextBoolean() {
+    public boolean Bool() {
         return mix32(nextSeed()) < 0;
     }
 

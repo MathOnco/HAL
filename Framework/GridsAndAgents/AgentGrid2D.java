@@ -293,12 +293,18 @@ public class AgentGrid2D<T extends AgentBaseSpatial> extends GridBase2D implemen
         for (T a : this) {
            a.Dispose();
         }
+        if(GetPop()>0){
+            throw new IllegalStateException("Something is wrong with Reset, tell Rafael Bravo to fix this!");
+        }
         tick=0;
     }
     public void ResetHard(){
         IncTick();
         for (T a : this) {
             a.Dispose();
+        }
+        if(GetPop()>0){
+            throw new IllegalStateException("Something is wrong with Reset, tell Rafael Bravo to fix this!");
         }
         this.agents.Reset();
         tick=0;

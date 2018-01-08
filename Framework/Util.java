@@ -356,13 +356,6 @@ public final class Util {
         }
         return sum;
     }
-    public static long SumArray(long[] arr) {
-        long sum = 0;
-        for (long val : arr) {
-            sum += val;
-        }
-        return sum;
-    }
 
     /**
      * prints an array to a string
@@ -1689,7 +1682,7 @@ public final class Util {
 
     //REFLECTION
     public static<T,O extends T> boolean IsMethodOverridden(Class<O> derived,Class<T> base,String methodName){
-            Method[] meths=derived.getClass().getDeclaredMethods();
+            Method[] meths=derived.getDeclaredMethods();
             Method[] baseMeths=base.getDeclaredMethods();
         for (Method meth : meths) {
             if(meth.getName().equals(methodName)) {

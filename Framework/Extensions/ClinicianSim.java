@@ -2,6 +2,7 @@ package Framework.Extensions;
 
 import Framework.Gui.*;
 import Framework.Interfaces.TreatableTumor;
+import Framework.Interfaces.VoidFunction;
 import Framework.Tools.KeyRecorder;
 import Framework.Util;
 
@@ -179,6 +180,7 @@ class SectionalGGV extends GuiGrid {
     }
 public class ClinicianSim extends GuiWindow{
     //GUI CONSTANTS
+    VoidFunction stepExtra;
     final private static int PLAY=0,SET_START=1,SET_END=2;
     final GuiLabel treatScoreLbl=new GuiLabel("Tolerable Toxicity:________________%");
     final GuiLabel visLbl=new GuiLabel("Default_View______________________________________",4,1);
@@ -222,8 +224,9 @@ public class ClinicianSim extends GuiWindow{
 
     //GUI COMPONENTS
     TreatableTumor myModel;
-    final GuiGrid vis;
-    final GuiGrid alphaVis;
+    final GuiLabel tickLbl;
+    final public GuiGrid vis;
+    final public GuiGrid alphaVis;
     final SectionalGGV timeline;
     final SectionalGGV speedControl;
     //final SectionalGGV treatline;
@@ -249,6 +252,7 @@ public class ClinicianSim extends GuiWindow{
         this.myModel =myModel;
         this.stateSaveFreq=stateSaveFreq;
         this.redrawOnSelectionSwitch =redrawOnTreatmentSwitch;
+        tickLbl = new GuiLabel("tick:____________");
         //this.multiSwitch=myModel.AllowMultiswitch();
         treatNames =myModel.GetTreatmentNames();
         nTreatments=treatNames.length;
@@ -303,7 +307,7 @@ public class ClinicianSim extends GuiWindow{
             alphaVis.SetPix(i, RGBA((double) 0, (double) 0, (double) 0, (double) 0));
         }
         timeline=new SectionalGGV(nSteps,2,timeScaleX,barScaleY,1,2);
-        pauseButton=new GuiButton("      ",false,(e)->{
+        pauseButton=new GuiButton("Pause [Space]",false,(e)->{
             TogglePause();
         });
         paused=false;
@@ -353,6 +357,7 @@ public class ClinicianSim extends GuiWindow{
         AddCol(0,burdenScoreBar);
         AddCol(2, winLbl);
         AddCol(2,totalScoreLbl);
+        AddCol(3,tickLbl);
         AddCol(2,new GuiLabel("Speed Control",2,1));
         AddCol(2,speedControl);
         //guiSwitches=new GuiBoolField[nSwitches];
@@ -550,7 +555,7 @@ public class ClinicianSim extends GuiWindow{
     }
     void SetPauseText(){
         if(GetMode()!=0){
-            pauseButton.SetText("    Play [space]");
+            pauseButton.SetText("Play [space]");
         }
         else{
             pauseButton.SetText("Pause [space]");
@@ -749,21 +754,35 @@ public class ClinicianSim extends GuiWindow{
         toxs[step] = myModel.GetTox();
         DrawTimeline();
         DrawTreatlines();
+        SetTickLbl();
+        if(stepExtra!=null){
+            stepExtra.Execute();
+        }
     }
-    public void DrawTreatlines(){
+    public void AddExtraStepAction(VoidFunction action){
+        stepExtra=action;
+    }
+    void DrawTreatlines(){
         for (int i = 0; i < nSteps; i++) {
             for (int j = 0; j < nTreatments; j++) {
                 bars[j].DrawTreatmentLine(i);
             }
         }
     }
-    public void DrawTreatline(int treatI){
+    void DrawTreatline(int treatI){
         for (int i = 0; i < nSteps; i++) {
             bars[treatI].DrawTreatmentLine(i);
         }
 
     }
+    void SetTickLbl(){
+        tickLbl.SetText("Tick: "+step);
+    }
+    public int GetTick(){
+        return step;
+    }
     public void RunModel(){
+        SetTickLbl();
         while(true){
             if(!paused){
                 RunNextStep();

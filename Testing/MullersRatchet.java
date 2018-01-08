@@ -22,6 +22,6 @@ public class MullersRatchet{
         }
     }
     public static void main(String[] args) {
-        //NonSpatialPopulationModel mr=new NonSpatialPopulationModel()
+        //Ratchet mr=new Ratchet()
     }
 }

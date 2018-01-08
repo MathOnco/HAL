@@ -316,6 +316,31 @@ public class AgentGrid3D<T extends AgentBaseSpatial> extends GridBase3D implemen
         return grid[index];
     }
 
+    /**
+     * calls dispose on all agents in the typeGrid, resets the tick timer to 0.
+     */
+    public void Reset(){
+        IncTick();
+        for (T a : this) {
+            a.Dispose();
+        }
+        if(GetPop()>0){
+            throw new IllegalStateException("Something is wrong with Reset, tell Rafael Bravo to fix this!");
+        }
+        tick=0;
+    }
+    public void ResetHard(){
+        IncTick();
+        for (T a : this) {
+            a.Dispose();
+        }
+        if(GetPop()>0){
+            throw new IllegalStateException("Something is wrong with Reset, tell Rafael Bravo to fix this!");
+        }
+        this.agents.Reset();
+        tick=0;
+    }
+
     public void AgentsInRad(final ArrayList<T> retAgentList, final double x, final double y, final double z, final double rad, boolean wrapX, boolean wrapY, boolean wrapZ){
         int nAgents;
         for (int xSq = (int)Math.floor(x-rad); xSq <(int)Math.ceil(x+rad) ; xSq++) {
