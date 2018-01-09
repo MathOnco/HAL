@@ -3,10 +3,7 @@ package Framework;
 import Framework.GridsAndAgents.AgentBase;
 import Framework.GridsAndAgents.AgentBaseSpatial;
 import Framework.GridsAndAgents.AgentGrid2D;
-import Framework.Interfaces.CoordsToAction2D;
-import Framework.Interfaces.DoubleToDouble;
-import Framework.Interfaces.ParallelFunction;
-import Framework.Interfaces.Sortable;
+import Framework.Interfaces.*;
 import Framework.Tools.SweepRun;
 
 import java.awt.*;
@@ -877,7 +874,7 @@ public final class Util {
         }
         return Count;
     }
-    public static void AlongLineCoords(double x1, double y1, double x2, double y2, CoordsToAction2D Action) {
+    public static void AlongLineCoords(double x1, double y1, double x2, double y2, CoordsAction Action) {
         double dx = Math.abs(x2 - x1);
         double dy = Math.abs(y2 - y1);
 

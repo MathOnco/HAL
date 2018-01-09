@@ -92,9 +92,9 @@ public class Rand implements Serializable{
             n -= ni;
             pSum -= probabilities[i];
         }
-        if (Math.abs(pSum - 1) > DOUBLE_EPSILON) {
-            throw new IllegalArgumentException("Multinomial probabilities array must sum to 1");
-        }
+//        if (Math.abs(pSum - 1) > DOUBLE_EPSILON) {
+//            throw new IllegalArgumentException("Multinomial probabilities array must sum to 1");
+//        }
     }
 
     //TODO: multinomial is slow for low probs...
@@ -137,9 +137,9 @@ public class Rand implements Serializable{
             n -= ni;
             pSum -= probabilities[i];
         }
-        if (Math.abs(pSum - 1) > DOUBLE_EPSILON) {
-            throw new IllegalArgumentException("Multinomial probabilities array must sum to 1");
-        }
+//        if (Math.abs(pSum - 1) > DOUBLE_EPSILON) {
+//            throw new IllegalArgumentException("Multinomial probabilities array must sum to 1");
+//        }
     }
 
     /**

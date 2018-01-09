@@ -1,11 +1,12 @@
 package Framework.Tools;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
 /**
  * Created by Rafael on 8/1/2017.
  */
-public class PerformanceTimer {
+public class PerformanceTimer implements Serializable {
     HashMap<String,Long> times=new HashMap<>();
     public void Start(String label){
         times.put(label,System.currentTimeMillis());
