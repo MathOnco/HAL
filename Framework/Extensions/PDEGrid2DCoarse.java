@@ -12,6 +12,8 @@ public class PDEGrid2DCoarse implements Serializable{
     final private double denom;
     private double nSetsPrev;
     private double setPartialMulPrev;
+//    private double mulPrevIn;
+//    private double mulPrevOut;
     public int ItoX(int i){
         return (i/(grid.xDim*spaceFactor))/spaceFactor;
     }
@@ -76,6 +78,10 @@ public class PDEGrid2DCoarse implements Serializable{
         grid.AddSwap(xc,yc,(val-oldVal)*mul);
     }
     public void Mul(int x,int y,double val){
+//        if(val!=mulPrevIn){
+//            mulPrevOut=Math.pow(val,denom);
+//            mulPrevIn=val;
+//        }
         grid.Mul(x/spaceFactor,y/spaceFactor,Math.pow(val,denom));
     }
     public void Add(int x,int y,double val){

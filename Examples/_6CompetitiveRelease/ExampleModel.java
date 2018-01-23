@@ -1,16 +1,17 @@
 package Examples._6CompetitiveRelease;
 
-import Framework.GridsAndAgents.AgentGrid2D;
-import Framework.GridsAndAgents.PDEGrid2D;
-import Framework.Gui.GifMaker;
-import Framework.Gui.GridWindow;
-import Framework.GridsAndAgents.AgentSQ2Dunstackable;
-import Framework.Gui.GuiGrid;
-import Framework.Tools.FileIO;
-import Framework.Rand;
+        import Framework.GridsAndAgents.AgentGrid2D;
+        import Framework.GridsAndAgents.PDEGrid2D;
+        import Framework.Gui.GifMaker;
+        import Framework.Gui.GridWindow;
+        import Framework.GridsAndAgents.AgentSQ2Dunstackable;
+        import Framework.Gui.GuiGrid;
+        import Framework.Tools.FileIO;
+        import Framework.Rand;
+        import Framework.Tools.PerformanceTimer;
 
-import static Examples._6CompetitiveRelease.ExampleModel.*;
-import static Framework.Util.*;
+        import static Examples._6CompetitiveRelease.ExampleModel.*;
+        import static Framework.Util.*;
 
 public class ExampleModel extends AgentGrid2D<ExampleCell> {
     //model constants
@@ -32,7 +33,7 @@ public class ExampleModel extends AgentGrid2D<ExampleCell> {
     public static void main(String[] args) {
         int x = 100, y = 100, visScale = 5, tumorRad = 10, msPause = 0;
         double resistantProp = 0.5;
-        GridWindow win = new GridWindow("Competitive Release", x*3, y, visScale);
+        GridWindow win = new GridWindow("Competitive Release", x*3, y, visScale,true,false);
         ExampleModel[] models = new ExampleModel[3];
         FileIO popsOut=new FileIO("populations.csv","w");
         for (int i = 0; i < models.length; i++) {
@@ -48,14 +49,13 @@ public class ExampleModel extends AgentGrid2D<ExampleCell> {
                 models[i].ModelStep();
                 models[i].DrawModel(win,i);
             }
-            if(popsOut!=null){
-                popsOut.Write(models[0].GetPop()+","+models[1].GetPop()+","+models[2].GetPop()+"\n");
-            }
+            //data recording
+            popsOut.Write(models[0].GetPop()+","+models[1].GetPop()+","+models[2].GetPop()+"\n");
             if((models[0].GetTick()-1)%100==0) {
                 win.ToPNG("ModelsTick" + (models[0].GetTick()-1)+".png");
             }
         }
-        popsOut.Close();
+        //popsOut.Close();
         win.Dispose();
     }
 

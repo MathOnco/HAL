@@ -22,6 +22,6 @@ public class MullersRatchet{
         }
     }
     public static void main(String[] args) {
-        //Ratchet mr=new Ratchet()
+        //ReplateRatchet mr=new ReplateRatchet()
     }
 }

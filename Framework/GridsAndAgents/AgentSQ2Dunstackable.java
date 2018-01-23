@@ -87,12 +87,6 @@ public class AgentSQ2Dunstackable<T extends AgentGrid2D> extends AgentBaseSpatia
         }
         myGrid.grid[iSq]=this;
     }
-    public int HoodAction(int[]neighborhood, IndexAction Action){
-        return G().HoodAction(neighborhood,Xsq(),Ysq(),Action);
-    }
-    public int HoodAction(int[]neighborhood, CoordsAction Action){
-        return G().HoodAction(neighborhood,Xsq(),Ysq(),Action);
-    }
     public int HoodToIs(int[]neighborhood,int[]retIs){
         return G().HoodToIs(neighborhood,retIs,this.Xsq(),this.Ysq());
     }

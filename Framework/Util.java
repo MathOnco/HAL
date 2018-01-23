@@ -4,12 +4,15 @@ import Framework.GridsAndAgents.AgentBase;
 import Framework.GridsAndAgents.AgentBaseSpatial;
 import Framework.GridsAndAgents.AgentGrid2D;
 import Framework.Interfaces.*;
+import Framework.Tools.SerializableModel;
 import Framework.Tools.SweepRun;
 
 import java.awt.*;
-import java.io.File;
+import java.io.*;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -1710,6 +1713,11 @@ public final class Util {
         return out;
     }
 
+    //MULTITHREADING
+    public static void MultiThread(int nRuns,ParallelFunction RunFun){
+        MultiThread(nRuns,Runtime.getRuntime().availableProcessors(),RunFun);
+    }
+
     public static void MultiThread(int nRuns, int nThreads, ParallelFunction RunFun) {
         ArrayList<SweepRun> runners = new ArrayList<>(nRuns);
         for (int i = 0; i < nRuns; i++) {
@@ -1722,6 +1730,93 @@ public final class Util {
         exec.shutdown();
         while (!exec.isTerminated()) ;
     }
+
+
+    //SAVING AND LOADING
+    public static byte[] SaveState(SerializableModel model){
+        ByteArrayOutputStream bos=new ByteArrayOutputStream();
+        ObjectOutput out;
+        try{
+            out= new ObjectOutputStream(bos);
+            out.writeObject(model);
+            out.flush();
+            return bos.toByteArray();
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        } finally {
+            try{
+                bos.close();
+            }
+            catch (IOException e){
+                System.out.println(e.getMessage());
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+    public static void SaveState(SerializableModel model,String stateFileName) {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ObjectOutput out;
+        try {
+            out = new ObjectOutputStream(bos);
+            out.writeObject(model);
+            out.flush();
+            bos.writeTo(new DataOutputStream(new BufferedOutputStream(new FileOutputStream(stateFileName, false))));
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        } finally {
+            try {
+                bos.close();
+            } catch (IOException e) {
+                System.out.println(e.getMessage());
+                e.printStackTrace();
+            }
+        }
+    }
+
+    static byte[] StateFromFile(String stateBytesFile){
+        Path path= Paths.get(stateBytesFile);
+        try {
+            return Files.readAllBytes(path);
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static <T extends SerializableModel> T LoadState(String stateBytesFile){
+        return LoadState(StateFromFile(stateBytesFile));
+    }
+    public static <T extends SerializableModel> T LoadState(byte[] state){
+        ByteArrayInputStream bis=new ByteArrayInputStream(state);
+        ObjectInput in=null;
+        SerializableModel ret=null;
+        try{
+            in=new ObjectInputStream(bis);
+            ret= (SerializableModel) in.readObject();
+            ret.SetupConstructors();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        } finally{
+            try{
+                if(in!=null){
+                    in.close();
+                }
+            }
+            catch (IOException e){
+                System.out.println(e.getMessage());
+                e.printStackTrace();
+            }
+        }
+        return (T)ret;
+    }
+
 }
 
 

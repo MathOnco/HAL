@@ -2,6 +2,7 @@ package Framework.Gui;
 
 import Framework.Interfaces.*;
 import Framework.Interfaces.MenuItem;
+import Framework.Tools.KeyRecorder;
 
 import javax.swing.*;
 import java.awt.*;
@@ -19,6 +20,7 @@ import java.util.ArrayList;
 //TODO: make something like the ParamSet, but for the entire GuiWindow, is there any way to do this efficiently?
 public class GuiWindow{
     boolean alive;
+    KeyRecorder kr;
     final boolean active;
     final boolean main;
     final private GridBagConstraints gbc;
@@ -33,7 +35,6 @@ public class GuiWindow{
     final GuiCloseAction closeAction;
     final TickTimer tt=new TickTimer();
     KeyboardFocusManager keyManager;
-    KeyEventResponse EventResponse;
     final ParamSet params;
     /**
      * @param title the title that will appear at the top of the window
@@ -84,12 +85,16 @@ public class GuiWindow{
             this.frame.setTitle(title);
             panel = new JPanel();
             gbc = new GridBagConstraints();
+            gbc.weightx=1;
+            gbc.weighty=1;
+
             panel.setLayout(new GridBagLayout());
             this.frame.add(panel);
             this.locs = new int[1000 * 1000];
             for (int i = 0; i < 1000 * 1000; i++) {
                 locs[i] = -1;
             }
+            this.kr=new KeyRecorder();
         }
         else{
             this.frame=null;
@@ -148,12 +153,15 @@ public class GuiWindow{
             this.frame.setTitle(title);
             panel = new JPanel();
             gbc = new GridBagConstraints();
+            gbc.weightx=1;
+            gbc.weighty=1;
             panel.setLayout(new GridBagLayout());
             this.frame.add(panel);
             this.locs = new int[1000 * 1000];
             for (int i = 0; i < 1000 * 1000; i++) {
                 locs[i] = -1;
             }
+            this.kr=new KeyRecorder();
         }
         else{
             this.frame=null;
@@ -194,12 +202,15 @@ public class GuiWindow{
             this.frame.setTitle(title);
             panel = new JPanel();
             gbc = new GridBagConstraints();
+            gbc.weightx=1;
+            gbc.weighty=1;
             panel.setLayout(new GridBagLayout());
             this.frame.add(panel);
             this.locs = new int[1000 * 1000];
             for (int i = 0; i < 1000 * 1000; i++) {
                 locs[i] = -1;
             }
+            this.kr=new KeyRecorder();
         }
         else{
             this.frame=null;
@@ -236,12 +247,15 @@ public class GuiWindow{
             this.frame.setTitle(title);
             panel = new JPanel();
             gbc = new GridBagConstraints();
+            gbc.weightx=1;
+            gbc.weighty=1;
             panel.setLayout(new GridBagLayout());
             this.frame.add(panel);
             this.locs = new int[1000 * 1000];
             for (int i = 0; i < 1000 * 1000; i++) {
                 locs[i] = -1;
             }
+            this.kr=new KeyRecorder();
         }
         else{
             this.frame=null;
@@ -297,19 +311,41 @@ public class GuiWindow{
             frame.repaint();
         }
     }
+    public boolean IsKeyDown(char c){
+        if(active) {
+            return kr.IsPressed(c);
+        }
+        return false;
+    }
+    public boolean IsKeyDown(int keyCode){
+        if(active){
+            return kr.IsPressed(keyCode);
+        }
+        return false;
+    }
 
-    public void AddKeyListener(KeyEventResponse EventResponse){
-        this.EventResponse=EventResponse;
-        keyManager=KeyboardFocusManager.getCurrentKeyboardFocusManager();
-        GuiWindow win=this;
-        keyManager.addKeyEventDispatcher(new KeyEventDispatcher() {
-            @Override
-            public boolean dispatchKeyEvent(KeyEvent e) {
-                win.EventResponse.RunEvent(e);
-                return true;
-            }
+    public void AddKeyResponses(KeyResponse OnKeyDown, KeyResponse OnKeyUp){
+        if(active) {
+            keyManager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
+            GuiWindow win = this;
+            keyManager.addKeyEventDispatcher(new KeyEventDispatcher() {
+                @Override
+                public boolean dispatchKeyEvent(KeyEvent e) {
+                    if (e.getID() == e.KEY_PRESSED && kr.KeyPress(e.getKeyCode())) {
+                        if (OnKeyDown != null) {
+                            OnKeyDown.Response(e.getKeyChar(), e.getKeyCode());
+                        }
+                    } else if (e.getID() == e.KEY_RELEASED) {
+                        kr.KeyRelease(e.getKeyCode());
+                        if (OnKeyUp != null) {
+                            OnKeyUp.Response(e.getKeyChar(), e.getKeyCode());
+                        }
+                    }
+                    return true;
+                }
 
-        });
+            });
+        }
     }
 
     void PlaceComponent(GuiComp comp,int x,int y,int w,int h){

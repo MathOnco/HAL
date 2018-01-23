@@ -19,13 +19,10 @@ import static Framework.Util.*;
  */
 /*
 TODO:
-[ ] add option selector
-    description:{
-        sorta combo-boxlike,
-        first is always none,
-        others are picking a specific value
-        when the model runs over a previously chosen thing, it will be overridden by the last selection
-
+    -add grey regions at beginning and end of timeline to help with selection at the extreme ends
+    -fix reverting to main color cycle after clicking on screen
+    -add option to set speed when model starts
+    -fix model error
 */
 
 class StateDebugger{
@@ -383,29 +380,24 @@ public class ClinicianSim extends GuiWindow{
         AddCol(0,pauseButton);
         AddCol(1, clearButton);
         AddCol(2, undoButton);
-        AddKeyListener((KeyEvent e) ->{
-            if(e.getID()==KeyEvent.KEY_PRESSED&&keyRecorder.KeyPress(e.getKeyChar())) {
+        AddKeyResponses((c,i) ->{
                 //key was pressed for the first time
-                if(e.getKeyChar()==' '){
+                if(c==' '){
                     pauseButton.doClick(0);
                 }
-                else if(e.getKeyChar()=='s'){
+                else if(c=='s'){
                     setAllButton.doClick(0);
                 }
-                else if(e.getKeyChar()=='c'){
+                else if(c=='c'){
                     clearButton.doClick(0);
                 }
-                else if(e.getKeyChar()=='u'){
+                else if(c=='u'){
                     undoButton.doClick(0);
                 }
-                else if(e.getKeyChar()=='r'){
+                else if(c=='r'){
                     resetButton.doClick(0);
                 }
-            }
-            else if(e.getID()==KeyEvent.KEY_RELEASED){
-                keyRecorder.KeyRelease(e.getKeyChar());
-            }
-        });
+            },null);
 
         timeline.AddMouseListeners(new MouseAdapter() {
             @Override
