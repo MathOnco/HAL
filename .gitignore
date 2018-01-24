@@ -1,8 +1,13 @@
-
-*.iml
-
-\.idea/
-
-*.gif
-
-\.DS_Store
+*
+# only allow scource files
+!Framework/*
+!LEARN_HERE/*
+!Testing/*
+!Raf/*
+!Examples/*
+!Testing/*
+!.gitignore
+!NinjaTurtleScheme.jar
+!manual.pdf
+!FrameworkPresentation.pdf
+.DS_Store
