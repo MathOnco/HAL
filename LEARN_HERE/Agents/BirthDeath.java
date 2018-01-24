@@ -1,8 +1,8 @@
 package LEARN_HERE.Agents;
 
+import Framework.GridsAndAgents.AgentGrid2D;
 import Framework.GridsAndAgents.AgentSQ2Dunstackable;
 import Framework.Gui.GridWindow;
-import Framework.GridsAndAgents.AgentGrid2D;
 import Framework.Gui.GuiGrid;
 import Framework.Rand;
 
@@ -60,6 +60,7 @@ public class BirthDeath extends AgentGrid2D<Cell> {
     public static void main(String[] args) {
         BirthDeath t=new BirthDeath(100,100);
         GridWindow win=new GridWindow(100,100,10);
+        BirthDeath t=new BirthDeath(100,100);
         t.Setup(10);
         for (int i = 0; i < 100000; i++) {
             win.TickPause(10);
