@@ -122,6 +122,21 @@ public class Window3DOpenGL {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         }
     }
+    public void ClearBox(int clearColor,int lineColor){
+        glClearColor((float)GetRed(clearColor),(float)GetGreen(clearColor),(float)GetBlue(clearColor), 1);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        Line(0,0,0,xDim,0,0,lineColor);
+        Line(0,0,0,0,yDim,0,lineColor);
+        Line(0,0,0,0,0,zDim,lineColor);
+        Line(xDim,yDim,zDim,0,yDim,zDim,lineColor);
+        Line(xDim,yDim,zDim,xDim,0,zDim,lineColor);
+        Line(xDim,yDim,zDim,xDim,yDim,0,lineColor);
+        Line(xDim,0,0,xDim,yDim,0,lineColor);
+        Line(xDim,0,0,xDim,0,zDim,lineColor);
+        Line(0,yDim,0,0,yDim,zDim,lineColor);
+        Line(0,yDim,0,xDim,yDim,0,lineColor);
+        Line(0,0,zDim,xDim,0,zDim,lineColor);
+    }
 
     public void Show(){
         if(active) {
@@ -241,7 +256,7 @@ public class Window3DOpenGL {
             glColor4f((float)GetRed(color),(float) GetGreen(color),(float) GetBlue(color),(float)GetAlpha(color));
             glBegin(GL_LINE_STRIP);
             for (int i = 0; i < coords.length; i+=3) {
-                glVertex3f((float)coords[i],(float)coords[i+1],(float)coords[i+2]);
+                glVertex3f((float)coords[i]+trans,(float)coords[i+1]+trans,(float)coords[i+2]+trans);
             }
             glEnd();
         }

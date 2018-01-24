@@ -99,6 +99,11 @@ public class AgentGrid0D<T extends Agent0D> extends GridBase implements Iterable
         tick=0;
     }
 
+    public void RandomAgent(Rand rn){
+        CleanAgents();
+        agents.agents.get(rn.Int(GetPop()));
+    }
+
     /**
      * returns the number of agents that are alive in the typeGrid
      */

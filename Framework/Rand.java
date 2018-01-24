@@ -1,5 +1,6 @@
 package Framework;
 
+import Framework.GridsAndAgents.AgentBase;
 import Framework.Interfaces.RNG;
 import Framework.Tools.Binomial;
 import Framework.Tools.Gaussian;

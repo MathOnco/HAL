@@ -22,7 +22,7 @@ public class mover3DoffLattice extends AgentGrid3D<MoveAgentoffLattice> {
     }
 
     public static void main(String[] args) {
-        int BLUE=RGB(0,0,0.2);
+        int BLUE=RGB(0,0,1);
         int RED=RGB(1,0,0);
 
         mover3DoffLattice test=new mover3DoffLattice(10,10,10);

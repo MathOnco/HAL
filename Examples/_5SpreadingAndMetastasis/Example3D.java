@@ -128,11 +128,11 @@ public class Example3D extends AgentGrid3D<ExCell3D> {
         return vesselCt;
     }
     public void DrawCells(Window3DOpenGL vis){
-        vis.Clear(BACKGROUND_COLOR);//used to clear gui
+        vis.ClearBox(BACKGROUND_COLOR,RGB(1,0,0));//used to clear gui
         for (ExCell3D cellOrVessel : this) {
             switch (cellOrVessel.type){
-                case VESSEL: vis.Circle(cellOrVessel.Xsq(),cellOrVessel.Ysq(),cellOrVessel.Zsq(),1, VESSEL_COLOR);break;
-                case TUMOR: vis.Circle(cellOrVessel.Xsq(),cellOrVessel.Ysq(),cellOrVessel.Zsq(),0.3,HeatMapBRG(Math.pow(oxygen.Get(cellOrVessel.Isq()),0.5)*0.8+0.2));
+                case VESSEL: vis.Circle(cellOrVessel.Xpt(),cellOrVessel.Ypt(),cellOrVessel.Zpt(),1, VESSEL_COLOR);break;
+                case TUMOR: vis.Circle(cellOrVessel.Xpt(),cellOrVessel.Ypt(),cellOrVessel.Zpt(),0.3,HeatMapBRG(Math.pow(oxygen.Get(cellOrVessel.Isq()),0.5)*0.8+0.2));
             }
         }
         vis.Show();
@@ -172,7 +172,7 @@ public class Example3D extends AgentGrid3D<ExCell3D> {
             ex.DiffStep();
         }
         GridWindow visResource=new GridWindow(x,y,5);
-        Window3DOpenGL vis=new Window3DOpenGL("TumorVis", 1000,1000,x,y,z);
+        Window3DOpenGL vis=new Window3DOpenGL("TumorVis", 1000,1000,x,z,y);
         while (!vis.CheckClosed()){
             ex.StepAll();
             ex.DrawCells(vis);

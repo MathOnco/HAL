@@ -324,6 +324,11 @@ public class AgentGrid2D<T extends AgentBaseSpatial> extends GridBase2D implemen
         });
     }
 
+    public void RandomAgent(Rand rn){
+        CleanAgents();
+        agents.agents.get(rn.Int(GetPop()));
+    }
+
     /**
      * returns the number of agents that are alive in the typeGrid
      */

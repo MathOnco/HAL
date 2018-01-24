@@ -397,7 +397,10 @@ public class AgentGrid3D<T extends AgentBaseSpatial> extends GridBase3D implemen
             }
         }
     }
-
+    public void RandomAgent(Rand rn){
+        CleanAgents();
+        agents.agents.get(rn.Int(GetPop()));
+    }
     /**
      * appends to the provided arraylist all agents on the square at the specified coordinates
      * @param retAgentList the arraylist ot be added to

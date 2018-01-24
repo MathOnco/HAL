@@ -8,7 +8,7 @@ import Framework.Rand;
 public class BinomialTest {
     public static void main(String[] args) {
         Rand rn=new Rand();
-        System.out.println(rn.Binomial(Long.MAX_VALUE,0.1)*1.0/Long.MAX_VALUE);
+        System.out.println(rn.Binomial(Long.MAX_VALUE,0.1)*1.0/ Long.MAX_VALUE);
 //        long[] res=new long[1000000];
 //        for (int i = 0; i < 1000000; i++) {
 //            res[i]=rn.Binomial(Integer.MAX_VALUE,0.001);

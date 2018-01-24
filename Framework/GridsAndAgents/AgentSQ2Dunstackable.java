@@ -1,8 +1,5 @@
 package Framework.GridsAndAgents;
 
-import Framework.Interfaces.CoordsAction;
-import Framework.Interfaces.IndexAction;
-
 import java.util.ArrayList;
 
 import static Framework.Util.InDim;

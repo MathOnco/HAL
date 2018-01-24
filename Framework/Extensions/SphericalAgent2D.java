@@ -142,7 +142,7 @@ public class SphericalAgent2D<A extends SphericalAgent2D,G extends AgentGrid2D<A
     public void ForceMove() {
         MoveSafePT(Xpt() + xVel, Ypt() + yVel, G().wrapX, G().wrapY);
     }
-    public A Divide(double[] scratchCoordArr, Rand rn, double divRadius, Gaussian gaussianGen, boolean wrapX, boolean wrapY){
+    public A Divide(double[] scratchCoordArr, Rand rn, double divRadius, boolean wrapX, boolean wrapY){
         if(rn!=null){
             rn.RandomPointOnCircleEdge(divRadius, scratchCoordArr);
         }
@@ -150,7 +150,7 @@ public class SphericalAgent2D<A extends SphericalAgent2D,G extends AgentGrid2D<A
         MoveSafePT(Xpt()-scratchCoordArr[0],Ypt()-scratchCoordArr[1],wrapX,wrapY);
         return child;
     }
-    public A Divide(double divRadius, double[] scratchCoordArr, Rand rn, Gaussian gaussianGen){
+    public A Divide(double divRadius, double[] scratchCoordArr, Rand rn){
         if(rn!=null){
             rn.RandomPointOnCircleEdge(divRadius, scratchCoordArr);
         }
