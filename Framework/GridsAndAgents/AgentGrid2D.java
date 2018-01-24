@@ -21,7 +21,7 @@ public class AgentGrid2D<T extends AgentBaseSpatial> extends GridBase2D implemen
         return grid[index];
     }
 
-    public void _SetupAgentListConstructor(Class<T> agentClass){
+    public void _PassAgentConstructor(Class<T> agentClass){
         agents.SetupConstructor(agentClass);
     }
 

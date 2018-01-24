@@ -95,12 +95,6 @@ public class AgentPT2D<T extends AgentGrid2D> extends AgentBaseSpatial<T> {
     public int HoodToOccupiedIs(int[]neighborhood,int[]retIs,boolean wrapX,boolean wrapY){
         return G().HoodToOccupiedIs(neighborhood,retIs,this.Xsq(),this.Ysq(),wrapX,wrapY);
     }
-    public int HoodAction(int[]neighborhood, IndexAction Action){
-        return G().HoodAction(neighborhood,Xsq(),Ysq(),Action);
-    }
-    public int HoodAction(int[]neighborhood, CoordsAction Action){
-        return G().HoodAction(neighborhood,Xsq(),Ysq(),Action);
-    }
 
     void RemSQ(){
         if(myGrid.grid[iSq]==this){

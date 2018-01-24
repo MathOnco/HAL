@@ -131,6 +131,35 @@ public class Window2DOpenGL {
             glEnd();
         }
     }
+    public void Line(double x1, double y1, double x2, double y2, int color){
+        if(active){
+            glColor4f((float)GetRed(color),(float) GetGreen(color),(float) GetBlue(color),(float)GetAlpha(color));
+            glBegin(GL_LINES);
+            glVertex2f((float)x1,(float)y1);
+            glVertex2f((float)x2,(float)y2);
+            glEnd();
+        }
+    }
+    public void LineStrip(double[]xs,double[]ys,int color){
+        if(active){
+            glColor4f((float)GetRed(color),(float) GetGreen(color),(float) GetBlue(color),(float)GetAlpha(color));
+            glBegin(GL_LINE_STRIP);
+            for (int i = 0; i < xs.length; i++) {
+                glVertex2f((float)xs[i],(float)ys[i]);
+            }
+            glEnd();
+        }
+    }
+    public void LineStrip(double[]coords,int color){
+        if(active){
+            glColor4f((float)GetRed(color),(float) GetGreen(color),(float) GetBlue(color),(float)GetAlpha(color));
+            glBegin(GL_LINE_STRIP);
+            for (int i = 0; i < coords.length; i+=2) {
+                glVertex2f((float)coords[i],(float)coords[i+1]);
+            }
+            glEnd();
+        }
+    }
     void SaveImg(String path,String mode){
         if(active){
             File out=new File(path);

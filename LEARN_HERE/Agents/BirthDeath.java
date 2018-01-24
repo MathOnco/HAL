@@ -1,8 +1,8 @@
 package LEARN_HERE.Agents;
 
+import Framework.GridsAndAgents.AgentGrid2D;
 import Framework.GridsAndAgents.AgentSQ2Dunstackable;
 import Framework.Gui.GridWindow;
-import Framework.GridsAndAgents.AgentGrid2D;
 import Framework.Gui.GuiGrid;
 import Framework.Rand;
 
@@ -40,8 +40,8 @@ public class BirthDeath extends AgentGrid2D<Cell> {
     Rand rn=new Rand();
     int[]mooreHood=MooreHood(false);
     int[]hoodIs=new int[mooreHood.length];
-    public BirthDeath(int x, int y, Class<Cell>cellClass) {
-        super(x, y, cellClass);
+    public BirthDeath(int x, int y) {
+        super(x, y, Cell.class);
     }
     public void Setup(double rad){
         int[]coords= CircleHood(true,rad);
@@ -65,7 +65,7 @@ public class BirthDeath extends AgentGrid2D<Cell> {
 
     public static void main(String[] args) {
         GridWindow win=new GridWindow(100,100,10);
-        BirthDeath t=new BirthDeath(100,100,Cell.class);
+        BirthDeath t=new BirthDeath(100,100);
         t.Setup(10);
         for (int i = 0; i < 100000; i++) {
             win.TickPause(10);

@@ -38,7 +38,7 @@ class CellOL extends SphericalAgent2D<CellOL,ExampleOffLattice>{
         yVel*=G().FRICTION;
         //compute whether division can occur, using the constants
         if((type == ExampleOffLattice.PURPLE &&CanDivide(G().PURP_DIV_BIAS,G().PURP_INHIB_WEIGHT))||(type == ExampleOffLattice.PINK &&CanDivide(G().PINK_DIV_BIAS,G().PINK_INHIB_WEIGHT))){
-            Divide(radius*2.0/3.0,G().divCoordStorage,G().rn, G().gn).Init(type);
+            Divide(radius*2.0/3.0,G().divCoordStorage,G().rn).Init(type);
         }
     }
 }

@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 public abstract class GridBase implements Serializable{
     int tick;
+    int[]actionIs=new int[10];//used with HoodToSingleAction
     public GridBase(){
     }
 

@@ -1,7 +1,8 @@
 package LEARN_HERE.Other;
 
 import Framework.Gui.GridWindow;
-import static Framework.Util.*;
+
+import static Framework.Util.CbCrPlaneColor;
 
 /**
  * Created by Rafael on 10/12/2017.

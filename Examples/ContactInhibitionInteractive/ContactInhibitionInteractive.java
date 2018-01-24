@@ -142,7 +142,7 @@ public class ContactInhibitionInteractive extends AgentGrid2D<Cell> implements T
         ccl.RunModel();
     }
     public void SetupConstructors(){
-        _SetupAgentListConstructor(Cell.class);
+        _PassAgentConstructor(Cell.class);
     }
 }
 

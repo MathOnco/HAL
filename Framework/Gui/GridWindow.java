@@ -1,7 +1,7 @@
 package Framework.Gui;
 
 import Framework.Interfaces.GuiCloseAction;
-import Framework.Interfaces.KeyEventResponse;
+import Framework.Interfaces.KeyResponse;
 
 /**
  * Created by Rafael on 9/5/2017.
@@ -31,6 +31,7 @@ public class GridWindow extends GuiGrid {
     public GridWindow(String title, int xDim, int yDim, int scaleFactor, boolean killOnClose, GuiCloseAction closeAction, boolean active) {
         super(xDim,yDim,scaleFactor,active);
         win=new GuiWindow(title, killOnClose, closeAction, active);
+        RunGui();
     }
     public GridWindow(String title, int xDim, int yDim, int scaleFactor, boolean killOnClose, GuiCloseAction closeAction) {
         super(xDim,yDim,scaleFactor,true);
@@ -41,8 +42,14 @@ public class GridWindow extends GuiGrid {
         win.AddCol(0, this);
         win.RunGui();
     }
-    public void AddKeyListener(KeyEventResponse EventResponse){
-        win.AddKeyListener(EventResponse);
+    public boolean IsKeyDown(char c){
+        return win.IsKeyDown(c);
+    }
+    public boolean IsKeyDown(int keyCode){
+        return win.IsKeyDown(keyCode);
+    }
+    public void AddKeyResponses(KeyResponse OnKeyDown, KeyResponse OnKeyUp){
+        win.AddKeyResponses(OnKeyDown,OnKeyUp);
     }
     public void Dispose(){
         win.Dispose();

@@ -217,6 +217,35 @@ public class Window3DOpenGL {
             glPopMatrix();
         }
     }
+    public void Line(double x1, double y1,double z1, double x2, double y2,double z2, int color){
+        if(active){
+            glColor4f((float)GetRed(color),(float) GetGreen(color),(float) GetBlue(color),(float)GetAlpha(color));
+            glBegin(GL_LINES);
+            glVertex3f((float)x1+trans,(float)y1+trans,(float)-z1+trans);
+            glVertex3f((float)x2+trans,(float)y2+trans,(float)-z2+trans);
+            glEnd();
+        }
+    }
+    public void LineStrip(double[]xs,double[]ys,double[]zs,int color){
+        if(active){
+            glColor4f((float)GetRed(color),(float) GetGreen(color),(float) GetBlue(color),(float)GetAlpha(color));
+            glBegin(GL_LINE_STRIP);
+            for (int i = 0; i < xs.length; i++) {
+                glVertex3f((float)xs[i]+trans,(float)ys[i]+trans,(float)-zs[i]+trans);
+            }
+            glEnd();
+        }
+    }
+    public void LineStrip(double[]coords,int color){
+        if(active){
+            glColor4f((float)GetRed(color),(float) GetGreen(color),(float) GetBlue(color),(float)GetAlpha(color));
+            glBegin(GL_LINE_STRIP);
+            for (int i = 0; i < coords.length; i+=3) {
+                glVertex3f((float)coords[i],(float)coords[i+1],(float)coords[i+2]);
+            }
+            glEnd();
+        }
+    }
     void SaveImg(String path,String mode){
         if(active){
             File out=new File(path);

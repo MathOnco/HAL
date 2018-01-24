@@ -2,7 +2,8 @@ package LEARN_HERE.Other;
 
 import Framework.Gui.Window3DOpenGL;
 
-import static Framework.Util.*;
+import static Framework.Util.GenCirclePoints;
+import static Framework.Util.RGB;
 
 /**
  * Created by bravorr on 6/16/17.
