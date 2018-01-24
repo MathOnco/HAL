@@ -136,6 +136,7 @@ public class Window3DOpenGL {
         Line(0,yDim,0,0,yDim,zDim,lineColor);
         Line(0,yDim,0,xDim,yDim,0,lineColor);
         Line(0,0,zDim,xDim,0,zDim,lineColor);
+        Line(0,0,zDim,0,yDim,zDim,lineColor);
     }
 
     public void Show(){
