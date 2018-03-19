@@ -2,7 +2,7 @@ package Testing;
 
 import Framework.GridsAndAgents.AgentGrid2D;
 import Framework.Gui.GridWindow;
-import Framework.Extensions.SphericalAgent2D;
+import Framework.GridsAndAgents.SphericalAgent2D;
 import Framework.Gui.GuiGrid;
 import Framework.Util;
 
@@ -59,7 +59,6 @@ public class ParticleExample extends AgentGrid2D<Particle> {
         for (Particle p: this) {
             p.Step2();
         }
-        IncTick();
     }
 
     public static void main(String[] args) {

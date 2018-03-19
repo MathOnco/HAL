@@ -17,6 +17,6 @@ public class DiffTest4 {
                 testArr[j]+=100;
             }
         }
-        pt.StopPr("DiffTest");
+        pt.Stop("DiffTest");
     }
 }

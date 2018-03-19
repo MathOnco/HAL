@@ -1,7 +1,6 @@
 package Framework.GridsAndAgents;
 
-import Framework.Interfaces.CoordsAction;
-import Framework.Interfaces.IndexAction;
+import Framework.Interfaces.AgentToBool;
 
 import java.util.ArrayList;
 
@@ -13,7 +12,7 @@ import static Framework.Util.*;
  * @param <T> the extended AgentGrid2D class that the agents will live in
  * Created by rafael on 11/18/16.
  */
-public class AgentPT2D<T extends AgentGrid2D> extends AgentBaseSpatial<T> {
+public class AgentPT2D<T extends AgentGrid2D> extends AgentBaseSpatial<T> implements Agent2DBase{
     private double ptX;
     private double ptY;
     AgentPT2D nextSq;
@@ -50,6 +49,9 @@ public class AgentPT2D<T extends AgentGrid2D> extends AgentBaseSpatial<T> {
         }
         RemSQ();
         myGrid.agents.RemoveAgent(this);
+        if(myNodes!=null){
+            myNodes.DisposeAll();
+        }
     }
 
     @Override
@@ -57,6 +59,41 @@ public class AgentPT2D<T extends AgentGrid2D> extends AgentBaseSpatial<T> {
         AgentPT2D toList=this;
         while (toList!=null){
             putHere.add(toList);
+            toList=toList.nextSq;
+        }
+    }
+
+    @Override
+    int GetCountOnSquare() {
+        int ct=1;
+        AgentPT2D curr=nextSq;
+        while(curr!=null){
+            ct++;
+            curr=curr.nextSq;
+        }
+        return ct;
+    }
+
+    @Override
+    int GetCountOnSquareEval(AgentToBool evalAgent) {
+        int ct=0;
+        AgentPT2D curr=this;
+        while (curr!=null){
+            if(evalAgent.EvalAgent(curr)){
+                ct++;
+                curr=curr.nextSq;
+            }
+        }
+        return ct;
+    }
+
+    @Override
+    void GetAllOnSquareEval(ArrayList<AgentBaseSpatial> putHere, AgentToBool evalAgent) {
+        AgentPT2D toList=this;
+        while (toList!=null){
+            if(evalAgent.EvalAgent(toList)) {
+                putHere.add(toList);
+            }
             toList=toList.nextSq;
         }
     }

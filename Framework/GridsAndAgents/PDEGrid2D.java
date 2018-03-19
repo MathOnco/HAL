@@ -176,10 +176,10 @@ public class PDEGrid2D extends Grid2Ddouble implements Serializable{
     /**
      * Swaps the prev and current field, and increments the tick
      */
-    public void SwapInc(){
-        SwapFields();
-        IncTick();
-    }
+//    public void SwapInc(){
+//        SwapFields();
+//        IncTick();
+//    }
 
     //assumed wrap around if non-periodic
     public void Advection(double xVel, double yVel){
@@ -201,7 +201,7 @@ public class PDEGrid2D extends Grid2Ddouble implements Serializable{
     public void Advection(double[] xVels,double[] yVels,double boundaryValue){
         for (int x = 0; x < xDim; x++) {
             for (int y = 0; y < yDim; y++) {
-                int i=I(x,y);
+                int i= I(x,y);
                 Advection1stOrder(x,y, field, swapField,xDim,yDim,xVels[i],yVels[i],true,boundaryValue);
             }
         }
@@ -210,7 +210,7 @@ public class PDEGrid2D extends Grid2Ddouble implements Serializable{
     public void Advection(double[] xVels,double[] yVels){
         for (int x = 0; x < xDim; x++) {
             for (int y = 0; y < yDim; y++) {
-                int i=I(x,y);
+                int i= I(x,y);
                 Advection1stOrder(x,y, field, swapField,xDim,yDim,xVels[i],yVels[i],false,0.0);
             }
         }
@@ -253,7 +253,7 @@ public class PDEGrid2D extends Grid2Ddouble implements Serializable{
     public void Advection2nd(double[] xVels,double[] yVels,double boundaryValue){
         for (int x = 0; x < xDim; x++) {
             for (int y = 0; y < yDim; y++) {
-                int i=I(x,y);
+                int i= I(x,y);
                 Advection2ndOrder(x,y, field, swapField,xDim,yDim,xVels[i],yVels[i],true,boundaryValue);
             }
         }
@@ -262,7 +262,7 @@ public class PDEGrid2D extends Grid2Ddouble implements Serializable{
     public void Advection2nd(double[] xVels,double[] yVels){
         for (int x = 0; x < xDim; x++) {
             for (int y = 0; y < yDim; y++) {
-                int i=I(x,y);
+                int i= I(x,y);
                 Advection2ndOrder(x,y, field, swapField,xDim,yDim,xVels[i],yVels[i],false,0.0);
             }
         }
@@ -359,7 +359,7 @@ public class PDEGrid2D extends Grid2Ddouble implements Serializable{
     public void Advection3rd(double[] xVels,double[] yVels,double boundaryValue){
         for (int x = 0; x < xDim; x++) {
             for (int y = 0; y < yDim; y++) {
-                int i=I(x,y);
+                int i= I(x,y);
                 Advection3rdOrder(x,y,field, swapField,xDim,yDim,xVels[i],yVels[i],true,boundaryValue);
             }
         }
@@ -368,7 +368,7 @@ public class PDEGrid2D extends Grid2Ddouble implements Serializable{
     public void Advection3rd(double[] xVels,double[] yVels){
         for (int x = 0; x < xDim; x++) {
             for (int y = 0; y < yDim; y++) {
-                int i=I(x,y);
+                int i= I(x,y);
                 Advection3rdOrder(x,y,field, swapField,xDim,yDim,xVels[i],yVels[i],false,0.0);
             }
         }
@@ -393,7 +393,7 @@ public class PDEGrid2D extends Grid2Ddouble implements Serializable{
     public void Advection2ndLW(double[] xVels,double[] yVels,double boundaryValue){
         for (int x = 0; x < xDim; x++) {
             for (int y = 0; y < yDim; y++) {
-                int i=I(x,y);
+                int i= I(x,y);
                 Advection2ndOrderLW(x,y, field, swapField,xDim,yDim,xVels[i],yVels[i],true,boundaryValue);
             }
         }
@@ -402,7 +402,7 @@ public class PDEGrid2D extends Grid2Ddouble implements Serializable{
     public void Advection2ndLW(double[] xVels,double[] yVels){
         for (int x = 0; x < xDim; x++) {
             for (int y = 0; y < yDim; y++) {
-                int i=I(x,y);
+                int i= I(x,y);
                 Advection2ndOrderLW(x,y, field, swapField,xDim,yDim,xVels[i],yVels[i],false,0.0);
             }
         }

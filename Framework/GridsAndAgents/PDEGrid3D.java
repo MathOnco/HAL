@@ -106,10 +106,10 @@ public class PDEGrid3D extends Grid3Ddouble implements Serializable{
     /**
      * Swaps the next and current field, and increments the tick
      */
-    public void SwapInc(){
-        SwapFields();
-        IncTick();
-    }
+//    public void SwapInc(){
+//        SwapFields();
+//        IncTick();
+//    }
 
     /**
      * Bounds all values in the next field between min and max

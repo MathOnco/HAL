@@ -59,14 +59,14 @@ public class Cell extends AgentSQ2Dunstackable<Tissue> {
     int InFallback(int val,int fallback,int dim){
         return(Util.InDim(dim,val))?val:fallback;
     }
-    public double GetInterp(PDEGrid2DCoarse diff){
-        PDEGrid2D g=diff.grid;
-        final int xCell=Xsq();
-        final int yCell=Ysq();
-        final int xDiff=xCell/3;
-        final int yDiff=yCell/3;
-        final int xMod=xCell%3;
-        final int yMod=yCell%3;
+    public double GetInterp(PDEGrid2DCoarse diff) {
+        PDEGrid2D g = diff.grid;
+        final int xCell = Xsq();
+        final int yCell = Ysq();
+        final int xDiff = xCell / 3;
+        final int yDiff = yCell / 3;
+        final int xMod = xCell % 3;
+        final int yMod = yCell % 3;
         switch (xMod) {
             case 0:
                 switch (yMod) {
@@ -80,17 +80,19 @@ public class Cell extends AgentSQ2Dunstackable<Tissue> {
                         return g.Get(xDiff, yDiff) * inCorner +
                                 g.Get(InFallback(xDiff - 1, xDiff, g.xDim), yDiff) * outCorner +
                                 g.Get(xDiff, InFallback(yDiff + 1, yDiff, g.yDim)) * outCorner;
-                    default: throw new IllegalStateException("mod calculation did not work!");
+                    default:
+                        throw new IllegalStateException("mod calculation did not work!");
                 }
             case 1:
-                switch (yMod){
+                switch (yMod) {
                     case 0://middle bottom
-                        return g.Get(xDiff, yDiff) * inSide + g.Get(xDiff, InFallback(yDiff-1,yDiff,g.yDim)) * outSide;
+                        return g.Get(xDiff, yDiff) * inSide + g.Get(xDiff, InFallback(yDiff - 1, yDiff, g.yDim)) * outSide;
                     case 1://middle
-                        return g.Get(xDiff,yDiff);
+                        return g.Get(xDiff, yDiff);
                     case 2://middle top
-                        return g.Get(xDiff, yDiff) * inSide + g.Get(xDiff, InFallback(yDiff+1,yDiff,g.yDim)) * outSide;
-                    default: throw new IllegalStateException("mod calculation did not work!");
+                        return g.Get(xDiff, yDiff) * inSide + g.Get(xDiff, InFallback(yDiff + 1, yDiff, g.yDim)) * outSide;
+                    default:
+                        throw new IllegalStateException("mod calculation did not work!");
                 }
             case 2:
                 switch (yMod) {
@@ -104,10 +106,12 @@ public class Cell extends AgentSQ2Dunstackable<Tissue> {
                         return g.Get(xDiff, yDiff) * inCorner +
                                 g.Get(InFallback(xDiff + 1, xDiff, g.xDim), yDiff) * outCorner +
                                 g.Get(xDiff, InFallback(yDiff + 1, yDiff, g.yDim)) * outCorner;
-                    default: throw new IllegalStateException("mod calculation did not work!");
+                    default:
+                        throw new IllegalStateException("mod calculation did not work!");
                 }
 
-            default: throw new IllegalStateException("mod calculation did not work!");
+            default:
+                throw new IllegalStateException("mod calculation did not work!");
         }
     }
 
@@ -187,7 +191,7 @@ public class Cell extends AgentSQ2Dunstackable<Tissue> {
             }
             c.InitTumor(glycRate, acidResistPH,G().MIN_CELL_CYCLE_TIME).Mutate(G().rn);
             Mutate(G().rn);
-            cycleRemaining = 1;
+            cycleRemaining=G().MIN_CELL_CYCLE_TIME;
             return true;
         } else if (nVessels > 0) {
             Cell degradeMe = G().GetAgent(G().vesselIs[G().rn.Int(nVessels)]);
@@ -213,6 +217,7 @@ public class Cell extends AgentSQ2Dunstackable<Tissue> {
                 return false;
             }
             c.InitNormal(G().MIN_CELL_CYCLE_TIME);
+            cycleRemaining = G().MIN_CELL_CYCLE_TIME;
             return true;
         }
         //contact inhibition
@@ -256,6 +261,7 @@ public class Cell extends AgentSQ2Dunstackable<Tissue> {
         double glycMult=Math.min(1,G().GLYC_CYCLE_COST*-GetGlycPheno(glycRate)+1);
         double ret= G().CELL_TIMESTEP*acidRMult*glycMult* 24/G().MIN_CELL_CYCLE_TIME*(Math.atan((availableATPprop-G().ATP_HALF_MAX)*2)/Math.PI+0.5);
         return ret;
+        //return availableATPprop*G().CELL_TIMESTEP;
     }
 //    public double DieProbVessel(){
 //        int nNeighbors=HoodToIs(G().vesselHood,G().vesselIs);
@@ -273,7 +279,7 @@ public class Cell extends AgentSQ2Dunstackable<Tissue> {
         //Random Death Check
         double surviveProb=1.0-G().DEATH_PROB_NORM_COND;
         //Acid Death Check
-        if (ProtonsToPh(GetConc(G().acid)) < acidResistPH) {
+        if (ProtonsToPh(GetInterp(G().acid)) < acidResistPH) {
             surviveProb*=1.0-G().DEATH_PROB_POOR_COND;
         }
         //ATP Death Check
@@ -311,8 +317,10 @@ public class Cell extends AgentSQ2Dunstackable<Tissue> {
                 return;//death event
             }
             if (availableATPprop < G().QUIESCENCE_THRESH_ATP) {
+                drawColor=RGB(1,0,0);
                 return;
             }
+            //AttemptDivide();
             //decrement cell cycle
             //if(DivideProb())
             cycleRemaining -= DivideProb();
@@ -334,15 +342,15 @@ public class Cell extends AgentSQ2Dunstackable<Tissue> {
             return;
         } else {
             //oxygen consumption
-            double consumedO2 = MichaelisMenten(GetConc(G().oxygen), G().MAX_CONSUMPTION_O2, G().HALF_MAX_CONC_O2);
-            AddConc(G().oxygen, -consumedO2*G().CELLS_PER_SQ * G().DIFF_TIMESTEP);
+            double consumedO2 = MichaelisMenten(GetInterp(G().oxygen), G().MAX_CONSUMPTION_O2, G().HALF_MAX_CONC_O2);
+            G().oxygen.AddSwap(Xsq(),Ysq(), -consumedO2*G().CELLS_PER_SQ * G().DIFF_TIMESTEP);
             //Glucose consumption
-            double consumedGluc = MichaelisMenten(GetConc(G().glucose), (glycRate * G().ATP_TARGET) / 2 - (27 * consumedO2) / 10, G().HALF_MAX_CONC_GLUCOSE);
-            AddConc(G().glucose, -consumedGluc*G().CELLS_PER_SQ * G().DIFF_TIMESTEP);
+            double consumedGluc = MichaelisMenten(GetInterp(G().glucose), (glycRate * G().ATP_TARGET) / 2 - (27 * consumedO2) / 10, G().HALF_MAX_CONC_GLUCOSE);
+            G().glucose.AddSwap(Xsq(),Ysq(), -consumedGluc*G().CELLS_PER_SQ * G().DIFF_TIMESTEP);
             //Conversion to ATP
             //availableATPprop = (2 * consumedGluc + (27 * consumedO2) / 5) / G().ATP_TARGET;
             //Production of acid
-            AddConc(G().acid, (G().PROTON_BUFFERING_COEFF * (consumedGluc - consumedO2 / 5) *G().CELLS_PER_SQ* G().DIFF_TIMESTEP));
+            G().acid.AddSwap(Xsq(),Ysq(),G().PROTON_BUFFERING_COEFF * (consumedGluc - consumedO2 / 5) *G().CELLS_PER_SQ* G().DIFF_TIMESTEP);
         }
     }
 }

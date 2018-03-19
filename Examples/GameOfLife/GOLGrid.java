@@ -19,20 +19,14 @@ class GOLAgent extends AgentSQ2Dunstackable<GOLGrid> {
     final int[] state =new int[2];
     int GetCurrState(){
         //modular division used to determine current state entry
-        return state[G().GetTick()%2];
+        return state[G().tick%2];
     }
     void SetNextState(int state){
         //modular division used to determine next state entry
-        this.state[(G().GetTick()+1)%2]=state;
+        this.state[(G().tick+1)%2]=state;
     }
     public void Step(){
-        G().HoodToIs(G().mooreHood,G().neighborIs,Xsq(),Ysq());
-        int countNeighbors=0;
-        for (int i : G().neighborIs) {
-                if(G().GetAgent(i).GetCurrState()==LIVE){
-                    countNeighbors++;
-                }
-        }
+        int countNeighbors=G().CountInHood(G().mooreHood,Isq(),(a)->a.GetCurrState()==1);
         //classic game of life rules
         if((GetCurrState()==LIVE&&(countNeighbors==2||countNeighbors==3))||(GetCurrState()==DEAD&&countNeighbors==3)){
             G().liveCt++;
@@ -47,10 +41,10 @@ class GOLAgent extends AgentSQ2Dunstackable<GOLGrid> {
 public class GOLGrid extends AgentGrid2D<GOLAgent> {
     public int liveCt;
     final GuiGrid vis;
-    final int[] neighborIs;
     final int[] mooreHood;
     final int runTicks;
     final int refreshRateMS;
+    int tick;
     final static int LIVE = RGB(1,0,0);
     final static int DEAD = RGB(0,0,0);
     GOLGrid(int x, int y, double livingProb, int runTicks, int refreshRateMS, GuiGrid vis){
@@ -62,21 +56,20 @@ public class GOLGrid extends AgentGrid2D<GOLAgent> {
             a.SetNextState(rn.nextDouble() < livingProb?LIVE:DEAD);
         }
         mooreHood=MooreHood(false);
-        neighborIs=new int[mooreHood.length/2];
         this.runTicks=runTicks;
         this.refreshRateMS=refreshRateMS;
     }
     public void StepAgents(){
         liveCt =0;//used to total population
+        tick++;
         for (GOLAgent a : this) {
             a.Step();
         };
-        IncTick();
     }
     public void Run(GuiLabel tickCt,GuiLabel popCt){
         for (int i = 0; i < runTicks; i++) {
             StepAgents();
-            tickCt.SetText("Tick "+GetTick());
+            tickCt.SetText("Tick "+tick);
             popCt.SetText("Population "+liveCt);
             for (int j = 0; j < length; j++) {
                 vis.SetPix(j,GetAgent(j).GetCurrState());
@@ -100,6 +93,6 @@ public class GOLGrid extends AgentGrid2D<GOLAgent> {
         gui.RunGui();
         vis.SetActive(true);
         gol.Run(tickCt,popCt);
-        gui.Dispose();
+        gui.Close();
     }
 }

@@ -1,6 +1,6 @@
 package Examples._3OffLatticeExample;
 
-import Framework.Extensions.SphericalAgent2D;
+import Framework.GridsAndAgents.SphericalAgent2D;
 import Framework.GridsAndAgents.AgentGrid2D;
 import Framework.Gui.Window2DOpenGL;
 import Framework.Tools.FileIO;
@@ -75,10 +75,12 @@ public class ExampleOffLattice extends AgentGrid2D<CellOL> {
         //ExampleOffLattice ex=new ExampleOffLattice(x,y);
         Window2DOpenGL vis=new Window2DOpenGL("Off Lattice Example", 1000,1000,x,y);
         ex.Setup(50,5,0.5);
-        while(ex.GetTick()<10000&&!vis.CheckClosed()) {//check for click on close button on window
+        int i=0;
+        while(i<10000&&!vis.CheckClosed()) {//check for click on close button on window
             vis.TickPause(0);
             ex.StepCells();
             ex.DrawCells(vis);
+            i++;
         }
         if(ex.out!=null){
             ex.out.Close();//be sure to call Close when finished writing output to make sure everything is recorded.
@@ -115,7 +117,6 @@ public class ExampleOffLattice extends AgentGrid2D<CellOL> {
             //if an output file has been generated, write to it
             RecordOut(out);
         }
-        IncTick();
     }
     public void RecordOut(FileIO writeHere){
         int ctPurp=0,ctPink=0;

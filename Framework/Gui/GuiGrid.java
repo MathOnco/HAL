@@ -7,10 +7,7 @@ import Framework.Util;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.io.File;
@@ -325,19 +322,19 @@ public class GuiGrid implements GuiComp{
         this.panel.alphaGrids.add(overlay);
     }
     public void PlotSegment(double x1, double y1, double x2, double y2, int color){
-        Util.AlongLineCoords(x1,y1,x2,y2,(int x, int y)->{this.SetPix(x,y,color); });
+        Util.AlongLineAction(x1,y1,x2,y2,(int x, int y)->{this.SetPix(x,y,color); });
     }
     public void PlotSegment(double x1, double y1, double x2, double y2, int color, double scale){
         if(scale<=0){
             throw new IllegalArgumentException("scale must be >0! scale: "+scale);
         }
-        Util.AlongLineCoords(x1*scale,y1*scale,x2*scale,y2*scale,(int x, int y)->{this.SetPix(x,y,color); });
+        Util.AlongLineAction(x1*scale,y1*scale,x2*scale,y2*scale,(int x, int y)->{this.SetPix(x,y,color); });
     }
     public void PlotSegment(double x1, double y1, double x2, double y2, int color, double scaleX, double scaleY){
         if(scaleX<0||scaleY<0){
             throw new IllegalArgumentException("scaleX and scaleY must be >=0! scaleX: "+scaleX+" scaleY: "+scaleY);
         }
-        Util.AlongLineCoords(x1*scaleX,y1*scaleY,x2*scaleX,y2*scaleY,(int x, int y)->{this.SetPix(x,y,color); });
+        Util.AlongLineAction(x1*scaleX,y1*scaleY,x2*scaleX,y2*scaleY,(int x, int y)->{this.SetPix(x,y,color); });
     }
     public void PlotLine(double[]xys,int color){
         PlotLine(xys, color, 0,xys.length);
@@ -359,7 +356,7 @@ public class GuiGrid implements GuiComp{
             throw new IllegalArgumentException("invalid startPoint or endPoint for plotting "+xys.length/2+" points! startPoint: "+startPoint+" endPoint: "+endPoint);
         }
         for (int i = 0; i < xys.length/2-1; i++) {
-            Util.AlongLineCoords(xys[i*2],xys[i*2+1],xys[(i+1)*2],xys[(i+1)*2+1],(int x, int y)->{this.SetPix(x,y,color); });
+            Util.AlongLineAction(xys[i*2],xys[i*2+1],xys[(i+1)*2],xys[(i+1)*2+1],(int x, int y)->{this.SetPix(x,y,color); });
         }
     }
     public void PlotLine(double[] xys, int color, int startPoint, int endPoint, double scaleX, double scaleY){
@@ -376,7 +373,7 @@ public class GuiGrid implements GuiComp{
             throw new IllegalArgumentException("invalid startPoint or endPoint for plotting "+xys.length/2+" points! startPoint: "+startPoint+" endPoint: "+endPoint);
         }
         for (int i = 0; i < xys.length/2-1; i++) {
-            Util.AlongLineCoords(xys[i*2]*scaleX,xys[i*2+1]*scaleY,xys[(i+1)*2]*scaleX,xys[(i+1)*2+1]*scaleY,(int x, int y)->{this.SetPix(x,y,color); });
+            Util.AlongLineAction(xys[i*2]*scaleX,xys[i*2+1]*scaleY,xys[(i+1)*2]*scaleX,xys[(i+1)*2+1]*scaleY,(int x, int y)->{this.SetPix(x,y,color); });
         }
     }
     public void PlotLine(double[]xs,double[]ys,int color){
@@ -399,7 +396,7 @@ public class GuiGrid implements GuiComp{
             throw new IllegalArgumentException("invalid startPoint or endPoint for plotting "+xs.length+" points! startPoint: "+startPoint+" endPoint: "+endPoint);
         }
         for (int i = startPoint; i < endPoint-1; i++) {
-            Util.AlongLineCoords(xs[i],ys[i],xs[i+1],ys[i+1],(int x, int y)->{this.SetPix(x,y,color);});
+            Util.AlongLineAction(xs[i],ys[i],xs[i+1],ys[i+1],(int x, int y)->{this.SetPix(x,y,color);});
         }
     }
     public void PlotLine(double[] xs, double[] ys, int color, int startPoint, int endPoint, double scaleX, double scaleY){
@@ -416,7 +413,7 @@ public class GuiGrid implements GuiComp{
             throw new IllegalArgumentException("invalid startPoint or endPoint for plotting "+xs.length+" points! startPoint: "+startPoint+" endPoint: "+endPoint);
         }
         for (int i = startPoint; i < endPoint-1; i++) {
-            Util.AlongLineCoords(xs[i]*scaleX,ys[i]*scaleY,xs[i+1]*scaleX,ys[i+1]*scaleY,(int x, int y)->{this.SetPix(x,y,color);});
+            Util.AlongLineAction(xs[i]*scaleX,ys[i]*scaleY,xs[i+1]*scaleX,ys[i+1]*scaleY,(int x, int y)->{this.SetPix(x,y,color);});
         }
     }
 
@@ -453,7 +450,7 @@ public class GuiGrid implements GuiComp{
         compSizesHere.add(compY);
     }
 
-    public int I(int x,int y){
+    public int I(int x, int y){
        return x*yDim+y;
     }
     public double ClickXpt(MouseEvent e){
@@ -468,12 +465,23 @@ public class GuiGrid implements GuiComp{
     public int ClickYsq(MouseEvent e){
         return (yDim-1)-e.getY()/ scale;
     };
-    public void AddMouseListeners(MouseListener mouseListener, MouseMotionListener motionListener){
+    public void AddMouseListeners(MouseAdapter mouseListener){
         if(mouseListener!=null) {
             this.panel.addMouseListener(mouseListener);
         }
-        if(motionListener!=null) {
-            this.panel.addMouseMotionListener(motionListener);
+    }
+    public void ApplyPix(CoordsToColor DrawPix){
+        for (int x = 0; x < xDim; x++) {
+            for (int y = 0; y < yDim; y++) {
+                SetPix(x,y,DrawPix.SetPix(x,y, I(x,y)));
+            }
+        }
+    }
+    public void ApplyPix(int startX,int startY, int width,int height,CoordsToColor DrawPix){
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                SetPix(startX+x,startY+y,DrawPix.SetPix(x,y, I(x,y)));
+            }
         }
     }
 
@@ -841,5 +849,142 @@ public class GuiGrid implements GuiComp{
             }
         }
     }
+
+    public void DrawStringSingleLine(String s,int xLeft,int yTop,int color,int bkColor){
+        //on top line and first char in line, don't draw bk, else draw bk to left & above
+        if(s.length()>0) {
+            DrawChar(s.charAt(0), xLeft, yTop, color, bkColor);
+            for (int i = 1; i < s.length(); i++) {
+                DrawVertCharBar(xLeft + i * 4 - 1, yTop, bkColor);
+                DrawChar(s.charAt(i), xLeft + i * 4, yTop, color, bkColor);
+            }
+        }
+    }
+    private void DrawVertCharBar(int x,int y,int color){
+        for (int dy = y-4; dy <= y; dy++) {
+            SetPix(x,dy,color);
+        }
+    }
+
+    public void DrawChar(char c,int xLeft,int yTop,int color,int bkColor){
+        if(c>alphabet.length+30){
+            c=0;
+        }
+        short s=(c<=30&&c<alphabet.length+30)?alphabet[0]:alphabet[c-30];
+        for (int x = 0; x < 3; x++) {
+            for (int y = 0; y < 5; y++) {
+                if(((s>>(x*5+y))&1)==0){
+                    SetPix(x+xLeft,y+yTop-4,bkColor);
+                }
+                else{
+                    SetPix(x+xLeft,y+yTop-4,color);
+                }
+            }
+        }
+
+    }
+
+
+    private static final short[]alphabet=new short[]{
+            32319//box
+            ,32767//full
+            ,0//space
+            ,928//!
+            ,24600//"
+            ,32095//#
+            ,21482//$
+            ,9362//%
+            ,8126//&
+            ,768//'
+            ,558//(
+            ,14880//)
+            ,20756//*
+            ,4548//+
+            ,65//,
+            ,4228//-
+            ,32//.
+            ,24707///
+            ,31279//0
+            ,1000//1
+            ,9907//2
+            ,10929//3
+            ,31900//4
+            ,19133//5
+            ,24239//6
+            ,25235//7
+            ,32447//8
+            ,31421//9
+            ,320//:
+            ,321//;
+            ,17732//<
+            ,10570//=
+            ,4433//>
+            ,25264//?
+            ,13998//@
+            ,16015//A
+            ,10943//B
+            ,17966//C
+            ,14911//D
+            ,22207//E
+            ,21151//F
+            ,24238//G
+            ,31903//H
+            ,18417//I
+            ,30754//J
+            ,27807//K
+            ,1087//L
+            ,32159//M
+            ,32223//N
+            ,14894//O
+            ,8863//P
+            ,15982//Q
+            ,14031//R
+            ,19113//S
+            ,17392//T
+            ,31806//U
+            ,28796//V
+            ,31967//W
+            ,27803//X
+            ,24824//Y
+            ,26291//Z
+            ,17983//[
+            ,2184//\
+            ,32305//]
+            ,8712//^
+            ,1057//_
+            ,272//`
+            ,7595//a
+            ,6463//b
+            ,9510//c
+            ,32038//d
+            ,13670//e
+            ,20964//f
+            ,14757//g
+            ,7455//h
+            ,736//i
+            ,22562//j
+            ,9439//k
+            ,2033//l
+            ,15823//m
+            ,7439//n
+            ,6438//o
+            ,4423//p
+            ,7492//q
+            ,9455//r
+            ,10725//s
+            ,10216//t
+            ,15406//u
+            ,14446//v
+            ,15599//w
+            ,9417//x
+            ,14505//y
+            ,13803//z
+            ,18276//{
+            ,864//|
+            ,4977//}
+            ,17160//~
+            ,32767//full
+
+    };
 
 }

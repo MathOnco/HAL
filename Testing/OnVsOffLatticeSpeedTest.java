@@ -1,6 +1,6 @@
 package Testing;
 
-import Framework.Extensions.SphericalAgent2D;
+import Framework.GridsAndAgents.SphericalAgent2D;
 import Framework.GridsAndAgents.AgentGrid2D;
 import Framework.GridsAndAgents.AgentSQ2Dunstackable;
 import Framework.Rand;

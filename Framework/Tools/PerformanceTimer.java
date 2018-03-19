@@ -12,11 +12,11 @@ public class PerformanceTimer implements Serializable {
         times.put(label,System.currentTimeMillis());
     }
     public long Stop(String label){
-        return System.currentTimeMillis()-times.get(label);
-    }
-    public long StopPr(String label){
-        long time=Stop(label);
+        long time=System.currentTimeMillis()-times.get(label);
         System.out.println(label+": "+time+" ms");
         return time;
+    }
+    public long StopQuiet(String label) {
+        return System.currentTimeMillis() - times.get(label);
     }
 }

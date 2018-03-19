@@ -28,7 +28,7 @@ public class Testing {
         m.MUT_RATE_GLYC=0.05;
         m.SetupBoundaryConds();
         m.SetupTumor(20,m.GetGlycRate(0),m.GetAcidResistPH(0));
-        m.IncTick();
+        //m.IncTick();
 
 
         TestVis visAll=null;
@@ -36,14 +36,14 @@ public class Testing {
             visAll=new TestVis(m,visScale);
         }
         for (int i = 0; i < steps; i++) {
-            m.StepAll();
+            m.StepAll(i);
             if(visScale>0) {
                 visAll.Draw();
             }
         }
     }
     public static void main(String[] args) {
-        RunModel(90,90,1,0,1200);
+        RunModel(90,90,1,0,99999);
         //Util.MultiThread(10,8,(runIndex -> RunModel(80,80,false,runIndex,1000,null)));
     }
 }

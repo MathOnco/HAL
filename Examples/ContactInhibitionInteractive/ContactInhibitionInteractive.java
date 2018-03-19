@@ -68,7 +68,8 @@ public class ContactInhibitionInteractive extends AgentGrid2D<Cell> implements T
             }
             //check if drug should enter through the boundaries
             drug.Diffusion(drugDiffRate, treatmentVals[0]);
-            CleanShuffInc(this.rn);
+            CleanAgents();
+            ShuffleAgents(this.rn);
         }
     }
 

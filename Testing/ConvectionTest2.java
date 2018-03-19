@@ -47,8 +47,6 @@ public class ConvectionTest2 {
             vis.DrawGridDiff(g,(val)->{
                 return Util.HeatMapRBG(Util.ScaleMinToMax(val, (double) 0, (double) 1));
             });
-            g.IncTick();
-            lbl.SetText("tick "+g.GetTick());
         }
     }
 }

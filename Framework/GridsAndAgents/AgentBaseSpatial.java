@@ -1,5 +1,7 @@
 package Framework.GridsAndAgents;
 
+import Framework.Interfaces.AgentToBool;
+
 import java.util.ArrayList;
 
 /**
@@ -35,4 +37,7 @@ public abstract class AgentBaseSpatial<T extends GridBase> extends AgentBase<T> 
     abstract void AddSQ(int iNext);
     abstract public void Dispose();
     abstract void GetAllOnSquare(ArrayList<AgentBaseSpatial> putHere);
+    abstract int GetCountOnSquare();
+    abstract int GetCountOnSquareEval(AgentToBool evalAgent);
+    abstract void GetAllOnSquareEval(ArrayList<AgentBaseSpatial> putHere,AgentToBool evalAgent);
 }

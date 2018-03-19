@@ -51,7 +51,7 @@ public class GridWindow extends GuiGrid {
     public void AddKeyResponses(KeyResponse OnKeyDown, KeyResponse OnKeyUp){
         win.AddKeyResponses(OnKeyDown,OnKeyUp);
     }
-    public void Dispose(){
-        win.Dispose();
+    public void Close(){
+        win.Close();
     }
 }

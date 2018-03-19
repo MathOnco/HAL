@@ -1,8 +1,6 @@
 package Framework.GridsAndAgents;
 
-import Framework.Interfaces.AgentStepFunction;
 import Framework.Rand;
-import Framework.Util;
 
 import java.util.*;
 
@@ -11,13 +9,13 @@ import java.util.*;
  * @param <T> the AgentSQ2Dunstackable extending agent class that will inhabit the typeGrid
  */
 public class AgentGrid0D<T extends Agent0D> extends GridBase implements Iterable<T>{
-    AgentList<T> agents;
+    InternalGridAgentList<T> agents;
 
     /**
      * @param agentClass pass T.class, used to instantiate agent instances within the typeGrid as needed
      */
     public AgentGrid0D(Class<T> agentClass){
-        agents=new AgentList<T>(agentClass,this);
+        agents=new InternalGridAgentList<T>(agentClass,this);
     }
 
     /**
@@ -56,52 +54,59 @@ public class AgentGrid0D<T extends Agent0D> extends GridBase implements Iterable
      * do not call this while in the middle of iteration
      * @param rn the Random number generator to be used
      */
-    public void CleanShuffInc(Rand rn){
-        agents.CleanAgents();
-        agents.ShuffleAgents(rn);
-        IncTick();
-    }
+//    public void CleanShuffInc(Rand rn){
+//        agents.CleanAgents();
+//        agents.ShuffleAgents(rn);
+//        IncTick();
+//    }
+//
+//    public void ShuffInc(Rand rn){
+//        agents.ShuffleAgents(rn);
+//        IncTick();
+//    }
+//    public void CleanInc(){
+//        agents.CleanAgents();
+//        IncTick();
+//    }
+//    public void IncTick(){
+//        agents.stateID++;
+//    }
 
-    public void ShuffInc(Rand rn){
-        agents.ShuffleAgents(rn);
-        IncTick();
-    }
-    public void CleanInc(){
-        agents.CleanAgents();
-        IncTick();
-    }
     /**
      * returns an umodifiable copy of the complete agentlist, including dead and just born agents
      */
     public ArrayList<T> AllAgents(){return (ArrayList<T>)this.agents.GetAllAgents();}
 
 
-    public void MultiThreadAgents(int nThreads, AgentStepFunction<T> StepFunction){
-        int last=agents.iLastAlive;
-        Util.MultiThread(nThreads,nThreads,(iThread)->{
-            ArrayList<T> agents=this.agents.agents;
-            int start=iThread/nThreads*last;
-            int end=(iThread+1)/nThreads*last;
-            for (int i = start; i < end; i++) {
-                T a=agents.get(i);
-                if(a.alive&&a.birthTick<tick){
-                    StepFunction.AgentStepFunction(a);
-                }
-            }
-        });
-    }
+//    public void MultiThreadAgents(int nThreads, AgentStepFunction<T> StepFunction){
+//        int last=agents.iLastAlive;
+//        Util.MultiThread(nThreads,nThreads,(iThread)->{
+//            ArrayList<T> agents=this.agents.agents;
+//            int start=iThread/nThreads*last;
+//            int end=(iThread+1)/nThreads*last;
+//            for (int i = start; i < end; i++) {
+//                T a=agents.get(i);
+//                if(a.alive&&a.birthTick<tick){
+//                    StepFunction.AgentStepFunction(a);
+//                }
+//            }
+//        });
+//    }
     /**
      * calls dispose on all agents in the typeGrid
      */
     public void Reset(){
         List<T> AllAgents=this.agents.GetAllAgents();
         AllAgents.stream().filter(curr -> curr.alive).forEach(Agent0D::Dispose);
-        tick=0;
+ //       tick=0;
     }
 
-    public void RandomAgent(Rand rn){
+    public T RandomAgent(Rand rn){
         CleanAgents();
-        agents.agents.get(rn.Int(GetPop()));
+        if(GetPop()==0){
+            return null;
+        }
+        return agents.agents.get(rn.Int(GetPop()));
     }
 
     /**

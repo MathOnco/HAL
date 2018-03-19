@@ -62,6 +62,6 @@ public class ConvectionTest {
             //g.ConvInhomogeneousSwap(xVels,yVels);
             g.Advection(0.001,0.001);
         }
-        win.Dispose();
+        win.Close();
     }
 }

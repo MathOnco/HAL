@@ -57,26 +57,13 @@ class CACell extends AgentSQ2Dunstackable<StemCellCA> {
         //check if division event will occur
         if(G().rn.Double()<G().DIV_PROB){
             //get moore neighborhood around cell, ignores indices that fall outside the bounds of the model
-            int checkLen=HoodToIs(G().mooreHood,G().localIs);
-            int openings=0;
-            //get indices of all moore neighborhood locations that do not have cells occupying them
-            for(int i=0;i<checkLen;i++){
-                int iLoc=G().localIs[i];
-                if(G().GetAgent(iLoc)==null){
-                    G().divIs[openings]=iLoc;
-                    openings++;
-                }
-            }
-            //can only divide if there is space
-            if(openings>0){
-                //die if out of divisions
+            int ct=MapEmptyHood(G().mooreHood);
+            if(ct>0){
                 if(divs==0){
                     Die();
                     return;
                 }
-                //choose a random location to divide into
-                int divI=G().divIs[G().rn.Int(openings)];
-                Divide(divI);
+                Divide(G().mooreHood[G().rn.Int(ct)]);
             }
         }
     }
@@ -117,7 +104,7 @@ class StemCellCA extends AgentGrid2D<CACell> {
         vis.Clear(BLACK);//clear the visualization for a new round
     }
     public void Run(){
-        while(GetTick()< RUN_DURATION){
+        for (int i = 0; i < RUN_DURATION; i++) {
             if(GetPop()==0){
                 //seed a new agent if grid is empty
                 NewAgentSQ(xDim/2,yDim/2).Init(MAX_DIVS,true);
@@ -131,11 +118,12 @@ class StemCellCA extends AgentGrid2D<CACell> {
                 outFile.Write(Util.ArrToString(cellCts,",")+"\n");
             }
             //increments tick, cleans and shuffles the agentlist
-            CleanShuffInc(rn);
+            CleanAgents();
+            ShuffleAgents(rn);
             //imposes a tick rate
             vis.TickPause(TICK_PAUSE);
             //displays the current tick
-            tickLabel.SetText("Timestep "+GetTick());
+            tickLabel.SetText("Timestep"+i);
             popLabel.SetText("Population "+GetPop());
         }
     }
@@ -181,7 +169,7 @@ class StemCellCA extends AgentGrid2D<CACell> {
             runGrid.Init(win.GetDouble("DIV_PROB"),win.GetDouble("DEATH_PROB"),win.GetDouble("STEM_DIV_PROB"),win.GetInt("MAX_DIVS"),win.GetInt("TICK_PAUSE"),win.GetInt("RUN_TICKS"),win.GetString("OUTPUT_FILE"),win.GetBool("Record"),vis,tickLabel,popLabel,win);
             visGui.RunGui();
             runGrid.Run();
-            visGui.Dispose();
+            visGui.Close();
         }));
         //starts the main gui
         win.RunGui();

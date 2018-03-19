@@ -45,17 +45,17 @@ class ExCell3D extends AgentSQ3D<Example3D>{
                 return;
             }
             if(Divide()){
-                int nDivOpts=HoodToEmptyIs(G().vnHood,G().divIs);//get indices of empty locations in 3D Von Neumann neighborhood around cell
+                int nDivOpts=MapEmptyHood(G().vnHood);//get indices of empty locations in 3D Von Neumann neighborhood around cell
                 if(nDivOpts>1){
-                    G().NewAgentSQ(G().divIs[G().rn.Int(nDivOpts)]).InitTumor();
+                    G().NewAgentSQ(G().vnHood[G().rn.Int(nDivOpts)]).InitTumor();
                 }
             }
             if(Metastasis()){//choose random vessel location to metastasize to
                 Dispose();//kill cell that has entered the vessel
                 int whichVessel=G().rn.Int(G().vessels.size());//get a random vessel position
-                int nMetOpts=G().vessels.get(whichVessel).HoodToEmptyIs(G().vnHood,G().divIs);//get any open positions around a particular vessel location
+                int nMetOpts=G().vessels.get(whichVessel).HoodToEmptyIs(G().vnHood,G().vnHood);//get any open positions around a particular vessel location
                 if(nMetOpts>1){
-                    G().NewAgentSQ(G().divIs[G().rn.Int(nMetOpts)]).InitTumor();//create and initialize a new cell to model successful metastasis
+                    G().NewAgentSQ(G().vnHood[G().rn.Int(nMetOpts)]).InitTumor();//create and initialize a new cell to model successful metastasis
                 }
             }
         }
@@ -74,7 +74,6 @@ public class Example3D extends AgentGrid3D<ExCell3D> {
     double METASTASIS_PROB=0.00001;
     double METASTASIS_CONC=0.3;
     int[]vnHood=VonNeumannHood3D(false);//3D von neuman neighborhood is of the form [x1,y1,z1,x2,y2,z2...]
-    int[]divIs=new int[vnHood.length/3];//since 3D coordinates are 3x more numbers than indices. used in local neighborhood calculation
     PDEGrid3D oxygen;
     Rand rn=new Rand();
     LinkedList<ExCell3D> vessels=new LinkedList<>();//used to make metastasis more efficient (and as an example)
@@ -101,7 +100,6 @@ public class Example3D extends AgentGrid3D<ExCell3D> {
             }
         }
         DiffStep();
-       IncTick();
     }
     public int GenVessels(double vesselSpacingMin){
         //create a Grid to store the locations that are too close for placing another vessel
@@ -166,7 +164,6 @@ public class Example3D extends AgentGrid3D<ExCell3D> {
         int x=150,y=150,z=10;
         Example3D ex=new Example3D(x,z,y);
         ex.GenVessels(20);
-        ex.IncTick();//tick is incremented so that initialized vessels appear
         //Diffuse to steady state
         for (int i = 0; i < 100; i++) {
             ex.DiffStep();
@@ -177,9 +174,10 @@ public class Example3D extends AgentGrid3D<ExCell3D> {
             ex.StepAll();
             ex.DrawCells(vis);
             visResource.DrawGridDiffXZ(ex.oxygen, (val)->HeatMapBRG(Math.pow(val,0.5)));
-            ex.CleanShuffInc(ex.rn);//Equivalent to calling CleanAgents, ShuffleAgents, and IncTick grid functions
+            ex.CleanAgents();//Equivalent to calling CleanAgents, ShuffleAgents, and IncTick grid functions
+            ex.ShuffleAgents(ex.rn);//Equivalent to calling CleanAgents, ShuffleAgents, and IncTick grid functions
         }
         vis.Dispose();
-        visResource.Dispose();
+        visResource.Close();
     }
 }

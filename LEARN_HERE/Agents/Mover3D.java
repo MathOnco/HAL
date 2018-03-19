@@ -45,6 +45,6 @@ public class Mover3D extends AgentGrid3D<MoveAgent> {
             }
         }
         win3D.Dispose();//destroy guis
-        win2D.Dispose();
+        win2D.Close();
     }
 }

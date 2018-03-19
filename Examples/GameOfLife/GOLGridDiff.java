@@ -37,7 +37,7 @@ public class GOLGridDiff extends PDEGrid2D {
         }
     }
     public void Run(GuiWindow win){
-        while(GetTick() < runTicks) {
+        for (int tick = 0; tick < runTicks; tick++) {
             int totalPop=0;
             for (int x = 0; x < xDim; x++) {
                 for (int y = 0; y < yDim; y++) {
@@ -59,11 +59,11 @@ public class GOLGridDiff extends PDEGrid2D {
                     }
                 }
             }
-            SwapInc();
+            SwapFields();
             if(popLbl!=null){ popLbl.SetText("Population: "+totalPop); }
-            if(tickLbl!=null){ tickLbl.SetText("Tick: "+ GetTick()); }
+            if(tickLbl!=null){ tickLbl.SetText("Tick: "+ tick); }
         }
-        win.Dispose();
+        win.Close();
     }
     public static void main(String[] args){
         int xDim=1000;

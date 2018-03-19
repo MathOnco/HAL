@@ -1,9 +1,5 @@
 package Framework.Interfaces;
 
-import Framework.GridsAndAgents.AgentBase;
-
-import java.util.function.BiFunction;
-
 /**
  * Created by philipaxelrod on 7/11/17.
  */

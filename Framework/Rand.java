@@ -1,14 +1,11 @@
 package Framework;
 
-import Framework.GridsAndAgents.AgentBase;
 import Framework.Interfaces.RNG;
 import Framework.Tools.Binomial;
 import Framework.Tools.Gaussian;
 import Framework.Tools.SplittableRN;
 
-import java.awt.*;
 import java.io.Serializable;
-import java.util.SplittableRandom;
 
 import static Framework.Util.DOUBLE_EPSILON;
 import static Framework.Util.DistSquared;

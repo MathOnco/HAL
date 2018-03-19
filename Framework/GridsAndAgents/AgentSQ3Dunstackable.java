@@ -1,5 +1,6 @@
 package Framework.GridsAndAgents;
 
+import Framework.Interfaces.AgentToBool;
 import Framework.Interfaces.Coords3DToAction;
 
 import java.util.ArrayList;
@@ -13,7 +14,7 @@ import static Framework.Util.ModWrap;
  * @param <T> the extended AgentGrid3D class that the agents will live in
  * Created by rafael on 11/18/16.
  */
-public class AgentSQ3Dunstackable<T extends AgentGrid3D> extends AgentBaseSpatial<T>{
+public class AgentSQ3Dunstackable<T extends AgentGrid3D> extends AgentBaseSpatial<T> implements Agent3DBase{
     int xSq;
     int ySq;
     int zSq;
@@ -160,6 +161,9 @@ public class AgentSQ3Dunstackable<T extends AgentGrid3D> extends AgentBaseSpatia
         }
         RemSQ();
         myGrid.agents.RemoveAgent(this);
+        if(myNodes!=null){
+            myNodes.DisposeAll();
+        }
     }
 
     @Override
@@ -167,6 +171,17 @@ public class AgentSQ3Dunstackable<T extends AgentGrid3D> extends AgentBaseSpatia
         putHere.add(this);
     }
 
+    @Override
+    void GetAllOnSquareEval(ArrayList<AgentBaseSpatial> putHere, AgentToBool evalAgent) {
+        if(evalAgent.EvalAgent(this)){
+            putHere.add(this);
+        }
+
+    }
+    @Override
+    int GetCountOnSquareEval(AgentToBool evalAgent) {
+        return evalAgent.EvalAgent(this)?1:0;
+    }
     @Override
     public void MoveSQ(int i) {
         if(!alive){
@@ -233,6 +248,11 @@ public class AgentSQ3Dunstackable<T extends AgentGrid3D> extends AgentBaseSpatia
     @Override
     void Setup(double i) {
 
+    }
+
+    @Override
+    int GetCountOnSquare() {
+        return 1;
     }
 
     @Override

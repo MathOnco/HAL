@@ -19,7 +19,7 @@ public class ReactionDiffusion2D {
     public static void main(String[] args) {
         //set up gui
         TickTimer trt=new TickTimer();
-        GuiWindow win=new GuiWindow("2D Diffusion Testing",true);
+        GuiWindow win=new GuiWindow("2D Diffusion VesselOcclusion",true);
         GuiGrid v1=new GuiGrid(x,y,visScale);
         GuiGrid v2=new GuiGrid(x,y,visScale);
         win.AddCol(0, new GuiLabel("advection"));
@@ -49,6 +49,6 @@ public class ReactionDiffusion2D {
             v1.DrawGridDiff(g1, Util::HeatMapRGB);
             v2.DrawGridDiff(g2, Util::HeatMapRGB);
         }
-        win.Dispose();
+        win.Close();
     }
 }

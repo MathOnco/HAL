@@ -1,95 +1,131 @@
 package Framework.GridsAndAgents;
 
 import Framework.Interfaces.AgentToString;
-import Framework.Tools.FileIO;
 import Framework.Rand;
-
+import Framework.Tools.FileIO;
 
 import java.io.Serializable;
-import java.lang.reflect.Constructor;
 import java.util.*;
 
 /**
  * Created by rafael on 2/17/17.
  */
-class AgentList <T extends AgentBase> implements Iterable<T>,Serializable{
-    ArrayList<T> agents;
-    ArrayList<T> deads;
-    transient Constructor<?> builder;
+
+class AgentListNode<T extends AgentBase>{
+    T agent;
+    int i;
+    int stateID;
+    AgentListNode<T> next;
+    AgentListNode<T> prev;
+    final AgentList<T> mySet;
+
+    AgentListNode(AgentList<T> mySet) {
+        this.mySet = mySet;
+    }
+    void SetAgent(T agent){
+        this.agent=agent;
+        this.next=agent.myNodes;
+        agent.myNodes=this;
+        this.prev=null;
+
+    }
+    void PopNode(){
+        if(agent.myNodes==this){
+            agent.myNodes=this.next;
+        }
+        if(this.next!=null){
+            this.next.prev=this.prev;
+        }
+        if(this.prev!=null){
+            this.prev.next=this.next;
+        }
+    }
+    void DisposeAll(){
+        AgentListNode remMe=this;
+        while(remMe!=null){
+            remMe.mySet.RemoveNode(remMe);
+            remMe=remMe.next;
+        }
+        agent.myNodes=null;
+    }
+}
+
+public class AgentList<T extends AgentBase> implements Iterable<T>,Serializable{
+    ArrayList<AgentListNode<T>> nodes;
+    ArrayList<AgentListNode<T>> deads;
+    ArrayList<myIter> usedIters=new ArrayList<>();
     int iLastAlive;
     int pop;
-    final GridBase myGrid;
+    int stateID;
 
-    AgentList(Class<T> type, GridBase myGrid){
-        this.builder=type.getDeclaredConstructors()[0];
-        this.builder.setAccessible(true);
-        this.agents=new ArrayList<>();
+    public AgentList(){
+        this.nodes =new ArrayList<>();
         this.deads=new ArrayList<>();
-        this.iLastAlive=-1;
-        this.pop=0;
-        this.myGrid=myGrid;
-    }
-    void Reset(){
-        this.agents.clear();
-        this.deads.clear();
+        //this.map=new HashMap<>();
         this.iLastAlive=-1;
         this.pop=0;
     }
-    void SetupConstructor(Class<T> type){
-        this.builder=type.getDeclaredConstructors()[0];
-        this.builder.setAccessible(true);
-    }
-    T GetNewAgent(){
-    T newAgent;
-    //internal function, inserts agent into AgentGridMin.AgentGrid2_5
-    if(deads.size()>0){
-        newAgent=deads.remove(deads.size()-1);
-    }
-    else if(agents.size()>iLastAlive+1){
-        iLastAlive++;
-        newAgent=agents.get(iLastAlive);
-    }
-    else {
-        try {
-            newAgent = (T)builder.newInstance();
+    public boolean InSet(T agent){
+        AgentListNode<T> n=agent.myNodes;
+        while(n!=null){
+            if(n.mySet==this){
+                return true;
+            }
+            n=n.next;
         }
-        catch (Exception e){
-            e.printStackTrace();
-            throw new RuntimeException("Could not instantiate");
-        }
-        agents.add(newAgent);
-        newAgent.myGrid=this.myGrid;
-        iLastAlive++;
-        newAgent.iList=iLastAlive;
-        //agent.iList= iLastAlive;
+        return false;
+        //return map.containsKey(agent);
     }
-    newAgent.alive=true;
-    newAgent.birthTick=this.myGrid.tick;
-    pop++;
-    return newAgent;
+    public int GetPop(){
+        return pop;
     }
-    void AddAgent(T newAgent){
-        if(!newAgent.alive){
-            throw new IllegalStateException("can't transplant dead agent between grids!");
+    public void AddAgent(T agent){
+        if(!agent.alive){
+            throw new IllegalStateException("add dead Agent!");
         }
-        if(iLastAlive+1<agents.size()) {
-            agents.add(agents.get(iLastAlive + 1));
+        //if(InSet(agent)){
+        //    throw new IllegalStateException("can't add agent to AgentList twice!");
+        //}
+        AgentListNode<T> node;
+        if(deads.size()>0){
+            node=deads.remove(deads.size()-1);
         }
-        agents.add(iLastAlive+1,newAgent);
-        iLastAlive++;
+        else if(iLastAlive+1< nodes.size()) {
+            iLastAlive++;
+            node= nodes.get(iLastAlive);
+        }
+        else{
+            node=new AgentListNode<>(this);
+            nodes.add(node);
+            iLastAlive++;
+            node.i=iLastAlive;
+        }
         pop++;
-        newAgent.birthTick=myGrid.tick;
+        node.stateID=stateID;
+        node.SetAgent(agent);
+        //map.put(agent,node);
     }
-    void RemoveAgent(T agent) {
-        agent.alive = false;
-        deads.add(agent);
+    public void RemoveAgent(T agent) {
+        //TODO may want to include check and debug message if map does not have node (or try catch?)
+        AgentListNode<T> n=agent.myNodes;
+        while(n!=null){
+            if(n.mySet==this){
+                n.stateID=Integer.MAX_VALUE;
+                n.PopNode();
+                deads.add(n);
+                //map.remove(agent);
+                pop--;
+                return;
+            }
+            n=n.next;
+        }
+        throw new IllegalStateException("attempting to remove agent that is not a member of list!");
+    }
+    void RemoveNode(AgentListNode<T> node) {
+        node.stateID=Integer.MAX_VALUE;
+        deads.add(node);
+        //map.remove(node.agent);
         pop--;
-    }
-    List<T> GetAllAgents(){
-        return Collections.unmodifiableList(this.agents);//will contain dead agents and newly born agents
-    }
-    List<T> GetAllDeads(){
-        return Collections.unmodifiableList(this.deads);//will contain dead agents and newly born agents
     }
 
     public void PopToCSV(FileIO out, AgentToString strFn){
@@ -99,83 +135,101 @@ class AgentList <T extends AgentBase> implements Iterable<T>,Serializable{
     }
     @Override
     public Iterator<T> iterator() {
+        myIter ret;
+        if(usedIters.size()>0){
+            ret=usedIters.remove(usedIters.size()-1);
+        }
+        else{
+            ret=new myIter(this);
+       }
+        ret.Setup(stateID);
         return new myIter(this);
     }
     private class myIter implements Iterator<T>{
-        AgentList<T> myList;
-        int iAgent;
+        int stateID;
+        final AgentList<T> myList;
+        int iNode;
         T ret;
 
-        T NextAgent(){
-            //use within a while loop that exits when the returned agent is null to iterate over all agents (advances Age of agents)
-            while(iAgent<=iLastAlive) {
-                T possibleRet=agents.get(iAgent);
-                iAgent += 1;
-                if (possibleRet != null && possibleRet.alive && possibleRet.birthTick != myList.myGrid.tick) {
-                    return possibleRet;
-                }
-            }
-            return null;
-        }
         myIter(AgentList<T> myList){
             this.myList=myList;
-            this.iAgent=0;
+        }
+        void Setup(int stateID){
+            this.stateID = stateID;
+            this.iNode =0;
             this.ret=null;
         }
         @Override
         public boolean hasNext() {
-            while(iAgent<=iLastAlive) {
-                T possibleRet=agents.get(iAgent);
-                iAgent += 1;
-                if (possibleRet != null && possibleRet.alive && possibleRet.birthTick != myList.myGrid.tick) {
-                    ret=possibleRet;
+            while(iNode <=iLastAlive) {
+                AgentListNode<T> possibleRet= nodes.get(iNode);
+                iNode += 1;
+                if (possibleRet != null && possibleRet.stateID<=stateID) {
+                    ret=possibleRet.agent;
                     return true;
                 }
             }
             ret=null;
+            usedIters.add(this);
             return false;
         }
 
         @Override
         public T next() {
+            if(stateID!=myList.stateID){
+                throw new IllegalStateException("shuffle or clean or randomagent called while in the middle of iteration! this is not permitted!");
+            }
             return ret;
         }
     }
+    public void CleanShuffle(Rand rn){
+        CleanAgents();
+        ShuffleAgents(rn);
+    }
     public void ShuffleAgents(Rand rn){
+        stateID++;
         //shuffles the agents list (Don't run during agent iteration)
         for(int iSwap1 = iLastAlive; iSwap1>0; iSwap1--){
             int iSwap2=rn.Int(iSwap1+1);
-            T swap1=agents.get(iSwap1);
-            T swap2=agents.get(iSwap2);
-            swap1.iList = iSwap2;
-            swap2.iList = iSwap1;
-            agents.set(iSwap2,swap1);
-            agents.set(iSwap1,swap2);
+            AgentListNode<T> swap1= nodes.get(iSwap1);
+            AgentListNode<T> swap2= nodes.get(iSwap2);
+            swap1.i = iSwap2;
+            swap2.i = iSwap1;
+            nodes.set(iSwap2,swap1);
+            nodes.set(iSwap1,swap2);
         }
     }
     public void CleanAgents(){
+        stateID++;
         int iSwap=iLastAlive;
         iLastAlive=pop-1;
         while(deads.size()>0&&iSwap>iLastAlive){
-            T dead=deads.remove(deads.size()-1);
-            int iDead=dead.iList;
+            AgentListNode<T> dead=deads.remove(deads.size()-1);
+            int iDead=dead.i;
             if(iDead<=iLastAlive){
-                T swap=agents.get(iSwap);
-                while(!swap.alive){
+                AgentListNode<T> swap= nodes.get(iSwap);
+                while(!(swap.stateID ==-1)){
                     iSwap--;
                     if(iSwap<=iLastAlive){
                         deads.clear();
                         return;
                     }
-                    swap=agents.get(iSwap);
+                    swap= nodes.get(iSwap);
                 }
-                swap.iList=iDead;
-                dead.iList=iSwap;
-                agents.set(iDead,swap);
-                agents.set(iSwap,dead);
+                swap.i=iDead;
+                dead.i=iSwap;
+                nodes.set(iDead,swap);
+                nodes.set(iSwap,dead);
                 iSwap--;
             }
         }
         deads.clear();
+    }
+    public T RandomAgent(Rand rn){
+        CleanAgents();
+        if(pop==0){
+            return null;
+        }
+        return nodes.get(rn.Int(pop)).agent;
     }
 }

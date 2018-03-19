@@ -46,12 +46,12 @@ public class PDEexample extends AgentGrid2D<SrcOrSink> {
                 NewAgentSQ(sinkI).Init(SINK);//create sink
                 sinksPlaced++;
                 if(sinksPlaced==nSinks){
-                    IncTick(); //IncTick called to make sources and sinks appear during iteration
+                    //IncTick(); //IncTick called to make sources and sinks appear during iteration
                     return;
                 }
             }
         }
-        IncTick();//in case we never place enough sinks, we still call IncTick to make sure they appear during iteration
+        //IncTick();//in case we never place enough sinks, we still call IncTick to make sure they appear during iteration
     }
     public void Step(int stepI){
         double advectionX=Math.sin(stepI*1.0/1000)*0.2;//sine and cosine based on timestep cause circular advection

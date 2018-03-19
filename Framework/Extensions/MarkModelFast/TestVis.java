@@ -45,7 +45,7 @@ public class TestVis {
     }
     public void Draw(){
         model.DrawCells(cells);
-        days.SetText("days: "+model.GetTick()*model.CELL_TIMESTEP);
+        //days.SetText("days: "+model.GetTick()*model.CELL_TIMESTEP);
         model.DrawAcidOld(acid);
         model.DrawOxygenOld(oxy);
         model.DrawGlucoseOld(gluc);

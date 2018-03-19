@@ -1,5 +1,7 @@
 package Framework.GridsAndAgents;
 
+import Framework.Interfaces.AgentToBool;
+
 import java.util.ArrayList;
 
 import static Framework.Util.InDim;
@@ -12,7 +14,7 @@ import static Framework.Util.ModWrap;
  * Created by rafael on 11/18/16.
  */
 
-public class AgentSQ2Dunstackable<T extends AgentGrid2D> extends AgentBaseSpatial <T>{
+public class AgentSQ2Dunstackable<T extends AgentGrid2D> extends AgentBaseSpatial <T> implements Agent2DBase{
     int xSq;
     int ySq;
 
@@ -193,11 +195,30 @@ public class AgentSQ2Dunstackable<T extends AgentGrid2D> extends AgentBaseSpatia
         }
         RemSQ();
         myGrid.agents.RemoveAgent(this);
+        if(myNodes!=null){
+            myNodes.DisposeAll();
+        }
     }
     public void GetAllOnSquare(ArrayList<AgentBaseSpatial> putHere){
         putHere.add(this);
     }
 
+    @Override
+    void GetAllOnSquareEval(ArrayList<AgentBaseSpatial> putHere, AgentToBool evalAgent) {
+        if(evalAgent.EvalAgent(this)) {
+            putHere.add(this);
+        }
+    }
+
+    @Override
+    int GetCountOnSquare() {
+        return 1;
+    }
+
+    @Override
+    int GetCountOnSquareEval(AgentToBool evalAgent) {
+        return evalAgent.EvalAgent(this)?1:0;
+    }
     /**
      * Gets the index of the square that the agent occupies
      */

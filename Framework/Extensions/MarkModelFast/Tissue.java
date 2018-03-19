@@ -44,7 +44,7 @@ public class Tissue extends AgentGrid2D<Cell> {
     public int ADI_MAX_SIM_TIME_START = (int) ADI_MAX_SIM_TIME *6;
 
     //MISC
-    public double MIN_CELL_CYCLE_TIME = 18;
+    public double MIN_CELL_CYCLE_TIME = 1.0/18;
 
     //EVENT PROBABILITIES
     //public double DEATH_PROB_NORM_COND_BASE = 0.005;
@@ -61,8 +61,8 @@ public class Tissue extends AgentGrid2D<Cell> {
     public double HYPOX_ANGIO_ZONE_MAX = 4E-3;
     public double HYPOX_ZONE_SIZE=100;
     public double ANGIO_PROB=0.5;
-    public int VESSEL_HP_MAX = 1;
-    public double ANGIO_RATE = 0.0;
+    public int VESSEL_HP_MAX = 20;
+    public double ANGIO_RATE = 0.1;
     public double VESSEL_EDGE_MAX_DIST=1;//no vessels this close to the edge
     public double VESSEL_DEGRADATION_RATE_BASE=1;
     public double VESSEL_DEATH_CONST=1;
@@ -292,7 +292,7 @@ public class Tissue extends AgentGrid2D<Cell> {
                 int x=oxygen.grid.ItoX(hypoxicIs[i])* DIFF_SPACE_SCALE +rn.Int(DIFF_SPACE_SCALE);
                 int y=oxygen.grid.ItoY(hypoxicIs[i])* DIFF_SPACE_SCALE +rn.Int(DIFF_SPACE_SCALE);
                 Cell occupant = GetAgent(x,y);
-                if(occupant!=null&&occupant.type==NECRO) {
+                if(occupant!=null&&(occupant.type==NECRO||occupant.type==VESSEL)) {
                     break;
                 }
                 if (occupant == null) {
@@ -317,7 +317,6 @@ public class Tissue extends AgentGrid2D<Cell> {
     }
 
     public int SetupBoundaryConds() {
-        IncTick();//make sure cells/vessels are present
         if (REFLECTIVE_BOUNDARY) {
             return SteadyStateDiff(false,ADI_MIN_STEPS, ADI_MAX_STEPS_START);
         } else {
@@ -336,9 +335,6 @@ public class Tissue extends AgentGrid2D<Cell> {
 
     public boolean DiffStep(boolean checkSteady) {
         //returns true if steady state conditions are met
-        for (Cell c : this) {
-            c.Metabolism();
-        }
         for (Cell vessel : vesselList) {
             int x=vessel.Xsq();
             int y=vessel.Ysq();
@@ -346,6 +342,15 @@ public class Tissue extends AgentGrid2D<Cell> {
             glucose.SetVesselConc(x,y);
             acid.SetVesselConc(x,y);
         }
+        oxygen.grid.CurrIntoSwap();
+        glucose.grid.CurrIntoSwap();
+        acid.grid.CurrIntoSwap();
+        for (Cell c : this) {
+            c.Metabolism();
+        }
+        oxygen.grid.SwapFields();
+        glucose.grid.SwapFields();
+        acid.grid.SwapFields();
         RunDiffusion();
         return checkSteady && IsSteady();
     }
@@ -374,9 +379,6 @@ public class Tissue extends AgentGrid2D<Cell> {
                 acid.boundaryValue=acid.grid.GetAvg();
             }
         } while (!steady&&step<maxSteps);
-        for (Cell cell:this) {
-            cell.ATPComp();
-        }
         return step;
     }
 
@@ -441,13 +443,17 @@ public class Tissue extends AgentGrid2D<Cell> {
         return true;
     }
 
-    public void StepAll() {
+    public void StepAll(int tick) {
         SteadyStateDiff(false,ADI_MIN_STEPS,ADI_MAX_STEPS);
+        for (Cell cell:this) {
+            cell.ATPComp();
+        }
         Angiogenesis();
         StepCells();
-        CleanShuffInc(rn);
-        if(GetTick()%20==0){
-            System.out.println("tick:"+GetTick()+", "+GetDiffVals(oxygen.grid,glucose.grid,acid.grid));
+        CleanAgents();
+        ShuffleAgents(rn);
+        if(tick%20==0){
+            System.out.println("tick:"+tick+", "+GetDiffVals(oxygen.grid,glucose.grid,acid.grid));
         }
     }
     public void StepCells(){
@@ -461,7 +467,6 @@ public class Tissue extends AgentGrid2D<Cell> {
         SetupTissue(startDensity);
         SetupBoundaryConds();
         SetupTumor(tumorRad, NORMAL_PHENO_GLYC, NORMAL_PHENO_ACID_RESIST);
-        IncTick();
     }
     public void PrintDiffs() {
         System.out.println("Oxygen:");

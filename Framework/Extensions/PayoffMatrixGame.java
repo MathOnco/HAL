@@ -93,11 +93,10 @@ public abstract class PayoffMatrixGame extends SpatialGameCanonical {
     public void DefaultStep(Rand rn){
         if(singleUpdate){
             StepOne();
-            IncTick();
         }
         else{
             StepAll();
-            types.SwapInc();
+            types.SwapFields();
         }
     }
 }

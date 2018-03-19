@@ -48,6 +48,6 @@ public class mover3DoffLattice extends AgentGrid3D<MoveAgentoffLattice> {
             }
         }
         win3D.Dispose();//destroy guis
-        win2D.Dispose();
+        win2D.Close();
     }
 }

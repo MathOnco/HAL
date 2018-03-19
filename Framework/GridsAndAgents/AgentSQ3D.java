@@ -1,5 +1,6 @@
 package Framework.GridsAndAgents;
 
+import Framework.Interfaces.AgentToBool;
 import Framework.Interfaces.Coords3DToAction;
 
 import java.util.ArrayList;
@@ -13,7 +14,7 @@ import static Framework.Util.ModWrap;
  * @param <T> the extended AgentGrid3D class that the agents will live in
  * Created by rafael on 11/18/16.
  */
-public class AgentSQ3D<T extends AgentGrid3D> extends AgentBaseSpatial<T>{
+public class AgentSQ3D<T extends AgentGrid3D> extends AgentBaseSpatial<T> implements Agent3DBase{
     int xSq;
     int ySq;
     int zSq;
@@ -152,6 +153,9 @@ public class AgentSQ3D<T extends AgentGrid3D> extends AgentBaseSpatial<T>{
         }
         RemSQ();
         myGrid.agents.RemoveAgent(this);
+        if(myNodes!=null){
+            myNodes.DisposeAll();
+        }
     }
 
     @Override
@@ -159,6 +163,17 @@ public class AgentSQ3D<T extends AgentGrid3D> extends AgentBaseSpatial<T>{
         AgentSQ3D toList=this;
         while (toList!=null){
             putHere.add(toList);
+            toList=toList.nextSq;
+        }
+    }
+
+    @Override
+    void GetAllOnSquareEval(ArrayList<AgentBaseSpatial> putHere, AgentToBool evalAgent) {
+        AgentSQ3D toList=this;
+        while (toList!=null){
+            if(evalAgent.EvalAgent(toList)) {
+                putHere.add(toList);
+            }
             toList=toList.nextSq;
         }
     }
@@ -225,7 +240,29 @@ public class AgentSQ3D<T extends AgentGrid3D> extends AgentBaseSpatial<T>{
         }
         MoveSQ(newX,newY,newZ);
     }
+    @Override
+    int GetCountOnSquare() {
+        int ct=1;
+        AgentSQ3D curr=nextSq;
+        while(curr!=null){
+            ct++;
+            curr=curr.nextSq;
+        }
+        return ct;
+    }
 
+    @Override
+    int GetCountOnSquareEval(AgentToBool evalAgent) {
+        int ct=0;
+        AgentSQ3D curr=this;
+        while (curr!=null){
+            if(evalAgent.EvalAgent(curr)){
+                ct++;
+                curr=curr.nextSq;
+            }
+        }
+        return ct;
+    }
     @Override
     void Setup(double i) {
         Setup((int)i);

@@ -1,7 +1,5 @@
-package Framework.Extensions;
+package Framework.GridsAndAgents;
 
-import Framework.GridsAndAgents.AgentGrid3D;
-import Framework.GridsAndAgents.AgentPT3D;
 import Framework.Interfaces.OverlapForceResponse;
 import Framework.Interfaces.OverlapNeighborForceResponse;
 import Framework.Rand;
@@ -118,6 +116,20 @@ public class SphericalAgent3D<A extends SphericalAgent3D,G extends AgentGrid3D<A
             }
         }
         return sum;
+    }
+    public double SumForces(double interactionRad,OverlapForceResponse OverlapFun){
+        ArrayList<A> scratcchAgentList=G().GetFreshAgentSearchArr();
+        double ret= SumForces(interactionRad,scratcchAgentList,OverlapFun);
+        scratcchAgentList.clear();
+        G().iagentSearch--;
+        return ret;
+    }
+    public double SumForces(double interactionRad,OverlapNeighborForceResponse OverlapFun){
+        ArrayList<A> scratcchAgentList=G().GetFreshAgentSearchArr();
+        double ret= SumForces(interactionRad,scratcchAgentList,OverlapFun);
+        scratcchAgentList.clear();
+        G().iagentSearch--;
+        return ret;
     }
 
     public void ForceMove(boolean wrapX,boolean wrapY,boolean wrapZ){

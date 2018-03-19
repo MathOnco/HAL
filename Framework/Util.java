@@ -1,8 +1,7 @@
 package Framework;
 
-import Framework.GridsAndAgents.AgentBase;
-import Framework.GridsAndAgents.AgentBaseSpatial;
-import Framework.GridsAndAgents.AgentGrid2D;
+import Framework.GridsAndAgents.Agent2DBase;
+import Framework.GridsAndAgents.Agent3DBase;
 import Framework.Interfaces.*;
 import Framework.Tools.SerializableModel;
 import Framework.Tools.SweepRun;
@@ -134,6 +133,7 @@ public final class Util {
         a = Bound(a, 0, 255);
         return color & 0x00ffffff | (a << 24);
     }
+    final public static int RED = RGB(1,0,0), GREEN= RGB(0,1,0), BLUE=RGB(0,0,1), BLACK=RGB(0,0,0), WHITE=RGB(1,1,1), YELLOW=RGB(1,1,0), CYAN=RGB(0,1,1), MAGENTA=RGB(1,0,1);
 
     //OTHER COLOR GENERATORS
     final private static int CC0 = RGB256(56, 116, 177), CC1 = RGB256(198, 56, 44), CC2 = RGB256(79, 159, 57), CC3 = RGB256(189, 190, 58), CC4 = RGB256(142, 102, 186), CC5 = RGB256(240, 134, 39), CC6 = RGB256(83, 187, 206), CC7 = RGB256(214, 123, 191), CC8 = RGB256(133, 88, 76), CC9 = RGB256(178, 197, 230), CC10 = RGB256(243, 156, 151), CC11 = RGB256(166, 222, 144), CC12 = RGB256(220, 220, 147), CC13 = RGB256(194, 174, 211), CC14 = RGB256(246, 191, 126), CC15 = RGB256(169, 216, 228), CC16 = RGB256(238, 184, 209), CC17 = RGB256(190, 157, 146), CC18 = RGB256(199, 199, 199), CC19 = RGB256(127, 127, 127);
@@ -598,9 +598,11 @@ public final class Util {
      */
     public static int[] VonNeumannHood(boolean includeOrigin) {
         if (includeOrigin) {
-            return new int[]{0, 0, 1, 0, -1, 0, 0, 1, 0, -1};
+            return new int[]{0,0,0,0,0,
+                    0, 0, 1, 0, -1, 0, 0, 1, 0, -1};
         } else {
-            return new int[]{1, 0, -1, 0, 0, 1, 0, -1};
+            return new int[]{0,0,0,0,
+                    1, 0, -1, 0, 0, 1, 0, -1};
         }
     }
 
@@ -612,9 +614,11 @@ public final class Util {
      */
     public static int[] MooreHood(boolean includeOrigin) {
         if (includeOrigin) {
-            return new int[]{0, 0, 1, 1, 1, 0, 1, -1, 0, -1, -1, -1, -1, 0, -1, 1, 0, 1};
+            return new int[]{0,0,0,0,0,0,0,0,0,
+                    0, 0, 1, 1, 1, 0, 1, -1, 0, -1, -1, -1, -1, 0, -1, 1, 0, 1};
         } else {
-            return new int[]{1, 1, 1, 0, 1, -1, 0, -1, -1, -1, -1, 0, -1, 1, 0, 1};
+            return new int[]{0,0,0,0,0,0,0,0,
+                    1, 1, 1, 0, 1, -1, 0, -1, -1, -1, -1, 0, -1, 1, 0, 1};
         }
     }
 
@@ -626,9 +630,11 @@ public final class Util {
      */
     public static int[] HexHoodEvenY(boolean includeOrigin) {
         if (includeOrigin) {
-            return new int[]{0, 0, 1, 1, 1, 0, 1, -1, 0, -1, -1, 0, 0, 1};
+            return new int[]{0,0,0,0,0,0,0,
+                    0, 0, 1, 1, 1, 0, 1, -1, 0, -1, -1, 0, 0, 1};
         } else {
-            return new int[]{1, 1, 1, 0, 1, -1, 0, -1, -1, 0, 0, 1};
+            return new int[]{0,0,0,0,0,0,
+                    1, 1, 1, 0, 1, -1, 0, -1, -1, 0, 0, 1};
         }
     }
 
@@ -640,9 +646,11 @@ public final class Util {
      */
     public static int[] HexHoodOddY(boolean includeOrigin) {
         if (includeOrigin) {
-            return new int[]{0, 0, 1, 0, 0, -1, -1, -1, -1, 0, -1, 1, 0, 1};
+            return new int[]{0,0,0,0,0,0,0,
+                    0, 0, 1, 0, 0, -1, -1, -1, -1, 0, -1, 1, 0, 1};
         } else {
-            return new int[]{1, 0, 0, -1, -1, -1, -1, 0, -1, 1, 0, 1};
+            return new int[]{0,0,0,0,0,0,
+                    1, 0, 0, -1, -1, -1, -1, 0, -1, 1, 0, 1};
         }
     }
 
@@ -654,9 +662,11 @@ public final class Util {
      */
     public static int[] TriangleHoodSameParity(boolean includeOrigin) {
         if (includeOrigin) {
-            return new int[]{0, 0, -1, 0, 1, 0, 0, 1};
+            return new int[]{0,0,0,0,
+                    0, 0, -1, 0, 1, 0, 0, 1};
         } else {
-            return new int[]{-1, 0, 1, 0, 0, 1};
+            return new int[]{0,0,0,
+                    -1, 0, 1, 0, 0, 1};
         }
     }
 
@@ -668,9 +678,11 @@ public final class Util {
      */
     public static int[] TriangleHoodDifParity(boolean includeOrigin) {
         if (includeOrigin) {
-            return new int[]{0, 0, -1, 0, 1, 0, 0, -1};
+            return new int[]{0,0,0,0,
+                    0, 0, -1, 0, 1, 0, 0, -1};
         } else {
-            return new int[]{-1, 0, 1, 0, 0, -1};
+            return new int[]{0,0,0,
+                    -1, 0, 1, 0, 0, -1};
         }
     }
 
@@ -683,15 +695,18 @@ public final class Util {
      */
     public static int[] VonNeumannHood3D(boolean includeOrigin) {
         if (includeOrigin) {
-            return new int[]{0, 0, 0, 1, 0, 0, -1, 0, 0, 0, 1, 0, 0, -1, 0, 0, 0, 1, 0, 0, -1};
+            return new int[]{0,0,0,0,0,0,0,
+                    0, 0, 0, 1, 0, 0, -1, 0, 0, 0, 1, 0, 0, -1, 0, 0, 0, 1, 0, 0, -1};
         } else {
-            return new int[]{1, 0, 0, -1, 0, 0, 0, 1, 0, 0, -1, 0, 0, 0, 1, 0, 0, -1};
+            return new int[]{0,0,0,0,0,0,
+                    1, 0, 0, -1, 0, 0, 0, 1, 0, 0, -1, 0, 0, 0, 1, 0, 0, -1};
         }
     }
 
     public int[] MooreHood3D(boolean includeOrigin) {
         if (includeOrigin) {
-            return new int[]{0, 0, 0,
+            return new int[]{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+                    0, 0, 0,
                     0, 0, 1,
                     0, 0, -1,
                     1, 0, 0,
@@ -720,7 +735,7 @@ public final class Util {
                     1, -1, -1,
             };
         } else {
-            return new int[]{
+            return new int[]{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
                     0, 0, 1,
                     0, 0, -1,
                     1, 0, 0,
@@ -877,7 +892,7 @@ public final class Util {
         }
         return Count;
     }
-    public static void AlongLineCoords(double x1, double y1, double x2, double y2, CoordsAction Action) {
+    public static void AlongLineAction(double x1, double y1, double x2, double y2, CoordsAction Action) {
         double dx = Math.abs(x2 - x1);
         double dy = Math.abs(y2 - y1);
 
@@ -959,80 +974,56 @@ public final class Util {
                 }
             }
         }
-        int[] ret = new int[ct * 2];
-        System.arraycopy(retLong, 0, ret, 0, ret.length);
+        int[] ret = new int[ct * 3];
+        System.arraycopy(retLong, 0, ret, ct, ct*2);
         return ret;
     }
 
-    static public int CircleHood(boolean includeOrigin, double radius, int[] returnCoords) {
-        double distSq = radius * radius;
-        int min = (int) Math.floor(-radius);
-        int max = (int) Math.ceil(radius);
-        int ct = 0;
-        if (includeOrigin) {
-            ct++;
-            returnCoords[0] = 0;
-            returnCoords[1] = 0;
-        }
-        for (int x = min; x <= max; x++) {
-            for (int y = min; y <= max; y++) {
-                if (Util.DistSquared(0, 0, x, y) <= distSq) {
-                    if (x == 0 && y == 0) {
-                        continue;
-                    }
-                    returnCoords[ct * 2] = x;
-                    returnCoords[ct * 2 + 1] = y;
-                    ct++;
-                }
-            }
-        }
-        return ct;
-    }
-    static public int[] RingHood(double innerRadius,double outerRadius) {
-        if(innerRadius<=outerRadius){
-            throw new IllegalArgumentException("inner radius must be less than outer radius");
-        }
-        double distSqInner = innerRadius * innerRadius;
-        double distSqOuter = outerRadius * outerRadius;
-        int min = (int) Math.floor(-outerRadius);
-        int max = (int) Math.ceil(outerRadius);
-        int[] retLong = new int[((max + 1 - min) * (max + 1 - min)) * 2];
-        int ct = 0;
-        for (int x = min; x <= max; x++) {
-            for (int y = min; y <= max; y++) {
-                double distSq= Util.DistSquared(0, 0, x, y);
-                if (distSq >= distSqInner&&distSq<=distSqOuter) {
-                    retLong[ct * 2] = x;
-                    retLong[ct * 2 + 1] = y;
-                    ct++;
-                }
-            }
-        }
-        int[] ret = new int[ct * 2];
-        System.arraycopy(retLong, 0, ret, 0, ret.length);
-        return ret;
-    }
-    static public int RingHood(double innerRadius,double outerRadius, int[] returnCoords) {
-        if(innerRadius<=outerRadius){
-            throw new IllegalArgumentException("inner radius must be less than outer radius");
-        }
-        double distSqInner = innerRadius * innerRadius;
-        double distSqOuter = outerRadius * outerRadius;
-        int min = (int) Math.floor(-outerRadius);
-        int max = (int) Math.ceil(outerRadius);
-        int ct = 0;
-        for (int x = min; x <= max; x++) {
-            for (int y = min; y <= max; y++) {
-                double distSq= Util.DistSquared(0, 0, x, y);
-                if (distSq >= distSqInner&&distSq<=distSqOuter) {
-                    returnCoords[ct * 2] = x;
-                    returnCoords[ct * 2 + 1] = y;
-                    ct++;
-                }
-            }
-        }
-        return ct;
-    }
+//    static public int[] RingHood(double innerRadius,double outerRadius) {
+//        if(innerRadius<=outerRadius){
+//            throw new IllegalArgumentException("inner radius must be less than outer radius");
+//        }
+//        double distSqInner = innerRadius * innerRadius;
+//        double distSqOuter = outerRadius * outerRadius;
+//        int min = (int) Math.floor(-outerRadius);
+//        int max = (int) Math.ceil(outerRadius);
+//        int[] retLong = new int[((max + 1 - min) * (max + 1 - min)) * 2];
+//        int ct = 0;
+//        for (int x = min; x <= max; x++) {
+//            for (int y = min; y <= max; y++) {
+//                double distSq= Util.DistSquared(0, 0, x, y);
+//                if (distSq >= distSqInner&&distSq<=distSqOuter) {
+//                    retLong[ct * 2] = x;
+//                    retLong[ct * 2 + 1] = y;
+//                    ct++;
+//                }
+//            }
+//        }
+//        int[] ret = new int[ct * 2];
+//        System.arraycopy(retLong, 0, ret, 0, ret.length);
+//        return ret;
+//    }
+//    static public int RingHood(double innerRadius,double outerRadius, int[] returnCoords) {
+//        if(innerRadius<=outerRadius){
+//            throw new IllegalArgumentException("inner radius must be less than outer radius");
+//        }
+//        double distSqInner = innerRadius * innerRadius;
+//        double distSqOuter = outerRadius * outerRadius;
+//        int min = (int) Math.floor(-outerRadius);
+//        int max = (int) Math.ceil(outerRadius);
+//        int ct = 0;
+//        for (int x = min; x <= max; x++) {
+//            for (int y = min; y <= max; y++) {
+//                double distSq= Util.DistSquared(0, 0, x, y);
+//                if (distSq >= distSqInner&&distSq<=distSqOuter) {
+//                    returnCoords[ct * 2] = x;
+//                    returnCoords[ct * 2 + 1] = y;
+//                    ct++;
+//                }
+//            }
+//        }
+//        return ct;
+//    }
 
     /**
      * Returns the coordinates of all squares whose centers lie within a rectangle of the provided radius, centered on (0,0)
@@ -1045,27 +1036,44 @@ public final class Util {
     static public int[] RectangleHood(boolean includeOrigin, int radX, int radY) {
         //returns a square with a center location at 0,0
         int[] dataIn;
-        int nCoord;
+        int iCoord;
+        int nCoords=(radX * 2 + 1) * (radY * 2 + 1);
         if (includeOrigin) {
-            dataIn = new int[(radX * 2 + 1) * (radY * 2 + 1) * 2];
-            dataIn[0] = 0;
-            dataIn[1] = 0;
-            nCoord = 1;
+            dataIn = new int[nCoords * 3];
+            iCoord = 1;
         } else {
-            dataIn = new int[(radX * 2 + 1) * (radY * 2 + 1) * 2 - 1];
-            nCoord = 0;
+            dataIn = new int[nCoords * 3 - 3];
+            iCoord = 0;
         }
         for (int x = -radX; x <= radX; x++) {
             for (int y = -radY; y <= radY; y++) {
                 if (x == 0 && y == 0) {
                     continue;
                 }
-                dataIn[nCoord * 2] = x;
-                dataIn[nCoord * 2 + 1] = y;
-                nCoord++;
+                dataIn[iCoord * 2] = x;
+                dataIn[iCoord * 2 + 1] = y;
+                iCoord++;
             }
         }
         return dataIn;
+    }
+    static public int[]GenHood2D(int[]coords){
+        if(coords.length%2!=0){
+            throw new IllegalArgumentException("2D coords list must be divisible by 2");
+        }
+        int isStart=coords.length/2;
+        int[]ret=new int[coords.length+isStart];
+        System.arraycopy(coords,0,ret,isStart,coords.length);
+        return ret;
+    }
+    static public int[]GenHood3D(int[]coords){
+        if(coords.length%3!=0){
+            throw new IllegalArgumentException("3D coords list must be divisible by 3");
+        }
+        int isStart=coords.length/3;
+        int[]ret=new int[coords.length+isStart];
+        System.arraycopy(coords,0,ret,isStart,coords.length);
+        return ret;
     }
 
     static public int RectangleHood(boolean includeOrigin, int radX, int radY, int[] returnCoords) {
@@ -1191,6 +1199,18 @@ public final class Util {
 
     public static double Dist(double x1, double y1, double x2, double y2) {
         return Math.sqrt(DistSquared(x1, y1, x2, y2));
+    }
+    public static double DistSqaured(Agent2DBase a1,Agent2DBase a2){
+        return DistSquared(a1.Xpt(), a1.Ypt(), a2.Xpt(), a2.Ypt());
+    }
+    public static double Dist(Agent2DBase a1,Agent2DBase a2){
+        return Dist(a1.Xpt(), a1.Ypt(), a2.Xpt(), a2.Ypt());
+    }
+    public static double DistSquared(Agent3DBase a1, Agent3DBase a2){
+        return DistSquared(a1.Xpt(), a1.Ypt(),a1.Zpt(), a2.Xpt(), a2.Ypt(),a2.Zpt());
+    }
+    public static double Dist(Agent3DBase a1, Agent3DBase a2){
+        return Dist(a1.Xpt(), a1.Ypt(),a1.Zpt(), a2.Xpt(), a2.Ypt(),a2.Zpt());
     }
 
     public static double Dist(double x1, double y1, double x2, double y2, double xDim, double yDim, boolean wrapX, boolean wrapY) {

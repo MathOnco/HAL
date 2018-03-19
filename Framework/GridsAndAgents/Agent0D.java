@@ -6,8 +6,7 @@ package Framework.GridsAndAgents;
  * @param <T> the extended AgentGrid2D class that the agents will live in
  * Created by rafael on 11/18/16.
  */
-abstract public class Agent0D<T extends AgentGrid0D> extends AgentBase<T>{
-
+abstract public class Agent0D<T extends AgentGrid0D> extends AgentBase<T> {
 
     /**
      * deletes the agent
@@ -15,6 +14,9 @@ abstract public class Agent0D<T extends AgentGrid0D> extends AgentBase<T>{
     public void Dispose(){
         //kills agent
         myGrid.RemoveAgent(this);
+        if(myNodes!=null){
+            myNodes.DisposeAll();
+        }
     }
 
     /**

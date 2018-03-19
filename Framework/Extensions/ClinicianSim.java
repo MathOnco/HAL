@@ -91,7 +91,7 @@ class TreatmentBar {
                 DrawIntensityLine();
                 myLab.AdjustDrawState(index);
             }
-        }, null);
+        });
         treatline.AddMouseListeners(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -114,7 +114,7 @@ class TreatmentBar {
                 myLab.DrawTreatline(index);
                 myLab.AdjustDrawState(index);
             }
-        },null);
+        });
     }
 
     public void SetLine(){
@@ -296,7 +296,7 @@ public class ClinicianSim extends GuiWindow{
             public void mousePressed(MouseEvent e) {
                 AdjustDrawState(-1);
             }
-        },null);
+        });
         int alphaVisScale=myModel.AlphaGridScaleFactor();
         alphaVis=new GuiGrid(myModel.VisPixX()/alphaVisScale,myModel.VisPixY()/alphaVisScale,alphaVisScale*visScale,4,1);
         vis.AddAlphaGrid(alphaVis);
@@ -337,7 +337,7 @@ public class ClinicianSim extends GuiWindow{
                 ColorSpeedBar(pos);
                 stepMS=stepMSmax-(int)((stepMSmax-stepMSmin)*frac);
             }
-        },null);
+        });
         clearButton =new GuiButton("Clear [C]",false,(e)->{
             SavePlansToUndo();
             UpdateAfterTreatmentChange();
@@ -410,7 +410,7 @@ public class ClinicianSim extends GuiWindow{
                 }
                 //JumpStep(timeline.ClickX(e));
             }
-        },null);
+        });
         saves[0]=SaveState();
         toxs[0]=myModel.GetTox();
         burdens[0]=myModel.GetBurden();

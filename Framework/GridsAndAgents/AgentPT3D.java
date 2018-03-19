@@ -1,5 +1,6 @@
 package Framework.GridsAndAgents;
 
+import Framework.Interfaces.AgentToBool;
 import Framework.Interfaces.Coords3DToAction;
 
 import java.util.ArrayList;
@@ -12,7 +13,7 @@ import static Framework.Util.*;
  * @param <T> the extended AgentGrid3D class that the agents will live in
  * Created by rafael on 11/18/16.
  */
-public class AgentPT3D<T extends AgentGrid3D> extends AgentBaseSpatial<T> {
+public class AgentPT3D<T extends AgentGrid3D> extends AgentBaseSpatial<T> implements Agent3DBase{
     private double xPos;
     private double yPos;
     private double zPos;
@@ -81,7 +82,18 @@ public class AgentPT3D<T extends AgentGrid3D> extends AgentBaseSpatial<T> {
     public int HoodToAction(int[]neighborhood, Coords3DToAction Action){
         return G().HoodToAction(neighborhood,Xsq(),Ysq(),Zsq(),Action);
     }
-
+    @Override
+    int GetCountOnSquareEval(AgentToBool evalAgent) {
+        int ct=0;
+        AgentPT3D curr=this;
+        while (curr!=null){
+            if(evalAgent.EvalAgent(curr)){
+                ct++;
+                curr=curr.nextSq;
+            }
+        }
+        return ct;
+    }
     public int HoodToIs(int[]neighborhood,int[]retIs){
         return G().HoodToIs(neighborhood,retIs,this.Xsq(),this.Ysq(),this.Zsq());
     }
@@ -251,6 +263,9 @@ public class AgentPT3D<T extends AgentGrid3D> extends AgentBaseSpatial<T> {
         }
         RemSQ();
         myGrid.agents.RemoveAgent(this);
+        if(myNodes!=null){
+            myNodes.DisposeAll();
+        }
     }
 
     @Override
@@ -260,6 +275,28 @@ public class AgentPT3D<T extends AgentGrid3D> extends AgentBaseSpatial<T> {
             putHere.add(toList);
             toList=toList.nextSq;
         }
+    }
+
+    @Override
+    void GetAllOnSquareEval(ArrayList<AgentBaseSpatial> putHere, AgentToBool evalAgent) {
+        AgentPT3D toList=this;
+        while (toList!=null){
+            if(evalAgent.EvalAgent(toList)) {
+                putHere.add(toList);
+            }
+            toList=toList.nextSq;
+        }
+    }
+
+    @Override
+    int GetCountOnSquare() {
+        int ct=1;
+        AgentPT3D curr=nextSq;
+        while(curr!=null){
+            ct++;
+            curr=curr.nextSq;
+        }
+        return ct;
     }
 
     public<T extends AgentPT3D> double Xdisp(T other, boolean wrapX){

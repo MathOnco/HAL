@@ -490,7 +490,7 @@ public class GuiWindow{
     /**
      * destroys the gui with the window closing event
      */
-    public void Dispose(){
+    public void Close(){
         if(active) {
             frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
         }

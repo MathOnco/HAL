@@ -19,9 +19,9 @@ class Cell extends AgentSQ2Dunstackable<BirthDeath> {
             Dispose();
         }
         if (G().rn.Double() < G().BIRTH_PROB) {
-            int nOptions = G().HoodToEmptyIs(G().mooreHood, G().hoodIs, Xsq(), Ysq());
+            int nOptions = G().MapEmptyHood(G().mooreHood, Xsq(), Ysq());
             if(nOptions>0) {
-                G().NewAgentSQ(G().hoodIs[G().rn.Int(nOptions)]);
+                G().NewAgentSQ(G().mooreHood[G().rn.Int(nOptions)]);
             }
         }
     }
@@ -33,7 +33,6 @@ public class BirthDeath extends AgentGrid2D<Cell> {
     double BIRTH_PROB=0.2;
     Rand rn=new Rand();
     int[]mooreHood=MooreHood(false);
-    int[]hoodIs=new int[mooreHood.length];
     public BirthDeath(int x, int y) {
         super(x, y, Cell.class);
     }
@@ -51,9 +50,10 @@ public class BirthDeath extends AgentGrid2D<Cell> {
         }
         for (int i = 0; i < vis.length; i++) {
             Cell c = GetAgent(i);
-            vis.SetPix(i, c == null ? BLACK : RGB(1,c.Age()/100.0,0));
+            vis.SetPix(i, c == null ? BLACK : RGB(1,1,0));
         }
-        CleanShuffInc(rn);
+        CleanAgents();
+        ShuffleAgents(rn);
     }
 
 
