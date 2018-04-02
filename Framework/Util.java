@@ -1377,7 +1377,7 @@ public final class Util {
         return ret;
     }
 
-    //    public static <T extends AgentPT2D,G extends AgentGrid2D<T>> void AgentsInRad(G searchMe, final ArrayList<T> putHere, final double x, final double y, final double rad, boolean wrapX, boolean wrapY){
+    //    public static <T extends AgentPT2D,G extends AgentGrid2D<T>> void GetAgentsRadApprox(G searchMe, final ArrayList<T> putHere, final double x, final double y, final double rad, boolean wrapX, boolean wrapY){
 //        putHere.clear();
 //        int nAgents;
 //        for (int xSq = (int)Math.floor(x-rad); xSq <(int)Math.ceil(x+rad) ; xSq++) {
@@ -1413,7 +1413,7 @@ public final class Util {
 //    public static <T extends AgentPhys2,Q extends AgentPhys2,G extends AgentGrid2D<Q>>double CollisionSum2D(T agent,G searchMe, final ArrayList<Q> putAgentsHere,RadToForceMap ForceFun,double searchRad,boolean wrapX,boolean wrapY){
 //        double ret=0;
 //        putAgentsHere.clear();
-//        AgentsInRad(searchMe,putAgentsHere,agent.Xpt(),agent.Ypt(),searchRad,wrapX,wrapY);
+//        GetAgentsRadApprox(searchMe,putAgentsHere,agent.Xpt(),agent.Ypt(),searchRad,wrapX,wrapY);
 //        for (Q a : putAgentsHere) {
 //            if(a!=agent){
 //                double xComp=wrapX?DistWrap(agent.Xpt(), a.Xpt(), searchMe.xDim):a.Xpt()-agent.Xpt();

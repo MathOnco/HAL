@@ -105,26 +105,7 @@ public class GuiGrid implements GuiComp{
         }
     }
     public GuiGrid(int gridW, int gridH, int scaleFactor, int compX, int compY){
-        this.active= true;
-        xDim=gridW;
-        yDim=gridH;
-        length=gridH*gridW;
-        this.compX=compX;
-        this.compY=compY;
-        scale =scaleFactor;
-        if(this.active) {
-            buff=new BufferedImage(xDim,yDim,BufferedImage.TYPE_INT_ARGB);
-            panel=new PaintPanel(buff,xDim,yDim, scale, scale);
-            data=((DataBufferInt)buff.getRaster().getDataBuffer()).getData();
-            for (int i = 0; i < length; i++) {
-                SetPix(i, Util.RGB((double) 0, (double) 0, (double) 0));
-            }
-        }
-        else{
-            panel=null;
-            buff=null;
-            data=null;
-        }
+        this(gridW,gridH,scaleFactor,compX,compY,true);
     }
 
     /**
@@ -133,48 +114,10 @@ public class GuiGrid implements GuiComp{
      * @param scaleFactor the width and height in screen pixels of each GuiGrid pixel
      */
     public GuiGrid(int gridW, int gridH, int scaleFactor, boolean active){
-        this.active=active;
-        xDim=gridW;
-        yDim=gridH;
-        length=gridH*gridW;
-        this.compX=1;
-        this.compY=1;
-        scale =scaleFactor;
-        if(active) {
-            buff=new BufferedImage(xDim,yDim,BufferedImage.TYPE_INT_ARGB);
-            panel=new PaintPanel(buff,xDim,yDim, scale, scale);
-            data=((DataBufferInt)buff.getRaster().getDataBuffer()).getData();
-            for (int i = 0; i < length; i++) {
-                SetPix(i, Util.RGB((double) 0, (double) 0, (double) 0));
-            }
-        }
-        else{
-            panel=null;
-            buff=null;
-            data=null;
-        }
+        this(gridW,gridH,scaleFactor,1,1,true);
     }
     public GuiGrid(int gridW, int gridH, int scaleFactor){
-        this.active=true;
-        xDim=gridW;
-        yDim=gridH;
-        length=gridH*gridW;
-        this.compX=1;
-        this.compY=1;
-        scale =scaleFactor;
-        if(active) {
-            buff=new BufferedImage(xDim,yDim,BufferedImage.TYPE_INT_ARGB);
-            panel=new PaintPanel(buff,xDim,yDim, scale, scale);
-            data=((DataBufferInt)buff.getRaster().getDataBuffer()).getData();
-            for (int i = 0; i < length; i++) {
-                SetPix(i, Util.RGB((double) 0, (double) 0, (double) 0));
-            }
-        }
-        else{
-            panel=null;
-            buff=null;
-            data=null;
-        }
+        this(gridW,gridH,scaleFactor,1,1,true);
     }
 //    /**
 //     * @param gridW width of the GuiGrid in pixels

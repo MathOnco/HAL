@@ -8,35 +8,22 @@ import Framework.Interfaces.KeyResponse;
  */
 public class GridWindow extends GuiGrid {
     private GuiWindow win;
-    public GridWindow(String title, int xDim, int yDim, int scaleFactor, boolean killOnClose, boolean active) {
+    public GridWindow(String title, int xDim, int yDim, int scaleFactor, boolean killOnClose,GuiCloseAction closeAction, boolean active) {
         super(xDim,yDim,scaleFactor,active);
-        win=new GuiWindow(title, killOnClose, active);
+        win=new GuiWindow(title, killOnClose,closeAction, active);
         RunGui();
     }
     public GridWindow(String title, int xDim, int yDim, int scaleFactor, boolean killOnClose) {
-        super(xDim,yDim,scaleFactor,true);
-        win=new GuiWindow(title, killOnClose);
-        RunGui();
+        this(title,xDim,yDim,scaleFactor,killOnClose,null,true);
     }
     public GridWindow(String title, int xDim, int yDim, int scaleFactor) {
-        super(xDim,yDim,scaleFactor,true);
-        win=new GuiWindow(title, true);
-        RunGui();
+        this(title,xDim,yDim,scaleFactor,true,null,true);
     }
     public GridWindow(int xDim, int yDim, int scaleFactor) {
-        super(xDim,yDim,scaleFactor,true);
-        win=new GuiWindow("Grid Vis", true);
-        RunGui();
-    }
-    public GridWindow(String title, int xDim, int yDim, int scaleFactor, boolean killOnClose, GuiCloseAction closeAction, boolean active) {
-        super(xDim,yDim,scaleFactor,active);
-        win=new GuiWindow(title, killOnClose, closeAction, active);
-        RunGui();
+        this("visualization",xDim,yDim,scaleFactor,true,null,true);
     }
     public GridWindow(String title, int xDim, int yDim, int scaleFactor, boolean killOnClose, GuiCloseAction closeAction) {
-        super(xDim,yDim,scaleFactor,true);
-        win=new GuiWindow(title, killOnClose, closeAction, true);
-        RunGui();
+        this(title,xDim,yDim,scaleFactor,killOnClose,closeAction,true);
     }
     private void RunGui(){
         win.AddCol(0, this);

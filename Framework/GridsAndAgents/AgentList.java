@@ -11,7 +11,7 @@ import java.util.*;
  * Created by rafael on 2/17/17.
  */
 
-class AgentListNode<T extends AgentBase>{
+class AgentListNode<T>{
     T agent;
     int i;
     int stateID;
@@ -24,14 +24,14 @@ class AgentListNode<T extends AgentBase>{
     }
     void SetAgent(T agent){
         this.agent=agent;
-        this.next=agent.myNodes;
-        agent.myNodes=this;
+        this.next=((AgentBase)agent).myNodes;
+        ((AgentBase)agent).myNodes=this;
         this.prev=null;
 
     }
     void PopNode(){
-        if(agent.myNodes==this){
-            agent.myNodes=this.next;
+        if(((AgentBase)agent).myNodes==this){
+            ((AgentBase)agent).myNodes=this.next;
         }
         if(this.next!=null){
             this.next.prev=this.prev;
@@ -46,11 +46,11 @@ class AgentListNode<T extends AgentBase>{
             remMe.mySet.RemoveNode(remMe);
             remMe=remMe.next;
         }
-        agent.myNodes=null;
+        ((AgentBase)agent).myNodes=null;
     }
 }
 
-public class AgentList<T extends AgentBase> implements Iterable<T>,Serializable{
+public class AgentList<T> implements Iterable<T>,Serializable{
     ArrayList<AgentListNode<T>> nodes;
     ArrayList<AgentListNode<T>> deads;
     ArrayList<myIter> usedIters=new ArrayList<>();
@@ -66,7 +66,7 @@ public class AgentList<T extends AgentBase> implements Iterable<T>,Serializable{
         this.pop=0;
     }
     public boolean InSet(T agent){
-        AgentListNode<T> n=agent.myNodes;
+        AgentListNode<T> n=((AgentBase)agent).myNodes;
         while(n!=null){
             if(n.mySet==this){
                 return true;
@@ -80,7 +80,7 @@ public class AgentList<T extends AgentBase> implements Iterable<T>,Serializable{
         return pop;
     }
     public void AddAgent(T agent){
-        if(!agent.alive){
+        if(!((AgentBase)agent).alive){
             throw new IllegalStateException("add dead Agent!");
         }
         //if(InSet(agent)){
@@ -107,7 +107,7 @@ public class AgentList<T extends AgentBase> implements Iterable<T>,Serializable{
     }
     public void RemoveAgent(T agent) {
         //TODO may want to include check and debug message if map does not have node (or try catch?)
-        AgentListNode<T> n=agent.myNodes;
+        AgentListNode<T> n=((AgentBase)agent).myNodes;
         while(n!=null){
             if(n.mySet==this){
                 n.stateID=Integer.MAX_VALUE;
@@ -130,7 +130,7 @@ public class AgentList<T extends AgentBase> implements Iterable<T>,Serializable{
 
     public void PopToCSV(FileIO out, AgentToString strFn){
         for (T agent : this) {
-            out.Write(strFn.AtoS(agent)+"\n");
+            out.Write(strFn.AtoS((AgentBase)(agent))+"\n");
         }
     }
     @Override

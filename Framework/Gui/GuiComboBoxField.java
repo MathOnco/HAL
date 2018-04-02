@@ -20,19 +20,6 @@ public class GuiComboBoxField extends JComboBox implements Framework.Interfaces.
      * @param label the label of the comboBox
      * @param initVal the starting setting of the combo box
      * @param options the array of options. the setting of the combo box corresponds to the index of the option in the array
-     */
-    public GuiComboBoxField(String label, int initVal, String[] options){
-        super(options);
-        this.initVal=Integer.toString(initVal);
-        this.labelText=label;
-        this.label=new JLabel(labelText);
-        this.compX=1;
-        this.compY=2;
-    }
-    /**
-     * @param label the label of the comboBox
-     * @param initVal the starting setting of the combo box
-     * @param options the array of options. the setting of the combo box corresponds to the index of the option in the array
      * @param compX the width on the gui GridBagLayout
      * @param compY the height on the gui GridBagLayout
      */
@@ -43,6 +30,14 @@ public class GuiComboBoxField extends JComboBox implements Framework.Interfaces.
         this.label=new JLabel(labelText);
         this.compX=compX;
         this.compY=compY;
+    }
+    /**
+     * @param label the label of the comboBox
+     * @param initVal the starting setting of the combo box
+     * @param options the array of options. the setting of the combo box corresponds to the index of the option in the array
+     */
+    public GuiComboBoxField(String label, int initVal, String[] options){
+        this(label,initVal,options,1,2);
     }
 
     /**

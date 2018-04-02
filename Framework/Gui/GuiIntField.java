@@ -26,17 +26,7 @@ public class GuiIntField extends JFormattedTextField implements Framework.Interf
      * @param initVal the starting value of the menuInt
      */
     public GuiIntField(String label, int initVal, int min, int max){
-        super(intFormat);
-        this.initVal=Integer.toString(initVal);
-        this.compX=1;
-        this.compY=2;
-        this.setColumns(10);
-        this.min=min;
-        this.max=max;
-        this.labelText=label;
-        if(label.length()>0){
-            this.label=new JLabel(labelText);
-        }
+        this(label,initVal,min,max,10,1,2);
     }
 
     /**

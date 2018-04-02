@@ -1,9 +1,6 @@
 package Framework.GridsAndAgents;
 
-import Framework.Interfaces.AgentToAction;
-import Framework.Interfaces.AgentToBool;
-import Framework.Interfaces.IndexAction;
-import Framework.Interfaces.IndexToBool;
+import Framework.Interfaces.*;
 import Framework.Rand;
 
 public interface Agent3DBase{
@@ -44,5 +41,27 @@ public interface Agent3DBase{
     }
     default int MapOccupiedHood(int[] hood){
         return G().MapOccupiedHood(hood,Xsq(),Ysq(),Zsq());
+    }
+    default int HoodToAction(int[]neighborhood, Coords3DToAction Action){
+        return G().HoodToAction(neighborhood,Xsq(),Ysq(),Zsq(),Action);
+    }
+
+    default int HoodToIs(int[]neighborhood,int[]retIs){
+        return G().HoodToIs(neighborhood,retIs,this.Xsq(),this.Ysq(),this.Zsq());
+    }
+    default int HoodToEmptyIs(int[]neighborhood,int[]retIs){
+        return G().HoodToEmptyIs(neighborhood,retIs,this.Xsq(),this.Ysq(),this.Zsq());
+    }
+    default int HoodToOccupiedIs(int[]neighborhood,int[]retIs){
+        return G().HoodToOccupiedIs(neighborhood,retIs,this.Xsq(),this.Ysq(),this.Zsq());
+    }
+    default int HoodToIs(int[]neighborhood,int[]retIs,boolean wrapX,boolean wrapY,boolean wrapZ){
+        return G().HoodToIs(neighborhood,retIs,this.Xsq(),this.Ysq(),this.Zsq(),wrapX,wrapY,wrapZ);
+    }
+    default int HoodToEmptyIs(int[]neighborhood,int[]retIs,boolean wrapX,boolean wrapY,boolean wrapZ){
+        return G().HoodToEmptyIs(neighborhood,retIs,this.Xsq(),this.Ysq(),this.Zsq(),wrapX,wrapY,wrapZ);
+    }
+    default int HoodToOccupiedIs(int[]neighborhood,int[]retIs,boolean wrapX,boolean wrapY,boolean wrapZ){
+        return G().HoodToOccupiedIs(neighborhood,retIs,this.Xsq(),this.Ysq(),this.Zsq(),wrapX,wrapY,wrapZ);
     }
 }

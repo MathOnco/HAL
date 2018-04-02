@@ -14,10 +14,7 @@ public class GuiBoolField extends JToggleButton implements Framework.Interfaces.
     int compY;
     private final String initVal;
     public GuiBoolField(String text, boolean initVal){
-        super(text);
-        this.initVal=Boolean.toString(initVal);
-        this.compX=1;
-        this.compY=1;
+        this(text,initVal,1,1);
     }
     public GuiBoolField(String text, boolean initVal, int compX, int compY){
         super(text);

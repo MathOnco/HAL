@@ -48,25 +48,7 @@ public class Window2DOpenGL {
         }
     }
     public Window2DOpenGL(String title, int xPix, int yPix, int xDim, int yDim) {
-        this.active=true;
-        this.xPix=xPix;
-        this.yPix=yPix;
-        this.xDim=xDim;
-        this.yDim=yDim;
-        if(active) {
-            try {
-                Display.setDisplayMode(new DisplayMode(xPix, yPix));
-                Display.setTitle(title);
-                Display.create();
-            } catch (LWJGLException e) {
-                e.printStackTrace();
-                System.err.println("unable to create Vis3D display");
-            }
-            glMatrixMode(GL_PROJECTION);
-            glLoadIdentity();
-            glOrtho(0, xDim, 0, yDim, -1, 1);
-            glMatrixMode(GL_MODELVIEW);
-        }
+        this(title,xPix,yPix,xDim,yDim,true);
     }
     public void TickPause(int millis){
         tt.TickPause(millis);
@@ -108,15 +90,8 @@ public class Window2DOpenGL {
     }
 
     public void FanShape(float centerX, float centerY, float scale, float[]points, ColorIntGenerator ColorGen) {
-        if(active){
-            int color=ColorGen.GenColorInt();
-            glColor4f((float)GetRed(color),(float) GetGreen(color),(float) GetBlue(color),(float)GetAlpha(color));
-            glBegin(GL_TRIANGLE_FAN);
-            glVertex2f(centerX,centerY);
-            for (int i = 0; i < points.length / 2; i++) {
-                glVertex2f((points[i * 2] * scale + centerX),(points[i * 2 + 1] * scale + centerY));
-            }
-            glEnd();
+        if (active) {
+            FanShape(centerX, centerY,scale,points,ColorGen.GenColorInt());
         }
     }
     public void FanShape(float centerX,float centerY,float scale,float[]points,int color) {

@@ -28,10 +28,7 @@ public class ParamSet {
     ParamSetChangeAction ChangeAction;
 
     public ParamSet() {
-        this.items = new ArrayList<MenuItem>();
-        this.labels=new HashMap<>();
-        this.vals=new ArrayList<>();
-        this.ChangeAction =null;
+        this(null,null);
     }
 
     /**
@@ -40,10 +37,17 @@ public class ParamSet {
      */
     public ParamSet(String[] labelArr, String[] vals){
         labels=new HashMap<>();
-        for(int i=0;i<labelArr.length;i++){
-            labels.put(labelArr[i],i);
+        if(labelArr!=null) {
+            for (int i = 0; i < labelArr.length; i++) {
+                labels.put(labelArr[i], i);
+            }
         }
-        this.vals=new ArrayList<String>(Arrays.asList(vals));
+        if(vals!=null){
+            this.vals=new ArrayList<String>(Arrays.asList(vals));
+        }
+        else {
+            this.vals = new ArrayList<>();
+        }
         this.items = new ArrayList<MenuItem>();
         this.ChangeAction =null;
     }

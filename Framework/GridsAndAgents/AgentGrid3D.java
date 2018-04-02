@@ -14,7 +14,8 @@ import java.util.Iterator;
 public class AgentGrid3D<T extends AgentBaseSpatial> extends GridBase3D implements Iterable<T>{
     InternalGridAgentList<T> agents;
     T[] grid;
-    ArrayList<ArrayList<T>> agentSearches=new ArrayList<>();
+    ArrayList<ArrayList<T>> usedAgentSearches =new ArrayList<>();
+    ArrayList<AgentsIterator3D> usedIterIs =new ArrayList<>();
     int iagentSearch=0;
     //int[] counts;
 
@@ -347,7 +348,6 @@ public class AgentGrid3D<T extends AgentBaseSpatial> extends GridBase3D implemen
         }
         return grid[I(x,y,z)];
     }
-
     /**
      * Gets the last agent to move to the specified index
      * not recommended if the model calls for multiple agents on the same square, as it will only return one of these
@@ -356,7 +356,145 @@ public class AgentGrid3D<T extends AgentBaseSpatial> extends GridBase3D implemen
     public T GetAgent(int index){
         return grid[index];
     }
+    public void GetAgentsRect(ArrayList<T> retAgentList, int x, int y,int z, int width, int height,int depth){
+        int xEnd=x+width;
+        int yEnd=y+height;
+        int zEnd=z+depth;
+        int xWrap;
+        int yWrap;
+        int zWrap;
+        for (int xi = x; xi <= xEnd; xi++) {
+            boolean inX= Util.InDim(xDim,xi);
+            if((!wrapX&&!inX)){
+                continue;
+            }
+            xWrap=xi;
+            if(wrapX&&!inX){
+                xWrap= Util.ModWrap(xi,xDim);
+            }
+            for (int yi = y; yi <= yEnd; yi++) {
+                boolean inY= Util.InDim(yDim,yi);
+                if((!wrapY&&!inY)){
+                    continue;
+                }
+                yWrap=yi;
+                if(wrapY&&!inY){
+                    yWrap= Util.ModWrap(yi,yDim);
+                }
+                for (int zi = z; zi <= zEnd; zi++) {
+                    boolean inZ = Util.InDim(zDim, zi);
+                    if ((!wrapZ && !inZ)) {
+                        continue;
+                    }
+                    zWrap = zi;
+                    if (wrapZ && !inZ) {
+                        zWrap = Util.ModWrap(zi, zDim);
+                    }
+                    GetAgents(retAgentList, xWrap, yWrap,zWrap);
+                }
+            }
+        }
+    }
+    public void GetAgentsHood(ArrayList<T> retAgentList,int[] hood,int centerX,int centerY,int centerZ){
+        int iStart=hood.length/4;
+        for (int i = iStart; i < hood.length; i+=3) {
+            int x = hood[i] + centerX;
+            int y = hood[i + 1] + centerY;
+            int z = hood[i + 2] + centerZ;
+            if (!Util.InDim(xDim, x)) {
+                if (wrapX) {
+                    x = Util.ModWrap(x, xDim);
+                } else {
+                    continue;
+                }
+            }
+            if (!Util.InDim(yDim, y)) {
+                if (wrapY) {
+                    y = Util.ModWrap(y, yDim);
+                } else {
+                    continue;
+                }
+            }
+            if (!Util.InDim(zDim, z)) {
+                if (wrapZ) {
+                    z = Util.ModWrap(z, zDim);
+                } else {
+                    continue;
+                }
+            }
+            GetAgents(retAgentList, x, y, z);
+        }
 
+    }
+
+    public void GetAgentsHoodMapped(ArrayList<T> retAgentList,int[] hood,int hoodLen){
+        for(int i=0;i<hoodLen;i++) {
+            GetAgents(retAgentList,hood[i]);
+        }
+    }
+    public void GetAgentsRadApprox(final ArrayList<T> retAgentList, final double x, final double y, final double z, final double rad, boolean wrapX, boolean wrapY, boolean wrapZ){
+        int nAgents;
+        for (int xSq = (int)Math.floor(x-rad); xSq <(int)Math.ceil(x+rad) ; xSq++) {
+            for (int ySq = (int)Math.floor(y-rad); ySq <(int)Math.ceil(y+rad) ; ySq++) {
+                for (int zSq = (int)Math.floor(z-rad); zSq <(int)Math.ceil(z+rad) ; zSq++) {
+                    int retX = xSq;
+                    int retY = ySq;
+                    int retZ = zSq;
+                    boolean inX = Util.InDim(xDim, retX);
+                    boolean inY = Util.InDim(yDim, retY);
+                    boolean inZ = Util.InDim(zDim, retZ);
+                    if ((!wrapX && !inX) || (!wrapY && !inY) || (!wrapZ && !inZ)) {
+                        continue;
+                    }
+                    if (wrapX && !inX) {
+                        retX = Util.ModWrap(retX, xDim);
+                    }
+                    if (wrapY && !inY) {
+                        retY = Util.ModWrap(retY, yDim);
+                    }
+                    if (wrapZ && !inZ) {
+                        retZ = Util.ModWrap(retZ, zDim);
+                    }
+                    GetAgents(retAgentList, I(retX, retY, retZ));
+                }
+            }
+        }
+    }
+    public void GetAgentsRad(final ArrayList<T> retAgentList, final double x, final double y, final double z, final double rad, boolean wrapX, boolean wrapY, boolean wrapZ){
+        int nAgents;
+        double radSq=rad*rad;
+        for (int xSq = (int)Math.floor(x-rad); xSq <(int)Math.ceil(x+rad) ; xSq++) {
+            for (int ySq = (int)Math.floor(y-rad); ySq <(int)Math.ceil(y+rad) ; ySq++) {
+                for (int zSq = (int)Math.floor(z-rad); zSq <(int)Math.ceil(z+rad) ; zSq++) {
+                    int retX = xSq;
+                    int retY = ySq;
+                    int retZ = zSq;
+                    boolean inX = Util.InDim(xDim, retX);
+                    boolean inY = Util.InDim(yDim, retY);
+                    boolean inZ = Util.InDim(zDim, retZ);
+                    if ((!wrapX && !inX) || (!wrapY && !inY) || (!wrapZ && !inZ)) {
+                        continue;
+                    }
+                    if (wrapX && !inX) {
+                        retX = Util.ModWrap(retX, xDim);
+                    }
+                    if (wrapY && !inY) {
+                        retY = Util.ModWrap(retY, yDim);
+                    }
+                    if (wrapZ && !inZ) {
+                        retZ = Util.ModWrap(retZ, zDim);
+                    }
+                    GetAgents(retAgentList,(agent)->{
+                        Agent3DBase a=(Agent3DBase)agent;
+                    return Util.DistSquared(a.Xpt(),a.Ypt(),a.Zpt(),x,y,z,xDim,yDim,zDim,wrapX,wrapY,wrapZ)<radSq;
+                },xSq,ySq,zSq);
+                }
+            }
+        }
+    }
+    public void GetAgentsRadApprox(final ArrayList<T> retAgentList, final double x, final double y, final double z, final double rad){
+        GetAgentsRadApprox(retAgentList,x,y,z,rad,wrapX,wrapY,wrapZ);
+    }
     /**
      * calls dispose on all agents in the typeGrid, resets the tick timer to 0.
      */
@@ -382,70 +520,35 @@ public class AgentGrid3D<T extends AgentBaseSpatial> extends GridBase3D implemen
 //        tick=0;
     }
 
-    public void AgentsInRad(final ArrayList<T> retAgentList, final double x, final double y, final double z, final double rad, boolean wrapX, boolean wrapY, boolean wrapZ){
-        int nAgents;
-        for (int xSq = (int)Math.floor(x-rad); xSq <(int)Math.ceil(x+rad) ; xSq++) {
-            for (int ySq = (int)Math.floor(y-rad); ySq <(int)Math.ceil(y+rad) ; ySq++) {
-                for (int zSq = (int)Math.floor(z-rad); zSq <(int)Math.ceil(z+rad) ; zSq++) {
-                    int retX = xSq;
-                    int retY = ySq;
-                    int retZ = zSq;
-                    boolean inX = Util.InDim(xDim, retX);
-                    boolean inY = Util.InDim(yDim, retY);
-                    boolean inZ = Util.InDim(zDim, retZ);
-                    if ((!wrapX && !inX) || (!wrapY && !inY) || (!wrapZ && !inZ)) {
-                        continue;
-                    }
-                    if (wrapX && !inX) {
-                        retX = Util.ModWrap(retX, xDim);
-                    }
-                    if (wrapY && !inY) {
-                        retY = Util.ModWrap(retY, yDim);
-                    }
-                    if (wrapZ && !inZ) {
-                        retZ = Util.ModWrap(retZ, zDim);
-                    }
-                    GetAgents(retAgentList, I(retX, retY, retZ));
-                }
-            }
+    public int CountAt(int i){
+        T agent=grid[i];
+        if(agent==null){
+            return 0;
         }
+        return agent.GetCountOnSquare();
     }
-    public void AgentsInRad(final ArrayList<T> retAgentList, final double x, final double y, final double z, final double rad){
-        int nAgents;
-        for (int xSq = (int)Math.floor(x-rad); xSq <(int)Math.ceil(x+rad) ; xSq++) {
-            for (int ySq = (int)Math.floor(y-rad); ySq <(int)Math.ceil(y+rad) ; ySq++) {
-                for (int zSq = (int)Math.floor(z-rad); zSq <(int)Math.ceil(z+rad) ; zSq++) {
-                    int retX = xSq;
-                    int retY = ySq;
-                    int retZ = zSq;
-                    boolean inX = Util.InDim(xDim, retX);
-                    boolean inY = Util.InDim(yDim, retY);
-                    boolean inZ = Util.InDim(zDim, retZ);
-                    if ((!wrapX && !inX) || (!wrapY && !inY) || (!wrapZ && !inZ)) {
-                        continue;
-                    }
-                    if (wrapX && !inX) {
-                        retX = Util.ModWrap(retX, xDim);
-                    }
-                    if (wrapY && !inY) {
-                        retY = Util.ModWrap(retY, yDim);
-                    }
-                    if (wrapZ && !inZ) {
-                        retZ = Util.ModWrap(retZ, zDim);
-                    }
-                    GetAgents(retAgentList, I(retX, retY, retZ));
-                }
-            }
+    public int CountAt(int x,int y,int z){
+        return CountAt(I(x,y,z));
+    }
+    public int CountAt(int i,AgentToBool EvalAgent){
+        T agent=grid[i];
+        if(agent==null){
+            return 0;
         }
+        return agent.GetCountOnSquareEval(EvalAgent);
     }
+    public int CountAt(int x,int y,int z,AgentToBool EvalAgent){
+        return CountAt(I(x,y,z),EvalAgent);
+    }
+
     ArrayList<T> GetFreshAgentSearchArr(){
         ArrayList<T> agents;
-        if(iagentSearch>=agentSearches.size()){
+        if(iagentSearch>= usedAgentSearches.size()){
             agents=new ArrayList<T>();
-            agentSearches.add(agents);
+            usedAgentSearches.add(agents);
         }
         else{
-            agents=agentSearches.get(iagentSearch);
+            agents= usedAgentSearches.get(iagentSearch);
             agents.clear();
         }
         return agents;
@@ -635,7 +738,18 @@ public class AgentGrid3D<T extends AgentBaseSpatial> extends GridBase3D implemen
         return nFound;
     }
 
-
+    int SubsetAgents(ArrayList<T>agents, AgentToBool<T> EvalAgent){
+        int len=agents.size();
+        int ret=0;
+        for (int i = 0; i < len; i++) {
+            T agent=agents.get(i);
+            if(EvalAgent.EvalAgent(agent)){
+                agents.set(ret,agent);
+                ret++;
+            }
+        }
+        return ret;
+    }
     public T RandomAgent(Rand rn){
         CleanAgents();
         if(GetPop()==0){
@@ -708,8 +822,214 @@ public class AgentGrid3D<T extends AgentBaseSpatial> extends GridBase3D implemen
         return agents.pop;
     }
 
+    public double DistSquared(double x1, double y1,double z1, double x2, double y2,double z2, boolean wrapX, boolean wrapY,boolean wrapZ){
+        return Util.DistSquared(x1,y1,z1,x2,y2,z2, xDim, yDim,zDim, wrapX,wrapY,wrapZ);
+    }
+    public double DistSquared(double x1, double y1,double z1, double x2, double y2,double z2){
+        return Util.DistSquared(x1,y1,z1,x2,y2,z2, xDim, yDim,zDim, wrapX,wrapY,wrapZ);
+    }
+
     @Override
     public Iterator<T> iterator() {
             return agents.iterator();
+    }
+
+
+    public Iterable<T> IterAgentsSafe(int x,int y,int z){
+        ArrayList<T> agents=GetFreshAgentSearchArr();
+        GetAgentsSafe(agents,x,y,z);
+        return GetFreshAgentsIterator(agents);
+    }
+    public Iterable<T> IterAgents(int x,int y,int z){
+        ArrayList<T> agents=GetFreshAgentSearchArr();
+        GetAgents(agents,x,y,z);
+        return GetFreshAgentsIterator(agents);
+    }
+    public Iterable<T> IterAgents(int i){
+        ArrayList<T> agents=GetFreshAgentSearchArr();
+        GetAgents(agents,i);
+        return GetFreshAgentsIterator(agents);
+    }
+    public Iterable<T> IterAgentsRadApprox(double x, double y, double z, double rad){
+        ArrayList<T> agents=GetFreshAgentSearchArr();
+        GetAgentsRadApprox(agents,x,y,z,rad,wrapX,wrapY,wrapZ);
+        return GetFreshAgentsIterator(agents);
+    }
+    public Iterable<T> IterAgentsRad(double x, double y, double z, double rad){
+        ArrayList<T> agents=GetFreshAgentSearchArr();
+        GetAgentsRad(agents,x,y,z,rad,wrapX,wrapY,wrapZ);
+        return GetFreshAgentsIterator(agents);
+    }
+    public Iterable<T> IterAgentsRect(int x, int y, int z, int width, int height, int depth){
+        ArrayList<T> agents=GetFreshAgentSearchArr();
+        GetAgentsRect(agents,x,y,z,width,height,depth);
+        return GetFreshAgentsIterator(agents);
+    }
+
+    public Iterable<T> IterAgentsHood(int[]hood, int centerX, int centerY, int centerZ){
+        ArrayList<T> myAgents=GetFreshAgentSearchArr();
+        GetAgentsHood(myAgents,hood,centerX,centerY,centerZ);
+        return GetFreshAgentsIterator(myAgents);
+    }
+    public Iterable<T> IterAgentsHood(int[]hood, int centerI){
+        return IterAgentsHood(hood,ItoX(centerI),ItoY(centerI),ItoZ(centerI));
+    }
+    public Iterable<T> IterAgentsHoodMapped(int[]hood,int hoodLen){
+        ArrayList<T> myAgents=GetFreshAgentSearchArr();
+        GetAgentsHoodMapped(myAgents,hood,hoodLen);
+        return GetFreshAgentsIterator(myAgents);
+    }
+
+    AgentsIterator3D GetFreshAgentsIterator(ArrayList<T> agents){
+        AgentsIterator3D ret;
+        if(usedIterIs.size()>0){
+            ret=usedIterIs.remove(usedIterIs.size()-1);
+        }
+        else{
+            ret=new AgentsIterator3D(this);
+        }
+        ret.Setup(agents);
+        return ret;
+    }
+    public T RandomAgentSafe(int x,int y,int z,Rand rn){
+        ArrayList<T> agents=GetFreshAgentSearchArr();
+        GetAgentsSafe(agents,x,y,z);
+        T ret= agents.get(rn.Int(agents.size()));
+        usedAgentSearches.add(agents);
+        return ret;
+    }
+    public T RandomAgent(int x,int y,int z,Rand rn){
+        ArrayList<T> agents=GetFreshAgentSearchArr();
+        GetAgents(agents,x,y,z);
+        T ret= agents.get(rn.Int(agents.size()));
+        usedAgentSearches.add(agents);
+        return ret;
+    }
+    public T RandomAgent(int i,Rand rn){
+        return RandomAgent(ItoX(i),ItoY(i),ItoZ(i),rn);
+    }
+    public T RandomAgentRad(double x,double y,double z,double rad,Rand rn){
+        ArrayList<T> agents=GetFreshAgentSearchArr();
+        GetAgentsRad(agents,x,y,z,rad,wrapX,wrapY,wrapZ);
+        T ret= agents.get(rn.Int(agents.size()));
+        return ret;
+    }
+    public T RandomAgentRect(int x,int y,int z,int width,int height,int depth,Rand rn){
+        ArrayList<T> agents=GetFreshAgentSearchArr();
+        GetAgentsRect(agents,x,y,z,width,height,depth);
+        T ret= agents.get(rn.Int(agents.size()));
+        usedAgentSearches.add(agents);
+        return ret;
+    }
+
+    public T RandomAgentHood(int[] hood,int x,int y,int z,Rand rn){
+        ArrayList<T> agents=GetFreshAgentSearchArr();
+        GetAgentsHood(agents,hood,x,y,z);
+        T ret= agents.get(rn.Int(agents.size()));
+        usedAgentSearches.add(agents);
+        return ret;
+    }
+    public T RandomAgentSafe(int x,int y,int z,Rand rn,AgentToBool<T> EvalAgent){
+        ArrayList<T> agents=GetFreshAgentSearchArr();
+        GetAgentsSafe(agents,x,y,z);
+        int ct=SubsetAgents(agents,EvalAgent);
+        T ret= agents.get(rn.Int(ct));
+        usedAgentSearches.add(agents);
+        return ret;
+    }
+    public T RandomAgent(int x,int y,int z,Rand rn,AgentToBool<T> EvalAgent){
+        ArrayList<T> agents=GetFreshAgentSearchArr();
+        GetAgents(agents,x,y,z);
+        int ct=SubsetAgents(agents,EvalAgent);
+        T ret= agents.get(rn.Int(ct));
+        usedAgentSearches.add(agents);
+        return ret;
+    }
+    public T RandomAgent(int i,Rand rn,AgentToBool<T> EvalAgent){
+        return RandomAgent(ItoX(i),ItoY(i),ItoZ(i),rn,EvalAgent);
+    }
+    public T RandomAgentRad(double x,double y,double z,double rad,Rand rn,AgentToBool<T> EvalAgent){
+        ArrayList<T> agents=GetFreshAgentSearchArr();
+        GetAgentsRadApprox(agents,x,y,z,rad,wrapX,wrapY,wrapZ);
+        int ct=0;
+        double radSq=rad*rad;
+        for (int i = 0; i < agents.size(); i++) {
+            Agent3DBase agent=(Agent3DBase)agents.get(i);
+            if(DistSquared(x,y,z,agent.Xpt(),agent.Ypt(),agent.Zpt(),wrapX,wrapY,wrapZ)<radSq&&EvalAgent.EvalAgent((T)agent)){
+                agents.set(ct,agents.get(i));
+                ct++;
+            }
+        }
+        T ret= agents.get(rn.Int(ct));
+        usedAgentSearches.add(agents);
+        return ret;
+    }
+    public T RandomAgentRect(int x,int y,int z,int width,int height,int depth,Rand rn,AgentToBool<T> EvalAgent){
+        ArrayList<T> agents=GetFreshAgentSearchArr();
+        GetAgentsRect(agents,x,y,z,width,height,depth);
+        int ct=SubsetAgents(agents,EvalAgent);
+        T ret= agents.get(rn.Int(ct));
+        usedAgentSearches.add(agents);
+        return ret;
+    }
+
+    public T RandomAgentHood(int[] hood,int x,int y,int z,Rand rn,AgentToBool<T> EvalAgent){
+        ArrayList<T> agents=GetFreshAgentSearchArr();
+        GetAgentsHood(agents,hood,x,y,z);
+        int ct=SubsetAgents(agents,EvalAgent);
+        T ret= agents.get(rn.Int(ct));
+        usedAgentSearches.add(agents);
+        return ret;
+    }
+    public T RandomAgentHoodMapped(int[]hood,int hoodLen,Rand rn){
+        ArrayList<T> agents=GetFreshAgentSearchArr();
+        GetAgentsHoodMapped(agents,hood,hoodLen);
+        T ret= agents.get(rn.Int(agents.size()));
+        usedAgentSearches.add(agents);
+        return ret;
+    }
+    public T RandomAgentHoodMapped(int[]hood,int hoodLen,Rand rn,AgentToBool<T> EvalAgent){
+        ArrayList<T> agents=GetFreshAgentSearchArr();
+        GetAgentsHoodMapped(agents,hood,hoodLen);
+        int ct=SubsetAgents(agents,EvalAgent);
+        T ret= agents.get(rn.Int(agents.size()));
+        usedAgentSearches.add(agents);
+        return ret;
+    }
+    private class AgentsIterator3D implements Iterator<T>,Iterable<T>{
+        final AgentGrid3D<T> myGrid;
+        ArrayList<T>myAgents;
+        int numAgents;
+        int iCount;
+        AgentsIterator3D(AgentGrid3D<T> grid){
+            myGrid=grid;
+        }
+        public void Setup(ArrayList<T> myAgents){
+            this.myAgents=myAgents;
+            iCount=0;
+            numAgents=myAgents.size();
+        }
+
+        @Override
+        public boolean hasNext() {
+            if(iCount== numAgents){
+                myGrid.usedAgentSearches.add(myAgents);
+                myGrid.usedIterIs.add(this);
+                return false;
+            }
+            return true;
+        }
+
+        @Override
+        public T next() {
+            T ret=myAgents.get(iCount);
+            iCount++;
+            return ret;
+        }
+
+        @Override
+        public Iterator<T> iterator() {
+            return this;
+        }
     }
 }

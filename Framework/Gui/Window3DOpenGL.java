@@ -38,7 +38,6 @@ public class Window3DOpenGL {
     private static int BLACK=RGB(0,0,0),WHITE=RGB(1,1,1);
 
     public Window3DOpenGL(String title, int xPix, int yPix, int xDim, int yDim, int zDim, boolean active) {
-        camera=new Camera();
         this.active = active;
         int maxDim = Math.max(xDim, yDim);
         this.maxDim = Math.max(maxDim, zDim);
@@ -52,6 +51,7 @@ public class Window3DOpenGL {
         //transZ = (float) (-zDim * 0.6);
 
         if (active) {
+            camera=new Camera();
             try {
                 Display.setDisplayMode(new DisplayMode(xPix, yPix));
                 Display.setTitle(title);
@@ -72,36 +72,7 @@ public class Window3DOpenGL {
         }
     }
     public Window3DOpenGL(String title, int xPix, int yPix, int xDim, int yDim, int zDim) {
-        this.active = true;
-        maxDim = Math.max(xDim, yDim);
-        this.xDim = xDim;
-        this.yDim = yDim;
-        this.zDim = zDim;
-        this.xPix = xPix;
-        this.yPix = yPix;
-        scaleDims = (float) (2.0 / this.maxDim);
-        trans = (float) (-this.maxDim / 2.0);
-
-        if (active) {
-            try {
-                Display.setDisplayMode(new DisplayMode(xPix, yPix));
-                Display.setTitle(title);
-                Display.create();
-            } catch (LWJGLException e) {
-                e.printStackTrace();
-                System.err.println("unable to create Vis3D display");
-            }
-            glEnable(GL_DEPTH_TEST);
-            glMatrixMode(GL_PROJECTION);
-            glLoadIdentity();
-            glFrustum(-1, 1, -1, 1, 1, 1000);
-            //glFrustum(0,maxDim,0,maxDim,maxDim,maxDim+zDim);
-            //glTranslatef(0,0,trans*2);
-            glMatrixMode(GL_MODELVIEW);
-            glLoadIdentity();
-            glScalef(scaleDims, scaleDims, scaleDims);
-            //glTranslatef(transXY, transXY, transZ);
-        }
+        this(title,xPix,yPix,xDim,yDim,zDim,true);
     }
     int GetDelta() {
         long time = System.currentTimeMillis();

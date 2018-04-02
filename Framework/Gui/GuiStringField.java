@@ -17,19 +17,6 @@ public class GuiStringField extends JTextField implements Framework.Interfaces.M
     int nCols;
     private final String initVal;
 
-    /**
-     * @param label the label of the menuString
-     * @param initVal the starting value of the menuString
-     */
-    public GuiStringField(String label, String initVal){
-        super(10);
-        this.initVal=initVal;
-        nCols=10;
-        this.compX=1;
-        this.compY=2;
-        this.labelText=label;
-        this.label=new JLabel(labelText);
-    }
 
     /**
      * @param label the label of the menuString
@@ -46,6 +33,16 @@ public class GuiStringField extends JTextField implements Framework.Interfaces.M
         this.compY=compY;
         this.labelText=label;
         this.label=new JLabel(labelText);
+    }
+    public GuiStringField(String label,int nCols, String initVal){
+        this(label,initVal,nCols,1,2);
+    }
+    /**
+     * @param label the label of the menuString
+     * @param initVal the starting value of the menuString
+     */
+    public GuiStringField(String label, String initVal){
+        this(label,initVal,10,1,2);
     }
 
     /**

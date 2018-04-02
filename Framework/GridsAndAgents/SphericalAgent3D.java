@@ -19,7 +19,7 @@ public class SphericalAgent3D<A extends SphericalAgent3D,G extends AgentGrid3D<A
     public double SumForces(double interactionRad, ArrayList<A> scratchAgentList, OverlapForceResponse OverlapFun, boolean wrapX, boolean wrapY, boolean wrapZ){
         scratchAgentList.clear();
         double sum=0;
-        G().AgentsInRad(scratchAgentList,Xpt(),Ypt(),Zpt(),interactionRad,wrapX,wrapY,wrapZ);
+        G().GetAgentsRadApprox(scratchAgentList,Xpt(),Ypt(),Zpt(),interactionRad,wrapX,wrapY,wrapZ);
         for (A a : scratchAgentList) {
             if(a!=this){
                 double xComp=Xdisp(a,wrapX);
@@ -43,7 +43,7 @@ public class SphericalAgent3D<A extends SphericalAgent3D,G extends AgentGrid3D<A
     public double SumForces(double interactionRad, ArrayList<A> scratchAgentList, OverlapForceResponse OverlapFun){
         scratchAgentList.clear();
         double sum=0;
-        G().AgentsInRad(scratchAgentList,Xpt(),Ypt(),Zpt(),interactionRad,G().wrapX,G().wrapY,G().wrapZ);
+        G().GetAgentsRadApprox(scratchAgentList,Xpt(),Ypt(),Zpt(),interactionRad,G().wrapX,G().wrapY,G().wrapZ);
         for (A a : scratchAgentList) {
             if(a!=this){
                 double xComp=Xdisp(a,G().wrapX);
@@ -68,7 +68,7 @@ public class SphericalAgent3D<A extends SphericalAgent3D,G extends AgentGrid3D<A
     public double SumForces(double interactionRad, ArrayList<A> scratchAgentList,OverlapNeighborForceResponse<A> OverlapFun){
         scratchAgentList.clear();
         double sum=0;
-        G().AgentsInRad(scratchAgentList,Xpt(),Ypt(),Zpt(),interactionRad,G().wrapX,G().wrapY,G().wrapZ);
+        G().GetAgentsRadApprox(scratchAgentList,Xpt(),Ypt(),Zpt(),interactionRad,G().wrapX,G().wrapY,G().wrapZ);
         for (A a : scratchAgentList) {
             if(a!=this){
                 double xComp=Xdisp(a,G().wrapX);
@@ -94,7 +94,7 @@ public class SphericalAgent3D<A extends SphericalAgent3D,G extends AgentGrid3D<A
     public double SumForces(double interactionRad, ArrayList<A> scratchAgentList, OverlapNeighborForceResponse<A> OverlapFun,boolean wrapX,boolean wrapY,boolean wrapZ){
         scratchAgentList.clear();
         double sum=0;
-        G().AgentsInRad(scratchAgentList,Xpt(),Ypt(),Zpt(),interactionRad,wrapX,wrapY,wrapZ);
+        G().GetAgentsRadApprox(scratchAgentList,Xpt(),Ypt(),Zpt(),interactionRad,wrapX,wrapY,wrapZ);
         for (A a : scratchAgentList) {
             if(a!=this){
                 double xComp=Xdisp(a,wrapX);

@@ -79,9 +79,6 @@ public class AgentPT3D<T extends AgentGrid3D> extends AgentBaseSpatial<T> implem
         }
         myGrid.grid[i]=this;
     }
-    public int HoodToAction(int[]neighborhood, Coords3DToAction Action){
-        return G().HoodToAction(neighborhood,Xsq(),Ysq(),Zsq(),Action);
-    }
     @Override
     int GetCountOnSquareEval(AgentToBool evalAgent) {
         int ct=0;
@@ -93,24 +90,6 @@ public class AgentPT3D<T extends AgentGrid3D> extends AgentBaseSpatial<T> implem
             }
         }
         return ct;
-    }
-    public int HoodToIs(int[]neighborhood,int[]retIs){
-        return G().HoodToIs(neighborhood,retIs,this.Xsq(),this.Ysq(),this.Zsq());
-    }
-    public int HoodToEmptyIs(int[]neighborhood,int[]retIs){
-        return G().HoodToEmptyIs(neighborhood,retIs,this.Xsq(),this.Ysq(),this.Zsq());
-    }
-    public int HoodToOccupiedIs(int[]neighborhood,int[]retIs){
-        return G().HoodToOccupiedIs(neighborhood,retIs,this.Xsq(),this.Ysq(),this.Zsq());
-    }
-    public int HoodToIs(int[]neighborhood,int[]retIs,boolean wrapX,boolean wrapY,boolean wrapZ){
-        return G().HoodToIs(neighborhood,retIs,this.Xsq(),this.Ysq(),this.Zsq(),wrapX,wrapY,wrapZ);
-    }
-    public int HoodToEmptyIs(int[]neighborhood,int[]retIs,boolean wrapX,boolean wrapY,boolean wrapZ){
-        return G().HoodToEmptyIs(neighborhood,retIs,this.Xsq(),this.Ysq(),this.Zsq(),wrapX,wrapY,wrapZ);
-    }
-    public int HoodToOccupiedIs(int[]neighborhood,int[]retIs,boolean wrapX,boolean wrapY,boolean wrapZ){
-        return G().HoodToOccupiedIs(neighborhood,retIs,this.Xsq(),this.Ysq(),this.Zsq(),wrapX,wrapY,wrapZ);
     }
     void RemSQ(){
         if(myGrid.grid[iSq]==this){

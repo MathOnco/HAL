@@ -42,12 +42,7 @@ public class GuiButton extends JButton implements GuiComp {
      * @param myAction function will execute when the button is clicked
      */
     public GuiButton(String text,boolean newThread,ButtonAction myAction){
-        super(text);
-        this.compX=1;
-        this.compY=1;
-        this.myAction=myAction;
-        this.newThread=newThread;
-        this.setupAction();
+        this(text,1,1,newThread,myAction);
     }
 
     /**

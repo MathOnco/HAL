@@ -23,7 +23,7 @@ public class GOLGridDiff extends PDEGrid2D {
     final int runTicks;
     final int refreshRateMS;
     GOLGridDiff(int x, int y, double livingProb, int runTicks, int refreshRateMS, GuiGrid vis, GuiLabel popLbl, GuiLabel tickLbl){
-        super(x,y);
+        super(x,y,true,true);
         this.vis=vis;
         mooreHood=MooreHood(false);
         neighborIs=new int[mooreHood.length/2];
@@ -41,10 +41,10 @@ public class GOLGridDiff extends PDEGrid2D {
             int totalPop=0;
             for (int x = 0; x < xDim; x++) {
                 for (int y = 0; y < yDim; y++) {
-                    HoodToIs(mooreHood, neighborIs, x, y, true, true);
+                    int hoodLen=MapHood(mooreHood, x, y);
                     int countNeighbors = 0;
-                    for (int i : neighborIs) {
-                        countNeighbors += Get(i);
+                    for (int i = 0; i < hoodLen; i++) {
+                        countNeighbors += Get(mooreHood[i]);
                     }
                     int status = (int) Get(x, y);
                     if ((status == 1 && (countNeighbors == 2 || countNeighbors == 3)) || (status == 0 && countNeighbors == 3)) {

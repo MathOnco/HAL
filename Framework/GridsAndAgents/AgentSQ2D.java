@@ -89,24 +89,6 @@ public class AgentSQ2D<T extends AgentGrid2D> extends AgentBaseSpatial<T> implem
         }
         myGrid.grid[i]=this;
     }
-    public int HoodToIs(int[]neighborhood,int[]retIs){
-        return G().HoodToIs(neighborhood,retIs,this.Xsq(),this.Ysq());
-    }
-    public int HoodToEmptyIs(int[]neighborhood,int[]retIs){
-        return G().HoodToEmptyIs(neighborhood,retIs,this.Xsq(),this.Ysq());
-    }
-    public int HoodToOccupiedIs(int[]neighborhood,int[]retIs){
-        return G().HoodToOccupiedIs(neighborhood,retIs,this.Xsq(),this.Ysq());
-    }
-    public int HoodToIs(int[]neighborhood,int[]retIs,boolean wrapX,boolean wrapY){
-        return G().HoodToIs(neighborhood,retIs,this.Xsq(),this.Ysq(),wrapX,wrapY);
-    }
-    public int HoodToEmptyIs(int[]neighborhood,int[]retIs,boolean wrapX,boolean wrapY){
-        return G().HoodToEmptyIs(neighborhood,retIs,this.Xsq(),this.Ysq(),wrapX,wrapY);
-    }
-    public int HoodToOccupiedIs(int[]neighborhood,int[]retIs,boolean wrapX,boolean wrapY){
-        return G().HoodToOccupiedIs(neighborhood,retIs,this.Xsq(),this.Ysq(),wrapX,wrapY);
-    }
 
     void RemSQ(){
         if(myGrid.grid[iSq]==this){

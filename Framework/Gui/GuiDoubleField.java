@@ -22,21 +22,6 @@ public class GuiDoubleField extends JFormattedTextField implements Framework.Int
     int compX;
     int compY;
 
-    /**
-     * @param label the label of the menuDouble
-     * @param initVal the starting setting of the menuDouble
-     */
-    public GuiDoubleField(String label, double initVal, double min, double max){
-        super(doubleFormat);
-        this.initValue=Double.toString(initVal);
-        this.setColumns(10);
-        this.min=min;
-        this.max=max;
-        this.labelText=label;
-        this.label=new JLabel(labelText);
-        this.compX=1;
-        this.compY=2;
-    }
 
     /**
      * @param label the label of the menuDouble
@@ -55,6 +40,14 @@ public class GuiDoubleField extends JFormattedTextField implements Framework.Int
         this.label=new JLabel(labelText);
         this.compX=compX;
         this.compY=compY;
+    }
+
+    /**
+     * @param label the label of the menuDouble
+     * @param initVal the starting setting of the menuDouble
+     */
+    public GuiDoubleField(String label, double initVal, double min, double max){
+        this(label,initVal,min,max,10,1,2);
     }
 
     /**

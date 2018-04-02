@@ -22,12 +22,17 @@ class ReturnVals{
 
 public class GOLSweepEx {
     public static void main(String[] args) {
-        int nRuns=10;
+        int nRuns=100;
         ArrayList<ReturnVals>runOutputs=new ArrayList<>(nRuns);
         for (int i = 0; i < nRuns; i++) {
             runOutputs.add(null);
         }
         MultiThread(nRuns,8,(iThread)->{
+
+
+
+
+
             Random rn=new Random();
             //the function that will run in parallel is specified here
             System.out.println("Started Thread:"+iThread);
@@ -40,7 +45,14 @@ public class GOLSweepEx {
                 ret.pops[i]=model.liveCt;
             }
             System.out.println("Finished Thread:"+iThread);
+
+
+
+
             runOutputs.set(iThread,ret);
+
+
+
         });
         //after all runs finish, we loop through the array of ReturnVals objects and write out their data
         FileIO out=new FileIO("SweepResults.csv","w");

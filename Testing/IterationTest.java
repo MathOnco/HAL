@@ -2,13 +2,11 @@ package Testing;
 
 import Framework.GridsAndAgents.AgentGrid2D;
 import Framework.GridsAndAgents.AgentSQ2Dunstackable;
-import Framework.GridsAndAgents.PDEGrid2D;
 import Framework.Rand;
 import Framework.Tools.PerformanceTimer;
 import Framework.Util;
 
 import java.util.ArrayList;
-import java.util.PrimitiveIterator;
 
 
 public class IterationTest {
@@ -45,7 +43,7 @@ public class IterationTest {
         pt.Stop("new way");
         pt.Start("newer way");
         for (int i = 0; i < 10000; i++) {
-            for(AgentSQ2Dunstackable a:g.IterAgents(testHood,rn.Int(100),rn.Int(100))){
+            for(AgentSQ2Dunstackable a:g.IterAgentsHood(testHood,rn.Int(100),rn.Int(100))){
                 storage[a.Isq()]=a.Xsq();
             }
         }

@@ -26,7 +26,13 @@ class GOLAgent extends AgentSQ2Dunstackable<GOLGrid> {
         this.state[(G().tick+1)%2]=state;
     }
     public void Step(){
-        int countNeighbors=G().CountInHood(G().mooreHood,Isq(),(a)->a.GetCurrState()==1);
+        int countNeighbors=0;
+        int hoodLen=MapHood(G().mooreHood);
+        for (int i = 0; i < hoodLen; i++) {
+            if(G().GetAgent(G().mooreHood[i]).GetCurrState()==LIVE){
+                countNeighbors++;
+            }
+        }
         //classic game of life rules
         if((GetCurrState()==LIVE&&(countNeighbors==2||countNeighbors==3))||(GetCurrState()==DEAD&&countNeighbors==3)){
             G().liveCt++;
@@ -60,8 +66,8 @@ public class GOLGrid extends AgentGrid2D<GOLAgent> {
         this.refreshRateMS=refreshRateMS;
     }
     public void StepAgents(){
-        liveCt =0;//used to total population
         tick++;
+        liveCt =0;//used to total population
         for (GOLAgent a : this) {
             a.Step();
         };

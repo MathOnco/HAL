@@ -34,4 +34,24 @@ public interface Agent2DBase{
     default int MapOccupiedHood(int[] hood){
         return G().MapOccupiedHood(hood,Xsq(),Ysq());
     }
+    default int HoodToIs(int[]neighborhood,int[]retIs){
+        return G().HoodToIs(neighborhood,retIs,this.Xsq(),this.Ysq());
+    }
+    default int HoodToEmptyIs(int[]neighborhood,int[]retIs){
+        return G().HoodToEmptyIs(neighborhood,retIs,this.Xsq(),this.Ysq());
+    }
+    default int HoodToOccupiedIs(int[]neighborhood,int[]retIs){
+        return G().HoodToOccupiedIs(neighborhood,retIs,this.Xsq(),this.Ysq());
+    }
+    default int HoodToIs(int[]neighborhood,int[]retIs,boolean wrapX,boolean wrapY){
+        return G().HoodToIs(neighborhood,retIs,this.Xsq(),this.Ysq(),wrapX,wrapY);
+    }
+    default int HoodToEmptyIs(int[]neighborhood,int[]retIs,boolean wrapX,boolean wrapY){
+        return G().HoodToEmptyIs(neighborhood,retIs,this.Xsq(),this.Ysq(),wrapX,wrapY);
+    }
+    default int HoodToOccupiedIs(int[]neighborhood,int[]retIs,boolean wrapX,boolean wrapY){
+        return G().HoodToOccupiedIs(neighborhood,retIs,this.Xsq(),this.Ysq(),wrapX,wrapY);
+    }
+
 }
+

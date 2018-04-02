@@ -21,24 +21,6 @@ public class GuiFileChooserField extends JButton implements Framework.Interfaces
     int compY;
     GuiWindow win;
     private final String initValue;
-    public GuiFileChooserField(String label, String initVal){
-        super();
-        this.initValue=initVal;
-        this.compX=1;
-        this.compY=2;
-        this.browser=new JFileChooser();
-        this.labelText=label;
-        this.label=new JLabel(labelText);
-        this.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int ret=browser.showSaveDialog(null);
-                if(ret==JFileChooser.APPROVE_OPTION){
-                    SetFile(browser.getSelectedFile());
-                }
-            }
-        });
-    }
     public GuiFileChooserField(String label, int compX, int compY, String initVal){
         super();
         this.initValue=initVal;
@@ -56,6 +38,9 @@ public class GuiFileChooserField extends JButton implements Framework.Interfaces
                 }
             }
         });
+    }
+    public GuiFileChooserField(String label, String initVal){
+        this(label,1,2,initVal);
     }
 
     /**

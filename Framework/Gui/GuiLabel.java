@@ -33,44 +33,17 @@ public class GuiLabel implements GuiComp {
         }
     }
     public GuiLabel(String text, int compX, int compY){
-        this.active=true;
-        this.xDim=compX;
-        this.yDim=compY;
-        if(active){
-            this.label=new JLabel(text);
-            this.label.setPreferredSize((Dimension)this.label.getPreferredSize().clone());
-        }
-        else{
-            this.label=null;
-        }
+        this(text,compX,compY,true);
     }
 
     /**
      * @param text label text
      */
     public GuiLabel(String text,boolean active){
-        this.active=active;
-        this.xDim=1;
-        this.yDim=1;
-        if(active){
-            this.label=new JLabel(text);
-            this.label.setPreferredSize((Dimension)this.label.getPreferredSize().clone());
-        }
-        else{
-            this.label=null;
-        }
+        this(text,1,1,true);
     }
     public GuiLabel(String text){
-        this.active=true;
-        this.xDim=1;
-        this.yDim=1;
-        if(active){
-            this.label=new JLabel(text);
-            this.label.setPreferredSize((Dimension)this.label.getPreferredSize().clone());
-        }
-        else{
-            this.label=null;
-        }
+        this(text,1,1,true);
     }
 //    public void SetMinSize(){
 //        double newW=Math.max(myDim.getWidth(),label.getPreferredSize().getWidth());

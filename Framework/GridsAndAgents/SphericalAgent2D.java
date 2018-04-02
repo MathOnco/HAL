@@ -18,7 +18,7 @@ public class SphericalAgent2D<A extends SphericalAgent2D,G extends AgentGrid2D<A
     public double SumForces(double interactionRad, ArrayList<A> scratchAgentList, OverlapForceResponse OverlapFun, boolean wrapX, boolean wrapY){
         scratchAgentList.clear();
         double sum=0;
-        G().AgentsInRad(scratchAgentList,Xpt(),Ypt(),interactionRad,wrapX,wrapY);
+        G().GetAgentsRadApprox(scratchAgentList,Xpt(),Ypt(),interactionRad,wrapX,wrapY);
         for (A a : scratchAgentList) {
             if(a!=this){
                 double xComp=Xdisp(a,wrapX);
@@ -44,7 +44,7 @@ public class SphericalAgent2D<A extends SphericalAgent2D,G extends AgentGrid2D<A
     public double SumForces(double interactionRad, ArrayList<A> scratchAgentList, OverlapNeighborForceResponse OverlapFun){
         scratchAgentList.clear();
         double sum=0;
-        G().AgentsInRad(scratchAgentList,Xpt(),Ypt(),interactionRad,G().wrapX,G().wrapY);
+        G().GetAgentsRadApprox(scratchAgentList,Xpt(),Ypt(),interactionRad,G().wrapX,G().wrapY);
         for (A a : scratchAgentList) {
             if(a!=this){
                 double xComp=Xdisp(a,G().wrapX);
@@ -84,7 +84,7 @@ public class SphericalAgent2D<A extends SphericalAgent2D,G extends AgentGrid2D<A
     public double SumForces(double interactionRad, ArrayList<A> scratchAgentList, OverlapForceResponse OverlapFun){
         scratchAgentList.clear();
         double sum=0;
-        G().AgentsInRad(scratchAgentList,Xpt(),Ypt(),interactionRad,G().wrapX,G().wrapY);
+        G().GetAgentsRadApprox(scratchAgentList,Xpt(),Ypt(),interactionRad,G().wrapX,G().wrapY);
         for (A a : scratchAgentList) {
             if(a!=this){
                 double xComp=Xdisp(a,G().wrapX);
