@@ -8,7 +8,7 @@ import java.util.*;
  * Extend the Grid2unstackable class if you want a 2D lattice with at most one agent per typeGrid square
  * @param <T> the AgentSQ2Dunstackable extending agent class that will inhabit the typeGrid
  */
-public class AgentGrid0D<T extends Agent0D> extends GridBase implements Iterable<T>{
+public class AgentGrid0D<T extends Agent0D> implements Iterable<T>{
     InternalGridAgentList<T> agents;
 
     /**

@@ -7,13 +7,13 @@ package Examples._6CompetitiveRelease;
         import Framework.Gui.GuiGrid;
         import Framework.Tools.FileIO;
         import Framework.Rand;
-        import static Examples._6CompetitiveRelease.ExampleModel.*;
+        import static Examples.CompetitiveReleaseVerbose.ExampleModel.*;
         import static Framework.Util.*;
 
 public class ExampleModel extends AgentGrid2D<ExampleCell> {
     //model constants
     public final static int RESISTANT = RGB(0, 1, 0), SENSITIVE = RGB(0, 0, 1);
-    public double DIV_PROB = 0.025, DIV_PROB_RES = 0.01, DEATH_PROB = 0.001, DRUG_START = 400, DRUG_PERIOD = 200,
+    public double DIV_PROB_SEN = 0.025, DIV_PROB_RES = 0.01, DEATH_PROB = 0.001, DRUG_START = 400, DRUG_PERIOD = 200,
             DRUG_DURATION = 40, DRUG_DIFF_RATE = 2, DRUG_UPTAKE = 0.91, DRUG_DEATH = 0.2, DRUG_BOUNDARY_VAL = 1.0;
     //internal model objects
     public PDEGrid2D drug;
@@ -65,6 +65,7 @@ public class ExampleModel extends AgentGrid2D<ExampleCell> {
     }
 
     public void ModelStep(int tick) {
+        ShuffleAgents(rn);
         for (ExampleCell cell : this) {
             cell.CellStep();
         }
@@ -74,7 +75,6 @@ public class ExampleModel extends AgentGrid2D<ExampleCell> {
         } else {
             drug.DiffusionADI(DRUG_DIFF_RATE);
         }
-        ShuffleAgents(rn);
     }
 
     public void DrawModel(GuiGrid vis, int iModel) {
@@ -94,9 +94,10 @@ class ExampleCell extends AgentSQ2Dunstackable<ExampleModel> {
         //Chance of Death, depends on resistance and drug concentration
         if (G().rn.Double() < G().DEATH_PROB + (type == RESISTANT ? 0 : G().drug.Get(Isq()) * G().DRUG_DEATH)) {
             Dispose();
+            return;
         }
         //Chance of Division, depends on resistance
-        else if (G().rn.Double() < (type == RESISTANT ? G().DIV_PROB_RES : G().DIV_PROB)) {
+        else if (G().rn.Double() < (type == RESISTANT ? G().DIV_PROB_RES : G().DIV_PROB_SEN)) {
             int options=MapEmptyHood(G().divHood);
             if(options>0){
                 G().NewAgentSQ(G().divHood[G().rn.Int(options)]).type=this.type;

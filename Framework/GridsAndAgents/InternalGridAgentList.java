@@ -19,10 +19,10 @@ class InternalGridAgentList<T extends AgentBase> implements Iterable<T>,Serializ
     transient Constructor<?> builder;
     int iLastAlive;
     int pop;
-    final GridBase myGrid;
+    final Object myGrid;
     int stateID;
 
-    InternalGridAgentList(Class<T> type, GridBase myGrid){
+    InternalGridAgentList(Class<T> type, Object myGrid){
         this.builder=type.getDeclaredConstructors()[0];
         this.builder.setAccessible(true);
         this.agents=new ArrayList<>();

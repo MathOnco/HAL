@@ -128,11 +128,6 @@ public class AgentList<T> implements Iterable<T>,Serializable{
         pop--;
     }
 
-    public void PopToCSV(FileIO out, AgentToString strFn){
-        for (T agent : this) {
-            out.Write(strFn.AtoS((AgentBase)(agent))+"\n");
-        }
-    }
     @Override
     public Iterator<T> iterator() {
         myIter ret;

@@ -1,7 +1,9 @@
 package Framework;
 
+import Framework.Extensions.PDEGrid2DCoarse;
 import Framework.GridsAndAgents.Agent2DBase;
 import Framework.GridsAndAgents.Agent3DBase;
+import Framework.GridsAndAgents.PDEGrid2D;
 import Framework.Interfaces.*;
 import Framework.Tools.SerializableModel;
 import Framework.Tools.SweepRun;
@@ -816,7 +818,7 @@ public final class Util {
         int Count = 0;
         for (; n > 0; --n) {
             writeHere[Count * 2] = (int) Math.floor(x);
-            writeHere[Count * 2] = (int) Math.floor(y);
+            writeHere[Count * 2+1] = (int) Math.floor(y);
             Count++;
 
             if (error > 0) {
@@ -830,68 +832,68 @@ public final class Util {
         return writeHere;
     }
 
-    /**
-     * Returns an array of all squares touching a line between the positions provided
-     *
-     * @param x1 the xDim coordinate of the starting position
-     * @param y1 the yDim coordinate of the starting position
-     * @param x2 the xDim coordinate of the ending position
-     * @param y2 the yDim coordinate of the ending position
-     * @return coordinates return as an array of the form [xDim,yDim,xDim,yDim,...]
-     */
-    public static int AlongLineCoords(double x1, double y1, double x2, double y2, int[] returnCoords) {
-        double dx = Math.abs(x2 - x1);
-        double dy = Math.abs(y2 - y1);
-
-        int x = (int) (Math.floor(x1));
-        int y = (int) (Math.floor(y1));
-
-        int n = 1;
-        int x_inc, y_inc;
-        double error;
-
-        if (dx == 0) {
-            x_inc = 0;
-            error = Double.MAX_VALUE;
-        } else if (x2 > x1) {
-            x_inc = 1;
-            n += (int) (Math.floor(x2)) - x;
-            error = (Math.floor(x1) + 1 - x1) * dy;
-        } else {
-            x_inc = -1;
-            n += x - (int) (Math.floor(x2));
-            error = (x1 - Math.floor(x1)) * dy;
-        }
-
-        if (dy == 0) {
-            y_inc = 0;
-            error -= Double.MAX_VALUE;
-        } else if (y2 > y1) {
-            y_inc = 1;
-            n += (int) (Math.floor(y2)) - y;
-            error -= (Math.floor(y1) + 1 - y1) * dx;
-        } else {
-            y_inc = -1;
-            n += y - (int) (Math.floor(y2));
-            error -= (y1 - Math.floor(y1)) * dx;
-        }
-
-        int Count = 0;
-        for (; n > 0; --n) {
-            returnCoords[Count * 2] = (int) Math.floor(x);
-            returnCoords[Count * 2] = (int) Math.floor(y);
-            Count++;
-
-            if (error > 0) {
-                y += y_inc;
-                error -= dx;
-            } else {
-                x += x_inc;
-                error += dy;
-            }
-        }
-        return Count;
-    }
+//    /**
+//     * Returns an array of all squares touching a line between the positions provided
+//     *
+//     * @param x1 the xDim coordinate of the starting position
+//     * @param y1 the yDim coordinate of the starting position
+//     * @param x2 the xDim coordinate of the ending position
+//     * @param y2 the yDim coordinate of the ending position
+//     * @return coordinates return as an array of the form [xDim,yDim,xDim,yDim,...]
+//     */
+//    public static int AlongLineCoords(double x1, double y1, double x2, double y2, int[] returnCoords) {
+//        double dx = Math.abs(x2 - x1);
+//        double dy = Math.abs(y2 - y1);
+//
+//        int x = (int) (Math.floor(x1));
+//        int y = (int) (Math.floor(y1));
+//
+//        int n = 1;
+//        int x_inc, y_inc;
+//        double error;
+//
+//        if (dx == 0) {
+//            x_inc = 0;
+//            error = Double.MAX_VALUE;
+//        } else if (x2 > x1) {
+//            x_inc = 1;
+//            n += (int) (Math.floor(x2)) - x;
+//            error = (Math.floor(x1) + 1 - x1) * dy;
+//        } else {
+//            x_inc = -1;
+//            n += x - (int) (Math.floor(x2));
+//            error = (x1 - Math.floor(x1)) * dy;
+//        }
+//
+//        if (dy == 0) {
+//            y_inc = 0;
+//            error -= Double.MAX_VALUE;
+//        } else if (y2 > y1) {
+//            y_inc = 1;
+//            n += (int) (Math.floor(y2)) - y;
+//            error -= (Math.floor(y1) + 1 - y1) * dx;
+//        } else {
+//            y_inc = -1;
+//            n += y - (int) (Math.floor(y2));
+//            error -= (y1 - Math.floor(y1)) * dx;
+//        }
+//
+//        int Count = 0;
+//        for (; n > 0; --n) {
+//            returnCoords[Count * 2] = (int) Math.floor(x);
+//            returnCoords[Count * 2] = (int) Math.floor(y);
+//            Count++;
+//
+//            if (error > 0) {
+//                y += y_inc;
+//                error -= dx;
+//            } else {
+//                x += x_inc;
+//                error += dy;
+//            }
+//        }
+//        return Count;
+//    }
     public static void AlongLineAction(double x1, double y1, double x2, double y2, CoordsAction Action) {
         double dx = Math.abs(x2 - x1);
         double dy = Math.abs(y2 - y1);
@@ -1835,6 +1837,63 @@ public final class Util {
             }
         }
         return (T)ret;
+    }
+
+
+    //used to interpolate values over a PDEGrid2DCoarse, when normal lattice positions are 1/3 the length of PDEGridCoarse lattice positions
+    //at some point it would be good to make a generic version of this function somehow
+    private final static double interpInSide =2.0/3.0, interpOutSide =1.0/3.0, interpInCorner =4.0/9.0, interpOutCorner =5.0/18.0;
+    static int InFallback(int val,int fallback,int dim){
+        return(Util.InDim(dim,val))?val:fallback;
+    }
+    public static double GetInterp3x3(int xCell,int yCell,PDEGrid2DCoarse diff){
+        PDEGrid2D g=diff.grid;
+        final int xDiff=xCell/3;
+        final int yDiff=yCell/3;
+        final int xMod=xCell%3;
+        final int yMod=yCell%3;
+        switch (xMod) {
+            case 0:
+                switch (yMod) {
+                    case 0://left bottom
+                        return g.Get(xDiff, yDiff) * interpInCorner +
+                                g.Get(InFallback(xDiff - 1, xDiff, g.xDim), yDiff) * interpOutCorner +
+                                g.Get(xDiff, InFallback(yDiff - 1, yDiff, g.yDim)) * interpOutCorner;
+                    case 1://left middle
+                        return g.Get(xDiff, yDiff) * interpInSide + g.Get(InFallback(xDiff - 1, xDiff, g.xDim), yDiff) * interpOutSide;
+                    case 2://left top
+                        return g.Get(xDiff, yDiff) * interpInCorner +
+                                g.Get(InFallback(xDiff - 1, xDiff, g.xDim), yDiff) * interpOutCorner +
+                                g.Get(xDiff, InFallback(yDiff + 1, yDiff, g.yDim)) * interpOutCorner;
+                    default: throw new IllegalStateException("mod calculation did not work!");
+                }
+            case 1:
+                switch (yMod){
+                    case 0://middle bottom
+                        return g.Get(xDiff, yDiff) * interpInSide + g.Get(xDiff, InFallback(yDiff-1,yDiff,g.yDim)) * interpOutSide;
+                    case 1://middle
+                        return g.Get(xDiff,yDiff);
+                    case 2://middle top
+                        return g.Get(xDiff, yDiff) * interpInSide + g.Get(xDiff, InFallback(yDiff+1,yDiff,g.yDim)) * interpOutSide;
+                    default: throw new IllegalStateException("mod calculation did not work!");
+                }
+            case 2:
+                switch (yMod) {
+                    case 0://right bottom
+                        return g.Get(xDiff, yDiff) * interpInCorner +
+                                g.Get(InFallback(xDiff + 1, xDiff, g.xDim), yDiff) * interpOutCorner +
+                                g.Get(xDiff, InFallback(yDiff - 1, yDiff, g.yDim)) * interpOutCorner;
+                    case 1://right middle
+                        return g.Get(xDiff, yDiff) * interpInSide + g.Get(InFallback(xDiff + 1, xDiff, g.xDim), yDiff) * interpOutSide;
+                    case 2://right top
+                        return g.Get(xDiff, yDiff) * interpInCorner +
+                                g.Get(InFallback(xDiff + 1, xDiff, g.xDim), yDiff) * interpOutCorner +
+                                g.Get(xDiff, InFallback(yDiff + 1, yDiff, g.yDim)) * interpOutCorner;
+                    default: throw new IllegalStateException("mod calculation did not work!");
+                }
+
+            default: throw new IllegalStateException("mod calculation did not work!");
+        }
     }
 
 }

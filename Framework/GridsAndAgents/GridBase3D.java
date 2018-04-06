@@ -1,9 +1,6 @@
 package Framework.GridsAndAgents;
 
-import Framework.Interfaces.Coords3DToAction;
-import Framework.Interfaces.IndexAction;
-import Framework.Interfaces.IndexToBool;
-import Framework.Interfaces.IntToInt;
+import Framework.Interfaces.*;
 import Framework.Rand;
 import Framework.Util;
 
@@ -12,7 +9,7 @@ import java.util.ArrayList;
 /**
  * Created by bravorr on 5/17/17.
  */
-public abstract class GridBase3D extends GridBase{
+public abstract class GridBase3D{
     public final int xDim;
     public final int yDim;
     public final int zDim;
@@ -174,6 +171,44 @@ public abstract class GridBase3D extends GridBase{
             }
             hood[ptCt]= I(x,y,z);
             ptCt++;
+        }
+        return ptCt;
+    }
+    public int MapHood(int[] hood, int centerX, int centerY, int centerZ,Coords3DToBool Eval) {
+        //moves coordinates to be around origin
+        //if any of the coordinates are outside the bounds, they will not be added
+        int ptCt = 0;
+        int iStart=hood.length/4;
+        for (int i = iStart; i < hood.length; i+=3) {
+            int x = hood[i] + centerX;
+            int y = hood[i + 1] + centerY;
+            int z = hood[i + 2] + centerZ;
+            if (!Util.InDim(xDim, x)) {
+                if (wrapX) {
+                    x = Util.ModWrap(x, xDim);
+                } else {
+                    continue;
+                }
+            }
+            if (!Util.InDim(yDim, y)) {
+                if (wrapY) {
+                    y = Util.ModWrap(y, yDim);
+                } else {
+                    continue;
+                }
+            }
+            if (!Util.InDim(zDim, z)) {
+                if (wrapZ) {
+                    z = Util.ModWrap(z, zDim);
+                } else {
+                    continue;
+                }
+            }
+            int j=I(x,y,z);
+            if(Eval.Eval(i,x,y,z)) {
+                hood[ptCt] = j;
+                ptCt++;
+            }
         }
         return ptCt;
     }
@@ -424,13 +459,13 @@ public abstract class GridBase3D extends GridBase{
         return nFound;
     }
     public int ConvXsq(int x,GridBase3D other){
-        return x*other.xDim/xDim;
+        return (int)(((x+0.5)*other.xDim)/xDim);
     }
     public int ConvYsq(int y,GridBase3D other){
-        return y*other.yDim/yDim;
+        return (int)(((y+0.5)*other.yDim)/yDim);
     }
     public int ConvZsq(int z,GridBase3D other){
-        return z*other.zDim/zDim;
+        return (int)(((z+0.5)*other.zDim)/zDim);
     }
     public int ConvI(int i,GridBase3D other){
         int x=ItoX(i);

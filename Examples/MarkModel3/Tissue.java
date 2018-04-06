@@ -673,9 +673,9 @@ public class Tissue <C extends Cell> extends AgentGrid2D<C>
     public boolean IsSteady()
     {
         double maxMaxDif=Double.MIN_VALUE;
-            maxMaxDif=Math.max(maxMaxDif,oxygen.grid.MaxDifInternalScaled(EPS));
-            maxMaxDif=Math.max(maxMaxDif,glucose.grid.MaxDifInternalScaled(EPS));
-            maxMaxDif=Math.max(maxMaxDif,acid.grid.MaxDifInternalScaled(EPS));
+            maxMaxDif=Math.max(maxMaxDif,oxygen.grid.MaxDifferenceScaled(EPS));
+            maxMaxDif=Math.max(maxMaxDif,glucose.grid.MaxDifferenceScaled(EPS));
+            maxMaxDif=Math.max(maxMaxDif,acid.grid.MaxDifferenceScaled(EPS));
             if(maxMaxDif> ADI_STOP_DIF)
             {
                 return false;

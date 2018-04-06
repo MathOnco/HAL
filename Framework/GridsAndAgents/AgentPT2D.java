@@ -12,7 +12,7 @@ import static Framework.Util.*;
  * @param <T> the extended AgentGrid2D class that the agents will live in
  * Created by rafael on 11/18/16.
  */
-public class AgentPT2D<T extends AgentGrid2D> extends AgentBaseSpatial<T> implements Agent2DBase{
+public class AgentPT2D<T extends AgentGrid2D> extends Agent2DBase<T>{
     private double ptX;
     private double ptY;
     AgentPT2D nextSq;

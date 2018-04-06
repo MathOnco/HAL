@@ -7,7 +7,7 @@ import java.util.ArrayList;
 /**
  * Created by rafael on 8/10/17.
  */
-public abstract class AgentBaseSpatial<T extends GridBase> extends AgentBase<T> {
+public abstract class AgentBaseSpatial<T> extends AgentBase<T> {
     int iSq;
     public int Isq(){
         return iSq;
@@ -35,7 +35,6 @@ public abstract class AgentBaseSpatial<T extends GridBase> extends AgentBase<T> 
     abstract void Setup(int x,int y,int z);
     abstract void RemSQ();
     abstract void AddSQ(int iNext);
-    abstract public void Dispose();
     abstract void GetAllOnSquare(ArrayList<AgentBaseSpatial> putHere);
     abstract int GetCountOnSquare();
     abstract int GetCountOnSquareEval(AgentToBool evalAgent);

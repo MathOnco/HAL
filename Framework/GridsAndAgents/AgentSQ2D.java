@@ -14,7 +14,7 @@ import static Framework.Util.ModWrap;
  * @param <T> the extended AgentGrid2D class that the agents will live in
  * Created by rafael on 11/18/16.
  */
-public class AgentSQ2D<T extends AgentGrid2D> extends AgentBaseSpatial<T> implements Agent2DBase{
+public class AgentSQ2D<T extends AgentGrid2D> extends Agent2DBase<T>{
     private int xSq;
     private int ySq;
     AgentSQ2D nextSq;

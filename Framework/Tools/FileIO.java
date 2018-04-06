@@ -232,7 +232,7 @@ public class FileIO {
     //WRITE FUNCTIONS
 
     /**
-     * requires write mode ("w")
+     * requires write mode or append mode ("w"/"a")
      * @param text writes the line to the file
      */
     public void Write(String text) {
@@ -243,7 +243,7 @@ public class FileIO {
         }
     }
     /**
-     * requires write mode ("w")
+     * requires write mode or append mode ("w"/"a")
      * the objects in the list are written to the output file using the toString() method
      * @param data a list of objects to be written
      * @param delimiter the delimiter used to separate each object
@@ -266,7 +266,7 @@ public class FileIO {
         }
     }
     /**
-     * requires write mode ("w")
+     * requires write mode or append mode ("w"/"a")
      * the objects in the array are written to the output file using the toString() method
      * @param data an array of objects to be written
      * @param delimiter the delimiter used to separate each object
@@ -281,7 +281,7 @@ public class FileIO {
     }
 
     /**
-     * requires write mode ("w")
+     * requires write mode or append mode ("w"/"a")
      * writes the array of ints to the file, separated by the delimiter
      */
     public void WriteDelimit(int[] data,String delimiter){
@@ -293,7 +293,7 @@ public class FileIO {
         }
     }
     /**
-     * requires write mode ("w")
+     * requires write mode or append mode ("w"/"a")
      * writes the array of longs to the file, separated by the delimiter
      */
     public void WriteDelimit(long[] data,String delimiter){
@@ -305,7 +305,7 @@ public class FileIO {
         }
     }
     /**
-     * requires write mode ("w")
+     * requires write mode or append mode ("w"/"a")
      * writes the array of floats to the file, separated by the delimiter
      */
     public void WriteDelimit(float[] data,String delimiter){
@@ -317,7 +317,7 @@ public class FileIO {
         }
     }
     /**
-     * requires write mode ("w")
+     * requires write mode or append mode ("w"/"a")
      * writes the array of doubles to the file, separated by the delimiter
      */
     public void WriteDelimit(double[] data,String delimiter){
@@ -365,7 +365,7 @@ public class FileIO {
         }
     }
     /**
-     * requires writeBinary model ("wb")
+     * requires writeBinary mode or appendBinary mode ("wb"/"ab")
      * writes a single double to the binary file
      */
     public void WriteBinDouble(double writeMe) {
@@ -377,7 +377,7 @@ public class FileIO {
         }
     }
     /**
-     * requires writeBinary model ("wb")
+     * requires writeBinary mode or appendBinary mode ("wb"/"ab")
      * writes a single float to the binary file
      */
     public void WriteBinFloat(float writeMe) {
@@ -389,7 +389,7 @@ public class FileIO {
     }
     }
     /**
-     * requires writeBinary model ("wb")
+     * requires writeBinary mode or appendBinary mode ("wb"/"ab")
      * writes a single int to the binary file
      */
     public void WriteBinInt(int writeMe) {
@@ -401,7 +401,7 @@ public class FileIO {
                 }
     }
     /**
-     * requires writeBinary model ("wb")
+     * requires writeBinary mode or appendBinary mode ("wb"/"ab")
      * writes a single long to the binary file
      */
     public void WriteBinLong(long writeMe) {
@@ -413,7 +413,7 @@ public class FileIO {
         }
     }
     /**
-     * requires writeBinary model ("wb")
+     * requires writeBinary mode or appendBinary mode ("wb"/"ab")
      * writes a string to the binary file
      */
     public void WriteBinString(String writeMe){
@@ -425,7 +425,7 @@ public class FileIO {
         }
     }
     /**
-     * requires writeBinary model ("wb")
+     * requires writeBinary mode or appendBinary mode ("wb"/"ab")
      * writes a single boolean to the binary file
      */
     public void WriteBinBool(boolean writeMe){

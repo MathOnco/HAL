@@ -14,7 +14,7 @@ import static Framework.Util.ModWrap;
  * @param <T> the extended AgentGrid3D class that the agents will live in
  * Created by rafael on 11/18/16.
  */
-public class AgentSQ3Dunstackable<T extends AgentGrid3D> extends AgentBaseSpatial<T> implements Agent3DBase{
+public class AgentSQ3Dunstackable<T extends AgentGrid3D> extends Agent3DBase<T>{
     int xSq;
     int ySq;
     int zSq;

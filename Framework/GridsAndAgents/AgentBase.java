@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * Created by rafael on 2/17/17.
  */
-public class AgentBase<T extends GridBase> implements Serializable{
+public abstract class AgentBase<T> implements Serializable{
     int stateID;
     int iList;
     boolean alive;
@@ -20,17 +20,12 @@ public class AgentBase<T extends GridBase> implements Serializable{
     }
 
     /**
-     * Returns how many typeGrid ticks the agent has been alive for
-     */
-    public int _GetAgentListIndex(){
-        return iList;
-    }
-
-    /**
      * Returns whether the agent is alive or has been disposed
      */
     public boolean IsAlive(){
         return alive;
     }
+
+    abstract public void Dispose();
 
 }

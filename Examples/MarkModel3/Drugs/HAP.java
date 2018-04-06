@@ -103,7 +103,7 @@ public class HAP<C extends Cell<C,T>,T extends Tissue<C>> extends Drug<C,T> {
                 }
             }
         }
-            while (diff.grid.MaxDifInternal() > STEADY_STATE && activated.grid.MaxDifInternal() > STEADY_STATE && i < MAX_STEPS)
+            while (diff.grid.MaxDifference() > STEADY_STATE && activated.grid.MaxDifference() > STEADY_STATE && i < MAX_STEPS)
                 ;
            // System.out.println(i);
 //            if (i == MAX_STEPS) {

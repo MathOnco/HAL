@@ -53,12 +53,9 @@ class PaintPanel extends JPanel {
  * a gui item that is used to efficiently visualize in 2 dimensions
  * uses an array of pixels whose color values are individually set
  */
-public class GuiGrid implements GuiComp{
+public class GuiGrid extends GridBase2D implements GuiComp{
     boolean active;
     final PaintPanel panel;
-    final public int xDim;
-    final public int yDim;
-    final public int length;
     public final int scale;
     public final int compX;
     public final int compY;
@@ -83,10 +80,8 @@ public class GuiGrid implements GuiComp{
      * @param active
      */
     public GuiGrid(int gridW, int gridH, int scaleFactor, int compX, int compY, boolean active){
+        super(gridW,gridH,false,false);
         this.active= active;
-        xDim=gridW;
-        yDim=gridH;
-        length=gridH*gridW;
         this.compX=compX;
         this.compY=compY;
         scale =scaleFactor;
@@ -393,9 +388,6 @@ public class GuiGrid implements GuiComp{
         compSizesHere.add(compY);
     }
 
-    public int I(int x, int y){
-       return x*yDim+y;
-    }
     public double ClickXpt(MouseEvent e){
         return e.getX()*1.0/ scale;
     };
@@ -428,12 +420,6 @@ public class GuiGrid implements GuiComp{
         }
     }
 
-    public int ItoX(int i){
-       return  i/yDim;
-    }
-    public int ItoY(int i){
-       return i%yDim;
-    }
     public void DrawShapeHood(int i, int[]Shapehood, int[]ColorInts){
             int ptCt=0;
             for(int k=0;k<Shapehood.length/2;k++) {

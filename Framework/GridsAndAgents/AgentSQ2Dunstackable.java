@@ -14,7 +14,7 @@ import static Framework.Util.ModWrap;
  * Created by rafael on 11/18/16.
  */
 
-public class AgentSQ2Dunstackable<T extends AgentGrid2D> extends AgentBaseSpatial <T> implements Agent2DBase{
+public class AgentSQ2Dunstackable<T extends AgentGrid2D> extends Agent2DBase<T>{
     int xSq;
     int ySq;
 

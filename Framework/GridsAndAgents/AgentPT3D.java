@@ -13,7 +13,7 @@ import static Framework.Util.*;
  * @param <T> the extended AgentGrid3D class that the agents will live in
  * Created by rafael on 11/18/16.
  */
-public class AgentPT3D<T extends AgentGrid3D> extends AgentBaseSpatial<T> implements Agent3DBase{
+public class AgentPT3D<T extends AgentGrid3D> extends Agent3DBase<T>{
     private double xPos;
     private double yPos;
     private double zPos;

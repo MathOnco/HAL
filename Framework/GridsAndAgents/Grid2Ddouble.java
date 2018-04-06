@@ -115,7 +115,7 @@ public class Grid2Ddouble extends GridBase2D implements Serializable{
         }
         return min;
     }
-    public double MaxDifScaled(double[]compareTo, double denomOffset){
+    public double MaxDifOtherScaled(double[]compareTo, double denomOffset){
         double maxDif=0;
         for(int i = 0; i< field.length; i++){
             maxDif=Math.max(maxDif,Math.abs(field[i]- compareTo[i])/ (compareTo[i]+denomOffset));
