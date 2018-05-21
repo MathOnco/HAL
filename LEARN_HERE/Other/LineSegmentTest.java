@@ -1,13 +1,12 @@
 package LEARN_HERE.Other;
 
-import Framework.Gui.Window2DOpenGL;
-import Framework.Gui.Window3DOpenGL;
+import Framework.Gui.OpenGL3DWindow;
 
 import static Framework.Util.RGB;
 
 public class LineSegmentTest {
     public static void main(String[] args) {
-        Window3DOpenGL win=new Window3DOpenGL("segment",500,500,10,10,10);
+        OpenGL3DWindow win=new OpenGL3DWindow("segment",500,500,10,10,10);
         while(!win.CheckClosed()) {
             win.Clear(RGB(0,0,0));
             win.Line(0, 0,0, 10, 10,10, RGB(1, 0, 0));

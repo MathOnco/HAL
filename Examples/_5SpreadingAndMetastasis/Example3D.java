@@ -4,7 +4,7 @@ import Framework.GridsAndAgents.AgentSQ3D;
 import Framework.GridsAndAgents.Grid2Ddouble;
 import Framework.GridsAndAgents.PDEGrid3D;
 import Framework.Gui.GridWindow;
-import Framework.Gui.Window3DOpenGL;
+import Framework.Gui.OpenGL3DWindow;
 import Framework.Rand;
 
 import java.util.LinkedList;
@@ -125,7 +125,7 @@ public class Example3D extends AgentGrid3D<ExCell3D> {
         }
         return vesselCt;
     }
-    public void DrawCells(Window3DOpenGL vis){
+    public void DrawCells(OpenGL3DWindow vis){
         vis.ClearBox(BACKGROUND_COLOR,RGB(1,0,0));//used to clear gui
         for (ExCell3D cellOrVessel : this) {
             switch (cellOrVessel.type){
@@ -169,7 +169,7 @@ public class Example3D extends AgentGrid3D<ExCell3D> {
             ex.DiffStep();
         }
         GridWindow visResource=new GridWindow(x,y,5);
-        Window3DOpenGL vis=new Window3DOpenGL("TumorVis", 1000,1000,x,z,y);
+        OpenGL3DWindow vis=new OpenGL3DWindow("TumorVis", 1000,1000,x,z,y);
         while (!vis.CheckClosed()){
             ex.StepAll();
             ex.DrawCells(vis);

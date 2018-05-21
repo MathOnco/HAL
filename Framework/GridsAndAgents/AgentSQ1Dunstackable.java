@@ -14,9 +14,7 @@ import static Framework.Util.ModWrap;
  * Created by rafael on 11/18/16.
  */
 
-public class AgentSQ2Dunstackable<T extends AgentGrid2D> extends Agent2DBase<T>{
-    int xSq;
-    int ySq;
+public class AgentSQ1Dunstackable<T extends AgentGrid1D> extends Agent1DBase<T>{
 
     public void SwapPosition(AgentBaseSpatial other){
         if(this.Isq()==other.Isq()){
@@ -39,26 +37,21 @@ public class AgentSQ2Dunstackable<T extends AgentGrid2D> extends Agent2DBase<T>{
         Setup((int)i);
     }
     void Setup(double xSq,double ySq){
-        Setup((int)xSq,(int)ySq);
+        throw new IllegalStateException("shouldn't be adding 1D agent to 2D typeGrid");
     }
     void Setup(double xSq,double ySq,double zSq){
-        throw new IllegalStateException("shouldn't be adding 2D agent to 3D typeGrid");
+        throw new IllegalStateException("shouldn't be adding 1D agent to 3D typeGrid");
     }
 
     @Override
     void Setup(int i) {
-        xSq=myGrid.ItoX(i);
-        ySq=myGrid.ItoY(i);
         iSq=i;
         AddSQ(i);
     }
 
     @Override
     void Setup(int x, int y) {
-        this.xSq=x;
-        this.ySq=y;
-        iSq=myGrid.I(xSq,ySq);
-        AddSQ(iSq);
+        throw new IllegalStateException("shouldn't be adding 1D agent to 2D typeGrid");
     }
 
     @Override
@@ -69,16 +62,14 @@ public class AgentSQ2Dunstackable<T extends AgentGrid2D> extends Agent2DBase<T>{
     /**
      * Moves the agent to the square with the specified index
      */
-    public void MoveSQ(int i){
+    public void MoveSQ(int x){
         //moves agent discretely
         if(!this.alive){
             throw new RuntimeException("Attempting to move dead agent!");
         }
-        this.xSq=myGrid.ItoX(i);
-        this.ySq=myGrid.ItoY(i);
         myGrid.grid[iSq]=null;
-        iSq=i;
-        AddSQ(i);
+        iSq=x;
+        AddSQ(x);
     }
     void AddSQ(int i){
         if(myGrid.grid[i]!=null){
@@ -90,27 +81,13 @@ public class AgentSQ2Dunstackable<T extends AgentGrid2D> extends Agent2DBase<T>{
         myGrid.grid[iSq]=null;
     }
 
-    /**
-     * Moves the agent to the square at the specified coordinates
-     */
-    public void MoveSQ(int x, int y){
-        if(!this.alive){
-            throw new RuntimeException("Attempting to move dead agent!");
-        }
-        int iNewPos=myGrid.I(x,y);
-        RemSQ();
-        AddSQ(iNewPos);
-        this.xSq=x;
-        this.ySq=y;
-        this.iSq=iNewPos;
-    }
 
-    public void MoveSafeSQ(int newX,int newY){
+    public void MoveSafeSQ(int newX){
         if(!alive){
             throw new RuntimeException("Attempting to move dead agent");
         }
-        if (G().In(newX, newY)) {
-            MoveSQ(newX, newY);
+        if (G().In(newX)) {
+            MoveSQ(newX);
             return;
         }
         if (G().wrapX) {
@@ -118,18 +95,14 @@ public class AgentSQ2Dunstackable<T extends AgentGrid2D> extends Agent2DBase<T>{
         } else if (!InDim(G().xDim, newX)) {
             newX = Xsq();
         }
-        if (G().wrapY) {
-            newY = ModWrap(newY, G().yDim);
-        } else if (!InDim(G().yDim, newY))
-            newY = Ysq();
-        MoveSQ(newX,newY);
+        MoveSQ(newX);
     }
-    public void MoveSafeSQ(int newX,int newY,boolean wrapX,boolean wrapY){
+    public void MoveSafeSQ(int newX,boolean wrapX){
         if(!alive){
             throw new RuntimeException("Attempting to move dead agent");
         }
-        if (G().In(newX, newY)) {
-            MoveSQ(newX, newY);
+        if (G().In(newX)) {
+            MoveSQ(newX);
             return;
         }
         if (wrapX) {
@@ -137,37 +110,20 @@ public class AgentSQ2Dunstackable<T extends AgentGrid2D> extends Agent2DBase<T>{
         } else if (!InDim(G().xDim, newX)) {
             newX = Xsq();
         }
-        if (wrapY) {
-            newY = ModWrap(newY, G().yDim);
-        } else if (!InDim(G().yDim, newY))
-            newY = Ysq();
-        MoveSQ(newX,newY);
+        MoveSQ(newX);
     }
     /**
      * Gets the xDim coordinate of the square that the agent occupies
      */
     public int Xsq(){
-        return xSq;
-    }
-    /**
-     * Gets the yDim coordinate of the square that the agent occupies
-     */
-    public int Ysq(){
-        return ySq;
+        return iSq;
     }
     /**
      * Gets the xDim coordinate agent
      */
     public double Xpt(){
-        return xSq+0.5;
+        return iSq+0.5;
     }
-    /**
-     * Gets the yDim coordinate agent
-     */
-    public double Ypt(){
-        return ySq+0.5;
-    }
-
     /**
      * Deletes the agent
      */

@@ -20,7 +20,7 @@ import static org.lwjgl.opengl.GL11.*;
 /**
  * Created by rafael on 5/28/17.
  */
-public class Window3DOpenGL {
+public class OpenGL3DWindow {
     final boolean active;
     public final int xDim;
     public final int yDim;
@@ -37,7 +37,7 @@ public class Window3DOpenGL {
     Camera camera;
     private static int BLACK=RGB(0,0,0),WHITE=RGB(1,1,1);
 
-    public Window3DOpenGL(String title, int xPix, int yPix, int xDim, int yDim, int zDim, boolean active) {
+    public OpenGL3DWindow(String title, int xPix, int yPix, int xDim, int yDim, int zDim, boolean active) {
         this.active = active;
         int maxDim = Math.max(xDim, yDim);
         this.maxDim = Math.max(maxDim, zDim);
@@ -71,7 +71,7 @@ public class Window3DOpenGL {
             //glTranslatef(transXY, transXY, transZ);
         }
     }
-    public Window3DOpenGL(String title, int xPix, int yPix, int xDim, int yDim, int zDim) {
+    public OpenGL3DWindow(String title, int xPix, int yPix, int xDim, int yDim, int zDim) {
         this(title,xPix,yPix,xDim,yDim,zDim,true);
     }
     int GetDelta() {

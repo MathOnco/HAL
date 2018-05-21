@@ -1,6 +1,6 @@
 package Testing;
 
-import Framework.Gui.Window2DOpenGL;
+import Framework.Gui.OpenGL2DWindow;
 import Framework.Gui.TickTimer;
 import Framework.Util;
 
@@ -11,7 +11,7 @@ import static Framework.Util.RGB;
  */
 public class Vis2DCircle {
     public static void main(String[] args) {
-        Window2DOpenGL vis = new Window2DOpenGL("Test", 1000, 1000,50,50, true);
+        OpenGL2DWindow vis = new OpenGL2DWindow("Test", 1000, 1000,50,50, true);
         float[] pts= Util.GenCirclePoints(1.0f,4);
         TickTimer trt=new TickTimer();
         float x=0;

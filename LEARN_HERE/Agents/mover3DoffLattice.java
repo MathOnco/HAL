@@ -3,7 +3,7 @@ package LEARN_HERE.Agents;
 import Framework.GridsAndAgents.AgentGrid3D;
 import Framework.GridsAndAgents.AgentPT3D;
 import Framework.Gui.GridWindow;
-import Framework.Gui.Window3DOpenGL;
+import Framework.Gui.OpenGL3DWindow;
 import Framework.Rand;
 import Framework.Util;
 
@@ -26,7 +26,7 @@ public class mover3DoffLattice extends AgentGrid3D<MoveAgentoffLattice> {
         int RED=RGB(1,0,0);
 
         mover3DoffLattice test=new mover3DoffLattice(10,10,10);
-        Window3DOpenGL win3D=new Window3DOpenGL("3D",500,500,test.xDim,test.yDim,test.zDim);
+        OpenGL3DWindow win3D=new OpenGL3DWindow("3D",500,500,test.xDim,test.yDim,test.zDim);
         GridWindow win2D=new GridWindow("2D",test.xDim,test.yDim,20);
         MoveAgentoffLattice ourHero=test.NewAgentSQ(5,5,5);
         Rand rn=new Rand();

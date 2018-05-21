@@ -79,10 +79,10 @@ public class AgentSQ3Dunstackable<T extends AgentGrid3D> extends Agent3DBase<T>{
         AddSQ(iNewPos);
     }
     void AddSQ(int i){
-        if(myGrid.grid[iSq]!=null){
+        if(myGrid.grid[i]!=null){
             throw new RuntimeException("Adding multiple unstackable agents to the same square!");
         }
-        myGrid.grid[iSq]=this;
+        myGrid.grid[i]=this;
     }
 
 

@@ -3,7 +3,7 @@ package LEARN_HERE.Agents;
 import Framework.GridsAndAgents.AgentGrid3D;
 import Framework.GridsAndAgents.AgentSQ3Dunstackable;
 import Framework.Gui.GridWindow;
-import Framework.Gui.Window3DOpenGL;
+import Framework.Gui.OpenGL3DWindow;
 import Framework.Util;
 
 import java.util.Random;
@@ -25,7 +25,7 @@ public class Mover3D extends AgentGrid3D<MoveAgent> {
         int WHITE= Util.RGB(1,1,1);
 
         Mover3D test=new Mover3D(10,10,10);
-        Window3DOpenGL win3D=new Window3DOpenGL("3D",500,500,test.xDim,test.yDim,test.zDim);
+        OpenGL3DWindow win3D=new OpenGL3DWindow("3D",500,500,test.xDim,test.yDim,test.zDim);
         GridWindow win2D=new GridWindow("2D",test.xDim,test.yDim,20);
         MoveAgent ourHero=test.NewAgentSQ(5,5,5);
         Random rn=new Random();

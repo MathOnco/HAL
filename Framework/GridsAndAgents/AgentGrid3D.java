@@ -689,10 +689,10 @@ public class AgentGrid3D<T extends AgentBaseSpatial> extends GridBase3D implemen
     int ApplyAgentsHood(int nActions, int[] hood, int centerX, int centerY, int centerZ, Rand rn, IntToInt GetNumActions, AgentToBool<T> evalAgent, AgentToAction<T> action, boolean wrapX, boolean wrapY, boolean wrapZ) {
         ArrayList<T> agents = GetFreshAgentSearchArr();
         iagentSearch++;
-        for (int i = 0; i < hood.length / 3; i++) {
-            int x = hood[i * 2] + centerX;
-            int y = hood[i * 2 + 1] + centerY;
-            int z = hood[i * 2 + 2] + centerZ;
+        for (int i = hood.length/4; i < hood.length; i+=3) {
+            int x = hood[i] + centerX;
+            int y = hood[i + 1] + centerY;
+            int z = hood[i + 2] + centerZ;
             if (!Util.InDim(xDim, x)) {
                 if (wrapX) {
                     x = Util.ModWrap(x, xDim);

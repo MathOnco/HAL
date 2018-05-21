@@ -10,76 +10,44 @@ import java.util.Iterator;
 /**
  * Created by bravorr on 5/17/17.
  */
-public class GridBase2D{
+public class GridBase1D {
     public final int xDim;
-    public final int yDim;
     public final int length;
     public boolean wrapX;
-    public boolean wrapY;
     int tick;
     public ArrayList<int[]> usedHoodIs = new ArrayList<>();
     ArrayList<IsIterator> usedIterIs = new ArrayList<>();
 
-    public GridBase2D(int xDim, int yDim, boolean wrapX, boolean wrapY) {
+    public GridBase1D(int xDim, boolean wrapX) {
         this.xDim = xDim;
-        this.yDim = yDim;
         this.wrapX = wrapX;
-        this.wrapY = wrapY;
-        this.length = xDim * yDim;
-    }
-
-    public int I(int x, int y) {
-        //gets typeGrid index from location
-        return x * yDim + y;
+        this.length = xDim;
     }
 
     /**
      * gets the index of the square at the specified coordinates with wrap around
      */
-    public int WrapI(int x, int y) {
+    public int WrapI(int x) {
         //wraps Coords to proper index
-        if (In(x, y)) {
-            return I(x, y);
+        if (In(x)) {
+            return x;
         }
-        return I(Util.ModWrap(x, xDim), Util.ModWrap(y, yDim));
-    }
-
-    /**
-     * gets the xDim component of the square at the specified index
-     */
-    public int ItoX(int i) {
-        return i / yDim;
-    }
-
-    /**
-     * gets the yDim component of the square at the specified index
-     */
-    public int ItoY(int i) {
-        return i % yDim;
-    }
-
-    /**
-     * gets the index of the square that contains the specified coordinates
-     */
-    public int I(double x, double y) {
-        //gets typeGrid index from location
-        return (int) Math.floor(x) * yDim + (int) Math.floor(y);
+        return Util.ModWrap(x, xDim);
     }
 
     /**
      * returns whether the specified coordinates are inside the typeGrid bounds
      */
-    public boolean In(int x, int y) {
-        return x >= 0 && x < xDim && y >= 0 && y < yDim;
+    public boolean In(int x) {
+        return x >= 0 && x < xDim;
     }
 
     /**
      * returns whether the specified coordinates are inside the typeGrid bounds
      */
-    public boolean In(double x, double y) {
+    public boolean In(double x) {
         int xInt = (int) Math.floor(x);
-        int yInt = (int) Math.floor(y);
-        return In(xInt, yInt);
+        return In(xInt);
     }
 
 //    /**
@@ -116,19 +84,16 @@ public class GridBase2D{
      * @param hood    list of coordinates of the form [xDim,yDim,xDim,yDim,...]
      * @param ret     list into which the displaced coordinates will be written
      * @param centerX xDim displacement of coordinates
-     * @param centerY yDim displacement of coordinates
      * @param wrapX   whether to wrap the coordinates that fall out of bounds in the X direction
-     * @param wrapY   whether to wrap the coordinates that fall out of bounds in the Y direction
      * @return the number of coordinates written into the ret array
      */
-    public int HoodToIs(int[] hood, int[] ret, int centerX, int centerY, boolean wrapX, boolean wrapY) {
+    public int HoodToIs(int[] hood, int[] ret, int centerX, boolean wrapX) {
         //moves coordinates to be around origin
         //if any of the coordinates are outside the bounds, they will not be added
         int ptCt = 0;
-        int iStart = hood.length / 3;
-        for (int i = iStart; i < hood.length; i += 2) {
+        int iStart = hood.length / 2;
+        for (int i = iStart; i < hood.length; i ++) {
             int x = hood[i] + centerX;
-            int y = hood[i + 1] + centerY;
             if (!Util.InDim(xDim, x)) {
                 if (wrapX) {
                     x = Util.ModWrap(x, xDim);
@@ -136,27 +101,27 @@ public class GridBase2D{
                     continue;
                 }
             }
-            if (!Util.InDim(yDim, y)) {
-                if (wrapY) {
-                    y = Util.ModWrap(y, yDim);
-                } else {
-                    continue;
-                }
-            }
-            ret[ptCt] = I(x, y);
+            ret[ptCt] = x;
             ptCt++;
         }
         return ptCt;
     }
+    public double Dist(double x1,double x2,boolean wrapX){
+        if(wrapX){
+            return Util.DistWrap(x1,x2,xDim);
+        }
+        else{
+            return Math.abs(x1-x2);
+        }
+    }
 
-    public int HoodToEvalIs(int[] hood, int[] ret, int centerX, int centerY, IndexToBool Eval, boolean wrapX, boolean wrapY) {
+    public int HoodToEvalIs(int[] hood, int[] ret, int centerX, IndexToBool Eval, boolean wrapX) {
         //moves coordinates to be around origin
         //if any of the coordinates are outside the bounds, they will not be added
         int ptCt = 0;
         int iStart = hood.length / 3;
         for (int i = iStart; i < hood.length; i += 2) {
             int x = hood[i] + centerX;
-            int y = hood[i + 1] + centerY;
             if (!Util.InDim(xDim, x)) {
                 if (wrapX) {
                     x = Util.ModWrap(x, xDim);
@@ -164,16 +129,8 @@ public class GridBase2D{
                     continue;
                 }
             }
-            if (!Util.InDim(yDim, y)) {
-                if (wrapY) {
-                    y = Util.ModWrap(y, yDim);
-                } else {
-                    continue;
-                }
-            }
-            int j = I(x, y);
-            if (Eval.Eval(j)) {
-                ret[ptCt] = j;
+            if (Eval.Eval(x)) {
+                ret[ptCt] = x;
                 ptCt++;
             }
         }
@@ -194,29 +151,21 @@ public class GridBase2D{
         return Is;
     }
 
-    public void ApplyRectangle(CoordsIAction Action) {
+    public void ApplyRectangle(Coords1DAction Action) {
         for (int x = 0; x < xDim; x++) {
-            for (int y = 0; y < yDim; y++) {
-                Action.Action(x, y, I(x, y));
-            }
+                Action.Action(x);
         }
     }
 
-    public void ApplyRectangle(int startX, int startY, int width, int height, CoordsIAction Action) {
+    public void ApplyRectangle(int startX, int width, Coords1DAction Action) {
         for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
-                Action.Action(x, y, I(x, y));
-            }
+                Action.Action(x);
         }
     }
 
-    public int IndexFromHood(int[] hood, int centerI, Rand rn, IndexToBool IsValid) {
-        return IndexFromHood(hood, ItoX(centerI), ItoY(centerI), rn, IsValid);
-    }
-
-    public int IndexFromHood(int[] hood, int centerX, int centerY, Rand rn, IndexToBool IsValid) {
+    public int IndexFromHood(int[] hood, int centerX, Rand rn, IndexToBool IsValid) {
         int[] inds = GetFreshHoodIs(hood.length);
-        int nOptions = HoodToEvalIs(hood, inds, centerX, centerY, IsValid, wrapX, wrapY);
+        int nOptions = HoodToEvalIs(hood, inds, centerX, IsValid, wrapX);
         if (nOptions == 0) {
             return -1;
         }
@@ -227,13 +176,9 @@ public class GridBase2D{
         }
     }
 
-    public int IndexFromHood(int[] hood, int centerI, Rand rn, IndexToBool IsValid, IntToBool ValidCount) {
-        return IndexFromHood(hood, ItoX(centerI), ItoY(centerI), rn, IsValid, ValidCount);
-    }
-
-    public int IndexFromHood(int[] hood, int centerX, int centerY, Rand rn, IndexToBool IsValid, IntToBool ValidCount) {
+    public int IndexFromHood(int[] hood, int centerX, Rand rn, IndexToBool IsValid, IntToBool ValidCount) {
         int[] inds = GetFreshHoodIs(hood.length);
-        int nOptions = HoodToEvalIs(hood, inds, centerX, centerY, IsValid, wrapX, wrapY);
+        int nOptions = HoodToEvalIs(hood, inds, centerX, IsValid, wrapX);
         if (!ValidCount.Eval(nOptions) || nOptions == 0) {
             return -1;
         }
@@ -244,13 +189,9 @@ public class GridBase2D{
         }
     }
 
-    public int IndexFromHood(int[] hood, int centerI, Rand rn) {
-        return IndexFromHood(hood, ItoX(centerI), ItoY(centerI), rn);
-    }
-
-    public int IndexFromHood(int[] hood, int centerX, int centerY, Rand rn) {
+    public int IndexFromHood(int[] hood, int centerX, Rand rn) {
         int[] inds = GetFreshHoodIs(hood.length);
-        int nOptions = HoodToIs(hood, inds, centerX, centerY);
+        int nOptions = HoodToIs(hood, inds, centerX);
         if (nOptions == 0) {
             return -1;
         }
@@ -261,77 +202,46 @@ public class GridBase2D{
         }
     }
 
-    public int ApplyHood(int[] hood, int centerI, IndexAction Action) {
-        return ApplyHood(-1, hood, ItoX(centerI), ItoY(centerI), null, null, Action, null, wrapX, wrapY);
-    }
-
-    public int ApplyHood(int[] hood, int centerX, int centerY, IndexAction Action) {
-        return ApplyHood(-1, hood, centerX, centerY, null, null, Action, null, wrapX, wrapY);
-    }
-
-    public int ApplyHood(int[] hood, int centerI, IndexToBool IsValidIndex, IndexAction Action) {
-        return ApplyHood(-1, hood, ItoX(centerI), ItoY(centerI), null, IsValidIndex, Action, null, wrapX, wrapY);
+    public int ApplyHood(int[] hood, int centerX, IndexAction Action) {
+        return ApplyHood(-1, hood, centerX, null, null, Action, null, wrapX);
     }
 
     public int ApplyHood(int[] hood, int centerX, int centerY, IndexToBool IsValidIndex, IndexAction Action) {
-        return ApplyHood(-1, hood, centerX, centerY, null, IsValidIndex, Action, null, wrapX, wrapY);
-    }
-
-    public int ApplyHood(int nActions, int[] hood, int centerI, Rand rn, IndexAction Action) {
-        return ApplyHood(nActions, hood, ItoX(centerI), ItoY(centerI), rn, null, Action, null, wrapX, wrapY);
+        return ApplyHood(-1, hood, centerX, null, IsValidIndex, Action, null, wrapX);
     }
 
     public int ApplyHood(int nActions, int[] hood, int centerX, int centerY, Rand rn, IndexAction Action) {
-        return ApplyHood(nActions, hood, centerX, centerY, rn, null, Action, null, wrapX, wrapY);
-    }
-
-    public int ApplyHood(int nActions, int[] hood, int centerI, Rand rn, IndexToBool IsValidIndex, IndexAction Action) {
-        return ApplyHood(nActions, hood, ItoX(centerI), ItoY(centerI), rn, IsValidIndex, Action, null, wrapX, wrapY);
+        return ApplyHood(nActions, hood, centerX, rn, null, Action, null, wrapX);
     }
 
     public int ApplyHood(int nActions, int[] hood, int centerX, int centerY, Rand rn, IndexToBool IsValidIndex, IndexAction Action) {
-        return ApplyHood(nActions, hood, centerX, centerY, rn, IsValidIndex, Action, null, wrapX, wrapY);
+        return ApplyHood(nActions, hood, centerX, rn, IsValidIndex, Action, null, wrapX);
     }
 
-    public int ApplyHood(int nActions, int[] hood, int centerI, Rand rn, IndexToBool IsValidIndex, IndexAction Action, boolean wrapX, boolean wrapY) {
-        return ApplyHood(nActions, hood, ItoX(centerI), ItoY(centerI), rn, IsValidIndex, Action, null, wrapX, wrapY);
-    }
-
-    public int ApplyHood(int nActions, int[] hood, int centerX, int centerY, Rand rn, IndexToBool IsValidIndex, IndexAction Action, boolean wrapX, boolean wrapY) {
-        return ApplyHood(nActions, hood, centerX, centerY, rn, IsValidIndex, Action, null, wrapX, wrapY);
-    }
-
-    public int ApplyHood(int[] hood, int centerI, Rand rn, IntToInt GetNumActions, IndexAction Action) {
-        return ApplyHood(-1, hood, ItoX(centerI), ItoY(centerI), rn, null, Action, GetNumActions, wrapX, wrapY);
+    public int ApplyHood(int nActions, int[] hood, int centerX, int centerY, Rand rn, IndexToBool IsValidIndex, IndexAction Action, boolean wrapX) {
+        return ApplyHood(nActions, hood, centerX, rn, IsValidIndex, Action, null, wrapX);
     }
 
     public int ApplyHood(int[] hood, int centerX, int centerY, Rand rn, IntToInt GetNumActions, IndexAction Action) {
-        return ApplyHood(-1, hood, centerX, centerY, rn, null, Action, GetNumActions, wrapX, wrapY);
-    }
-
-    public int ApplyHood(int[] hood, int centerI, Rand rn, IntToInt GetNumActions, IndexToBool IsValidIndex, IndexAction Action) {
-        return ApplyHood(-1, hood, ItoX(centerI), ItoY(centerI), rn, IsValidIndex, Action, GetNumActions, wrapX, wrapY);
+        return ApplyHood(-1, hood, centerX, rn, null, Action, GetNumActions, wrapX);
     }
 
     public int ApplyHood(int[] hood, int centerX, int centerY, Rand rn, IntToInt GetNumActions, IndexToBool IsValidIndex, IndexAction Action) {
-        return ApplyHood(-1, hood, centerX, centerY, rn, IsValidIndex, Action, GetNumActions, wrapX, wrapY);
+        return ApplyHood(-1, hood, centerX, rn, IsValidIndex, Action, GetNumActions, wrapX);
     }
 
-    public int ApplyHood(int[] hood, int centerI, Rand rn, IntToInt GetNumActions, IndexToBool IsValidIndex, IndexAction Action, boolean wrapX, boolean wrapY) {
-        return ApplyHood(-1, hood, ItoX(centerI), ItoY(centerI), rn, IsValidIndex, Action, GetNumActions, wrapX, wrapY);
+
+    public int ApplyHood(int[] hood, int centerX, Rand rn, IntToInt GetNumActions, IndexToBool IsValidIndex, IndexAction Action, boolean wrapX) {
+        return ApplyHood(-1, hood, centerX, rn, IsValidIndex, Action, GetNumActions, wrapX);
     }
 
-    public int ApplyHood(int[] hood, int centerX, int centerY, Rand rn, IntToInt GetNumActions, IndexToBool IsValidIndex, IndexAction Action, boolean wrapX, boolean wrapY) {
-        return ApplyHood(-1, hood, centerX, centerY, rn, IsValidIndex, Action, GetNumActions, wrapX, wrapY);
-    }
-
-    int ApplyHood(int nActions, int[] hood, int centerX, int centerY, Rand rn, IndexToBool IsValidIndex, IndexAction Action, IntToInt GetNumActions, boolean wrapX, boolean wrapY) {
+    int ApplyHood(int nActions, int[] hood, int centerX, Rand rn, IndexToBool IsValidIndex, IndexAction Action, IntToInt GetNumActions, boolean wrapX) {
         int nFound;
         int[] Is = GetFreshHoodIs(hood.length);
         if (IsValidIndex != null) {
-            nFound = HoodToEvalIs(hood, Is, centerX, centerY, IsValidIndex, wrapX, wrapY);
+            nFound = HoodToEvalIs(hood, Is, centerX, IsValidIndex, wrapX);
         } else {
-            nFound = HoodToIs(hood, Is, centerX, centerY, wrapX, wrapY);
+            nFound = HoodToIs(hood, Is, centerX, wrapX);
         }
         if (GetNumActions != null) {
             nActions = GetNumActions.Eval(nFound);
@@ -480,14 +390,13 @@ public class GridBase2D{
 //    public int HoodAction(int[] hood, int centerX,int centerY, LocalIndexAction Action){
 //        return HoodAction(hood,centerX,centerY,Action,wrapX,wrapY);
 //    }
-    public int HoodToIs(int[] hood, int[] ret, int centerX, int centerY) {
+    public int HoodToIs(int[] hood, int[] ret, int centerX) {
         //moves coordinates to be around origin
         //if any of the coordinates are outside the bounds, they will not be added
         int ptCt = 0;
-        int iStart = hood.length / 3;
-        for (int i = iStart; i < hood.length; i += 2) {
+        int iStart = hood.length / 2;
+        for (int i = iStart; i < hood.length; i ++) {
             int x = hood[i] + centerX;
-            int y = hood[i + 1] + centerY;
             if (!Util.InDim(xDim, x)) {
                 if (wrapX) {
                     x = Util.ModWrap(x, xDim);
@@ -495,36 +404,19 @@ public class GridBase2D{
                     continue;
                 }
             }
-            if (!Util.InDim(yDim, y)) {
-                if (wrapY) {
-                    y = Util.ModWrap(y, yDim);
-                } else {
-                    continue;
-                }
-            }
-            ret[ptCt] = I(x, y);
+            ret[ptCt] = x;
             ptCt++;
         }
         return ptCt;
     }
 
-    public int HoodToIs(int[] hood, int[] ret, int iCenter) {
-        return HoodToIs(hood, ret, ItoX(iCenter), ItoY(iCenter));
-    }
-
-    public int MapHood(int[] hood, int iCenter) {
-        //moves coordinates to be around origin
-        //if any of the coordinates are outside the bounds, they will not be added
-        return MapHood(hood, ItoX(iCenter), ItoY(iCenter));
-    }
-    public int MapHood(int[] hood, int centerX,int centerY,Coords2DToBool Eval){
+    public int MapHood(int[] hood, int centerX,Coords1DToBool Eval){
         //moves coordinates to be around origin
         //if any of the coordinates are outside the bounds, they will not be added
         int ptCt = 0;
-        int iStart = hood.length / 3;
-        for (int i = iStart; i < hood.length; i += 2) {
+        int iStart = hood.length / 2;
+        for (int i = iStart; i < hood.length; i ++) {
             int x = hood[i] + centerX;
-            int y = hood[i + 1] + centerY;
             if (!Util.InDim(xDim, x)) {
                 if (wrapX) {
                     x = Util.ModWrap(x, xDim);
@@ -532,33 +424,20 @@ public class GridBase2D{
                     continue;
                 }
             }
-            if (!Util.InDim(yDim, y)) {
-                if (wrapY) {
-                    y = Util.ModWrap(y, yDim);
-                } else {
-                    continue;
-                }
-            }
-            int j=I(x,y);
-            if(Eval.Eval(j,x,y)) {
-                hood[ptCt] = j;
+            if(Eval.Eval(x)) {
+                hood[ptCt] = x;
                 ptCt++;
             }
         }
         return ptCt;
     }
-    public int MapHood(int[] hood, int iCenter,Coords2DToBool Eval){
-        return MapHood(hood,ItoX(iCenter),ItoY(iCenter),Eval);
-    }
-
-    public int MapHood(int[] hood, int centerX, int centerY) {
+    public int MapHood(int[] hood, int centerX) {
         //moves coordinates to be around origin
         //if any of the coordinates are outside the bounds, they will not be added
         int ptCt = 0;
-        int iStart = hood.length / 3;
-        for (int i = iStart; i < hood.length; i += 2) {
+        int iStart = hood.length / 2;
+        for (int i = iStart; i < hood.length; i ++) {
             int x = hood[i] + centerX;
-            int y = hood[i + 1] + centerY;
             if (!Util.InDim(xDim, x)) {
                 if (wrapX) {
                     x = Util.ModWrap(x, xDim);
@@ -566,47 +445,15 @@ public class GridBase2D{
                     continue;
                 }
             }
-            if (!Util.InDim(yDim, y)) {
-                if (wrapY) {
-                    y = Util.ModWrap(y, yDim);
-                } else {
-                    continue;
-                }
-            }
-            hood[ptCt] = I(x, y);
+            hood[ptCt] = x;
             ptCt++;
         }
         return ptCt;
     }
 
-    public double DistSquared(double x1, double y1, double x2, double y2, boolean wrapX, boolean wrapY) {
-        return Util.DistSquared(x1, y1, x2, y2, xDim, yDim, wrapX, wrapY);
-    }
-
-    public double DistSquared(double x1, double y1, double x2, double y2) {
-        return Util.DistSquared(x1, y1, x2, y2, xDim, yDim, wrapX, wrapY);
-    }
-
-    public int[] BoundaryIs() {
-        int[] ret = new int[(xDim + yDim) * 2];
-        for (int x = 0; x < xDim; x++) {
-            ret[x] = I(x, 0);
-            ret[x + xDim] = I(x, yDim - 1);
-        }
-        for (int y = 0; y < yDim; y++) {
-            ret[y + xDim * 2] = I(0, y);
-            ret[y + xDim * 2 + yDim] = I(xDim - 1, y);
-        }
-        return ret;
-    }
-
-    public boolean ContainsValidI(int[] hood, int centerI, IndexToBool IsValid) {
-        return ContainsValidI(hood, ItoX(centerI), ItoY(centerI), IsValid);
-    }
-
-    public boolean ContainsValidI(int[] hood, int centerX, int centerY, IndexToBool IsValid) {
+    public boolean ContainsValidI(int[] hood, int centerX, IndexToBool IsValid) {
         int[] is = GetFreshHoodIs(hood.length);
-        int ct = HoodToIs(hood, is, centerX, centerY);
+        int ct = HoodToIs(hood, is, centerX);
         int ret = 0;
         for (int i = 0; i < ct; i++) {
             if (IsValid.Eval(is[i])) {
@@ -616,13 +463,9 @@ public class GridBase2D{
         return false;
     }
 
-    public int HoodCount(int[] hood, int centerI, IndexToBool IsValid) {
-        return HoodCount(hood, centerI, IsValid);
-    }
-
-    public int HoodCount(int[] hood, int centerX, int centerY, IndexToBool IsValid) {
+    public int HoodCount(int[] hood, int centerX, IndexToBool IsValid) {
         int[] is = GetFreshHoodIs(hood.length);
-        int ct = HoodToIs(hood, is, centerX, centerY);
+        int ct = HoodToIs(hood, is, centerX);
         int ret = 0;
         for (int i = 0; i < ct; i++) {
             if (IsValid.Eval(is[i])) {
@@ -633,43 +476,28 @@ public class GridBase2D{
     }
 
 
-    public int ConvXsq(int x, GridBase2D other) {
+    public int ConvXsq(int x, GridBase1D other) {
         return (int)(((x+0.5) * other.xDim) / xDim);
     }
 
-    public int ConvYsq(int y, GridBase2D other) {
-        return (int)(((y+0.5) * other.yDim) / yDim);
-    }
-
-    public int ConvI(int i, GridBase2D other) {
-        int x = ItoX(i);
-        int y = ItoY(i);
-        return other.I(ConvXsq(x, other), ConvYsq(y, other));
-    }
-
-    public double ConvXpt(double x, GridBase2D other) {
+    public double ConvXpt(double x, GridBase1D other) {
         return x * other.xDim / xDim;
     }
 
-    public double ConvYpt(double y, GridBase2D other) {
-        return y * other.yDim / yDim;
-    }
-
-
     private class IsIterator implements Iterator<Integer>, Iterable<Integer> {
-        final GridBase2D myGrid;
+        final GridBase1D myGrid;
         int[] myIs;
         int numIs;
         int iCount;
 
-        IsIterator(GridBase2D grid) {
+        IsIterator(GridBase1D grid) {
             myGrid = grid;
         }
 
-        public void Setup(GridBase2D grid, int[] hood, int centerX, int centerY) {
+        public void Setup(GridBase1D grid, int[] hood, int centerX, int centerY) {
             iCount = 0;
             myIs = myGrid.GetFreshHoodIs(hood.length);
-            numIs = myGrid.HoodToIs(hood, myIs, centerX, centerY);
+            numIs = myGrid.HoodToIs(hood, myIs, centerX);
 
         }
 
@@ -693,59 +521,6 @@ public class GridBase2D{
         public Iterator<Integer> iterator() {
             return this;
         }
-    }
-
-    public int AlongLineIs(double x1, double y1, double x2, double y2, int[] writeHere) {
-        double dx = Math.abs(x2 - x1);
-        double dy = Math.abs(y2 - y1);
-
-        int x = (int) (Math.floor(x1));
-        int y = (int) (Math.floor(y1));
-
-        int n = 1;
-        int x_inc, y_inc;
-        double error;
-
-        if (dx == 0) {
-            x_inc = 0;
-            error = Double.MAX_VALUE;
-        } else if (x2 > x1) {
-            x_inc = 1;
-            n += (int) (Math.floor(x2)) - x;
-            error = (Math.floor(x1) + 1 - x1) * dy;
-        } else {
-            x_inc = -1;
-            n += x - (int) (Math.floor(x2));
-            error = (x1 - Math.floor(x1)) * dy;
-        }
-
-        if (dy == 0) {
-            y_inc = 0;
-            error -= Double.MAX_VALUE;
-        } else if (y2 > y1) {
-            y_inc = 1;
-            n += (int) (Math.floor(y2)) - y;
-            error -= (Math.floor(y1) + 1 - y1) * dx;
-        } else {
-            y_inc = -1;
-            n += y - (int) (Math.floor(y2));
-            error -= (y1 - Math.floor(y1)) * dx;
-        }
-
-        int Count = 0;
-        for (; n > 0; --n) {
-            writeHere[Count] = I((int) Math.floor(x), (int) Math.floor(y));
-            Count++;
-
-            if (error > 0) {
-                y += y_inc;
-                error -= dx;
-            } else {
-                x += x_inc;
-                error += dy;
-            }
-        }
-        return Count;
     }
     int GetTick(){
         return tick;

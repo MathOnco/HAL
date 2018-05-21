@@ -17,6 +17,7 @@ public abstract class GridBase3D{
     public boolean wrapX;
     public boolean wrapY;
     public boolean wrapZ;
+    int tick;
     public ArrayList<int[]> hoodIs=new ArrayList<>();
     int ihoodIs=0;
     GridBase3D(int x,int y,int z,boolean wrapX,boolean wrapY,boolean wrapZ){
@@ -571,6 +572,15 @@ public abstract class GridBase3D{
         }
         ihoodIs--;
         return nFound;
+    }
+    int GetTick(){
+        return tick;
+    }
+    void SetTick(int tickValue){
+        tick=tickValue;
+    }
+    void IncTick(){
+        tick++;
     }
 }
 

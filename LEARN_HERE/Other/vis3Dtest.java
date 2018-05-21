@@ -1,6 +1,6 @@
 package LEARN_HERE.Other;
 
-import Framework.Gui.Window3DOpenGL;
+import Framework.Gui.OpenGL3DWindow;
 
 import static Framework.Util.GenCirclePoints;
 import static Framework.Util.RGB;
@@ -10,7 +10,7 @@ import static Framework.Util.RGB;
  */
 class Vis3Dtest {
     public static void main(String[] args) {
-        Window3DOpenGL v3d=new Window3DOpenGL("testing", 640,480,20,10,10, true);
+        OpenGL3DWindow v3d=new OpenGL3DWindow("testing", 640,480,20,10,10, true);
         float[] circ=GenCirclePoints(0.5f,100);
         while(!v3d.CheckClosed()) {
             v3d.TickPause(0);

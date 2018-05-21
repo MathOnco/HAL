@@ -5,7 +5,7 @@ import java.util.Iterator;
 /**
  * Created by bravorr on 8/4/17.
  */
-public class GenomeTracker<T extends GenomeInfo> implements Iterable<T> {
+class GenomeTracker<T extends GenomeBase> implements Iterable<T> {
     int nGenomesEver;
     int nLivingGenomes;
     int nTreeGenomes;
@@ -16,7 +16,6 @@ public class GenomeTracker<T extends GenomeInfo> implements Iterable<T> {
 
     public GenomeTracker(T progenitor, boolean removeEmptyLeaves) {
         this.progenitor = progenitor;
-        this.progenitor.Init(this, null, nGenomesEver);
         this.removeEmptyLeaves = removeEmptyLeaves;
     }
 

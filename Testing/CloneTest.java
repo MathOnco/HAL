@@ -95,7 +95,7 @@ class Genome<T extends Genome>{
         this.pop = 1 ;
         myTracker.totalPop++;
         if(this.id!=-1){
-            throw new IllegalStateException("Adding GenomeInfo to tree twice!");
+            throw new IllegalStateException("Adding GenomeBase to tree twice!");
         }
         this.myTracker=myTracker;
         this.parent=parent;
@@ -120,13 +120,13 @@ class Genome<T extends Genome>{
     }
     public void SetPop(long pop){
         if(myTracker==null){
-            throw new IllegalStateException("GenomeInfo must be part of tracker before pop can be changed!");
+            throw new IllegalStateException("GenomeBase must be part of tracker before pop can be changed!");
         }
         if(pop<0){
             throw new IllegalStateException("Can't decrease pop below 0!");
         }
         if(this.pop<=0){
-            throw new IllegalStateException("Can't alter dead GenomeInfo!");
+            throw new IllegalStateException("Can't alter dead GenomeBase!");
         }
         myTracker.totalPop+=pop-this.pop;
         this.pop=pop;

@@ -8,16 +8,16 @@ import java.util.ArrayList;
 /**
  * Created by bravorr on 8/4/17.
  */
-public class GenomeInfo {
+public abstract class GenomeBase {
     long pop;
-    GenomeInfo parent;
-    GenomeInfo firstChild;
-    GenomeInfo nextSibling;
-    GenomeInfo prevSibling;
-    GenomeInfo nextLiving;
-    GenomeInfo prevLiving;
+    GenomeBase parent;
+    GenomeBase firstChild;
+    GenomeBase nextSibling;
+    GenomeBase prevSibling;
+    GenomeBase nextLiving;
+    GenomeBase prevLiving;
     int id;
-    GenomeTracker myTracker;
+    final GenomeTracker myTracker;
 
     public int GetId() {
         return id;
@@ -27,34 +27,43 @@ public class GenomeInfo {
         return pop;
     }
 
-    public GenomeInfo GetParent() {
+    public GenomeBase GetParent() {
         return parent;
     }
 
-    public GenomeInfo(GenomeInfo parent){
+    public GenomeBase(GenomeBase parent, boolean removeLeaves){
         if(parent!=null) {
+            myTracker=parent.myTracker;
             parent.NewMutantGenome(this);
         }
-    }
-
-    void Init(GenomeTracker myTracker, GenomeInfo parent, int id) {
+        else{
+            myTracker=new GenomeTracker(this,removeLeaves);
+        }
+        this.id = myTracker.nGenomesEver;
         myTracker.nGenomesEver++;
         myTracker.nLivingGenomes++;
         myTracker.nTreeGenomes++;
-        this.pop = 1;
+        this.pop = 0;
         myTracker.totalPop++;
-        if (this.myTracker != null) {
-            throw new IllegalStateException("Adding GenomeInfo to tree twice!");
-        }
-        this.myTracker = myTracker;
-        this.parent = parent;
-        this.id = id;
     }
 
-    <T extends GenomeInfo> void NewMutantGenome(T child) {
+//    void Init(GenomeTracker myTracker, GenomeBase parent, int id) {
+//        myTracker.nGenomesEver++;
+//        myTracker.nLivingGenomes++;
+//        myTracker.nTreeGenomes++;
+//        this.pop = 1;
+//        myTracker.totalPop++;
+//        if (this.myTracker != null) {
+//            throw new IllegalStateException("Adding GenomeBase to tree twice!");
+//        }
+//        this.myTracker = myTracker;
+//        this.parent = parent;
+//        this.id = id;
+//    }
+
+    <T extends GenomeBase> void NewMutantGenome(T child) {
         T new_clone = child;
-        child.Init(myTracker, this, myTracker.nGenomesEver);
-        GenomeInfo current_right_child = this.firstChild;
+        GenomeBase current_right_child = this.firstChild;
         this.firstChild = new_clone;
         if (current_right_child != null) {
             current_right_child.prevSibling = new_clone;
@@ -70,14 +79,14 @@ public class GenomeInfo {
 
     public void SetPop(long pop) {
         if (myTracker == null) {
-            throw new IllegalStateException("GenomeInfo must be part of tracker before pop can be changed!");
+            throw new IllegalStateException("GenomeBase must be part of tracker before pop can be changed!");
         }
         if (pop < 0) {
             throw new IllegalStateException("Can't decrease pop below 0!");
         }
-        if (this.pop <= 0) {
-            throw new IllegalStateException("Can't alter dead GenomeInfo!");
-        }
+        //if (this.pop <= 0) {
+        //    throw new IllegalStateException("Can't alter dead GenomeBase!");
+        //}
         myTracker.totalPop += pop - this.pop;
         this.pop = pop;
         if (pop == 0) {
@@ -95,9 +104,9 @@ public class GenomeInfo {
 
     void RemoveGenomeFromTree() {
         myTracker.nTreeGenomes--;
-        GenomeInfo my_left_sib = this.nextSibling;
-        GenomeInfo my_right_sib = this.prevSibling;
-        GenomeInfo parent = this.parent;
+        GenomeBase my_left_sib = this.nextSibling;
+        GenomeBase my_right_sib = this.prevSibling;
+        GenomeBase parent = this.parent;
         if (parent!=null&&this == parent.firstChild) {
             // clone is parent's most recent child
             parent.firstChild = my_left_sib;
@@ -131,17 +140,17 @@ public class GenomeInfo {
 
     public void Traverse(GenomeFn GenomeFunction) {
         GenomeFunction.GenomeFn(this);
-        GenomeInfo child = firstChild;
+        GenomeBase child = firstChild;
         while (child != null) {
             child.Traverse(GenomeFunction);
             child = child.nextSibling;
         }
     }
 
-    public<T extends GenomeInfo> void TraverseWithLineage(ArrayList<T> lineageStorage, GenomeLineageFn GenomeFunction) {
+    public<T extends GenomeBase> void TraverseWithLineage(ArrayList<T> lineageStorage, GenomeLineageFn GenomeFunction) {
         lineageStorage.add((T) this);
         GenomeFunction.GenomeLineageFn(lineageStorage);
-        GenomeInfo child = firstChild;
+        GenomeBase child = firstChild;
         while (child != null) {
             child.TraverseWithLineage(lineageStorage, GenomeFunction);
             lineageStorage.remove(lineageStorage.size() - 1);
@@ -149,19 +158,39 @@ public class GenomeInfo {
         }
     }
 
-    public <T extends GenomeInfo> void GetChildren(ArrayList<T> childrenStorage) {
-        GenomeInfo child = firstChild;
+    public <T extends GenomeBase> void GetChildren(ArrayList<T> childrenStorage) {
+        GenomeBase child = firstChild;
         while (child != null) {
             childrenStorage.add((T)child);
             child = child.nextSibling;
         }
     }
 
-    public <T extends GenomeInfo> void GetLineage(ArrayList<T> lineageStorage) {
-        GenomeInfo parent = this;
+    public <T extends GenomeBase> void GetLineage(ArrayList<T> lineageStorage) {
+        GenomeBase parent = this;
         while (parent != null) {
             lineageStorage.add((T)parent);
             parent = parent.parent;
         }
+    }
+
+    public int GetNumGenomes() {
+        return myTracker.nGenomesEver;
+    }
+
+    public int GetNumLivingGenomes() {
+        return myTracker.nLivingGenomes;
+    }
+
+    public int GetNumTreeGenomes() {
+        return myTracker.nTreeGenomes;
+    }
+
+    public long GetTotalPop() {
+        return myTracker.totalPop;
+    }
+
+    public <T extends GenomeBase> T GetRoot(){
+        return (T)myTracker.progenitor;
     }
 }

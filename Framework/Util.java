@@ -383,7 +383,7 @@ public final class Util {
         sb.append(arr[end - 1]);
         return sb.toString();
     }
-    public static double Interpolate(double bottomLeft,double bottomRight,double topLeft,double topRight,double x,double y){
+    public static double Interpolate2D(double bottomLeft, double bottomRight, double topLeft, double topRight, double x, double y){
         if(x<0||x>1||y<0||y>1){
             throw new IllegalArgumentException("x and y for interpolation must be between 0 and 1 x: "+x+" y: "+y);
         }
@@ -1059,6 +1059,12 @@ public final class Util {
         }
         return dataIn;
     }
+    static public int[]GenHood1D(int[]coords){
+        int isStart=coords.length;
+        int[]ret=new int[coords.length+isStart];
+        System.arraycopy(coords,0,ret,isStart,coords.length);
+        return ret;
+    }
     static public int[]GenHood2D(int[]coords){
         if(coords.length%2!=0){
             throw new IllegalArgumentException("2D coords list must be divisible by 2");
@@ -1558,11 +1564,11 @@ public final class Util {
         Arrays.fill(neurons, iStart, iEnd, val);
     }
 
-    public double Sigmoid(double val, double stretch, double inflectionValue, double minCap, double maxCap) {
+    public static double Sigmoid(double val, double stretch, double inflectionValue, double minCap, double maxCap) {
         return minCap + ((maxCap - minCap)) / (1.0 + Math.exp(((-val) + inflectionValue) / stretch));
     }
-    public double Sigmoid(double val, double stretch) {
-        return 1 / (1.0 + Math.exp(((-val) + 0.5) / stretch));
+    public static double Sigmoid(double val, double stretch) {
+        return 1 / (1.0 + Math.exp(-val/stretch));
     }
 
 

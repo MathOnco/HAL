@@ -14,7 +14,7 @@ public class ExampleModel extends AgentGrid2D<ExampleCell> {
     public final static int RESISTANT = RGB(0, 1, 0), SENSITIVE = RGB(0, 0, 1);
     public double DIV_PROB_SEN = 0.025, DIV_PROB_RES = 0.01, DEATH_PROB = 0.001,
             DRUG_DIFF_RATE = 2, DRUG_UPTAKE = 0.91, DRUG_TOXICITY = 0.2, DRUG_BOUNDARY_VAL = 1.0;
-    public int DRUG_START = 400, DRUG_CYCLE = 200, DRUG_DURATION = 40;
+    public int DRUG_START = 400, DRUG_CYCLE = 200, DRUG_DURATION = 0;
     //internal model objects
     public PDEGrid2D drug;
     public Rand rng;
@@ -38,8 +38,8 @@ public class ExampleModel extends AgentGrid2D<ExampleCell> {
             models[i] = new ExampleModel(x, y, new Rand(1));
             models[i].InitTumor(tumorRad, resistantProb);
         }
-        models[0].DRUG_DURATION = 0;//no drug
         models[1].DRUG_DURATION = 200;//constant drug
+        models[2].DRUG_DURATION = 40;//pulsed drug
         //Main run loop
         for (int tick = 0; tick < 10000; tick++) {
             win.TickPause(msPause);

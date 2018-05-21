@@ -2,7 +2,7 @@ package Examples._3OffLatticeExample;
 
 import Framework.GridsAndAgents.SphericalAgent2D;
 import Framework.GridsAndAgents.AgentGrid2D;
-import Framework.Gui.Window2DOpenGL;
+import Framework.Gui.OpenGL2DWindow;
 import Framework.Tools.FileIO;
 import Framework.Tools.Gaussian;
 import Framework.Rand;
@@ -72,7 +72,7 @@ public class ExampleOffLattice extends AgentGrid2D<CellOL> {
         //to record output, call the constructor with an output filename
         ExampleOffLattice ex=new ExampleOffLattice(x,y,"PopOut.csv");
         //ExampleOffLattice ex=new ExampleOffLattice(x,y);
-        Window2DOpenGL vis=new Window2DOpenGL("Off Lattice Example", 1000,1000,x,y);
+        OpenGL2DWindow vis=new OpenGL2DWindow("Off Lattice Example", 1000,1000,x,y);
         ex.Setup(50,5,0.5);
         int i=0;
         while(i<10000&&!vis.CheckClosed()) {//check for click on close button on window
@@ -93,7 +93,7 @@ public class ExampleOffLattice extends AgentGrid2D<CellOL> {
             NewAgentPT(divCoordStorage[0]+xDim/2.0,divCoordStorage[1]+yDim/2.0).Init(rn.Double()<propRed? PURPLE : PINK);
         }
     }
-    public void DrawCells(Window2DOpenGL vis){
+    public void DrawCells(OpenGL2DWindow vis){
         vis.Clear(WHITE);
         for (CellOL cell : this) {
             //draw "cytoplasm" of cell

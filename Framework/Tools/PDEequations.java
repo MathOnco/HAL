@@ -192,13 +192,34 @@ public class PDEequations {
         currRate = DisplacedX2D(x - 1, y, diffRates, xDim, yDim, x + 1, false, boundaryValue, wrapX);
         valSum += DisplacedX2D(x - 1, y, inGrid, xDim, yDim, x + 1, boundaryCond, boundaryValue, wrapX) * currRate;
         rateSum += currRate;
-        currRate = DisplacedY2D(x, y+1, diffRates, xDim, yDim, y - 1, false, boundaryValue, wrapX);
-        valSum += DisplacedY2D(x, y+1, inGrid, xDim, yDim, y - 1, boundaryCond, boundaryValue, wrapX) * currRate;
+        currRate = DisplacedY2D(x, y+1, diffRates, xDim, yDim, y - 1, false, boundaryValue, wrapY);
+        valSum += DisplacedY2D(x, y+1, inGrid, xDim, yDim, y - 1, boundaryCond, boundaryValue, wrapY) * currRate;
         rateSum += currRate;
-        currRate = DisplacedY2D(x, y-1, diffRates, xDim, yDim, y + 1, false, boundaryValue, wrapX);
-        valSum += DisplacedY2D(x, y-1, inGrid, xDim, yDim, y + 1, boundaryCond, boundaryValue, wrapX) * currRate;
+        currRate = DisplacedY2D(x, y-1, diffRates, xDim, yDim, y + 1, false, boundaryValue, wrapY);
+        valSum += DisplacedY2D(x, y-1, inGrid, xDim, yDim, y + 1, boundaryCond, boundaryValue, wrapY) * currRate;
         rateSum += currRate;
         outGrid[i] = inGrid[i] + (-inGrid[i] * rateSum + valSum) / 2;
+    }
+    public static void Diffusion1inhomogeneous(int x,final double[] inGrid, final double[] outGrid, final double[] diffRates, final int xDim, final boolean boundaryCond, final double boundaryValue, final boolean wrapX) {
+        double valSum;
+        double rateSum;
+        double currRate;
+
+        //4 squares to check
+        valSum = 0;
+        rateSum = 0;
+        double diffRate = diffRates[x];
+        if(diffRate>0.5){
+            throw new IllegalArgumentException("Diffusion rate above stable maximum value of 0.5 value: "+diffRate+" x: "+x);
+        }
+
+        currRate = Displaced1D(x + 1, diffRates, xDim,  x - 1, false, boundaryValue, wrapX);
+        valSum += Displaced1D(x + 1, inGrid, xDim, x - 1, boundaryCond, boundaryValue, wrapX) * currRate;
+        rateSum += currRate;
+        currRate = Displaced1D(x - 1, diffRates, xDim, x + 1, false, boundaryValue, wrapX);
+        valSum += Displaced1D(x - 1, inGrid, xDim, x + 1, boundaryCond, boundaryValue, wrapX) * currRate;
+        rateSum += currRate;
+        outGrid[x] = inGrid[x] + (-inGrid[x] * rateSum + valSum) / 2;
     }
     public static void Diffusion2(int x,int y,final double[] inGrid, final double[] outGrid, final int xDim, final int yDim, final double diffRate, final boolean boundaryCond, final double boundaryValue, final boolean wrapX,final boolean wrapY) {
         //4 squares to check
@@ -209,6 +230,13 @@ public class PDEequations {
         valSum+= DisplacedY2D(x,y-1,inGrid,xDim,yDim,y,boundaryCond,boundaryValue,wrapY);
         int i=x*yDim+y;
         outGrid[i]=inGrid[i]+diffRate*(-inGrid[i]*4+valSum);
+    }
+    public static void Diffusion1(int x,final double[] inGrid, final double[] outGrid, final int xDim, final double diffRate, final boolean boundaryCond, final double boundaryValue, final boolean wrapX) {
+        //4 squares to check
+
+        double valSum= Displaced1D(x+1,inGrid,xDim,x,boundaryCond,boundaryValue,wrapX);
+        valSum+= Displaced1D(x-1,inGrid,xDim,x,boundaryCond,boundaryValue,wrapX);
+        outGrid[x]=inGrid[x]+diffRate*(-inGrid[x]*2+valSum);
     }
 
 
@@ -363,6 +391,18 @@ public class PDEequations {
         xxFlux=-(xVel*xVel/2)*(DisplacedX2D(x+1,y,inGrid,xDim,yDim,-1,boundaryCond,boundaryValue,true)-2*prev+ DisplacedX2D(x-1,y,inGrid,xDim,yDim,-1,boundaryCond,boundaryValue,true));
         yyFlux=-(yVel*yVel/2)*(DisplacedY2D(x,y+1,inGrid,xDim,yDim,-1,boundaryCond,boundaryValue,true)-2*prev+ DisplacedY2D(x,y-1,inGrid,xDim,yDim,-1,boundaryCond,boundaryValue,true));
         outGrid[i]=inGrid[i]-xFlux-yFlux-xyFlux-xxFlux-yyFlux;
+    }
+    public static void Advection1stOrder1D(int x, final double[] inGrid, final double[] outGrid, int xDim, double xVel, boolean boundaryCond, double boundaryValue){
+        double xFlux=0;
+        double yFlux=0;
+        double prev=inGrid[x];
+        if(xVel>0){
+            xFlux=xVel*(prev- Displaced1D(x-1,inGrid,xDim,-1,boundaryCond,boundaryValue,true));
+        }
+        if(xVel<0){
+            xFlux=xVel*(Displaced1D(x+1,inGrid,xDim,-1,boundaryCond,boundaryValue,true)-prev);
+        }
+        outGrid[x]=inGrid[x]-xFlux-yFlux;
     }
 
     public static void Advection1stOrder(int x, int y, final double[] inGrid, final double[] outGrid, int xDim, int yDim, double xVel, double yVel, boolean boundaryCond, double boundaryValue){
@@ -653,6 +693,19 @@ public class PDEequations {
                 outGrid[i]=midGrid[i]-(dVx/2+dVy/2)*inGrid[i];
             }
         }
+    }
+    public static double Displaced1D(int x, double[] vals, int xDim, int fallbackX, boolean boundaryCond, double boundaryValue, boolean wrapX){
+        boolean inX=InDim(xDim,x);
+        if(inX){
+            return vals[x];
+        }
+        if(boundaryCond){
+            return boundaryValue;
+        }
+        if(!inX&&wrapX){
+            x=ModWrap(x,xDim);
+        }
+        return vals[x];
     }
 
     public static double Displaced2D(int x, int y, double[] vals, int xDim, int yDim, int fallbackX, int fallbackY, boolean boundaryCond, double boundaryValue, boolean wrapX, boolean wrapY){

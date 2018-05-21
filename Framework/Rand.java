@@ -34,6 +34,9 @@ public class Rand implements Serializable{
         this.bn=new Binomial();
     }
     public int Int(int bound){
+        if(bound==1){
+            return 0;
+        }
         return rn.Int(bound);
     }
     public double Double(double bound){

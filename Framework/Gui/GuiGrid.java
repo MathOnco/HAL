@@ -782,10 +782,10 @@ public class GuiGrid extends GridBase2D implements GuiComp{
     public void DrawStringSingleLine(String s,int xLeft,int yTop,int color,int bkColor){
         //on top line and first char in line, don't draw bk, else draw bk to left & above
         if(s.length()>0) {
-            DrawChar(s.charAt(0), xLeft, yTop, color, bkColor);
+            DrawChar(s.charAt(0), xLeft, yTop-1, color, bkColor);
             for (int i = 1; i < s.length(); i++) {
-                DrawVertCharBar(xLeft + i * 4 - 1, yTop, bkColor);
-                DrawChar(s.charAt(i), xLeft + i * 4, yTop, color, bkColor);
+                DrawVertCharBar(xLeft + i * 4 - 1, yTop-1, bkColor);
+                DrawChar(s.charAt(i), xLeft + i * 4, yTop-1, color, bkColor);
             }
         }
     }

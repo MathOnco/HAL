@@ -18,7 +18,7 @@ import static Framework.Util.*;
 /**
  * Created by rafael on 5/28/17.
  */
-public class Window2DOpenGL {
+public class OpenGL2DWindow {
     final boolean active;
     final public int xPix;
     final public int yPix;
@@ -26,7 +26,7 @@ public class Window2DOpenGL {
     final public int yDim;
     TickTimer tt=new TickTimer();
     final float[]circlPtsDefault= Util.GenCirclePoints(1,20);
-    public Window2DOpenGL(String title, int xPix, int yPix, int xDim, int yDim, boolean active) {
+    public OpenGL2DWindow(String title, int xPix, int yPix, int xDim, int yDim, boolean active) {
         this.active=active;
         this.xPix=xPix;
         this.yPix=yPix;
@@ -47,7 +47,7 @@ public class Window2DOpenGL {
             glMatrixMode(GL_MODELVIEW);
         }
     }
-    public Window2DOpenGL(String title, int xPix, int yPix, int xDim, int yDim) {
+    public OpenGL2DWindow(String title, int xPix, int yPix, int xDim, int yDim) {
         this(title,xPix,yPix,xDim,yDim,true);
     }
     public void TickPause(int millis){
