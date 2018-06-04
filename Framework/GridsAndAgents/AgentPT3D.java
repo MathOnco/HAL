@@ -78,6 +78,7 @@ public class AgentPT3D<T extends AgentGrid3D> extends Agent3DBase<T>{
             this.nextSq=(AgentPT3D)myGrid.grid[i];
         }
         myGrid.grid[i]=this;
+        myGrid.counts[i]++;
     }
     @Override
     int GetCountOnSquareEval(AgentToBool evalAgent) {
@@ -103,6 +104,7 @@ public class AgentPT3D<T extends AgentGrid3D> extends Agent3DBase<T>{
         }
         prevSq=null;
         nextSq=null;
+        myGrid.counts[iSq]--;
     }
     /**
      * Moves the agent to the specified coordinates
@@ -269,13 +271,7 @@ public class AgentPT3D<T extends AgentGrid3D> extends Agent3DBase<T>{
 
     @Override
     int GetCountOnSquare() {
-        int ct=1;
-        AgentPT3D curr=nextSq;
-        while(curr!=null){
-            ct++;
-            curr=curr.nextSq;
-        }
-        return ct;
+        return myGrid.counts[Isq()];
     }
 
     public<T extends AgentPT3D> double Xdisp(T other, boolean wrapX){

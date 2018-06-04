@@ -4,11 +4,12 @@ import Framework.Interfaces.GenomeFn;
 import Framework.Interfaces.GenomeLineageFn;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Created by bravorr on 8/4/17.
  */
-public abstract class GenomeBase {
+public abstract class GenomeBase<T extends GenomeBase> implements Iterable<T>{
     long pop;
     GenomeBase parent;
     GenomeBase firstChild;
@@ -17,7 +18,7 @@ public abstract class GenomeBase {
     GenomeBase nextLiving;
     GenomeBase prevLiving;
     int id;
-    final GenomeTracker myTracker;
+    final GenomeTracker<T> myTracker;
 
     public int GetId() {
         return id;
@@ -61,7 +62,7 @@ public abstract class GenomeBase {
 //        this.id = id;
 //    }
 
-    <T extends GenomeBase> void NewMutantGenome(T child) {
+    void NewMutantGenome(T child) {
         T new_clone = child;
         GenomeBase current_right_child = this.firstChild;
         this.firstChild = new_clone;
@@ -147,7 +148,7 @@ public abstract class GenomeBase {
         }
     }
 
-    public<T extends GenomeBase> void TraverseWithLineage(ArrayList<T> lineageStorage, GenomeLineageFn GenomeFunction) {
+    public void TraverseWithLineage(ArrayList<T> lineageStorage, GenomeLineageFn GenomeFunction) {
         lineageStorage.add((T) this);
         GenomeFunction.GenomeLineageFn(lineageStorage);
         GenomeBase child = firstChild;
@@ -158,7 +159,7 @@ public abstract class GenomeBase {
         }
     }
 
-    public <T extends GenomeBase> void GetChildren(ArrayList<T> childrenStorage) {
+    public void GetChildren(ArrayList<T> childrenStorage) {
         GenomeBase child = firstChild;
         while (child != null) {
             childrenStorage.add((T)child);
@@ -166,7 +167,7 @@ public abstract class GenomeBase {
         }
     }
 
-    public <T extends GenomeBase> void GetLineage(ArrayList<T> lineageStorage) {
+    public void GetLineage(ArrayList<T> lineageStorage) {
         GenomeBase parent = this;
         while (parent != null) {
             lineageStorage.add((T)parent);
@@ -190,7 +191,12 @@ public abstract class GenomeBase {
         return myTracker.totalPop;
     }
 
-    public <T extends GenomeBase> T GetRoot(){
+    public T GetRoot(){
         return (T)myTracker.progenitor;
+    }
+
+    @Override
+    public Iterator<T> iterator() {
+        return myTracker.iterator();
     }
 }

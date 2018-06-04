@@ -1,7 +1,7 @@
 package Framework.Tools;
 
-public class GenomeKeepLeaves extends GenomeBase{
-    public GenomeKeepLeaves(GenomeBase parent) {
+public class GenomeKeepLeaves<T extends GenomeKeepLeaves> extends GenomeBase<T>{
+    public GenomeKeepLeaves(T parent) {
         super(parent,true);
     }
 }

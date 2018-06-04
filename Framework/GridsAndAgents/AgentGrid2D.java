@@ -21,7 +21,7 @@ public class AgentGrid2D<T extends AgentBaseSpatial> extends GridBase2D implemen
     T[] grid;
     ArrayList<ArrayList<T>> usedAgentSearches =new ArrayList<>();
     ArrayList<AgentsIterator2D> usedIterIs =new ArrayList<>();
-//    int[] counts;
+    int[] counts;
 
     public T GetAgent(int index) {
         return grid[index];
@@ -56,14 +56,11 @@ public class AgentGrid2D<T extends AgentBaseSpatial> extends GridBase2D implemen
         //creates a new typeGrid with given dimensions
         agents=new InternalGridAgentList<T>(agentClass,this);
         grid=(T[])new AgentBaseSpatial[length];
-//        counts= new int[length];
+        counts= new int[length];
     }
     public AgentGrid2D(int x, int y, Class<T> agentClass){
-        super(x,y,false,false);
-        //creates a new typeGrid with given dimensions
-        agents=new InternalGridAgentList<T>(agentClass,this);
-        grid=(T[])new AgentBaseSpatial[length];
-//        counts= new int[length];
+        this(x,y,agentClass,false,false);
+
     }
 
 //    void RemAgentFromSquare(T agent,int iGrid){

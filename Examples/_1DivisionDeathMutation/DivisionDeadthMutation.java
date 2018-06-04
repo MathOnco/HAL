@@ -6,7 +6,7 @@ import Framework.Gui.GridWindow;
 import Framework.Gui.GuiGrid;
 import Framework.Tools.FileIO;
 import Framework.Rand;
-import Framework.Tools.PerformanceTimer;
+import Framework.Tools.Timer;
 import Framework.Util;
 
 import java.util.Arrays;
@@ -103,16 +103,15 @@ public class DivisionDeadthMutation extends AgentGrid2D<CellEx> {
     }
 
     public static void main(String[]args){
-        PerformanceTimer pt=new PerformanceTimer();
         int x=500,y=500,scaleFactor=2;
         GridWindow vis=new GridWindow(x,y,scaleFactor);//used for visualization
         DivisionDeadthMutation grid=new DivisionDeadthMutation(x,y,vis);
         grid.InitTumor(5);
-        pt.Start("test");
+        Timer pt=new Timer();
         for (int tick = 0; tick < 1000; tick++) {
             vis.TickPause(0);//set to nonzero value to cap tick rate.
             grid.StepCells();
         }
-        pt.Stop("test");
+        pt.Lap("test");
     }
 }

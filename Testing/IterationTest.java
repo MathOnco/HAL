@@ -3,7 +3,7 @@ package Testing;
 import Framework.GridsAndAgents.AgentGrid2D;
 import Framework.GridsAndAgents.AgentSQ2Dunstackable;
 import Framework.Rand;
-import Framework.Tools.PerformanceTimer;
+import Framework.Tools.Timer;
 import Framework.Util;
 
 import java.util.ArrayList;
@@ -15,13 +15,12 @@ public class IterationTest {
         int[]testHood= Util.RectangleHood(true,90,90);
         ArrayList<AgentSQ2Dunstackable> fair=new ArrayList<>();
         Rand rn=new Rand();
-        PerformanceTimer pt=new PerformanceTimer();
+        Timer t=new Timer();
         int[]testIs=new int[100*100];
         int[]storage=new int[100*100];
         for (int i = 0; i < g.length; i++) {
             g.NewAgentSQ(i);
         }
-        pt.Start("old way");
         for (int i = 0; i < 10000; i++) {
             int num=g.HoodToIs(testHood,testIs,rn.Int(100),rn.Int(100));
             for (int j = 0; j < num; j++) {
@@ -35,18 +34,16 @@ public class IterationTest {
             }
             fair.clear();
         }
-        pt.Stop("old way");
-        pt.Start("new way");
+        t.Lap("old way");
         for (int i = 0; i < 10000; i++) {
             g.ApplyAgentsHood(testHood,rn.Int(100),rn.Int(100),(a,ct)->storage[a.Isq()]=a.Xsq());
         }
-        pt.Stop("new way");
-        pt.Start("newer way");
+        t.Lap("new way");
         for (int i = 0; i < 10000; i++) {
             for(AgentSQ2Dunstackable a:g.IterAgentsHood(testHood,rn.Int(100),rn.Int(100))){
                 storage[a.Isq()]=a.Xsq();
             }
         }
-        pt.Stop("newer way");
+        t.Lap("newer way");
     }
 }

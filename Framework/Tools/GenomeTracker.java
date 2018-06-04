@@ -33,7 +33,7 @@ class GenomeTracker<T extends GenomeBase> implements Iterable<T> {
 
         @Override
         public boolean hasNext() {
-            return curr.nextLiving != null;
+            return curr!=null&&curr.nextLiving != null;
         }
 
         @Override

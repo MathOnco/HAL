@@ -17,7 +17,7 @@ public class AgentGrid3D<T extends AgentBaseSpatial> extends GridBase3D implemen
     ArrayList<ArrayList<T>> usedAgentSearches =new ArrayList<>();
     ArrayList<AgentsIterator3D> usedIterIs =new ArrayList<>();
     int iagentSearch=0;
-    //int[] counts;
+    int[] counts;
 
 
     /**
@@ -27,13 +27,10 @@ public class AgentGrid3D<T extends AgentBaseSpatial> extends GridBase3D implemen
         super(x,y,z,wrapX,wrapY,wrapZ);
         agents=new InternalGridAgentList<T>(agentClass,this);
         grid=(T[])new AgentBaseSpatial[length];
-        //counts= new int[length];
+        counts= new int[length];
     }
     public AgentGrid3D(int x, int y, int z, Class<T> agentClass){
-        super(x,y,z,false,false,false);
-        agents=new InternalGridAgentList<T>(agentClass,this);
-        grid=(T[])new AgentBaseSpatial[length];
-        //counts= new int[length];
+        this(x,y,z,agentClass,false,false,false);
     }
 //    void AddAgentToSquare(T agent,int iGrid){
 //        //internal function, adds agent to typeGrid voxel

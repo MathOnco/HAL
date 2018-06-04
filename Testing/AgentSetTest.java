@@ -3,7 +3,7 @@ package Testing;
 import Framework.GridsAndAgents.Agent0D;
 import Framework.GridsAndAgents.AgentGrid0D;
 import Framework.GridsAndAgents.AgentList;
-import Framework.Tools.PerformanceTimer;
+import Framework.Tools.Timer;
 
 class ListAgent extends Agent0D<AgentSetTest>{}
 
@@ -14,14 +14,13 @@ public class AgentSetTest extends AgentGrid0D<ListAgent>{
     }
 
     public static void main(String[] args) {
-        PerformanceTimer pt=new PerformanceTimer();
-        pt.Start("AgentSetTest");
+        Timer t=new Timer();
         AgentSetTest g=new AgentSetTest();
         for (int i = 0; i < 100000; i++) {
             ListAgent a=g.NewAgent();
             g.list.AddAgent(a);
             g.list.RemoveAgent(a);
         }
-        pt.Stop("AgentSetTest");
+        t.Lap("AgentSetTest");
     }
 }

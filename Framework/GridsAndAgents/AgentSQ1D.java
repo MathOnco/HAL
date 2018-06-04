@@ -65,6 +65,9 @@ public class AgentSQ1D<T extends AgentGrid1D> extends Agent1DBase<T>{
             this.nextSq=(AgentSQ1D)myGrid.grid[x];
         }
         myGrid.grid[x]=this;
+        if(myGrid.counts!=null) {
+            myGrid.counts[x]++;
+        }
     }
 
     void RemSQ(){
@@ -79,6 +82,9 @@ public class AgentSQ1D<T extends AgentGrid1D> extends Agent1DBase<T>{
         }
         prevSq=null;
         nextSq=null;
+        if(myGrid.counts!=null) {
+            myGrid.counts[iSq]--;
+        }
     }
 
     /**
@@ -166,13 +172,7 @@ public class AgentSQ1D<T extends AgentGrid1D> extends Agent1DBase<T>{
 
     @Override
     int GetCountOnSquare() {
-        int ct=1;
-        AgentSQ1D curr=nextSq;
-        while(curr!=null){
-            ct++;
-            curr=curr.nextSq;
-        }
-        return ct;
+        return myGrid.counts[Isq()];
     }
     @Override
     int GetCountOnSquareEval(AgentToBool evalAgent) {

@@ -1,7 +1,7 @@
 package Testing;
 
 import Framework.Rand;
-import Framework.Tools.PerformanceTimer;
+import Framework.Tools.Timer;
 
 public class RandSpeedTest {
     static int GetZero(int bound){
@@ -12,17 +12,15 @@ public class RandSpeedTest {
     }
     public static void main(String[] args) {
         Rand rn=new Rand();
-        PerformanceTimer pt=new PerformanceTimer();
         int x=0;
-        pt.Start("oldRand");
+        Timer t=new Timer();
         for (int i = 0; i < 10000000; i++) {
             x+=rn.Int(1);
         }
-        pt.Stop("oldRand");
-        pt.Start("newRand");
+        t.Lap("oldRand");
         for (int i = 0; i < 10000000; i++) {
             x+=GetZero(1);
         }
-        pt.Stop("newRand");
+        t.Lap("newRand");
     }
 }

@@ -51,6 +51,7 @@ public class AgentSQ3D<T extends AgentGrid3D> extends Agent3DBase<T>{
             this.nextSq=(AgentSQ3D)myGrid.grid[i];
         }
         myGrid.grid[i]=this;
+        myGrid.counts[i]++;
     }
 
     void RemSQ(){
@@ -65,6 +66,7 @@ public class AgentSQ3D<T extends AgentGrid3D> extends Agent3DBase<T>{
         }
         prevSq=null;
         nextSq=null;
+        myGrid.counts[iSq]--;
     }
     /**
      * Moves the agent to the specified coordinates
@@ -221,13 +223,7 @@ public class AgentSQ3D<T extends AgentGrid3D> extends Agent3DBase<T>{
     }
     @Override
     int GetCountOnSquare() {
-        int ct=1;
-        AgentSQ3D curr=nextSq;
-        while(curr!=null){
-            ct++;
-            curr=curr.nextSq;
-        }
-        return ct;
+        return myGrid.counts[iSq];
     }
 
     @Override

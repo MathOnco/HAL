@@ -25,7 +25,7 @@ public class AgentGrid1D<T extends AgentBaseSpatial> extends GridBase1D implemen
     T[] grid;
     ArrayList<ArrayList<T>> usedAgentSearches =new ArrayList<>();
     ArrayList<AgentsIterator1D> usedIterIs =new ArrayList<>();
-//    int[] counts;
+    final int[] counts;
 
     public void _PassAgentConstructor(Class<T> agentClass){
         agents.SetupConstructor(agentClass);
@@ -45,19 +45,15 @@ public class AgentGrid1D<T extends AgentBaseSpatial> extends GridBase1D implemen
     /**
      * @param agentClass pass T.class, used to instantiate agent instances within the typeGrid as needed
      */
-    public AgentGrid1D(int x, int y, Class<T> agentClass, boolean wrapX, boolean wrapY){
+    public AgentGrid1D(int x, Class<T> agentClass, boolean wrapX){
         super(x,wrapX);
         //creates a new typeGrid with given dimensions
         agents=new InternalGridAgentList<T>(agentClass,this);
         grid=(T[])new AgentBaseSpatial[length];
-//        counts= new int[length];
+            counts = new int[length];
     }
-    public AgentGrid1D(int x, int y, Class<T> agentClass){
-        super(x,false);
-        //creates a new typeGrid with given dimensions
-        agents=new InternalGridAgentList<T>(agentClass,this);
-        grid=(T[])new AgentBaseSpatial[length];
-//        counts= new int[length];
+    public AgentGrid1D(int x, Class<T> agentClass){
+        this(x,agentClass,false);
     }
 
 //    void RemAgentFromSquare(T agent,int iGrid){
