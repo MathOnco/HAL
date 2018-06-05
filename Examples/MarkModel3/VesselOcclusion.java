@@ -188,7 +188,7 @@ class OCTissue extends Tissue<OCCell>
 
     public OCTissue(int x, int y, boolean reflectiveBoundary, Rand rn)
     {
-        super(x, y, reflectiveBoundary, rn, OCCell.class);
+        super(x, y, reflectiveBoundary, rn, OCCell.class,false);
     }
 
 

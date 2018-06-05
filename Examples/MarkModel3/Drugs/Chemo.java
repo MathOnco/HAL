@@ -1,6 +1,7 @@
 package Examples.MarkModel3.Drugs;
 
 import Examples.MarkModel3.Cell;
+import Examples.MarkModel3.Diff;
 import Examples.MarkModel3.Drug;
 import Examples.MarkModel3.Tissue;
 import Framework.Extensions.PDEGrid2DCoarse;
@@ -14,7 +15,7 @@ import static Framework.Util.RGB;
 public class Chemo<C extends Cell<C,T>,T extends Tissue<C>> extends Drug<C,T> {
 
     boolean active=false;
-    PDEGrid2DCoarse conc;
+    Diff conc;
     final static int PURPLE =RGB(1,0,1);
 
     double PROB_KILL_NORMAL=2;
@@ -71,11 +72,11 @@ public class Chemo<C extends Cell<C,T>,T extends Tissue<C>> extends Drug<C,T> {
             if (c.type == TUMOR) {
                 //if (G().rn.Double() < c.GetInterp(conc)*PROB_KILL_CANCER*(1.0-c.pumpPheno*PUMP_PHENO_SCALE)) {
                 //no pump pheno!
-                if (G().rn.Double() < c.GetInterp(conc)*PROB_KILL_CANCER) {
+                if (G().rn.Double() < conc.GetInterp(c.Xsq(),c.Ysq())*PROB_KILL_CANCER) {
                     c.Die(false);
                 }
             }else if (c.type == NORMAL) {
-                if (G().rn.Double() < c.GetInterp(conc)*PROB_KILL_NORMAL) {
+                if (G().rn.Double() < conc.GetInterp(c.Xsq(),c.Ysq())*PROB_KILL_NORMAL) {
                     c.Die(false);
                 }
             }

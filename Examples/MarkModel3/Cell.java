@@ -56,22 +56,34 @@ public class Cell<C extends Cell,T extends Tissue<C>> extends AgentSQ2Dunstackab
         this.cycleRemaining=startCycleTime;
         return (C) this;
     }
-    public double GetInterp(PDEGrid2DCoarse diff){
-        return G().GetInterp(Xsq(),Ysq(),diff);
-    }
 
 
 
     public double GetConc(Diff diff) {
-        return diff.Get(Xsq(),Ysq());
+        if(G().DIFF_SPACE_SCALE==1){
+            return diff.grid.Get(Xsq(),Ysq());
+        }
+        else {
+            return diff.Get(Xsq(), Ysq());
+        }
     }
 
     public void AddConc(Diff diff, double val) {
-        diff.Add(Xsq(),Ysq(), val);
+        if(G().DIFF_SPACE_SCALE==1){
+            diff.grid.Add(Xsq(),Ysq(),val);
+        }
+        else {
+            diff.Add(Xsq(), Ysq(), val);
+        }
     }
 
     public void SetConc(Diff diff, double val) {
-        diff.Set(Xsq(),Ysq(), val);
+        if(G().DIFF_SPACE_SCALE==1){
+            diff.grid.Set(Xsq(),Ysq(),val);
+        }
+        else {
+            diff.Set(Xsq(), Ysq(), val);
+        }
     }
 
     public void Die(boolean necrotic) {
@@ -231,7 +243,7 @@ public class Cell<C extends Cell,T extends Tissue<C>> extends AgentSQ2Dunstackab
         //Random Death Check
         double surviveProb=1.0-G().DEATH_PROB_NORM_COND;
         //Acid Death Check
-        if (ProtonsToPh(GetInterp(G().acid)) < acidResistPH) {
+        if (ProtonsToPh(G().acid.GetInterp(Xsq(),Ysq())) < acidResistPH) {
             surviveProb*=1.0-G().DEATH_PROB_POOR_COND;
         }
         //ATP Death Check
@@ -295,8 +307,8 @@ public class Cell<C extends Cell,T extends Tissue<C>> extends AgentSQ2Dunstackab
     }
 
     public void ATPComp(){
-        double consumedO2 = MichaelisMenten(GetInterp(G().oxygen), G().MAX_CONSUMPTION_O2, G().HALF_MAX_CONC_O2);
-        double consumedGluc = MichaelisMenten(GetInterp(G().glucose), (glycRate * G().ATP_TARGET) / 2 - (27 * consumedO2) / 10, G().HALF_MAX_CONC_GLUCOSE);
+        double consumedO2 = MichaelisMenten(G().oxygen.GetInterp(Xsq(),Ysq()), G().MAX_CONSUMPTION_O2, G().HALF_MAX_CONC_O2);
+        double consumedGluc = MichaelisMenten(G().glucose.GetInterp(Xsq(),Ysq()), (glycRate * G().ATP_TARGET) / 2 - (27 * consumedO2) / 10, G().HALF_MAX_CONC_GLUCOSE);
         availableATPprop = (2 * consumedGluc + (27 * consumedO2) / 5) / G().ATP_TARGET;
     }
     public void Metabolism(double[]intensities) {
@@ -309,10 +321,10 @@ public class Cell<C extends Cell,T extends Tissue<C>> extends AgentSQ2Dunstackab
             }
         }
         //oxygen consumption
-        double consumedO2 = MichaelisMenten(GetInterp(G().oxygen), G().MAX_CONSUMPTION_O2, G().HALF_MAX_CONC_O2);
+        double consumedO2 = MichaelisMenten(G().oxygen.GetInterp(Xsq(),Ysq()), G().MAX_CONSUMPTION_O2, G().HALF_MAX_CONC_O2);
         G().oxygen.AddSwap(Xsq(), Ysq(), -consumedO2 * G().CELLS_PER_SQ * G().DIFF_TIMESTEP);
         //Glucose consumption
-        double consumedGluc = MichaelisMenten(GetInterp(G().glucose), (glycRate * G().ATP_TARGET) / 2 - (27 * consumedO2) / 10, G().HALF_MAX_CONC_GLUCOSE);
+        double consumedGluc = MichaelisMenten(G().glucose.GetInterp(Xsq(),Ysq()), (glycRate * G().ATP_TARGET) / 2 - (27 * consumedO2) / 10, G().HALF_MAX_CONC_GLUCOSE);
         G().glucose.AddSwap(Xsq(), Ysq(), -consumedGluc * G().CELLS_PER_SQ * G().DIFF_TIMESTEP);
         //Conversion to ATP
         //availableATPprop = (2 * consumedGluc + (27 * consumedO2) / 5) / G().ATP_TARGET;

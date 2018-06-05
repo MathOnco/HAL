@@ -1,9 +1,6 @@
 package Examples.MarkModel3.Drugs;
 
-import Examples.MarkModel3.Cell;
-import Examples.MarkModel3.CellAbsorption;
-import Examples.MarkModel3.Drug;
-import Examples.MarkModel3.Tissue;
+import Examples.MarkModel3.*;
 import Framework.Extensions.PDEGrid2DCoarse;
 import Framework.Gui.GuiGrid;
 
@@ -14,8 +11,8 @@ import static Framework.Util.RGB;
 
 public class HAP<C extends Cell<C,T>,T extends Tissue<C>> extends Drug<C,T> {
 
-    public PDEGrid2DCoarse conc;
-    public PDEGrid2DCoarse concActivated;
+    public Diff conc;
+    public Diff concActivated;
     public double MAX_STEPS=20;
     public double STEADY_STATE=0.001;
 
@@ -122,12 +119,12 @@ public class HAP<C extends Cell<C,T>,T extends Tissue<C>> extends Drug<C,T> {
 
     //looks like activation?
     public double DeathProb(C c, double intensity){
-        double o2=c.GetInterp(G().oxygen);
+        double o2=G().oxygen.GetInterp(c.Xsq(),c.Ysq());
         if(o2<LETHALITY_START_O2){
                 //return c.GetInterp(conc)*(1.0-o2/LETHALITY_START_O2)*(1.0-(c.pumpPheno*PUMP_PHENO_SCALE));
             //no pump pheno
             //return 1;
-            return c.GetInterp(concActivated)*LETHALITY;
+            return concActivated.GetInterp(c.Xsq(),c.Ysq())*LETHALITY;
             }
         return 0;
     }

@@ -1,5 +1,6 @@
 package Examples.MarkModel3.Drugs;
 
+import Examples.MarkModel3.Diff;
 import Examples.MarkModel3.Drug;
 import Framework.Extensions.PDEGrid2DCoarse;
 import Framework.Gui.GuiGrid;
@@ -11,7 +12,7 @@ import static Framework.Util.RGB;
  * Created by Rafael on 11/28/2017.
  */
 public class AntiAngio extends Drug {
-    PDEGrid2DCoarse conc;
+    Diff conc;
     final static int RED =RGB(1,0,0);
 
     double ANTIANGIO_EXP=0.025;

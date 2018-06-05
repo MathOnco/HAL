@@ -16,6 +16,12 @@ public class SphericalAgent3D<A extends SphericalAgent3D,G extends AgentGrid3D<A
     public double xVel;
     public double yVel;
     public double zVel;
+    public void Init(double radius){
+        this.radius=radius;
+        this.xVel=xVel;
+        this.yVel=yVel;
+        this.zVel=zVel;
+    }
     public double SumForces(double interactionRad, ArrayList<A> scratchAgentList, OverlapForceResponse OverlapFun, boolean wrapX, boolean wrapY, boolean wrapZ){
         scratchAgentList.clear();
         double sum=0;

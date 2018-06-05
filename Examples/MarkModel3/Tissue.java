@@ -168,10 +168,10 @@ public class Tissue <C extends Cell> extends AgentGrid2D<C>
 
     public boolean cellDivided;
 
-    public Tissue(int x, int y, boolean reflectiveBoundary, Rand rn, Class<C> cellClass)
+    public Tissue(int x, int y, boolean reflectiveBoundary, Rand rn, Class<C> cellClass,boolean CoarseDiffusibles)
     {
         super(x, y, cellClass);
-        this.DIFF_SPACE_SCALE = 3;
+        this.DIFF_SPACE_SCALE = CoarseDiffusibles?3:1;
         oxygen=new Diff(xDim/ DIFF_SPACE_SCALE, yDim/ DIFF_SPACE_SCALE, DIFF_SPACE_SCALE, this,true);
         glucose=new Diff(xDim/ DIFF_SPACE_SCALE, yDim/ DIFF_SPACE_SCALE, DIFF_SPACE_SCALE, this,true);
         acid=new Diff(xDim/ DIFF_SPACE_SCALE, yDim/ DIFF_SPACE_SCALE, DIFF_SPACE_SCALE, this,true);
@@ -352,59 +352,9 @@ public class Tissue <C extends Cell> extends AgentGrid2D<C>
             }
         }
     }
-    private final static double inSide=2.0/3.0,outSide=1.0/3.0,inCorner=4.0/9.0,outCorner=5.0/18.0;
-    int InFallback(int val,int fallback,int dim){
-        return(Util.InDim(dim,val))?val:fallback;
-    }
-    public double GetInterp(int xCell,int yCell,PDEGrid2DCoarse diff){
-        PDEGrid2D g=diff.grid;
-        final int xDiff=xCell/3;
-        final int yDiff=yCell/3;
-        final int xMod=xCell%3;
-        final int yMod=yCell%3;
-        switch (xMod) {
-            case 0:
-                switch (yMod) {
-                    case 0://left bottom
-                        return g.Get(xDiff, yDiff) * inCorner +
-                                g.Get(InFallback(xDiff - 1, xDiff, g.xDim), yDiff) * outCorner +
-                                g.Get(xDiff, InFallback(yDiff - 1, yDiff, g.yDim)) * outCorner;
-                    case 1://left middle
-                        return g.Get(xDiff, yDiff) * inSide + g.Get(InFallback(xDiff - 1, xDiff, g.xDim), yDiff) * outSide;
-                    case 2://left top
-                        return g.Get(xDiff, yDiff) * inCorner +
-                                g.Get(InFallback(xDiff - 1, xDiff, g.xDim), yDiff) * outCorner +
-                                g.Get(xDiff, InFallback(yDiff + 1, yDiff, g.yDim)) * outCorner;
-                    default: throw new IllegalStateException("mod calculation did not work!");
-                }
-            case 1:
-                switch (yMod){
-                    case 0://middle bottom
-                        return g.Get(xDiff, yDiff) * inSide + g.Get(xDiff, InFallback(yDiff-1,yDiff,g.yDim)) * outSide;
-                    case 1://middle
-                        return g.Get(xDiff,yDiff);
-                    case 2://middle top
-                        return g.Get(xDiff, yDiff) * inSide + g.Get(xDiff, InFallback(yDiff+1,yDiff,g.yDim)) * outSide;
-                    default: throw new IllegalStateException("mod calculation did not work!");
-                }
-            case 2:
-                switch (yMod) {
-                    case 0://right bottom
-                        return g.Get(xDiff, yDiff) * inCorner +
-                                g.Get(InFallback(xDiff + 1, xDiff, g.xDim), yDiff) * outCorner +
-                                g.Get(xDiff, InFallback(yDiff - 1, yDiff, g.yDim)) * outCorner;
-                    case 1://right middle
-                        return g.Get(xDiff, yDiff) * inSide + g.Get(InFallback(xDiff + 1, xDiff, g.xDim), yDiff) * outSide;
-                    case 2://right top
-                        return g.Get(xDiff, yDiff) * inCorner +
-                                g.Get(InFallback(xDiff + 1, xDiff, g.xDim), yDiff) * outCorner +
-                                g.Get(xDiff, InFallback(yDiff + 1, yDiff, g.yDim)) * outCorner;
-                    default: throw new IllegalStateException("mod calculation did not work!");
-                }
 
-            default: throw new IllegalStateException("mod calculation did not work!");
-        }
-    }
+
+
     public void Angiogenesis(double[]intensities)  //---**********************---
     {
         //find hypoxic areas
@@ -412,7 +362,7 @@ public class Tissue <C extends Cell> extends AgentGrid2D<C>
         int nPossible=length;
         for (int i = 0; i < length; i++)
         {
-            double concO2 = GetInterp(ItoX(i),ItoY(i),oxygen);
+            double concO2 = oxygen.GetInterp(ItoX(i),ItoY(i));
             if (concO2 >= HYPOX_ANGIO_ZONE_MIN && concO2 <= HYPOX_ANGIO_ZONE_MAX)
             {
                 hypoxicIs[nHypox] = i;

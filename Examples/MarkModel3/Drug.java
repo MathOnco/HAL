@@ -85,8 +85,8 @@ public abstract class Drug<C extends Cell,T extends Tissue<C>> implements Serial
         return i;
     }
 
-    public PDEGrid2DCoarse GenDiff(){
-        return new PDEGrid2DCoarse(G().xDim/G().DIFF_SPACE_SCALE,G().yDim/G().DIFF_SPACE_SCALE,G().DIFF_SPACE_SCALE);
+    public Diff GenDiff(){
+        return new Diff(G().xDim/G().DIFF_SPACE_SCALE,G().yDim/G().DIFF_SPACE_SCALE,G().DIFF_SPACE_SCALE,g,true);
     }
 
     //once every timestep
