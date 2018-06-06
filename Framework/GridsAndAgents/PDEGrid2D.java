@@ -44,66 +44,66 @@ public class PDEGrid2D extends Grid2Ddouble implements Serializable{
 
 
 
-    public void DiffusionADI(double nonDimDiffCoef){
+    public void DiffusionADI(double diffCoef){
         EnsureScratch();
-        DiffusionADI2(true, field, swapField,scratch,xDim,yDim,nonDimDiffCoef/2,false,0);
+        DiffusionADI2(true, field, swapField,scratch,xDim,yDim,diffCoef/2,false,0);
         SwapFields();
-        DiffusionADI2(false, field, swapField,scratch,xDim,yDim,nonDimDiffCoef/2,false,0);
+        DiffusionADI2(false, field, swapField,scratch,xDim,yDim,diffCoef/2,false,0);
         SwapFields();
         adiOrder=!adiOrder;
     }
-    public void DiffusionADIChangeOrder(double nonDimDiffCoef){
+    public void DiffusionADIChangeOrder(double diffCoef){
         EnsureScratch();
-        DiffusionADI2(adiX^adiOrder, field, swapField,scratch,xDim,yDim,nonDimDiffCoef/2,false,0);
+        DiffusionADI2(adiX^adiOrder, field, swapField,scratch,xDim,yDim,diffCoef/2,false,0);
         adiX=!adiX;
         SwapFields();
-        DiffusionADI2(adiX^adiOrder, field, swapField,scratch,xDim,yDim,nonDimDiffCoef/2,false,0);
-        adiX=!adiX;
-        SwapFields();
-        adiOrder=!adiOrder;
-    }
-    public void DiffusionADI(double nonDimDiffCoef,double boundaryValue){
-        EnsureScratch();
-        DiffusionADI2(adiX^adiOrder, field, swapField,scratch,xDim,yDim,nonDimDiffCoef/2,true,boundaryValue);
-        adiX=!adiX;
-        SwapFields();
-        DiffusionADI2(adiX^adiOrder, field, swapField,scratch,xDim,yDim,nonDimDiffCoef/2,true,boundaryValue);
+        DiffusionADI2(adiX^adiOrder, field, swapField,scratch,xDim,yDim,diffCoef/2,false,0);
         adiX=!adiX;
         SwapFields();
         adiOrder=!adiOrder;
     }
-    public void DiffusionADIChangeOrder(double nonDimDiffCoef,double boundaryValue){
+    public void DiffusionADI(double diffCoef,double boundaryValue){
         EnsureScratch();
-        DiffusionADI2(adiX^adiOrder, field, swapField,scratch,xDim,yDim,nonDimDiffCoef/2,true,boundaryValue);
+        DiffusionADI2(adiX^adiOrder, field, swapField,scratch,xDim,yDim,diffCoef/2,true,boundaryValue);
         adiX=!adiX;
         SwapFields();
-        DiffusionADI2(adiX^adiOrder, field, swapField,scratch,xDim,yDim,nonDimDiffCoef/2,true,boundaryValue);
+        DiffusionADI2(adiX^adiOrder, field, swapField,scratch,xDim,yDim,diffCoef/2,true,boundaryValue);
         adiX=!adiX;
         SwapFields();
         adiOrder=!adiOrder;
     }
-    public void DiffusionADIHalf(double nonDimDiffCoef){
+    public void DiffusionADIChangeOrder(double diffCoef,double boundaryValue){
         EnsureScratch();
-        DiffusionADI2(adiX^adiOrder, field, swapField,scratch,xDim,yDim,nonDimDiffCoef/2,false,0);
+        DiffusionADI2(adiX^adiOrder, field, swapField,scratch,xDim,yDim,diffCoef/2,true,boundaryValue);
+        adiX=!adiX;
+        SwapFields();
+        DiffusionADI2(adiX^adiOrder, field, swapField,scratch,xDim,yDim,diffCoef/2,true,boundaryValue);
+        adiX=!adiX;
+        SwapFields();
+        adiOrder=!adiOrder;
+    }
+    public void DiffusionADIHalf(double diffCoef){
+        EnsureScratch();
+        DiffusionADI2(adiX^adiOrder, field, swapField,scratch,xDim,yDim,diffCoef/2,false,0);
         adiX=!adiX;
         SwapFields();
         if(!adiX) {
             adiOrder = !adiOrder;
         }
     }
-    public void DiffusionADIHalfX(double nonDimDiffCoef,boolean boundaryCond,double boundaryValue){
+    public void DiffusionADIHalfX(double diffCoef,boolean boundaryCond,double boundaryValue){
         EnsureScratch();
-        DiffusionADI2(true, field, swapField,scratch,xDim,yDim,nonDimDiffCoef/2,boundaryCond,boundaryValue);
+        DiffusionADI2(true, field, swapField,scratch,xDim,yDim,diffCoef/2,boundaryCond,boundaryValue);
         SwapFields();
     }
-    public void DiffusionADIHalfY(double nonDimDiffCoef,boolean boundaryCond,double boundaryValue){
+    public void DiffusionADIHalfY(double diffCoef,boolean boundaryCond,double boundaryValue){
         EnsureScratch();
-        DiffusionADI2(true, field, swapField,scratch,xDim,yDim,nonDimDiffCoef/2,boundaryCond,boundaryValue);
+        DiffusionADI2(true, field, swapField,scratch,xDim,yDim,diffCoef/2,boundaryCond,boundaryValue);
         SwapFields();
     }
-    public void DiffusionADIHalf(double nonDimDiffCoef,double boundaryValue){
+    public void DiffusionADIHalf(double diffCoef,double boundaryValue){
         EnsureScratch();
-        DiffusionADI2(adiX^adiOrder, field, swapField,scratch,xDim,yDim,nonDimDiffCoef/2,true,boundaryValue);
+        DiffusionADI2(adiX^adiOrder, field, swapField,scratch,xDim,yDim,diffCoef/2,true,boundaryValue);
         adiX=!adiX;
         SwapFields();
         if(!adiX) {
@@ -410,87 +410,87 @@ public class PDEGrid2D extends Grid2Ddouble implements Serializable{
     }
     /**
      * Runs diffusion on the current field, putting the result into the prev field, then swaps current and prev
-     * @param nonDimDiffCoef rate of diffusion
+     * @param diffCoef rate of diffusion
      */
-    public void Diffusion(double nonDimDiffCoef){
-        if(nonDimDiffCoef>0.25){
-            throw new IllegalArgumentException("Diffusion rate above stable maximum value of 0.25 value: "+nonDimDiffCoef);
+    public void Diffusion(double diffCoef){
+        if(diffCoef>0.25){
+            throw new IllegalArgumentException("Diffusion rate above stable maximum value of 0.25 value: "+diffCoef);
         }
         for (int x = 0; x < xDim; x++) {
             for (int y = 0; y < yDim; y++) {
-                Diffusion2(x,y, field, swapField, xDim, yDim, nonDimDiffCoef, false, 0.0, wrapX, wrapY);
+                Diffusion2(x,y, field, swapField, xDim, yDim, diffCoef, false, 0.0, wrapX, wrapY);
             }
         }
         SwapFields();
     }
-    public void Diffusion(double nonDimDiffCoef, boolean wrapX, boolean wrapY){
-        if(nonDimDiffCoef>0.25){
-            throw new IllegalArgumentException("Diffusion rate above stable maximum value of 0.25 value: "+nonDimDiffCoef);
+    public void Diffusion(double diffCoef, boolean wrapX, boolean wrapY){
+        if(diffCoef>0.25){
+            throw new IllegalArgumentException("Diffusion rate above stable maximum value of 0.25 value: "+diffCoef);
         }
         for (int x = 0; x < xDim; x++) {
             for (int y = 0; y < yDim; y++) {
-                Diffusion2(x, y, field, swapField, xDim, yDim, nonDimDiffCoef, false, 0.0, wrapX, wrapY);
+                Diffusion2(x, y, field, swapField, xDim, yDim, diffCoef, false, 0.0, wrapX, wrapY);
             }
         }
         SwapFields();
     }
     /**
      * Runs diffusion on the current field, putting the result into the prev field, then swaps current and prev
-     * @param nonDimDiffCoef rate of diffusion
+     * @param diffCoef rate of diffusion
      * @param boundaryValue value that diffuses in from the boundary
      */
-    public void Diffusion(double nonDimDiffCoef, double boundaryValue){
-        if(nonDimDiffCoef>0.25){
-            throw new IllegalArgumentException("Diffusion rate above stable maximum value of 0.25 value: "+nonDimDiffCoef);
+    public void Diffusion(double diffCoef, double boundaryValue){
+        if(diffCoef>0.25){
+            throw new IllegalArgumentException("Diffusion rate above stable maximum value of 0.25 value: "+diffCoef);
         }
         for (int x = 0; x < xDim; x++) {
             for (int y = 0; y < yDim; y++) {
-                Diffusion2(x,y, field, swapField, xDim, yDim, nonDimDiffCoef, true, boundaryValue, wrapX, wrapY);
+                Diffusion2(x,y, field, swapField, xDim, yDim, diffCoef, true, boundaryValue, wrapX, wrapY);
             }
         }
         SwapFields();
     }
-    public void Diffusion(double nonDimDiffCoef, double boundaryValue, boolean wrapX, boolean wrapY){
-        if(nonDimDiffCoef>0.25){
-            throw new IllegalArgumentException("Diffusion rate above stable maximum value of 0.25 value: "+nonDimDiffCoef);
+    public void Diffusion(double diffCoef, double boundaryValue, boolean wrapX, boolean wrapY){
+        if(diffCoef>0.25){
+            throw new IllegalArgumentException("Diffusion rate above stable maximum value of 0.25 value: "+diffCoef);
         }
         for (int x = 0; x < xDim; x++) {
             for (int y = 0; y < yDim; y++) {
-        Diffusion2(x,y, field, swapField,xDim,yDim,nonDimDiffCoef,true,boundaryValue,wrapX,wrapY);
+        Diffusion2(x,y, field, swapField,xDim,yDim,diffCoef,true,boundaryValue,wrapX,wrapY);
             }
         }
         SwapFields();
     }
 
 
-    public void Diffusion(double[] nonDimDiffCoefs, boolean wrapX, boolean wrapY){
+    public void Diffusion(double[] diffCoefs, boolean wrapX, boolean wrapY){
         for (int x = 0; x < xDim; x++) {
             for (int y = 0; y < yDim; y++) {
-                Diffusion2inhomogeneous(x,y, field, swapField, nonDimDiffCoefs, xDim, yDim, false, 0.0, wrapX, wrapY);
+                Diffusion2inhomogeneous(x,y, field, swapField, diffCoefs, xDim, yDim, false, 0.0, wrapX, wrapY);
             }
         }
         SwapFields();
     }
-    public void Diffusion(double[] nonDimDiffCoefs){
+    public void Diffusion(double[] diffCoefs){
         for (int x = 0; x < xDim; x++) {
             for (int y = 0; y < yDim; y++) {
-                Diffusion2inhomogeneous(x,y, field, swapField, nonDimDiffCoefs, xDim, yDim, false, 0.0, wrapX, wrapY);
+                Diffusion2inhomogeneous(x,y, field, swapField, diffCoefs, xDim, yDim, false, 0.0, wrapX, wrapY);
             }
         }
         SwapFields();
     }
-    public void Diffusion(double[] nonDimDiffCoefs,double boundaryValue, boolean wrapX, boolean wrapY){
+    public void Diffusion(double[] diffCoefs,double boundaryValue, boolean wrapX, boolean wrapY){
         for (int x = 0; x < xDim; x++) {
             for (int y = 0; y < yDim; y++) {
-                Diffusion2inhomogeneous(x,y, field, swapField, nonDimDiffCoefs, xDim, yDim, true, boundaryValue, wrapX, wrapY);
+                Diffusion2inhomogeneous(x,y, field, swapField, diffCoefs, xDim, yDim, true, boundaryValue, wrapX, wrapY);
             }
         }
         SwapFields();
     }
-    public void Diffusion(double[] nonDimDiffCoefs,double boundaryValue){
+    public void Diffusion(double[] diffCoefs,double boundaryValue){
         for (int x = 0; x < xDim; x++) {
             for (int y = 0; y < yDim; y++) {
-                Diffusion2inhomogeneous(x,y, field, swapField, nonDimDiffCoefs, xDim, yDim, true, boundaryValue, wrapX, wrapY);
+                Diffusion2inhomogeneous(x,y, field, swapField, diffCoefs, xDim, yDim, true, boundaryValue, wrapX, wrapY);
             }
         }
         SwapFields();
@@ -498,32 +498,32 @@ public class PDEGrid2D extends Grid2Ddouble implements Serializable{
 
     /**
      * Runs diffusion on the current field, putting the result into the prev field, then swaps current and prev, and increments the tick
-     * @param nonDimDiffCoef rate of diffusion
+     * @param diffCoef rate of diffusion
      * @param boundaryCond whether a boundary condition value will diffuse in from the field boundaries
      * @param boundaryValue only applies when boundaryCond is true, the boundary condition value
      * @param wrapX whether to wrap the field over the left and right boundaries
      */
-  //  public void DiffSwapInc(double nonDimDiffCoef,boolean boundaryCond,double boundaryValue,boolean wrapX,boolean wrapY){
-  //      //NOTE: EXPLICIT DIFFUSION WILL ONLY BE STABLE IF nonDimDiffCoef <= 1/4
-  //      Util.Diffusion2(field, swapField,xDim,yDim,nonDimDiffCoef,boundaryCond,boundaryValue,wrapX,wrapY);
+  //  public void DiffSwapInc(double diffCoef,boolean boundaryCond,double boundaryValue,boolean wrapX,boolean wrapY){
+  //      //NOTE: EXPLICIT DIFFUSION WILL ONLY BE STABLE IF diffCoef <= 1/4
+  //      Util.Diffusion2(field, swapField,xDim,yDim,diffCoef,boundaryCond,boundaryValue,wrapX,wrapY);
   //      SwapFields();
   //      IncTick();
   //  }
-  //  public void DiffSwapInc(double nonDimDiffCoef,boolean boundaryCond,double boundaryValue){
-  //      //NOTE: EXPLICIT DIFFUSION WILL ONLY BE STABLE IF nonDimDiffCoef <= 1/4
-  //      Util.Diffusion2(field, swapField,xDim,yDim,nonDimDiffCoef,boundaryCond,boundaryValue,wrapX,wrapY);
+  //  public void DiffSwapInc(double diffCoef,boolean boundaryCond,double boundaryValue){
+  //      //NOTE: EXPLICIT DIFFUSION WILL ONLY BE STABLE IF diffCoef <= 1/4
+  //      Util.Diffusion2(field, swapField,xDim,yDim,diffCoef,boundaryCond,boundaryValue,wrapX,wrapY);
   //      SwapFields();
   //      IncTick();
   //  }
-  //  public void DiffSwapInc1(double nonDimDiffCoef,boolean boundaryCond,double boundaryValue,boolean wrapX,boolean wrapY){
-  //      //NOTE: EXPLICIT DIFFUSION WILL ONLY BE STABLE IF nonDimDiffCoef <= 1/4
-  //      Util.Diffusion(field, swapField,xDim,yDim,nonDimDiffCoef,boundaryCond,boundaryValue,wrapX,wrapY);
+  //  public void DiffSwapInc1(double diffCoef,boolean boundaryCond,double boundaryValue,boolean wrapX,boolean wrapY){
+  //      //NOTE: EXPLICIT DIFFUSION WILL ONLY BE STABLE IF diffCoef <= 1/4
+  //      Util.Diffusion(field, swapField,xDim,yDim,diffCoef,boundaryCond,boundaryValue,wrapX,wrapY);
   //      SwapFields();
   //      IncTick();
   //  }
-  //  public void DiffSwapInc1(double nonDimDiffCoef,boolean boundaryCond,double boundaryValue){
-  //      //NOTE: EXPLICIT DIFFUSION WILL ONLY BE STABLE IF nonDimDiffCoef <= 1/4
-  //      Util.Diffusion(field, swapField,xDim,yDim,nonDimDiffCoef,boundaryCond,boundaryValue,wrapX,wrapY);
+  //  public void DiffSwapInc1(double diffCoef,boolean boundaryCond,double boundaryValue){
+  //      //NOTE: EXPLICIT DIFFUSION WILL ONLY BE STABLE IF diffCoef <= 1/4
+  //      Util.Diffusion(field, swapField,xDim,yDim,diffCoef,boundaryCond,boundaryValue,wrapX,wrapY);
   //      SwapFields();
   //      IncTick();
   //  }

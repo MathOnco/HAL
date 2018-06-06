@@ -1,8 +1,7 @@
-package LEARN_HERE.Tutorials;
+package LEARN_HERE.Tutorials.OffLatticeExample;
 
 import Framework.GridsAndAgents.AgentGrid2D;
 import Framework.GridsAndAgents.AgentPT2D;
-import Framework.Gui.GridWindow;
 import Framework.Gui.OpenGL2DWindow;
 import Framework.Rand;
 import Framework.Util;
@@ -73,6 +72,7 @@ public class ExampleGrid extends AgentGrid2D<ExampleCell> {
             //draw
             model.DrawModel(win);
         }
+        //can you make the cells move faster based on how crowded they are?
     }
 }
 

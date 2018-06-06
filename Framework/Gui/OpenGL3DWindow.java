@@ -85,7 +85,9 @@ public class OpenGL3DWindow {
         return delta;
     }
     public void TickPause(int millis){
-        tt.TickPause(millis);
+        if(active) {
+            tt.TickPause(millis);
+        }
     }
     public void Clear(int color){
         if(active) {

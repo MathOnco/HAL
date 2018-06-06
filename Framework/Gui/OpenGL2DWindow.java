@@ -51,7 +51,9 @@ public class OpenGL2DWindow {
         this(title,xPix,yPix,xDim,yDim,true);
     }
     public void TickPause(int millis){
-        tt.TickPause(millis);
+        if(active) {
+            tt.TickPause(millis);
+        }
     }
     public void Clear(int clearColor){
         if (active) {

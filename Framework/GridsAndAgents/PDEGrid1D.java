@@ -126,104 +126,104 @@ public class PDEGrid1D extends Grid1Ddouble implements Serializable{
     }
     /**
      * Runs diffusion on the current field, putting the result into the prev field, then swaps current and prev
-     * @param nonDimDiffCoef rate of diffusion
+     * @param diffCoef rate of diffusion
      */
-    public void Diffusion(double nonDimDiffCoef){
-        if(nonDimDiffCoef>0.25){
-            throw new IllegalArgumentException("Diffusion rate above stable maximum value of 0.25 value: "+nonDimDiffCoef);
+    public void Diffusion(double diffCoef){
+        if(diffCoef>0.25){
+            throw new IllegalArgumentException("Diffusion rate above stable maximum value of 0.25 value: "+diffCoef);
         }
         for (int x = 0; x < xDim; x++) {
-                Diffusion1(x, field, swapField, xDim, nonDimDiffCoef, false, 0.0, wrapX);
+                Diffusion1(x, field, swapField, xDim, diffCoef, false, 0.0, wrapX);
         }
         SwapFields();
     }
-    public void Diffusion(double nonDimDiffCoef, boolean wrapX, boolean wrapY){
-        if(nonDimDiffCoef>0.25){
-            throw new IllegalArgumentException("Diffusion rate above stable maximum value of 0.25 value: "+nonDimDiffCoef);
+    public void Diffusion(double diffCoef, boolean wrapX, boolean wrapY){
+        if(diffCoef>0.25){
+            throw new IllegalArgumentException("Diffusion rate above stable maximum value of 0.25 value: "+diffCoef);
         }
         for (int x = 0; x < xDim; x++) {
-                Diffusion1(x, field, swapField, xDim, nonDimDiffCoef, false, 0.0, wrapX);
+                Diffusion1(x, field, swapField, xDim, diffCoef, false, 0.0, wrapX);
         }
         SwapFields();
     }
     /**
      * Runs diffusion on the current field, putting the result into the prev field, then swaps current and prev
-     * @param nonDimDiffCoef rate of diffusion
+     * @param diffCoef rate of diffusion
      * @param boundaryValue value that diffuses in from the boundary
      */
-    public void Diffusion(double nonDimDiffCoef, double boundaryValue){
-        if(nonDimDiffCoef>0.25){
-            throw new IllegalArgumentException("Diffusion rate above stable maximum value of 0.25 value: "+nonDimDiffCoef);
+    public void Diffusion(double diffCoef, double boundaryValue){
+        if(diffCoef>0.25){
+            throw new IllegalArgumentException("Diffusion rate above stable maximum value of 0.25 value: "+diffCoef);
         }
         for (int x = 0; x < xDim; x++) {
-                Diffusion1(x, field, swapField, xDim,  nonDimDiffCoef, true, boundaryValue, wrapX);
+                Diffusion1(x, field, swapField, xDim,  diffCoef, true, boundaryValue, wrapX);
         }
         SwapFields();
     }
-    public void Diffusion(double nonDimDiffCoef, double boundaryValue, boolean wrapX, boolean wrapY){
-        if(nonDimDiffCoef>0.25){
-            throw new IllegalArgumentException("Diffusion rate above stable maximum value of 0.25 value: "+nonDimDiffCoef);
+    public void Diffusion(double diffCoef, double boundaryValue, boolean wrapX, boolean wrapY){
+        if(diffCoef>0.25){
+            throw new IllegalArgumentException("Diffusion rate above stable maximum value of 0.25 value: "+diffCoef);
         }
         for (int x = 0; x < xDim; x++) {
-        Diffusion1(x,field, swapField,xDim,nonDimDiffCoef,true,boundaryValue,wrapX);
+        Diffusion1(x,field, swapField,xDim,diffCoef,true,boundaryValue,wrapX);
         }
         SwapFields();
     }
 
 
-    public void Diffusion(double[] nonDimDiffCoefs, boolean wrapX, boolean wrapY){
+    public void Diffusion(double[] diffCoefs, boolean wrapX, boolean wrapY){
         for (int x = 0; x < xDim; x++) {
-                Diffusion1inhomogeneous(x, field, swapField, nonDimDiffCoefs, xDim, false, 0.0, wrapX);
+                Diffusion1inhomogeneous(x, field, swapField, diffCoefs, xDim, false, 0.0, wrapX);
         }
         SwapFields();
     }
-    public void Diffusion(double[] nonDimDiffCoefs){
+    public void Diffusion(double[] diffCoefs){
         for (int x = 0; x < xDim; x++) {
-                Diffusion1inhomogeneous(x, field, swapField, nonDimDiffCoefs, xDim, false, 0.0, wrapX);
+                Diffusion1inhomogeneous(x, field, swapField, diffCoefs, xDim, false, 0.0, wrapX);
         }
         SwapFields();
     }
-    public void Diffusion(double[] nonDimDiffCoefs,double boundaryValue, boolean wrapX, boolean wrapY){
+    public void Diffusion(double[] diffCoefs,double boundaryValue, boolean wrapX, boolean wrapY){
         for (int x = 0; x < xDim; x++) {
-                Diffusion1inhomogeneous(x, field, swapField, nonDimDiffCoefs, xDim, true, boundaryValue, wrapX);
+                Diffusion1inhomogeneous(x, field, swapField, diffCoefs, xDim, true, boundaryValue, wrapX);
             }
         SwapFields();
     }
-    public void Diffusion(double[] nonDimDiffCoefs,double boundaryValue){
+    public void Diffusion(double[] diffCoefs,double boundaryValue){
         for (int x = 0; x < xDim; x++) {
-                Diffusion1inhomogeneous(x,field, swapField, nonDimDiffCoefs, xDim, true, boundaryValue, wrapX);
+                Diffusion1inhomogeneous(x,field, swapField, diffCoefs, xDim, true, boundaryValue, wrapX);
         }
         SwapFields();
     }
 
     /**
      * Runs diffusion on the current field, putting the result into the prev field, then swaps current and prev, and increments the tick
-     * @param nonDimDiffCoef rate of diffusion
+     * @param diffCoef rate of diffusion
      * @param boundaryCond whether a boundary condition value will diffuse in from the field boundaries
      * @param boundaryValue only applies when boundaryCond is true, the boundary condition value
      * @param wrapX whether to wrap the field over the left and right boundaries
      */
-  //  public void DiffSwapInc(double nonDimDiffCoef,boolean boundaryCond,double boundaryValue,boolean wrapX,boolean wrapY){
-  //      //NOTE: EXPLICIT DIFFUSION WILL ONLY BE STABLE IF nonDimDiffCoef <= 1/4
-  //      Util.Diffusion2(field, swapField,xDim,yDim,nonDimDiffCoef,boundaryCond,boundaryValue,wrapX,wrapY);
+  //  public void DiffSwapInc(double diffCoef,boolean boundaryCond,double boundaryValue,boolean wrapX,boolean wrapY){
+  //      //NOTE: EXPLICIT DIFFUSION WILL ONLY BE STABLE IF diffCoef <= 1/4
+  //      Util.Diffusion2(field, swapField,xDim,yDim,diffCoef,boundaryCond,boundaryValue,wrapX,wrapY);
   //      SwapFields();
   //      IncTick();
   //  }
-  //  public void DiffSwapInc(double nonDimDiffCoef,boolean boundaryCond,double boundaryValue){
-  //      //NOTE: EXPLICIT DIFFUSION WILL ONLY BE STABLE IF nonDimDiffCoef <= 1/4
-  //      Util.Diffusion2(field, swapField,xDim,yDim,nonDimDiffCoef,boundaryCond,boundaryValue,wrapX,wrapY);
+  //  public void DiffSwapInc(double diffCoef,boolean boundaryCond,double boundaryValue){
+  //      //NOTE: EXPLICIT DIFFUSION WILL ONLY BE STABLE IF diffCoef <= 1/4
+  //      Util.Diffusion2(field, swapField,xDim,yDim,diffCoef,boundaryCond,boundaryValue,wrapX,wrapY);
   //      SwapFields();
   //      IncTick();
   //  }
-  //  public void DiffSwapInc1(double nonDimDiffCoef,boolean boundaryCond,double boundaryValue,boolean wrapX,boolean wrapY){
-  //      //NOTE: EXPLICIT DIFFUSION WILL ONLY BE STABLE IF nonDimDiffCoef <= 1/4
-  //      Util.Diffusion(field, swapField,xDim,yDim,nonDimDiffCoef,boundaryCond,boundaryValue,wrapX,wrapY);
+  //  public void DiffSwapInc1(double diffCoef,boolean boundaryCond,double boundaryValue,boolean wrapX,boolean wrapY){
+  //      //NOTE: EXPLICIT DIFFUSION WILL ONLY BE STABLE IF diffCoef <= 1/4
+  //      Util.Diffusion(field, swapField,xDim,yDim,diffCoef,boundaryCond,boundaryValue,wrapX,wrapY);
   //      SwapFields();
   //      IncTick();
   //  }
-  //  public void DiffSwapInc1(double nonDimDiffCoef,boolean boundaryCond,double boundaryValue){
-  //      //NOTE: EXPLICIT DIFFUSION WILL ONLY BE STABLE IF nonDimDiffCoef <= 1/4
-  //      Util.Diffusion(field, swapField,xDim,yDim,nonDimDiffCoef,boundaryCond,boundaryValue,wrapX,wrapY);
+  //  public void DiffSwapInc1(double diffCoef,boolean boundaryCond,double boundaryValue){
+  //      //NOTE: EXPLICIT DIFFUSION WILL ONLY BE STABLE IF diffCoef <= 1/4
+  //      Util.Diffusion(field, swapField,xDim,yDim,diffCoef,boundaryCond,boundaryValue,wrapX,wrapY);
   //      SwapFields();
   //      IncTick();
   //  }

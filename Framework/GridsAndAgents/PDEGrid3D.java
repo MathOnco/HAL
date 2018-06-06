@@ -122,43 +122,43 @@ public class PDEGrid3D extends Grid3Ddouble implements Serializable{
     /**
      * Runs diffusion on the current field, putting the results into the next field
      */
-    public void Diffusion(double nonDimDiffCoef){
-        if(nonDimDiffCoef>1.0/6){
-            throw new IllegalArgumentException("3D Diffusion is unstable if rate is above 0.1666666! rate: "+nonDimDiffCoef);
+    public void Diffusion(double diffCoef){
+        if(diffCoef>1.0/6){
+            throw new IllegalArgumentException("3D Diffusion is unstable if rate is above 0.1666666! rate: "+diffCoef);
         }
-        Diffusion3(field, swapField,xDim,yDim,zDim,nonDimDiffCoef,false,0.0,wrapX,wrapY,wrapZ);
+        Diffusion3(field, swapField,xDim,yDim,zDim,diffCoef,false,0.0,wrapX,wrapY,wrapZ);
         SwapFields();
     }
-    public void Diffusion(double nonDimDiffCoef, boolean wrapX, boolean wrapY, boolean wrapZ){
-        if(nonDimDiffCoef>1.0/6){
-            throw new IllegalArgumentException("3D Diffusion is unstable if rate is above 0.1666666! rate: "+nonDimDiffCoef);
+    public void Diffusion(double diffCoef, boolean wrapX, boolean wrapY, boolean wrapZ){
+        if(diffCoef>1.0/6){
+            throw new IllegalArgumentException("3D Diffusion is unstable if rate is above 0.1666666! rate: "+diffCoef);
         }
-        Diffusion3(field, swapField,xDim,yDim,zDim,nonDimDiffCoef,false,0.0,wrapX,wrapY,wrapZ);
+        Diffusion3(field, swapField,xDim,yDim,zDim,diffCoef,false,0.0,wrapX,wrapY,wrapZ);
         SwapFields();
     }
-    public void Diffusion(double nonDimDiffCoef, double boundaryValue){
-        if(nonDimDiffCoef>1.0/6){
-            throw new IllegalArgumentException("3D Diffusion is unstable if rate is above 0.1666666! rate: "+nonDimDiffCoef);
+    public void Diffusion(double diffCoef, double boundaryValue){
+        if(diffCoef>1.0/6){
+            throw new IllegalArgumentException("3D Diffusion is unstable if rate is above 0.1666666! rate: "+diffCoef);
         }
-        Diffusion3(field, swapField,xDim,yDim,zDim,nonDimDiffCoef,true,boundaryValue,wrapX,wrapY,wrapZ);
+        Diffusion3(field, swapField,xDim,yDim,zDim,diffCoef,true,boundaryValue,wrapX,wrapY,wrapZ);
         SwapFields();
     }
-    public void Diffusion(double nonDimDiffCoef, double boundaryValue, boolean wrapX, boolean wrapY, boolean wrapZ){
-        if(nonDimDiffCoef>1.0/6){
-            throw new IllegalArgumentException("3D Diffusion is unstable if rate is above 0.1666666! rate: "+nonDimDiffCoef);
+    public void Diffusion(double diffCoef, double boundaryValue, boolean wrapX, boolean wrapY, boolean wrapZ){
+        if(diffCoef>1.0/6){
+            throw new IllegalArgumentException("3D Diffusion is unstable if rate is above 0.1666666! rate: "+diffCoef);
         }
-        Diffusion3(field, swapField,xDim,yDim,zDim,nonDimDiffCoef,true,boundaryValue,wrapX,wrapY,wrapZ);
+        Diffusion3(field, swapField,xDim,yDim,zDim,diffCoef,true,boundaryValue,wrapX,wrapY,wrapZ);
         SwapFields();
     }
-    //    public void ADITripleDiffSwap(final double nonDimDiffCoef){
+    //    public void ADITripleDiffSwap(final double diffCoef){
 //        if(scratch==null){
 //            scratch=new double[Math.max(Math.max(xDim,yDim),zDim)*2];
 //        }
-//        Util.DiffusionADI3(0,field,swapField,scratch,xDim,yDim,zDim,nonDimDiffCoef/3);
+//        Util.DiffusionADI3(0,field,swapField,scratch,xDim,yDim,zDim,diffCoef/3);
 //        SwapFields();
-//        Util.DiffusionADI3(1,field,swapField,scratch,xDim,yDim,zDim,nonDimDiffCoef/3);
+//        Util.DiffusionADI3(1,field,swapField,scratch,xDim,yDim,zDim,diffCoef/3);
 //        SwapFields();
-//        Util.DiffusionADI3(2,field,swapField,scratch,xDim,yDim,zDim,nonDimDiffCoef/3);
+//        Util.DiffusionADI3(2,field,swapField,scratch,xDim,yDim,zDim,diffCoef/3);
 //        SwapFields();
 //    }
 
