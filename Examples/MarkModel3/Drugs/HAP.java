@@ -2,7 +2,7 @@ package Examples.MarkModel3.Drugs;
 
 import Examples.MarkModel3.*;
 import Framework.Extensions.PDEGrid2DCoarse;
-import Framework.Gui.GuiGrid;
+import Framework.Gui.UIGrid;
 
 import static Examples.MarkModel3.Tissue.NORMAL;
 import static Examples.MarkModel3.Tissue.TUMOR;
@@ -45,7 +45,7 @@ public class HAP<C extends Cell<C,T>,T extends Tissue<C>> extends Drug<C,T> {
 
     }
     @Override
-    public void Draw(GuiGrid vis) {
+    public void Draw(UIGrid vis) {
         for (int i = 0; i < conc.grid.length; i++) {
             vis.SetPix(i,RGB(concActivated.grid.Get(i),0.0,conc.grid.Get(i)));
         }

@@ -11,7 +11,7 @@ import static Framework.Tools.PDEequations.*;
 
 /**
  * PDEGrid3D class facilitates 2D diffusion with two arrays of doubles called fields
- * the intended usage is that during a diffusion step, the current values will be read, and the next values will be written to
+ * the intended usage is that during a diffusion tick, the current values will be read, and the next values will be written to
  * after updates, SwapFields is called to set the next field as the current field.
  */
 public class PDEGrid3D extends Grid3Ddouble implements Serializable{
@@ -129,21 +129,7 @@ public class PDEGrid3D extends Grid3Ddouble implements Serializable{
         Diffusion3(field, swapField,xDim,yDim,zDim,diffCoef,false,0.0,wrapX,wrapY,wrapZ);
         SwapFields();
     }
-    public void Diffusion(double diffCoef, boolean wrapX, boolean wrapY, boolean wrapZ){
-        if(diffCoef>1.0/6){
-            throw new IllegalArgumentException("3D Diffusion is unstable if rate is above 0.1666666! rate: "+diffCoef);
-        }
-        Diffusion3(field, swapField,xDim,yDim,zDim,diffCoef,false,0.0,wrapX,wrapY,wrapZ);
-        SwapFields();
-    }
     public void Diffusion(double diffCoef, double boundaryValue){
-        if(diffCoef>1.0/6){
-            throw new IllegalArgumentException("3D Diffusion is unstable if rate is above 0.1666666! rate: "+diffCoef);
-        }
-        Diffusion3(field, swapField,xDim,yDim,zDim,diffCoef,true,boundaryValue,wrapX,wrapY,wrapZ);
-        SwapFields();
-    }
-    public void Diffusion(double diffCoef, double boundaryValue, boolean wrapX, boolean wrapY, boolean wrapZ){
         if(diffCoef>1.0/6){
             throw new IllegalArgumentException("3D Diffusion is unstable if rate is above 0.1666666! rate: "+diffCoef);
         }

@@ -1,7 +1,6 @@
 package Framework.GridsAndAgents;
 
 import Framework.Interfaces.AgentToBool;
-import Framework.Interfaces.Coords3DToAction;
 
 import java.util.ArrayList;
 
@@ -148,31 +147,6 @@ public class AgentPT3D<T extends AgentGrid3D> extends Agent3DBase<T>{
     }
 
 
-    public void MoveSafePT(double newX, double newY, double newZ, boolean wrapX, boolean wrapY, boolean wrapZ) {
-        if(!alive){
-            throw new RuntimeException("Attempting to move dead agent!");
-        }
-        if (G().In(newX, newY, newZ)) {
-            MovePT(newX, newY, newZ);
-            return;
-        }
-        if (wrapX) {
-            newX = ModWrap(newX, G().xDim);
-        } else if (!InDim(G().xDim, newX)) {
-            newX = Xpt();
-        }
-        if (wrapY) {
-            newY = ModWrap(newY, G().yDim);
-        } else if (!InDim(G().yDim, newY)) {
-            newY = Ypt();
-        }
-        if (wrapZ) {
-            newZ = ModWrap(newZ, G().zDim);
-        } else if (!InDim(G().zDim, newZ)) {
-            newZ = Zpt();
-        }
-        MovePT(newX,newY,newZ);
-    }
     public void MoveSafePT(double newX, double newY, double newZ) {
         if(!alive){
             throw new RuntimeException("Attempting to move dead agent!");
@@ -182,18 +156,18 @@ public class AgentPT3D<T extends AgentGrid3D> extends Agent3DBase<T>{
             return;
         }
         if (G().wrapX) {
-            newX = ModWrap(newX, G().xDim);
-        } else if (!InDim(G().xDim, newX)) {
+            newX = ModWrap(newX, G().moveSafeXdim);
+        } else if (!InDim(newX, G().xDim)) {
             newX = Xpt();
         }
         if (G().wrapY) {
-            newY = ModWrap(newY, G().yDim);
-        } else if (!InDim(G().yDim, newY)) {
+            newY = ModWrap(newY, G().moveSafeYdim);
+        } else if (!InDim(newY, G().yDim)) {
             newY = Ypt();
         }
         if (G().wrapZ) {
-            newZ = ModWrap(newZ, G().zDim);
-        } else if (!InDim(G().zDim, newZ)) {
+            newZ = ModWrap(newZ, G().moveSafeZdim);
+        } else if (!InDim(newZ, G().zDim)) {
             newZ = Zpt();
         }
         MovePT(newX,newY,newZ);
@@ -273,21 +247,39 @@ public class AgentPT3D<T extends AgentGrid3D> extends Agent3DBase<T>{
     int GetCountOnSquare() {
         return myGrid.counts[Isq()];
     }
+    public int GetAge(){
+        return G().GetTick()-birthTick;
+    }
 
     public<T extends AgentPT3D> double Xdisp(T other, boolean wrapX){
-        return wrapX? DistWrap(other.Xpt(),Xpt(),G().xDim):Xpt()-other.Xpt();
+        return wrapX? DispWrap(other.Xpt(),Xpt(),G().xDim):Xpt()-other.Xpt();
+    }
+    public<T extends AgentPT3D> double Xdisp(T other){
+        return G().wrapX? DispWrap(other.Xpt(),Xpt(),G().xDim):Xpt()-other.Xpt();
     }
     public <T extends AgentPT3D> double Ydisp(T other, boolean wrapY){
-        return wrapY? DistWrap(other.Ypt(),Ypt(),G().yDim):Ypt()-other.Ypt();
+        return wrapY? DispWrap(other.Ypt(),Ypt(),G().yDim):Ypt()-other.Ypt();
     }
-    public <T extends AgentPT3D> double Zdisp(T other, boolean wrapY){
-        return wrapY? DistWrap(other.Zpt(),Zpt(),G().zDim):Zpt()-other.Zpt();
+    public <T extends AgentPT3D> double Ydisp(T other){
+        return G().wrapY? DispWrap(other.Ypt(),Ypt(),G().yDim):Ypt()-other.Ypt();
+    }
+    public <T extends AgentPT3D> double Zdisp(T other, boolean wrapZ){
+        return wrapZ? DispWrap(other.Zpt(),Zpt(),G().zDim):Zpt()-other.Zpt();
+    }
+    public <T extends AgentPT3D> double Zdisp(T other){
+        return G().wrapZ? DispWrap(other.Zpt(),Zpt(),G().zDim):Zpt()-other.Zpt();
     }
 
     public <T extends AgentPT3D> double disp(T other, boolean wrap){
         double dx = Xdisp(other, wrap);
         double dy = Ydisp(other, wrap);
         double dz = Zdisp(other, wrap);
+        return Norm(dx, dy, dz);
+    }
+    public <T extends AgentPT3D> double disp(T other){
+        double dx = Xdisp(other, G().wrapX);
+        double dy = Ydisp(other, G().wrapY);
+        double dz = Zdisp(other, G().wrapZ);
         return Norm(dx, dy, dz);
     }
 }

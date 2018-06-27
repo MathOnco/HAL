@@ -21,6 +21,7 @@ class InternalGridAgentList<T extends AgentBase> implements Iterable<T>,Serializ
     int pop;
     final Object myGrid;
     int stateID;
+    AgentListIterator outerIter;
 
     InternalGridAgentList(Class<T> type, Object myGrid){
         this.builder=type.getDeclaredConstructors()[0];
@@ -42,7 +43,7 @@ class InternalGridAgentList<T extends AgentBase> implements Iterable<T>,Serializ
         this.builder=type.getDeclaredConstructors()[0];
         this.builder.setAccessible(true);
     }
-    T GetNewAgent(){
+    T GetNewAgent(int birthTick){
     T newAgent;
     //internal function, inserts agent into AgentGridMin.AgentGrid2_5
     if(deads.size()>0){
@@ -68,6 +69,7 @@ class InternalGridAgentList<T extends AgentBase> implements Iterable<T>,Serializ
     }
     newAgent.alive=true;
     newAgent.stateID=this.stateID;
+    newAgent.birthTick=birthTick;
     pop++;
     return newAgent;
     }
@@ -102,15 +104,22 @@ class InternalGridAgentList<T extends AgentBase> implements Iterable<T>,Serializ
     }
     @Override
     public Iterator<T> iterator() {
-        stateID++;
+        if(outerIter==null) {
+            stateID++;
+        }
+        AgentListIterator ret;
         if(usedIters.size()>0){
-            AgentListIterator ret=usedIters.remove(usedIters.size()-1);
+            ret=usedIters.remove(usedIters.size()-1);
             ret.stateID=stateID;
             ret.iAgent=0;
             ret.ret=null;
-
+        }else {
+            ret=new AgentListIterator(stateID, this);
         }
-        return new AgentListIterator(stateID, this);
+        if(outerIter==null){
+            outerIter=ret;
+        }
+        return ret;
     }
     private class AgentListIterator implements Iterator<T>{
         int stateID;
@@ -136,6 +145,9 @@ class InternalGridAgentList<T extends AgentBase> implements Iterable<T>,Serializ
             }
             ret=null;
             usedIters.add(this);
+            if(outerIter==this){
+                outerIter=null;
+            }
             return false;
         }
 

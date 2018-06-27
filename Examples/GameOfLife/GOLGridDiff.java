@@ -1,9 +1,9 @@
 package Examples.GameOfLife;
 
 import Framework.GridsAndAgents.PDEGrid2D;
-import Framework.Gui.GuiGrid;
-import Framework.Gui.GuiLabel;
-import Framework.Gui.GuiWindow;
+import Framework.Gui.UIGrid;
+import Framework.Gui.UILabel;
+import Framework.Gui.UIWindow;
 
 import java.util.Random;
 
@@ -17,12 +17,12 @@ public class GOLGridDiff extends PDEGrid2D {
     static final int RED=RGB(1,0,0),BLACK=RGB(0,0,0);
     final int[]mooreHood;
     final int[]neighborIs;
-    final GuiGrid vis;
-    final GuiLabel popLbl;
-    final GuiLabel tickLbl;
+    final UIGrid vis;
+    final UILabel popLbl;
+    final UILabel tickLbl;
     final int runTicks;
     final int refreshRateMS;
-    GOLGridDiff(int x, int y, double livingProb, int runTicks, int refreshRateMS, GuiGrid vis, GuiLabel popLbl, GuiLabel tickLbl){
+    GOLGridDiff(int x, int y, double livingProb, int runTicks, int refreshRateMS, UIGrid vis, UILabel popLbl, UILabel tickLbl){
         super(x,y,true,true);
         this.vis=vis;
         mooreHood=MooreHood(false);
@@ -36,7 +36,7 @@ public class GOLGridDiff extends PDEGrid2D {
             Set(i,rn.nextDouble()<livingProb?1:0);
         }
     }
-    public void Run(GuiWindow win){
+    public void Run(UIWindow win){
         for (int tick = 0; tick < runTicks; tick++) {
             int totalPop=0;
             for (int x = 0; x < xDim; x++) {
@@ -72,10 +72,10 @@ public class GOLGridDiff extends PDEGrid2D {
         int scaleFactor=1;
         int runTicks=10000000;
         int refreshRate=0;
-        GuiWindow gui=new GuiWindow("GOL with GridDiff",true);
-        GuiGrid vis=new GuiGrid(xDim,yDim,scaleFactor,2,1, true);
-        GuiLabel popLbl=new GuiLabel("Population:                0",1,1);
-        GuiLabel tickLbl=new GuiLabel("GetTick:               0",1,1);
+        UIWindow gui=new UIWindow("GOL with GridDiff",true);
+        UIGrid vis=new UIGrid(xDim,yDim,scaleFactor,2,1, true);
+        UILabel popLbl=new UILabel("Population:                0",1,1);
+        UILabel tickLbl=new UILabel("GetTick:               0",1,1);
 
         gui.AddCol(0, popLbl);
         gui.AddCol(1, tickLbl);

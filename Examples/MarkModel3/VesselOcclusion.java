@@ -674,7 +674,7 @@ public class VesselOcclusion {
             MultiThread(nRuns,6,(runIndex) -> {
                 RunModel3(io,runIndex,2);
             });
-//            FileIO runRes=new FileIO("runRes.csv","a");
+//            PDE runRes=new PDE("runRes.csv","a");
             FileIO runRes=new FileIO("t_pheno100.csv","a");
             for (double[] doubles : io) {
                 runRes.WriteDelimit(doubles,",");
@@ -698,7 +698,7 @@ public class VesselOcclusion {
 //                });
 //
 //                String file_name = "invasionRun_" + i +  ".csv";
-//                FileIO out_file = new FileIO(file_name, "a");
+//                PDE out_file = new PDE(file_name, "a");
 //                out_file.Write(Util.ArrToString(stepsTillTumorEdge, ",") + "\n");
 //                out_file.Close();
 //

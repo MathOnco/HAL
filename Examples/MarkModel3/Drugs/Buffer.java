@@ -1,7 +1,7 @@
 package Examples.MarkModel3.Drugs;
 
 import Examples.MarkModel3.Drug;
-import Framework.Gui.GuiGrid;
+import Framework.Gui.UIGrid;
 
 import static Framework.Util.PhToProtons;
 import static Framework.Util.RGB;
@@ -19,7 +19,7 @@ public class Buffer extends Drug {
     }
 
     @Override
-    public void Draw(GuiGrid vis) {
+    public void Draw(UIGrid vis) {
         return;
     }
 

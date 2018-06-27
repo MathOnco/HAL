@@ -1,9 +1,9 @@
 package Testing;
 
 import Framework.GridsAndAgents.PDEGrid2D;
-import Framework.Gui.GuiGrid;
-import Framework.Gui.GuiLabel;
-import Framework.Gui.GuiWindow;
+import Framework.Gui.UIGrid;
+import Framework.Gui.UILabel;
+import Framework.Gui.UIWindow;
 import Framework.Gui.TickTimer;
 import Framework.Util;
 
@@ -27,9 +27,9 @@ public class ConvectionTest2 {
     }
     public static void main(String[] args) {
         PDEGrid2D g=new PDEGrid2D(sideLen,sideLen,false,false);
-        GuiWindow win=new GuiWindow("Advection1stOrder Example",true);
-        GuiGrid vis=new GuiGrid(sideLen,sideLen,1);
-        GuiLabel lbl=new GuiLabel("tick");
+        UIWindow win=new UIWindow("Advection1stOrder Example",true);
+        UIGrid vis=new UIGrid(sideLen,sideLen,1);
+        UILabel lbl=new UILabel("tick");
         TickTimer trt=new TickTimer();
         double[]diffRates=new double[g.length];
         win.AddCol(0, lbl);

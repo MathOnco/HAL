@@ -4,7 +4,7 @@ package Examples._6CompetitiveRelease;
         import Framework.GridsAndAgents.PDEGrid2D;
         import Framework.Gui.GridWindow;
         import Framework.GridsAndAgents.AgentSQ2Dunstackable;
-        import Framework.Gui.GuiGrid;
+        import Framework.Gui.UIGrid;
         import Framework.Tools.FileIO;
         import Framework.Rand;
         import static Examples.CompetitiveReleaseVerbose.ExampleModel.*;
@@ -46,7 +46,7 @@ public class ExampleModel extends AgentGrid2D<ExampleCell> {
                 models[i].DrawModel(win,i);
             }
             //data recording
-            popsOut.Write(models[0].GetPop()+","+models[1].GetPop()+","+models[2].GetPop()+"\n");
+            popsOut.Write(models[0].Pop()+","+models[1].Pop()+","+models[2].Pop()+"\n");
             if((tick)%100==0) {
         //        win.ToPNG("ModelsTick" +tick+".png");
             }
@@ -77,7 +77,7 @@ public class ExampleModel extends AgentGrid2D<ExampleCell> {
         }
     }
 
-    public void DrawModel(GuiGrid vis, int iModel) {
+    public void DrawModel(UIGrid vis, int iModel) {
         for (int i = 0; i < length; i++) {
             ExampleCell drawMe = GetAgent(i);
             //if the cell does not exist, draw the drug concentration

@@ -11,7 +11,7 @@ import static Framework.Tools.PDEequations.*;
 
 /**
  * PDEGrid2D class facilitates 2D diffusion with two arrays of doubles called fields
- * the intended usage is that during a diffusion step, the current values will be read, and the prev values will be written to
+ * the intended usage is that during a diffusion tick, the current values will be read, and the prev values will be written to
  * after updates, SwapFields is called to set the prev field as the current field.
  */
 public class PDEGrid1D extends Grid1Ddouble implements Serializable{
@@ -137,15 +137,6 @@ public class PDEGrid1D extends Grid1Ddouble implements Serializable{
         }
         SwapFields();
     }
-    public void Diffusion(double diffCoef, boolean wrapX, boolean wrapY){
-        if(diffCoef>0.25){
-            throw new IllegalArgumentException("Diffusion rate above stable maximum value of 0.25 value: "+diffCoef);
-        }
-        for (int x = 0; x < xDim; x++) {
-                Diffusion1(x, field, swapField, xDim, diffCoef, false, 0.0, wrapX);
-        }
-        SwapFields();
-    }
     /**
      * Runs diffusion on the current field, putting the result into the prev field, then swaps current and prev
      * @param diffCoef rate of diffusion
@@ -160,33 +151,12 @@ public class PDEGrid1D extends Grid1Ddouble implements Serializable{
         }
         SwapFields();
     }
-    public void Diffusion(double diffCoef, double boundaryValue, boolean wrapX, boolean wrapY){
-        if(diffCoef>0.25){
-            throw new IllegalArgumentException("Diffusion rate above stable maximum value of 0.25 value: "+diffCoef);
-        }
-        for (int x = 0; x < xDim; x++) {
-        Diffusion1(x,field, swapField,xDim,diffCoef,true,boundaryValue,wrapX);
-        }
-        SwapFields();
-    }
 
 
-    public void Diffusion(double[] diffCoefs, boolean wrapX, boolean wrapY){
-        for (int x = 0; x < xDim; x++) {
-                Diffusion1inhomogeneous(x, field, swapField, diffCoefs, xDim, false, 0.0, wrapX);
-        }
-        SwapFields();
-    }
     public void Diffusion(double[] diffCoefs){
         for (int x = 0; x < xDim; x++) {
                 Diffusion1inhomogeneous(x, field, swapField, diffCoefs, xDim, false, 0.0, wrapX);
         }
-        SwapFields();
-    }
-    public void Diffusion(double[] diffCoefs,double boundaryValue, boolean wrapX, boolean wrapY){
-        for (int x = 0; x < xDim; x++) {
-                Diffusion1inhomogeneous(x, field, swapField, diffCoefs, xDim, true, boundaryValue, wrapX);
-            }
         SwapFields();
     }
     public void Diffusion(double[] diffCoefs,double boundaryValue){

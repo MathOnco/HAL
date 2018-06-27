@@ -1,7 +1,7 @@
 package Framework.Extensions;
 
 import Framework.GridsAndAgents.PDEGrid2D;
-import Framework.Gui.GuiGrid;
+import Framework.Gui.UIGrid;
 import Framework.Rand;
 
 import static Framework.Util.*;
@@ -33,7 +33,7 @@ public abstract class PayoffMatrixGame extends SpatialGameCanonical {
         if(singleUpdate){ types.Set(idTo,types.Get(idFrom)); }
         else { types.SetSwap(idTo, types.Get(idFrom)); }
     }
-    public void DrawTypes(GuiGrid vis, int[]colors){
+    public void DrawTypes(UIGrid vis, int[]colors){
         if(colors.length!=nTypes){
             throw new IllegalArgumentException("colors array has incorrect length");
         }

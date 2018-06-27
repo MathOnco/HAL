@@ -4,8 +4,8 @@ import Framework.Extensions.ClinicianSim;
 import Framework.GridsAndAgents.AgentSQ2Dunstackable;
 import Framework.GridsAndAgents.AgentGrid2D;
 import Framework.GridsAndAgents.PDEGrid2D;
-import Framework.Gui.GuiGrid;
-import Framework.Gui.GuiLabel;
+import Framework.Gui.UIGrid;
+import Framework.Gui.UILabel;
 import Framework.Rand;
 import Framework.Util;
 import Framework.Interfaces.TreatableTumor;
@@ -23,7 +23,6 @@ public class ContactInhibitionInteractive extends AgentGrid2D<Cell> implements T
     //internal model objects
     public PDEGrid2D drug;
     public int[] divHood = MooreHood(false);
-    public int[] divIs = new int[divHood.length / 2];
 
     public ContactInhibitionInteractive(int xDim, int yDim) {
         super(xDim, yDim, Cell.class);
@@ -33,17 +32,16 @@ public class ContactInhibitionInteractive extends AgentGrid2D<Cell> implements T
     public void InitTumor(int radius, double resistantProb,Random rn) {
         //get a list of indices that fill a circle at the center of the grid
         int[] circleCoords = CircleHood(true, radius);
-        int[] cellIs = new int[circleCoords.length / 2];
-        int cellsToPlace = HoodToEmptyIs(circleCoords, cellIs, xDim / 2, yDim / 2);
+        int cellsToPlace = MapEmptyHood(circleCoords, xDim / 2, yDim / 2);
         //place a new tumor cell at each index
         for (int i = 0; i < cellsToPlace; i++) {
-            Cell seedCell = NewAgentSQ(cellIs[i]);
+            Cell seedCell = NewAgentSQ(circleCoords[i]);
             seedCell.isRes = rn.nextDouble() < resistantProb;
         }
     }
 
     @Override
-    public void Draw(GuiGrid vis, GuiGrid alphaVis, int iLastSelected, GuiLabel drawLbl,double[]treatments) {
+    public void Draw(UIGrid vis, UIGrid alphaVis, int iLastSelected, UILabel drawLbl, double[]treatments) {
         System.out.println(iLastSelected);
         for (int i = 0; i < vis.length; i++) {
             Cell drawMe = GetAgent(i);
@@ -112,7 +110,7 @@ public class ContactInhibitionInteractive extends AgentGrid2D<Cell> implements T
 
     @Override
     public double GetBurden() {
-        return GetPop()*1.0/length;
+        return Pop()*1.0/length;
     }
 
     @Override
@@ -160,10 +158,10 @@ class Cell extends AgentSQ2Dunstackable<ContactInhibitionInteractive> {
         }
         //Chance of Division, depends on resistance
         else if (rn.Double() < (isRes ? G().divProbRes : G().divProb)) {
-            int nEmptySpaces = G().HoodToEmptyIs(G().divHood, G().divIs, Xsq(), Ysq());
+            int nEmptySpaces = G().MapEmptyHood(G().divHood, Xsq(), Ysq());
             //If any empty spaces exist, randomly choose one and create a daughter cell there
             if (nEmptySpaces > 0) {
-                Cell daughter = G().NewAgentSQ(G().divIs[rn.Int(nEmptySpaces)]);
+                Cell daughter = G().NewAgentSQ(G().divHood[rn.Int(nEmptySpaces)]);
                 daughter.isRes = this.isRes;
             }
         }

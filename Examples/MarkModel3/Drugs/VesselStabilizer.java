@@ -1,7 +1,7 @@
 package Examples.MarkModel3.Drugs;
 
 import Examples.MarkModel3.Drug;
-import Framework.Gui.GuiGrid;
+import Framework.Gui.UIGrid;
 
 import static Framework.Util.RGB;
 import static Framework.Util.RGBA256;
@@ -31,7 +31,7 @@ public class VesselStabilizer extends Drug {
     }
 
     @Override
-    public void Draw(GuiGrid vis) {
+    public void Draw(UIGrid vis) {
         return;
     }
 }

@@ -1,7 +1,7 @@
 package Framework.Tools;
 
 
-import Framework.Gui.GuiGrid;
+import Framework.Gui.UIGrid;
 import Framework.Rand;
 import Framework.Util;
 
@@ -95,7 +95,7 @@ public abstract class NonSpatialPopModel {
             }
         }
     }
-    public void DrawPops(GuiGrid vis, int[]colors, long maxPop){
+    public void DrawPops(UIGrid vis, int[]colors, long maxPop){
         long[]currPops=GetPops();
         if(colors.length<currPops.length+1){
             throw new IllegalArgumentException("need a color for each pop color, number of colors: "+colors.length+" number of pops: "+pops.length);
@@ -115,7 +115,7 @@ public abstract class NonSpatialPopModel {
         }
         drawStep++;
     }
-    public void DrawPops(GuiGrid vis, long maxPop){
+    public void DrawPops(UIGrid vis, long maxPop){
         long[]currPops=GetPops();
         int iCol=GetStep()%vis.xDim;
         for (int i = 0; i < vis.yDim; i++) {

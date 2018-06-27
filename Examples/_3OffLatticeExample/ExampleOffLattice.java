@@ -18,7 +18,7 @@ class CellOL extends SphericalAgent2D<CellOL,ExampleOffLattice>{
         this.type =color;
         this.radius=G().RADIUS;
     }
-    double ForceCalc(double overlap){
+    double ForceCalc(double overlap,CellOL other){
         if(overlap<0) {
             return 0;//if cells aren't actually overlapping, then there is no force response
         }
@@ -26,7 +26,7 @@ class CellOL extends SphericalAgent2D<CellOL,ExampleOffLattice>{
     }
     public void CalcMove(){
         //sets x and y velocity components of cell
-        forceSum=SumForces(G().RADIUS*2,G().neighborList,this::ForceCalc);
+        forceSum=SumForces(G().RADIUS*2,this::ForceCalc);
     }
     public boolean CanDivide(double div_bias,double inhib_weight){
         return G().rn.Double()<Math.tanh(div_bias-forceSum*inhib_weight);

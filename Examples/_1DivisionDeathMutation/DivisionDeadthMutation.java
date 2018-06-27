@@ -3,10 +3,10 @@ package Examples._1DivisionDeathMutation;
 import Framework.GridsAndAgents.AgentGrid2D;
 import Framework.GridsAndAgents.AgentSQ2Dunstackable;
 import Framework.Gui.GridWindow;
-import Framework.Gui.GuiGrid;
+import Framework.Gui.UIGrid;
 import Framework.Tools.FileIO;
 import Framework.Rand;
-import Framework.Tools.Timer;
+import Framework.Tools.LapTimer;
 import Framework.Util;
 
 import java.util.Arrays;
@@ -56,13 +56,13 @@ public class DivisionDeadthMutation extends AgentGrid2D<CellEx> {
     int[]mutCounts=new int[MAX_MUTATIONS+1];//+1 to count for un-mutated type
     int[]hood=Util.GenHood2D(new int[]{1,0,-1,0,0,1,0,-1}); //equivalent to int[]hood=Util.VonNeumannHood(false);
     Rand rn=new Rand(1);
-    GuiGrid vis;
+    UIGrid vis;
     FileIO outputFile=null;
-    public DivisionDeadthMutation(int x, int y, GuiGrid vis) {
+    public DivisionDeadthMutation(int x, int y, UIGrid vis) {
         super(x, y, CellEx.class);
         this.vis=vis;
     }
-    public DivisionDeadthMutation(int x, int y, GuiGrid vis, String outputFileName) {
+    public DivisionDeadthMutation(int x, int y, UIGrid vis, String outputFileName) {
         super(x, y, CellEx.class);
         this.vis=vis;
         outputFile=new FileIO(outputFileName,"w");
@@ -107,7 +107,7 @@ public class DivisionDeadthMutation extends AgentGrid2D<CellEx> {
         GridWindow vis=new GridWindow(x,y,scaleFactor);//used for visualization
         DivisionDeadthMutation grid=new DivisionDeadthMutation(x,y,vis);
         grid.InitTumor(5);
-        Timer pt=new Timer();
+        LapTimer pt=new LapTimer();
         for (int tick = 0; tick < 1000; tick++) {
             vis.TickPause(0);//set to nonzero value to cap tick rate.
             grid.StepCells();

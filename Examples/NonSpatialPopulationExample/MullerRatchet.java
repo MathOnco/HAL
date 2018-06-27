@@ -102,7 +102,7 @@ public class MullerRatchet extends NonSpatialPopModel {
     //    MullerRatchet ex=new MullerRatchet(new long[]{500000,0,0,0,0,0,0,0,0,0}, 10000000,0.1,new Random(),0.5,0.011);
     //    GridWindow win=new GridWindow("testWin",500,300,2);
     //    for (int i = 0; i < 100000; i++) {
-    //        ex.Step();
+    //        ex.IncTick();
     //        if(i%100000/500==0) {
     //            win.TickPause(10);
     //            ex.DrawPops(win, colors, 10000000);

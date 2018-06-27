@@ -48,7 +48,7 @@ public class ExampleModel extends AgentGrid2D<ExampleCell> {
                 models[i].DrawModel(win, i);
             }
             //data recording
-            popsOut.Write(models[0].GetPop() + "," + models[1].GetPop() + "," + models[2].GetPop() + "\n");
+            popsOut.Write(models[0].Pop() + "," + models[1].Pop() + "," + models[2].Pop() + "\n");
             if ((tick) % 100 == 0) {
                 win.ToPNG("ModelsTick" + tick + ".png");
             }

@@ -1,9 +1,7 @@
 package Examples.MarkModel3;
 
-import Framework.Extensions.PDEGrid2DCoarse;
 import Framework.GridsAndAgents.AgentGrid2D;
-import Framework.GridsAndAgents.PDEGrid2D;
-import Framework.Gui.GuiGrid;
+import Framework.Gui.UIGrid;
 import Framework.Interfaces.DoubleToColor;
 import Framework.Rand;
 import Framework.Util;
@@ -130,8 +128,6 @@ public class Tissue <C extends Cell> extends AgentGrid2D<C>
     //public int[] tumorHood = VonNeumannHood(true);
     public int[] vesselAngioHood;
     public int[] vesselAngioIs;
-    public int[] normalHoodIs = new int[normalHood.length / 2];
-    public int[] tumorHoodIs = new int[tumorHood.length / 2];
     public int[] vesselIs = new int[tumorHood.length / 2];
     public final boolean REFLECTIVE_BOUNDARY;
 
@@ -303,7 +299,6 @@ public class Tissue <C extends Cell> extends AgentGrid2D<C>
     {
         //place vessels using circle packing, so no vessels are within VESSEL_SPACING_MIN
         int[] vesselCheck = CircleHood(true, VESSEL_SPACING_MIN);
-        int[] circleIs = new int[vesselCheck.length / 2];
         int[] indices= GenIndicesArray(length);
         rn.Shuffle(indices, length, length);
         int nVesselsRequested = (int) (length / VESSEL_SPACING_MEAN*VESSEL_SPACING_MEAN);
@@ -315,7 +310,7 @@ public class Tissue <C extends Cell> extends AgentGrid2D<C>
             //make sure that we aren't putting a vessel too close to the edge
             if(x>=VESSEL_EDGE_MAX_DIST&&y>=VESSEL_EDGE_MAX_DIST&&xDim-x>VESSEL_EDGE_MAX_DIST&&yDim-y>VESSEL_EDGE_MAX_DIST)
             {
-                int nNeigbhors = HoodToOccupiedIs(vesselCheck, circleIs, ItoX(i), ItoY(i));
+                int nNeigbhors = MapOccupiedHood(vesselCheck, ItoX(i), ItoY(i));
                 for (int j = 0; j < nNeigbhors + 1; j++)
                 {
                     if (j == nNeigbhors)
@@ -327,7 +322,7 @@ public class Tissue <C extends Cell> extends AgentGrid2D<C>
                         {
                             return nVesselsPlaced;
                         }
-                    } else if (GetAgent(circleIs[j]).type == VESSEL)
+                    } else if (GetAgent(vesselCheck[j]).type == VESSEL)
                     {
                         break;
                     }
@@ -454,15 +449,15 @@ public class Tissue <C extends Cell> extends AgentGrid2D<C>
             }
         }
         for (C vessel : vesselList) {
-            if(ContainsValidI(tumorHood,vessel.Isq(), i->{
-                C agent=GetAgent(i);
+            if(ContainsValidI(tumorHood,vessel.Isq(), (x,y)->{
+                C agent=GetAgent(x,y);
                 return agent!=null&&agent.type==TUMOR;
             })){
                 vessel.vesselHP*=rn.Double();
             }
-            int hoodSize=vessel.HoodToIs(tumorHood,tumorHoodIs);
+            int hoodSize=MapHood(tumorHood,vessel.Isq());
             for (int i = 0; i < hoodSize; i++) {
-                C agent=GetAgent(tumorHoodIs[i]);
+                C agent=GetAgent(tumorHood[i]);
                 if(agent!=null&&agent.type==TUMOR){
                     vessel.vesselHP*=rn.Double();
                     break;
@@ -552,7 +547,7 @@ public class Tissue <C extends Cell> extends AgentGrid2D<C>
         return step;
     }
 
-    public void DrawCells(GuiGrid drawHere)   //----THIS SHOULD WORK IF NEW COLOR IS ADDED CORRECTLY----
+    public void DrawCells(UIGrid drawHere)   //----THIS SHOULD WORK IF NEW COLOR IS ADDED CORRECTLY----
     {
         for (int i = 0; i < length; i++)
         {
@@ -566,14 +561,14 @@ public class Tissue <C extends Cell> extends AgentGrid2D<C>
             }
         }
     }
-    public void DrawAllDiffs(GuiGrid acidVis, GuiGrid oxygenVis, GuiGrid glucoseVis)
+    public void DrawAllDiffs(UIGrid acidVis, UIGrid oxygenVis, UIGrid glucoseVis)
     {
         DrawAcidOld(acidVis);
         DrawOxygenOld(oxygenVis);
         DrawGlucoseOld(glucoseVis);
 
     }
-    public void DrawOxygenMinMaxAngio(GuiGrid oxygenVis)
+    public void DrawOxygenMinMaxAngio(UIGrid oxygenVis)
     {
 
         DrawDiff(oxygenVis,oxygen,(val)->
@@ -593,7 +588,7 @@ public class Tissue <C extends Cell> extends AgentGrid2D<C>
             //return HeatMapBGR(val,min,max);
         });
     }
-    public void DrawDiff(GuiGrid drawHere, Diff drawMe, DoubleToColor ColorFun)
+    public void DrawDiff(UIGrid drawHere, Diff drawMe, DoubleToColor ColorFun)
     {
         for (int x = 0; x < drawMe.grid.xDim; x++)
         {
@@ -603,7 +598,7 @@ public class Tissue <C extends Cell> extends AgentGrid2D<C>
             }
         }
     }
-    public void DrawPhenos(GuiGrid drawHere)
+    public void DrawPhenos(UIGrid drawHere)
     {
         for (int x = 0; x < drawHere.xDim; x++)
         {
@@ -692,15 +687,15 @@ public class Tissue <C extends Cell> extends AgentGrid2D<C>
     final static int CYAN=RGB(0,1,1);
     final static int YELLOW=RGB(1,1,0);
     final static int GREEN=RGB(0,1,0);
-    public void DrawOxygen(GuiGrid alphaVis)
+    public void DrawOxygen(UIGrid alphaVis)
     {
         DrawDiff(alphaVis,oxygen,(double v)->AlphaColorDiff(v,0,VESSEL_O2,0,0.7,CYAN));
     }
-    public void DrawGlucose(GuiGrid alphaVis)
+    public void DrawGlucose(UIGrid alphaVis)
     {
         DrawDiff(alphaVis,glucose,(double v)->AlphaColorDiff(v,0,VESSEL_GLUC,0,0.7,YELLOW));
     }
-    public void DrawAcid(GuiGrid alphaVis)
+    public void DrawAcid(UIGrid alphaVis)
     {
         DrawDiff(alphaVis,acid,(double v)->{
             if(ProtonsToPh(v)<NORMAL_PHENO_ACID_RESIST){
@@ -708,7 +703,7 @@ public class Tissue <C extends Cell> extends AgentGrid2D<C>
             }
             return AlphaColorDiff(ProtonsToPh(v),VESSEL_PH,5.5,0,0.7,GREEN);});
     }
-    public void DrawOxygenOld(GuiGrid oxygenVis)
+    public void DrawOxygenOld(UIGrid oxygenVis)
     {
         DrawDiff(oxygenVis,oxygen,(val)->
         {
@@ -716,7 +711,7 @@ public class Tissue <C extends Cell> extends AgentGrid2D<C>
             return HeatMapBGR(val,0,VESSEL_O2);
         });
     }
-    public void DrawGlucoseOld(GuiGrid glucoseVis)
+    public void DrawGlucoseOld(UIGrid glucoseVis)
     {
         DrawDiff(glucoseVis,glucose,(val)->
         {
@@ -724,7 +719,7 @@ public class Tissue <C extends Cell> extends AgentGrid2D<C>
             //return HeatMapRGB(val,min,max);
         });
     }
-    public void DrawAcidOld(GuiGrid acidVis)
+    public void DrawAcidOld(UIGrid acidVis)
     {
         DrawDiff(acidVis,acid,(val)->
         {

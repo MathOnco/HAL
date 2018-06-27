@@ -59,7 +59,7 @@ public class Diff extends PDEGrid2DCoarse implements Serializable{
         }
     }
     int InFallback(int val,int fallback,int dim){
-        return(Util.InDim(dim,val))?val:fallback;
+        return(Util.InDim(val, dim))?val:fallback;
     }
     public double GetInterp(int x,int y) {
         if (g.DIFF_SPACE_SCALE == 1) {

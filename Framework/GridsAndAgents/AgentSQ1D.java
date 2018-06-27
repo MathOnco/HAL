@@ -100,22 +100,7 @@ public class AgentSQ1D<T extends AgentGrid1D> extends Agent1DBase<T>{
         }
         if (G().wrapX) {
             newX = ModWrap(newX, G().xDim);
-        } else if (!InDim(G().xDim, newX)) {
-            newX = Xsq();
-        }
-        MoveSQ(newX);
-    }
-    public void MoveSafeSQ(int newX,boolean wrapX){
-        if(!alive){
-            throw new RuntimeException("Attempting to move dead agent");
-        }
-        if (G().In(newX)) {
-            MoveSQ(newX);
-            return;
-        }
-        if (wrapX) {
-            newX = ModWrap(newX, G().xDim);
-        } else if (!InDim(G().xDim, newX)) {
+        } else if (!InDim(newX, G().xDim)) {
             newX = Xsq();
         }
         MoveSQ(newX);
@@ -185,6 +170,10 @@ public class AgentSQ1D<T extends AgentGrid1D> extends Agent1DBase<T>{
             }
         }
         return ct;
+    }
+
+    public int GetAge(){
+        return G().GetTick()-birthTick;
     }
     //addCoords
 }

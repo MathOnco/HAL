@@ -18,6 +18,9 @@ public class AgentGrid3D<T extends AgentBaseSpatial> extends GridBase3D implemen
     ArrayList<AgentsIterator3D> usedIterIs =new ArrayList<>();
     int iagentSearch=0;
     int[] counts;
+    final double moveSafeXdim;
+    final double moveSafeYdim;
+    final double moveSafeZdim;
 
 
     /**
@@ -28,6 +31,9 @@ public class AgentGrid3D<T extends AgentBaseSpatial> extends GridBase3D implemen
         agents=new InternalGridAgentList<T>(agentClass,this);
         grid=(T[])new AgentBaseSpatial[length];
         counts= new int[length];
+        moveSafeXdim=Math.nextAfter(xDim,0);
+        moveSafeYdim=Math.nextAfter(yDim,0);
+        moveSafeZdim=Math.nextAfter(zDim,0);
     }
     public AgentGrid3D(int x, int y, int z, Class<T> agentClass){
         this(x,y,z,agentClass,false,false,false);
@@ -63,7 +69,7 @@ public class AgentGrid3D<T extends AgentBaseSpatial> extends GridBase3D implemen
 //    agents.stateID++;
 //}
     T GetNewAgent(){
-        return agents.GetNewAgent();
+        return agents.GetNewAgent(tick);
     }
 
     /**
@@ -87,7 +93,7 @@ public class AgentGrid3D<T extends AgentBaseSpatial> extends GridBase3D implemen
      * returns an uninitialized agent at the specified index
      */
     public T NewAgentSQ(int index){
-        T newAgent=agents.GetNewAgent();
+        T newAgent=GetNewAgent();
         newAgent.Setup(index);
         return newAgent;
     }
@@ -132,77 +138,6 @@ public class AgentGrid3D<T extends AgentBaseSpatial> extends GridBase3D implemen
 //        CleanAgents();
 //        IncTick();
 //    }
-    public int FindEmptyIs(int[] IsToCheck,int lenToCheck){
-        int validCount=0;
-        for (int i = 0; i < lenToCheck; i++) {
-            if(GetAgent(IsToCheck[i])==null){
-                IsToCheck[validCount]=IsToCheck[i];
-                validCount++;
-            }
-        }
-        return validCount;
-    }
-    public int FindEmptyIs(int[] IsToCheck,int[]retIs,int lenToCheck){
-        int validCount=0;
-        for (int i = 0; i < lenToCheck; i++) {
-            if(GetAgent(IsToCheck[i])==null){
-                retIs[validCount]=IsToCheck[i];
-                validCount++;
-            }
-        }
-        return validCount;
-    }
-
-//    public void MultiThreadAgents(int nThreads, AgentStepFunction<T> StepFunction){
-//        int last=agents.iLastAlive;
-//        Util.MultiThread(nThreads,nThreads,(iThread)->{
-//            ArrayList<T> agents=this.agents.agents;
-//            int start=iThread/nThreads*last;
-//            int end=(iThread+1)/nThreads*last;
-//            for (int i = start; i < end; i++) {
-//                T a=agents.get(i);
-//                if(a.alive&&a.stateID<st){
-//                    StepFunction.AgentStepFunction(a);
-//                }
-//            }
-//        });
-//    }
-    public int FindOccupiedIs(int[] IsToCheck,int lenToCheck){
-        int validCount=0;
-        for (int i = 0; i < lenToCheck; i++) {
-            if(GetAgent(IsToCheck[i])!=null){
-                IsToCheck[validCount]=IsToCheck[i];
-                validCount++;
-            }
-        }
-        return validCount;
-    }
-    public int FindOccupiedIs(int[] IsToCheck,int[] retIs,int lenToCheck){
-        int validCount=0;
-        for (int i = 0; i < lenToCheck; i++) {
-            if(GetAgent(IsToCheck[i])!=null){
-                retIs[validCount]=IsToCheck[i];
-                validCount++;
-            }
-        }
-        return validCount;
-    }
-    public int HoodToEmptyIs(int[] hood, int[] ret, int centerX, int centerY, int centerZ, boolean wrapX, boolean wrapY, boolean wrapZ){
-        int toCheck= HoodToIs(hood,ret,centerX,centerY,centerZ,wrapX,wrapY,wrapZ);
-        return FindEmptyIs(ret,toCheck);
-    }
-    public int HoodToEmptyIs(int[] hood, int[] ret, int centerX, int centerY, int centerZ){
-        int toCheck= HoodToIs(hood,ret,centerX,centerY,centerZ);
-        return FindEmptyIs(ret,toCheck);
-    }
-    public int HoodToOccupiedIs(int[] hood, int[] ret, int centerX, int centerY, int centerZ){
-        int toCheck= HoodToIs(hood,ret,centerX,centerY,centerZ);
-        return FindOccupiedIs(ret,toCheck);
-    }
-    public int HoodToOccupiedIs(int[] hood, int[] ret, int centerX, int centerY, int centerZ, boolean wrapX, boolean wrapY, boolean wrapZ){
-        int toCheck= HoodToIs(hood,ret,centerX,centerY,centerZ,wrapX,wrapY,wrapZ);
-        return FindOccupiedIs(ret,toCheck);
-    }
     public void ChangeGridsSQ(T foreignAgent,int newX,int newY,int newZ){
         if(!foreignAgent.alive){
             throw new IllegalStateException("can't move dead agent between grids!");
@@ -241,20 +176,16 @@ public class AgentGrid3D<T extends AgentBaseSpatial> extends GridBase3D implemen
     }
 
     public int MapEmptyHood(int[] hood,int centerX,int centerY,int centerZ){
-        int toCheck=MapHood(hood,centerX,centerY,centerZ);
-        return FindEmptyIs(hood,toCheck);
+        return MapHood(hood,centerX,centerY,centerZ,(i,x,y,z)->GetAgent(i)==null);
     }
     public int MapEmptyHood(int[] hood,int centerI){
-        int toCheck=MapHood(hood,centerI);
-        return FindEmptyIs(hood,toCheck);
+        return MapEmptyHood(hood,ItoX(centerI),ItoY(centerI),ItoZ(centerI));
     }
     public int MapOccupiedHood(int[] hood,int centerX,int centerY,int centerZ){
-        int toCheck=MapHood(hood,centerX,centerY,centerZ);
-        return FindOccupiedIs(hood,toCheck);
+        return MapHood(hood,centerX,centerY,centerZ,(i,x,y,z)->GetAgent(i)!=null);
     }
     public int MapOccupiedHood(int[] hood,int centerI){
-        int toCheck=MapHood(hood,centerI);
-        return FindOccupiedIs(hood,toCheck);
+        return MapOccupiedHood(hood,ItoX(centerI),ItoY(centerI),ItoZ(centerI));
     }
 
     /**
@@ -271,26 +202,23 @@ public class AgentGrid3D<T extends AgentBaseSpatial> extends GridBase3D implemen
 //        //gets population count at location
 //        return counts[i];
 //    }
-    public T NewAgentPTSafe(double newX, double newY, double newZ, double fallbackX, double fallbackY, double fallbackZ, boolean wrapX, boolean wrapY, boolean wrapZ){
+    public T NewAgentPTSafe(double newX, double newY, double newZ){
         if (In(newX, newY,newZ)) {
             return NewAgentPT(newX, newY,newZ);
         }
         if (wrapX) {
             newX = Util.ModWrap(newX, xDim);
-        } else if (!Util.InDim(xDim, newX)) {
-            newX = fallbackX;
+        } else if (!Util.InDim(newX, xDim)) {
+            return null;
         }
         if (wrapY) {
             newY = Util.ModWrap(newY, yDim);
-        } else if (!Util.InDim(yDim, newY))
-            newY = fallbackY;
+        } else if (!Util.InDim(newY, yDim))
+            return null;
         if (wrapZ) {
             newZ = Util.ModWrap(newZ, zDim);
-        } else if (!Util.InDim(zDim, newZ))
-            newZ = fallbackZ;
-        if(!In(newX,newY,newZ)){
-            System.out.println("");
-        }
+        } else if (!Util.InDim(newZ, zDim))
+            return null;
         return NewAgentPT(newX,newY,newZ);
     }
     public T NewAgentPTSafe(double newX, double newY, double newZ, double fallbackX, double fallbackY, double fallbackZ){
@@ -299,16 +227,16 @@ public class AgentGrid3D<T extends AgentBaseSpatial> extends GridBase3D implemen
         }
         if (wrapX) {
             newX = Util.ModWrap(newX, xDim);
-        } else if (!Util.InDim(xDim, newX)) {
+        } else if (!Util.InDim(newX, xDim)) {
             newX = fallbackX;
         }
         if (wrapY) {
             newY = Util.ModWrap(newY, yDim);
-        } else if (!Util.InDim(yDim, newY))
+        } else if (!Util.InDim(newY, yDim))
             newY = fallbackY;
         if (wrapZ) {
             newZ = Util.ModWrap(newZ, zDim);
-        } else if (!Util.InDim(zDim, newZ))
+        } else if (!Util.InDim(newZ, zDim))
             newZ = fallbackZ;
         return NewAgentPT(newX,newY,newZ);
     }
@@ -330,17 +258,17 @@ public class AgentGrid3D<T extends AgentBaseSpatial> extends GridBase3D implemen
     public T GetAgentSafe(int x, int y,int z) {
         if (wrapX) {
             x = Util.ModWrap(x, xDim);
-        } else if (!Util.InDim(xDim, x)) {
+        } else if (!Util.InDim(x, xDim)) {
             return null;
         }
         if (wrapY) {
             y = Util.ModWrap(y, yDim);
-        } else if (!Util.InDim(yDim, y)) {
+        } else if (!Util.InDim(y, yDim)) {
             return null;
         }
         if (wrapZ) {
             z = Util.ModWrap(z, yDim);
-        } else if (!Util.InDim(yDim, z)) {
+        } else if (!Util.InDim(z, yDim)) {
             return null;
         }
         return grid[I(x,y,z)];
@@ -361,7 +289,7 @@ public class AgentGrid3D<T extends AgentBaseSpatial> extends GridBase3D implemen
         int yWrap;
         int zWrap;
         for (int xi = x; xi <= xEnd; xi++) {
-            boolean inX= Util.InDim(xDim,xi);
+            boolean inX= Util.InDim(xi, xDim);
             if((!wrapX&&!inX)){
                 continue;
             }
@@ -370,7 +298,7 @@ public class AgentGrid3D<T extends AgentBaseSpatial> extends GridBase3D implemen
                 xWrap= Util.ModWrap(xi,xDim);
             }
             for (int yi = y; yi <= yEnd; yi++) {
-                boolean inY= Util.InDim(yDim,yi);
+                boolean inY= Util.InDim(yi, yDim);
                 if((!wrapY&&!inY)){
                     continue;
                 }
@@ -379,7 +307,7 @@ public class AgentGrid3D<T extends AgentBaseSpatial> extends GridBase3D implemen
                     yWrap= Util.ModWrap(yi,yDim);
                 }
                 for (int zi = z; zi <= zEnd; zi++) {
-                    boolean inZ = Util.InDim(zDim, zi);
+                    boolean inZ = Util.InDim(zi, zDim);
                     if ((!wrapZ && !inZ)) {
                         continue;
                     }
@@ -398,21 +326,21 @@ public class AgentGrid3D<T extends AgentBaseSpatial> extends GridBase3D implemen
             int x = hood[i] + centerX;
             int y = hood[i + 1] + centerY;
             int z = hood[i + 2] + centerZ;
-            if (!Util.InDim(xDim, x)) {
+            if (!Util.InDim(x, xDim)) {
                 if (wrapX) {
                     x = Util.ModWrap(x, xDim);
                 } else {
                     continue;
                 }
             }
-            if (!Util.InDim(yDim, y)) {
+            if (!Util.InDim(y, yDim)) {
                 if (wrapY) {
                     y = Util.ModWrap(y, yDim);
                 } else {
                     continue;
                 }
             }
-            if (!Util.InDim(zDim, z)) {
+            if (!Util.InDim(z, zDim)) {
                 if (wrapZ) {
                     z = Util.ModWrap(z, zDim);
                 } else {
@@ -437,9 +365,9 @@ public class AgentGrid3D<T extends AgentBaseSpatial> extends GridBase3D implemen
                     int retX = xSq;
                     int retY = ySq;
                     int retZ = zSq;
-                    boolean inX = Util.InDim(xDim, retX);
-                    boolean inY = Util.InDim(yDim, retY);
-                    boolean inZ = Util.InDim(zDim, retZ);
+                    boolean inX = Util.InDim(retX, xDim);
+                    boolean inY = Util.InDim(retY, yDim);
+                    boolean inZ = Util.InDim(retZ, zDim);
                     if ((!wrapX && !inX) || (!wrapY && !inY) || (!wrapZ && !inZ)) {
                         continue;
                     }
@@ -466,9 +394,9 @@ public class AgentGrid3D<T extends AgentBaseSpatial> extends GridBase3D implemen
                     int retX = xSq;
                     int retY = ySq;
                     int retZ = zSq;
-                    boolean inX = Util.InDim(xDim, retX);
-                    boolean inY = Util.InDim(yDim, retY);
-                    boolean inZ = Util.InDim(zDim, retZ);
+                    boolean inX = Util.InDim(retX, xDim);
+                    boolean inY = Util.InDim(retY, yDim);
+                    boolean inZ = Util.InDim(retZ, zDim);
                     if ((!wrapX && !inX) || (!wrapY && !inY) || (!wrapZ && !inZ)) {
                         continue;
                     }
@@ -500,7 +428,7 @@ public class AgentGrid3D<T extends AgentBaseSpatial> extends GridBase3D implemen
         for (T a : this) {
             a.Dispose();
         }
-        if(GetPop()>0){
+        if(Pop()>0){
             throw new IllegalStateException("Something is wrong with Reset, tell Rafael Bravo to fix this!");
         }
 //        tick=0;
@@ -510,32 +438,32 @@ public class AgentGrid3D<T extends AgentBaseSpatial> extends GridBase3D implemen
         for (T a : this) {
             a.Dispose();
         }
-        if(GetPop()>0){
+        if(Pop()>0){
             throw new IllegalStateException("Something is wrong with Reset, tell Rafael Bravo to fix this!");
         }
         this.agents.Reset();
 //        tick=0;
     }
 
-    public int CountAt(int i){
+    public int PopAt(int i){
         T agent=grid[i];
         if(agent==null){
             return 0;
         }
         return agent.GetCountOnSquare();
     }
-    public int CountAt(int x,int y,int z){
-        return CountAt(I(x,y,z));
+    public int PopAt(int x,int y,int z){
+        return PopAt(I(x,y,z));
     }
-    public int CountAt(int i,AgentToBool EvalAgent){
+    public int PopAt(int i,AgentToBool EvalAgent){
         T agent=grid[i];
         if(agent==null){
             return 0;
         }
         return agent.GetCountOnSquareEval(EvalAgent);
     }
-    public int CountAt(int x,int y,int z,AgentToBool EvalAgent){
-        return CountAt(I(x,y,z),EvalAgent);
+    public int PopAt(int x,int y,int z,AgentToBool EvalAgent){
+        return PopAt(I(x,y,z),EvalAgent);
     }
 
     ArrayList<T> GetFreshAgentSearchArr(){
@@ -562,9 +490,9 @@ public class AgentGrid3D<T extends AgentBaseSpatial> extends GridBase3D implemen
                     int retX = xSq;
                     int retY = ySq;
                     int retZ = zSq;
-                    boolean inX = Util.InDim(xDim, retX);
-                    boolean inY = Util.InDim(yDim, retY);
-                    boolean inZ = Util.InDim(zDim, retZ);
+                    boolean inX = Util.InDim(retX, xDim);
+                    boolean inY = Util.InDim(retY, yDim);
+                    boolean inZ = Util.InDim(retZ, zDim);
                     if ((!wrapX && !inX) || (!wrapY && !inY) || (!wrapZ && ! inZ)) {
                         continue;
                     }
@@ -597,144 +525,6 @@ public class AgentGrid3D<T extends AgentBaseSpatial> extends GridBase3D implemen
         return nAgents;
     }
 
-    public int ApplyAgentsSQ(int i, AgentToAction<T> action) {
-        return ApplyAgentsSQ(-1, i, null,null,action);
-    }
-    public int ApplyAgentsSQ(int x, int y,int z, AgentToAction<T> action) {
-        return ApplyAgentsSQ(-1, I(x,y,z), null,null,action);
-    }
-    public int ApplyAgentsSQ(int i, AgentToBool<T> evalAgent, AgentToAction<T> action) {
-        return ApplyAgentsSQ(-1, i, null,evalAgent,action);
-    }
-    public int ApplyAgentsSQ(int x, int y,int z, AgentToBool<T> evalAgent, AgentToAction<T> action) {
-        return ApplyAgentsSQ(-1, I(x,y,z), null,evalAgent,action);
-    }
-    public int ApplyAgentsSQ(int nActions, int x, int y,int z, Rand rn, AgentToAction<T> action) {
-        return ApplyAgentsSQ(nActions, I(x,y,z), rn,null,action);
-    }
-    public int ApplyAgentsSQ(int nActions, int i, Rand rn, AgentToAction<T> action) {
-        return ApplyAgentsSQ(nActions, i, rn,null,action);
-
-    }
-    public int ApplyAgentsSQ(int nActions, int x, int y,int z, Rand rn, AgentToBool<T> evalAgent, AgentToAction<T> action) {
-        return ApplyAgentsSQ(nActions, I(x,y,z), rn,evalAgent,action);
-    }
-    public int ApplyAgentsSQ(int nActions, int i, Rand rn, AgentToBool<T> evalAgent, AgentToAction<T> action) {
-        ArrayList<T> agents = GetFreshAgentSearchArr();
-        iagentSearch++;
-        if(evalAgent!=null) {
-            GetAgents(agents, evalAgent, i);
-        }
-        else{
-            GetAgents(agents, i);
-        }
-        int nFound = agents.size();
-        if (nActions < 0 || nFound <= nActions) {
-            for (T agent : agents) {
-                action.Action(agent,nFound);
-            }
-        } else {
-            for (int j = 0; j < nActions; j++) {
-                int iRand = rn.Int(nFound - j);
-                T agent=agents.get(iRand);
-                action.Action(agent, nFound);
-                agents.set(iRand,agents.get(nFound - j - 1));
-            }
-        }
-        iagentSearch--;
-        return nFound;
-    }
-    public int ApplyAgentsHood(int[]hood, int centerI, AgentToAction<T> action) {
-        return ApplyAgentsHood(-1, hood,ItoX(centerI),ItoY(centerI),ItoZ(centerI), null, null, null,action,wrapX,wrapY,wrapZ);
-    }
-    public int ApplyAgentsHood(int[]hood, int centerX, int centerY, int centerZ, AgentToAction<T> action) {
-        return ApplyAgentsHood(-1, hood,centerX,centerY,centerZ, null, null, null,action,wrapX,wrapY,wrapZ);
-    }
-    public int ApplyAgentsHood(int[]hood, int centerI, AgentToBool<T> evalAgent, AgentToAction<T> action) {
-        return ApplyAgentsHood(-1, hood,ItoX(centerI),ItoY(centerI),ItoZ(centerI), null, null, evalAgent,action,wrapX,wrapY,wrapZ);
-    }
-    public int ApplyAgentsHood(int[]hood, int centerX, int centerY, int centerZ, AgentToBool<T> evalAgent, AgentToAction<T> action) {
-        return ApplyAgentsHood(-1, hood,centerX,centerY,centerZ, null, null, evalAgent,action,wrapX,wrapY,wrapZ);
-    }
-    public int ApplyAgentsHood(int[]hood, int centerI, int nActions, Rand rn, AgentToAction<T> action) {
-        return ApplyAgentsHood(nActions, hood,ItoX(centerI),ItoY(centerI),ItoZ(centerI), rn, null, null,action,wrapX,wrapY,wrapZ);
-    }
-    public int ApplyAgentsHood(int nActions, int[] hood, int centerX, int centerY, int centerZ, Rand rn, AgentToAction<T> action) {
-        return ApplyAgentsHood(nActions, hood,centerX,centerY,centerZ, rn, null, null,action,wrapX,wrapY,wrapZ);
-    }
-    public int ApplyAgentsHood(int nActions, int[] hood, int centerI, Rand rn, AgentToBool<T> evalAgent, AgentToAction<T> action) {
-        return ApplyAgentsHood(nActions, hood,ItoX(centerI),ItoY(centerI),ItoZ(centerI), rn, null, evalAgent,action,wrapX,wrapY,wrapZ);
-    }
-    public int ApplyAgentsHood(int nActions, int[] hood, int centerX, int centerY, int centerZ, Rand rn, AgentToBool<T> evalAgent, AgentToAction<T> action) {
-        return ApplyAgentsHood(nActions, hood,centerX,centerY,centerZ, rn, null, evalAgent,action,wrapX,wrapY,wrapZ);
-    }
-    public int ApplyAgentsHood(int nActions, int[] hood, int centerI, Rand rn, AgentToBool<T> evalAgent, AgentToAction<T> action, boolean wrapX, boolean wrapY, boolean wrapZ) {
-        return ApplyAgentsHood(nActions, hood,ItoX(centerI),ItoY(centerI),ItoZ(centerI), rn, null, evalAgent,action,wrapX,wrapY,wrapZ);
-    }
-    public int ApplyAgentsHood(int[] hood, int centerX, int centerY, int centerZ, Rand rn, IntToInt GetNumActions,AgentToAction<T> action) {
-        return ApplyAgentsHood(-1, hood,centerX,centerY,centerZ, rn, GetNumActions, null,action,wrapX,wrapY,wrapZ);
-    }
-    public int ApplyAgentsHood(int[] hood, int centerI, Rand rn, AgentToBool<T> evalAgent,IntToInt GetNumActions, AgentToAction<T> action) {
-        return ApplyAgentsHood(-1, hood,ItoX(centerI),ItoY(centerI),ItoZ(centerI), rn, GetNumActions, evalAgent,action,wrapX,wrapY,wrapZ);
-    }
-    public int ApplyAgentsHood(int[] hood, int centerX, int centerY, int centerZ, Rand rn,IntToInt GetNumActions, AgentToBool<T> evalAgent, AgentToAction<T> action) {
-        return ApplyAgentsHood(-1, hood,centerX,centerY,centerZ, rn, GetNumActions, evalAgent,action,wrapX,wrapY,wrapZ);
-    }
-    public int ApplyAgentsHood(int[] hood, int centerI, Rand rn,IntToInt GetNumActions, AgentToBool<T> evalAgent, AgentToAction<T> action, boolean wrapX, boolean wrapY, boolean wrapZ) {
-        return ApplyAgentsHood(-1, hood,ItoX(centerI),ItoY(centerI),ItoZ(centerI), rn, GetNumActions, evalAgent,action,wrapX,wrapY,wrapZ);
-    }
-    int ApplyAgentsHood(int nActions, int[] hood, int centerX, int centerY, int centerZ, Rand rn, IntToInt GetNumActions, AgentToBool<T> evalAgent, AgentToAction<T> action, boolean wrapX, boolean wrapY, boolean wrapZ) {
-        ArrayList<T> agents = GetFreshAgentSearchArr();
-        iagentSearch++;
-        for (int i = hood.length/4; i < hood.length; i+=3) {
-            int x = hood[i] + centerX;
-            int y = hood[i + 1] + centerY;
-            int z = hood[i + 2] + centerZ;
-            if (!Util.InDim(xDim, x)) {
-                if (wrapX) {
-                    x = Util.ModWrap(x, xDim);
-                } else {
-                    continue;
-                }
-            }
-            if (!Util.InDim(yDim, y)) {
-                if (wrapY) {
-                    y = Util.ModWrap(y, yDim);
-                } else {
-                    continue;
-                }
-            }
-            if (!Util.InDim(zDim, z)) {
-                if (wrapZ) {
-                    z = Util.ModWrap(z, zDim);
-                } else {
-                    continue;
-                }
-            }
-            if(evalAgent!=null) {
-                GetAgents(agents, evalAgent, x, y,z);
-            }
-            else{
-                GetAgents(agents, x, y,z);
-            }
-        }
-        int nFound = agents.size();
-        if (nActions < 0 || nFound <= nActions) {
-            for (T agent : agents) {
-                action.Action(agent,nFound);
-            }
-        } else {
-            for (int i = 0; i < nActions; i++) {
-                int iRand = rn.Int(nFound - i);
-                T agent=agents.get(iRand);
-                action.Action(agent, nFound);
-                agents.set(iRand,agents.get(nFound - i - 1));
-            }
-        }
-        iagentSearch--;
-        return nFound;
-    }
-
     int SubsetAgents(ArrayList<T>agents, AgentToBool<T> EvalAgent){
         int len=agents.size();
         int ret=0;
@@ -749,10 +539,10 @@ public class AgentGrid3D<T extends AgentBaseSpatial> extends GridBase3D implemen
     }
     public T RandomAgent(Rand rn){
         CleanAgents();
-        if(GetPop()==0){
+        if(Pop()==0){
             return null;
         }
-        return agents.agents.get(rn.Int(GetPop()));
+        return agents.agents.get(rn.Int(Pop()));
     }
     /**
      * appends to the provided arraylist all agents on the square at the specified coordinates
@@ -782,17 +572,17 @@ public class AgentGrid3D<T extends AgentBaseSpatial> extends GridBase3D implemen
     public void GetAgentsSafe(ArrayList<T>retAgentList, int x, int y, int z){
         if (wrapX) {
             x = Util.ModWrap(x, xDim);
-        } else if (!Util.InDim(xDim, x)) {
+        } else if (!Util.InDim(x, xDim)) {
             return;
         }
         if (wrapY) {
             y = Util.ModWrap(y, yDim);
-        } else if (!Util.InDim(yDim, y)) {
+        } else if (!Util.InDim(y, yDim)) {
             return;
         }
         if (wrapZ) {
             z = Util.ModWrap(z, yDim);
-        } else if (!Util.InDim(yDim, z)) {
+        } else if (!Util.InDim(z, yDim)) {
             return;
         }
         T agent= GetAgent(x,y,z);
@@ -814,16 +604,9 @@ public class AgentGrid3D<T extends AgentBaseSpatial> extends GridBase3D implemen
     /**
      * returns the number of agents that are alive in the typeGrid
      */
-    public int GetPop(){
+    public int Pop(){
         //gets population
         return agents.pop;
-    }
-
-    public double DistSquared(double x1, double y1,double z1, double x2, double y2,double z2, boolean wrapX, boolean wrapY,boolean wrapZ){
-        return Util.DistSquared(x1,y1,z1,x2,y2,z2, xDim, yDim,zDim, wrapX,wrapY,wrapZ);
-    }
-    public double DistSquared(double x1, double y1,double z1, double x2, double y2,double z2){
-        return Util.DistSquared(x1,y1,z1,x2,y2,z2, xDim, yDim,zDim, wrapX,wrapY,wrapZ);
     }
 
     @Override
@@ -952,7 +735,7 @@ public class AgentGrid3D<T extends AgentBaseSpatial> extends GridBase3D implemen
         double radSq=rad*rad;
         for (int i = 0; i < agents.size(); i++) {
             Agent3DBase agent=(Agent3DBase)agents.get(i);
-            if(DistSquared(x,y,z,agent.Xpt(),agent.Ypt(),agent.Zpt(),wrapX,wrapY,wrapZ)<radSq&&EvalAgent.EvalAgent((T)agent)){
+            if(DistSquared(x,y,z,agent.Xpt(),agent.Ypt(),agent.Zpt())<radSq&&EvalAgent.EvalAgent((T)agent)){
                 agents.set(ct,agents.get(i));
                 ct++;
             }

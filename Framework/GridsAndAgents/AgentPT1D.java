@@ -150,24 +150,6 @@ public class AgentPT1D<T extends AgentGrid1D> extends Agent1DBase<T>{
         ptX =newX;
     }
 
-    /**
-     * Moves the agent to the specified coordinates, and either stops or wraps around at the edges
-     */
-    public void MoveSafePT(double newX, boolean wrapX){
-        if(!alive){
-            throw new RuntimeException("Attempting to move dead agent");
-        }
-        if (G().In(newX)) {
-            MovePT(newX);
-            return;
-        }
-        if (wrapX) {
-            newX = ModWrap(newX, G().xDim);
-        } else if (!InDim(G().xDim, newX)) {
-            newX = Xpt();
-        }
-        MovePT(newX);
-    }
     public void MoveSafePT(double newX){
         if(!alive){
             throw new RuntimeException("Attempting to move dead agent");
@@ -177,8 +159,8 @@ public class AgentPT1D<T extends AgentGrid1D> extends Agent1DBase<T>{
             return;
         }
         if (G().wrapX) {
-            newX = ModWrap(newX, G().xDim);
-        } else if (!InDim(G().xDim, newX)) {
+            newX = ModWrap(newX, G().moveSafeXdim);
+        } else if (!InDim(newX, G().xDim)) {
             newX = Xpt();
         }
         MovePT(newX);
@@ -197,8 +179,11 @@ public class AgentPT1D<T extends AgentGrid1D> extends Agent1DBase<T>{
     public int Xsq(){
         return (int) ptX;
     }
+    public int GetAge(){
+        return G().GetTick()-birthTick;
+    }
 
-    public<T extends AgentPT1D> double Xdisp(T other, boolean wrapX){
-        return wrapX? DistWrap(other.Xpt(),Xpt(),G().xDim):Xpt()-other.Xpt();
+    public<T extends AgentPT1D> double Xdisp(T other){
+        return G().wrapX? DispWrap(other.Xpt(),Xpt(),G().xDim):Xpt()-other.Xpt();
     }
 }

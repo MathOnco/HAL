@@ -1,7 +1,6 @@
 package Framework.GridsAndAgents;
 
-import Framework.Interfaces.OverlapForceResponse;
-import Framework.Interfaces.OverlapNeighborForceResponse;
+import Framework.Interfaces.OverlapForceResponse2D;
 import Framework.Rand;
 
 import java.util.ArrayList;
@@ -20,33 +19,8 @@ public class SphericalAgent2D<A extends SphericalAgent2D,G extends AgentGrid2D<A
         this.xVel=0;
         this.yVel=0;
     }
-    public double SumForces(double interactionRad, ArrayList<A> scratchAgentList, OverlapForceResponse OverlapFun, boolean wrapX, boolean wrapY){
-        scratchAgentList.clear();
-        double sum=0;
-        G().GetAgentsRadApprox(scratchAgentList,Xpt(),Ypt(),interactionRad,wrapX,wrapY);
-        for (A a : scratchAgentList) {
-            if(a!=this){
-                double xComp=Xdisp(a,wrapX);
-                double yComp=Ydisp(a,wrapY);
-                if(xComp==0&&yComp==0){
-                    xComp=Math.random()-0.5;
-                    yComp=Math.random()-0.5;
-                }
-                double dist=Norm(xComp,yComp);
-                if(dist<interactionRad) {
-                    double touchDist = (radius + a.radius) - dist;
-                    double force=OverlapFun.CalcForce(touchDist);
-                    xVel+=(xComp/dist)*force;
-                    yVel+=(yComp/dist)*force;
-                    if(force>0) {
-                        sum += Math.abs(force);
-                    }
-                }
-            }
-        }
-        return sum;
-    }
-    public double SumForces(double interactionRad, ArrayList<A> scratchAgentList, OverlapNeighborForceResponse OverlapFun){
+    public double SumForces(double interactionRad, OverlapForceResponse2D<A> OverlapFun){
+        ArrayList<A> scratchAgentList=G().GetFreshAgentSearchArr();
         scratchAgentList.clear();
         double sum=0;
         G().GetAgentsRadApprox(scratchAgentList,Xpt(),Ypt(),interactionRad,G().wrapX,G().wrapY);
@@ -72,25 +46,12 @@ public class SphericalAgent2D<A extends SphericalAgent2D,G extends AgentGrid2D<A
         }
         return sum;
     }
-    public double SumForces(double interactionRad,OverlapForceResponse OverlapFun){
-        ArrayList<A> scratcchAgentList=G().GetFreshAgentSearchArr();
-        double ret= SumForces(interactionRad,scratcchAgentList,OverlapFun);
-        scratcchAgentList.clear();
-        G().usedAgentSearches.add(scratcchAgentList);
-        return ret;
-    }
-    public double SumForces(double interactionRad,OverlapNeighborForceResponse OverlapFun){
-        ArrayList<A> scratcchAgentList=G().GetFreshAgentSearchArr();
-        double ret= SumForces(interactionRad,scratcchAgentList,OverlapFun);
-        scratcchAgentList.clear();
-        G().usedAgentSearches.add(scratcchAgentList);
-        return ret;
-    }
-    public double SumForces(double interactionRad, ArrayList<A> scratchAgentList, OverlapForceResponse OverlapFun){
+    public <T extends SphericalAgent2D> double SumForces(double interactionRad, AgentGrid2D<T>otherGrid, OverlapForceResponse2D<T> OverlapFun){
+        ArrayList<T> scratchAgentList=otherGrid.GetFreshAgentSearchArr();
         scratchAgentList.clear();
         double sum=0;
-        G().GetAgentsRadApprox(scratchAgentList,Xpt(),Ypt(),interactionRad,G().wrapX,G().wrapY);
-        for (A a : scratchAgentList) {
+        otherGrid.GetAgentsRadApprox(scratchAgentList,Xpt(),Ypt(),interactionRad,G().wrapX,G().wrapY);
+        for (T a : scratchAgentList) {
             if(a!=this){
                 double xComp=Xdisp(a,G().wrapX);
                 double yComp=Ydisp(a,G().wrapY);
@@ -101,7 +62,7 @@ public class SphericalAgent2D<A extends SphericalAgent2D,G extends AgentGrid2D<A
                 double dist=Norm(xComp,yComp);
                 if(dist<interactionRad) {
                     double touchDist = (radius + a.radius) - dist;
-                    double force=OverlapFun.CalcForce(touchDist);
+                    double force=OverlapFun.CalcForce(touchDist,a);
                     xVel+=(xComp/dist)*force;
                     yVel+=(yComp/dist)*force;
                     if(force>0) {
@@ -113,9 +74,6 @@ public class SphericalAgent2D<A extends SphericalAgent2D,G extends AgentGrid2D<A
         return sum;
     }
 
-    public void ForceMove(boolean wrapX,boolean wrapY){
-        MoveSafePT(Xpt()+xVel,Ypt()+yVel,wrapX,wrapY);
-    }
     public void ApplyFriction(double frictionConst){
         xVel*=frictionConst;
         yVel*=frictionConst;
@@ -130,22 +88,14 @@ public class SphericalAgent2D<A extends SphericalAgent2D,G extends AgentGrid2D<A
         }
     }
     public void ForceMove() {
-        MoveSafePT(Xpt() + xVel, Ypt() + yVel, G().wrapX, G().wrapY);
-    }
-    public A Divide(double[] scratchCoordArr, Rand rn, double divRadius, boolean wrapX, boolean wrapY){
-        if(rn!=null){
-            rn.RandomPointOnCircleEdge(divRadius, scratchCoordArr);
-        }
-        A child=G().NewAgentPTSafe(Xpt()+scratchCoordArr[0],Ypt()+scratchCoordArr[1],Xpt(),Ypt(),wrapX,wrapY);
-        MoveSafePT(Xpt()-scratchCoordArr[0],Ypt()-scratchCoordArr[1],wrapX,wrapY);
-        return child;
+        MoveSafePT(Xpt() + xVel, Ypt() + yVel);
     }
     public A Divide(double divRadius, double[] scratchCoordArr, Rand rn){
         if(rn!=null){
             rn.RandomPointOnCircleEdge(divRadius, scratchCoordArr);
         }
-        A child=G().NewAgentPTSafe(Xpt()+scratchCoordArr[0],Ypt()+scratchCoordArr[1],Xpt(),Ypt(),G().wrapX,G().wrapY);
-        MoveSafePT(Xpt()-scratchCoordArr[0],Ypt()-scratchCoordArr[1],G().wrapX,G().wrapY);
+        A child=G().NewAgentPTSafe(Xpt()+scratchCoordArr[0],Ypt()+scratchCoordArr[1],Xpt(),Ypt());
+        MoveSafePT(Xpt()-scratchCoordArr[0], Ypt()-scratchCoordArr[1]);
         return child;
     }
 }

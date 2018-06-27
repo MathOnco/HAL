@@ -4,8 +4,7 @@ import Examples.MarkModel3.Cell;
 import Examples.MarkModel3.Diff;
 import Examples.MarkModel3.Drug;
 import Examples.MarkModel3.Tissue;
-import Framework.Extensions.PDEGrid2DCoarse;
-import Framework.Gui.GuiGrid;
+import Framework.Gui.UIGrid;
 
 import static Examples.MarkModel3.Tissue.NORMAL;
 import static Examples.MarkModel3.Tissue.TUMOR;
@@ -34,7 +33,7 @@ public class Chemo<C extends Cell<C,T>,T extends Tissue<C>> extends Drug<C,T> {
     }
 
     @Override
-    public void Draw(GuiGrid vis) {
+    public void Draw(UIGrid vis) {
         vis.DrawGridDiff(conc.grid,(v)->HeatMapRGB(v));
     }
 

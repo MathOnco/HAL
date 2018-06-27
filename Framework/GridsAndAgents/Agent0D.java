@@ -19,6 +19,10 @@ abstract public class Agent0D<T extends AgentGrid0D> extends AgentBase<T> {
         }
     }
 
+    public int GetAge(){
+        return birthTick-G().GetTick();
+    }
+
     /**
      * Gets the index of the square that the agent occupies
      */

@@ -4,12 +4,9 @@ package Examples.GasParticles;
 import Framework.GridsAndAgents.AgentGrid2D;
 import Framework.GridsAndAgents.AgentPT2D;
 import Framework.Gui.GridWindow;
-import Framework.Gui.GuiWindow;
 import Framework.Rand;
 
-import static Framework.Util.BLACK;
 import static Framework.Util.HeatMapRGB;
-import static Framework.Util.WHITE;
 
 class Particle extends AgentPT2D<Gas> {
     public void BrownianMotion(){
@@ -34,7 +31,7 @@ public class Gas extends AgentGrid2D<Particle> {
         for (int i = 0; i < length; i++) {
             //sets each pixel of the display based on the density at the same model grid index
             //0 cells will be colored black, 4 or more cells will be colored white
-            display.SetPix(i,HeatMapRGB(CountAt(i),0,4));
+            display.SetPix(i,HeatMapRGB(PopAt(i),0,4));
         }
     }
     public static void main(String[] args) {

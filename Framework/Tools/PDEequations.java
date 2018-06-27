@@ -107,7 +107,7 @@ public class PDEequations {
                 for (z = 0; z < zDim; z++) {
                     //6 squares to check
                     valSum = 0;
-                    if (InDim(xDim, x + 1)) {
+                    if (InDim(x + 1, xDim)) {
                         valSum += inGrid[(x + 1) * yDim * zDim + (y) * zDim + (z)];
                     }  else if (boundaryCond) {
                         valSum += boundaryValue;
@@ -117,7 +117,7 @@ public class PDEequations {
                         valSum+=inGrid[(x-1)*yDim*zDim+(y)*zDim+(z)];
                     }
 
-                    if (InDim(xDim, x - 1)) {
+                    if (InDim(x - 1, xDim)) {
                         valSum += inGrid[(x - 1) * yDim * zDim + (y) * zDim + (z)];
                     }  else if (boundaryCond) {
                         valSum += boundaryValue;
@@ -127,7 +127,7 @@ public class PDEequations {
                         valSum += inGrid[(x + 1) * yDim * zDim + (y) * zDim + (z)];
                     }
 
-                    if (InDim(yDim, y + 1)) {
+                    if (InDim(y + 1, yDim)) {
                         valSum += inGrid[(x) * yDim * zDim + (y + 1) * zDim + (z)];
                     } else if (boundaryCond) {
                         valSum += boundaryValue;
@@ -137,7 +137,7 @@ public class PDEequations {
                         valSum += inGrid[(x) * yDim * zDim + (y-1) * zDim + (z)];
                     }
 
-                    if (InDim(yDim, y - 1)) {
+                    if (InDim(y - 1, yDim)) {
                         valSum += inGrid[(x) * yDim * zDim + (y - 1) * zDim + (z)];
                     } else if (boundaryCond) {
                         valSum += boundaryValue;
@@ -147,7 +147,7 @@ public class PDEequations {
                         valSum += inGrid[(x) * yDim * zDim + (y+1) * zDim + (z)];
                     }
 
-                    if (InDim(zDim, z + 1)) {
+                    if (InDim(z + 1, zDim)) {
                         valSum += inGrid[(x) * yDim * zDim + (y) * zDim + (z+1)];
                     } else if (boundaryCond) {
                         valSum += boundaryValue;
@@ -157,7 +157,7 @@ public class PDEequations {
                         valSum += inGrid[(x) * yDim * zDim + (y) * zDim + (z-1)];
                     }
 
-                    if (InDim(zDim, z - 1)) {
+                    if (InDim(z - 1, zDim)) {
                         valSum += inGrid[(x) * yDim * zDim + (y) * zDim + (z-1)];
                     } else if (boundaryCond) {
                         valSum += boundaryValue;
@@ -651,7 +651,7 @@ public class PDEequations {
         for (x = 0; x < xDim; x++) {
             for (y = 0; y < yDim; y++) {
                 int i=x*yDim+y;
-                if(InDim(xDim,x+1)){
+                if(InDim(x+1, xDim)){
                     vXp1=xVels[(x+1)*yDim+y];
                 }
                 else if(boundaryCond){
@@ -660,7 +660,7 @@ public class PDEequations {
                 else{
                     vXp1=xVels[(0)*yDim+y];
                 }
-                if(InDim(xDim,x-1)){
+                if(InDim(x-1, xDim)){
                     vXm1=xVels[(x-1)*yDim+y];
                 }
                 else if(boundaryCond){
@@ -670,7 +670,7 @@ public class PDEequations {
                     vXm1=xVels[(xDim-1)*yDim+y];
                 }
 
-                if(InDim(yDim,y+1)){
+                if(InDim(y+1, yDim)){
                     vYp1=yVels[x*yDim+(y+1)];
                 }
                 else if(boundaryCond){
@@ -679,7 +679,7 @@ public class PDEequations {
                 else{
                     vYp1=yVels[x*yDim+(0)];
                 }
-                if(InDim(yDim,y-1)){
+                if(InDim(y-1, yDim)){
                     vYm1=yVels[x*yDim+(y-1)];
                 }
                 else if(boundaryCond){
@@ -695,7 +695,7 @@ public class PDEequations {
         }
     }
     public static double Displaced1D(int x, double[] vals, int xDim, int fallbackX, boolean boundaryCond, double boundaryValue, boolean wrapX){
-        boolean inX=InDim(xDim,x);
+        boolean inX=InDim(x, xDim);
         if(inX){
             return vals[x];
         }
@@ -709,8 +709,8 @@ public class PDEequations {
     }
 
     public static double Displaced2D(int x, int y, double[] vals, int xDim, int yDim, int fallbackX, int fallbackY, boolean boundaryCond, double boundaryValue, boolean wrapX, boolean wrapY){
-        boolean inX=InDim(xDim,x);
-        boolean inY=InDim(yDim,y);
+        boolean inX=InDim(x, xDim);
+        boolean inY=InDim(y, yDim);
         if(inX&&inY){
             return vals[x*yDim+y];
         }
@@ -733,7 +733,7 @@ public class PDEequations {
     }
 
     public static double DisplacedX2D(int x, int y, double[] vals, int xDim, int yDim, int fallbackX, boolean boundaryCond, double boundaryValue, boolean wrapX){
-        if(InDim(xDim,x)){
+        if(InDim(x, xDim)){
             return vals[x*yDim+y];
         }
         if(boundaryCond){
@@ -749,7 +749,7 @@ public class PDEequations {
     }
 
     public static double DisplacedY2D(int x, int y, double[] vals, int xDim, int yDim, int fallbackY, boolean boundaryCond, double boundaryValue, boolean wrapY){
-        if(InDim(yDim,y)){
+        if(InDim(y, yDim)){
             return vals[x*yDim+y];
         }
         if(boundaryCond){
@@ -764,7 +764,7 @@ public class PDEequations {
         return vals[x*yDim+y];
     }
     public static double DisplacedX3D(int x, int y, int z, double[] vals, int xDim, int yDim, int zDim, int fallbackX, boolean boundaryCond, double boundaryValue, boolean wrapX){
-        if(InDim(xDim,x)){
+        if(InDim(x, xDim)){
             return vals[x*yDim*zDim+y*zDim+z];
         }
         if(boundaryCond){
@@ -779,7 +779,7 @@ public class PDEequations {
         return vals[x*yDim*zDim+y*zDim+z];
     }
     public static double DisplacedY3D(int x, int y, int z, double[] vals, int xDim, int yDim, int zDim, int fallbackY, boolean boundaryCond, double boundaryValue, boolean wrapY){
-        if(InDim(yDim,y)){
+        if(InDim(y, yDim)){
             return vals[x*yDim*zDim+y*zDim+z];
         }
         if(boundaryCond){
@@ -794,7 +794,7 @@ public class PDEequations {
         return vals[x*yDim*zDim+y*zDim+z];
     }
     public static double DisplacedZ3D(int x, int y, int z, double[] vals, int xDim, int yDim, int zDim, int fallbackZ, boolean boundaryCond, double boundaryValue, boolean wrapZ){
-        if(InDim(zDim,z)){
+        if(InDim(z, zDim)){
             return vals[x*yDim*zDim+y*zDim+z];
         }
         if(boundaryCond){

@@ -2,9 +2,9 @@ package Examples.GameOfLife;
 
 import Framework.GridsAndAgents.AgentGrid2D;
 import Framework.GridsAndAgents.AgentSQ2Dunstackable;
-import Framework.Gui.GuiGrid;
-import Framework.Gui.GuiLabel;
-import Framework.Gui.GuiWindow;
+import Framework.Gui.UIGrid;
+import Framework.Gui.UILabel;
+import Framework.Gui.UIWindow;
 
 import java.util.Random;
 
@@ -46,14 +46,14 @@ class GOLAgent extends AgentSQ2Dunstackable<GOLGrid> {
 
 public class GOLGrid extends AgentGrid2D<GOLAgent> {
     public int liveCt;
-    final GuiGrid vis;
+    final UIGrid vis;
     final int[] mooreHood;
     final int runTicks;
     final int refreshRateMS;
     int tick;
     final static int LIVE = RGB(1,0,0);
     final static int DEAD = RGB(0,0,0);
-    GOLGrid(int x, int y, double livingProb, int runTicks, int refreshRateMS, GuiGrid vis){
+    GOLGrid(int x, int y, double livingProb, int runTicks, int refreshRateMS, UIGrid vis){
         super(x,y,GOLAgent.class,true,true);
         this.vis=vis;
         Random rn=new Random();
@@ -72,7 +72,7 @@ public class GOLGrid extends AgentGrid2D<GOLAgent> {
             a.Step();
         };
     }
-    public void Run(GuiLabel tickCt,GuiLabel popCt){
+    public void Run(UILabel tickCt, UILabel popCt){
         for (int i = 0; i < runTicks; i++) {
             StepAgents();
             tickCt.SetText("Tick "+tick);
@@ -88,10 +88,10 @@ public class GOLGrid extends AgentGrid2D<GOLAgent> {
         double livingProb=0.35;
         int runTicks=10000000;
         int refreshRate=0;
-        GuiWindow gui=new GuiWindow("GOL with Agents",true);
-        GuiLabel tickCt=new GuiLabel("Tick:______________");
-        GuiLabel popCt=new GuiLabel("Population:________________");
-        GuiGrid vis=new GuiGrid(xDim,yDim,1,2,1);
+        UIWindow gui=new UIWindow("GOL with Agents",true);
+        UILabel tickCt=new UILabel("Tick:______________");
+        UILabel popCt=new UILabel("Population:________________");
+        UIGrid vis=new UIGrid(xDim,yDim,1,2,1);
         gui.AddCol(0, tickCt);
         gui.AddCol(1, popCt);
         gui.AddCol(0, vis);

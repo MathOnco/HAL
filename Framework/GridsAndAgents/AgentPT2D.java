@@ -171,28 +171,6 @@ public class AgentPT2D<T extends AgentGrid2D> extends Agent2DBase<T>{
         ptY =newY;
     }
 
-    /**
-     * Moves the agent to the specified coordinates, and either stops or wraps around at the edges
-     */
-    public void MoveSafePT(double newX, double newY, boolean wrapX, boolean wrapY){
-        if(!alive){
-            throw new RuntimeException("Attempting to move dead agent");
-        }
-        if (G().In(newX, newY)) {
-            MovePT(newX, newY);
-            return;
-        }
-        if (wrapX) {
-            newX = ModWrap(newX, G().xDim);
-        } else if (!InDim(G().xDim, newX)) {
-            newX = Xpt();
-        }
-        if (wrapY) {
-            newY = ModWrap(newY, G().yDim);
-        } else if (!InDim(G().yDim, newY))
-            newY = Ypt();
-        MovePT(newX,newY);
-    }
     public void MoveSafePT(double newX, double newY){
         if(!alive){
             throw new RuntimeException("Attempting to move dead agent");
@@ -202,13 +180,13 @@ public class AgentPT2D<T extends AgentGrid2D> extends Agent2DBase<T>{
             return;
         }
         if (G().wrapX) {
-            newX = ModWrap(newX, G().xDim);
-        } else if (!InDim(G().xDim, newX)) {
+            newX = ModWrap(newX, G().moveSafeXdim);
+        } else if (!InDim(newX, G().xDim)) {
             newX = Xpt();
         }
         if (G().wrapY) {
-            newY = ModWrap(newY, G().yDim);
-        } else if (!InDim(G().yDim, newY))
+            newY = ModWrap(newY, G().moveSafeYdim);
+        } else if (!InDim(newY, G().yDim))
             newY = Ypt();
         MovePT(newX,newY);
     }
@@ -233,6 +211,9 @@ public class AgentPT2D<T extends AgentGrid2D> extends Agent2DBase<T>{
     public int Xsq(){
         return (int) ptX;
     }
+    public int GetAge(){
+        return G().GetTick()-birthTick;
+    }
 
     /**
      * gets the yDim coordinate of the square that the agent occupies
@@ -241,9 +222,15 @@ public class AgentPT2D<T extends AgentGrid2D> extends Agent2DBase<T>{
         return (int) ptY;
     }
     public<T extends AgentPT2D> double Xdisp(T other, boolean wrapX){
-        return wrapX? DistWrap(other.Xpt(),Xpt(),G().xDim):Xpt()-other.Xpt();
+        return wrapX? DispWrap(other.Xpt(),Xpt(),G().xDim):Xpt()-other.Xpt();
     }
     public <T extends AgentPT2D> double Ydisp(T other, boolean wrapY){
-        return wrapY? DistWrap(other.Ypt(),Ypt(),G().yDim):Ypt()-other.Ypt();
+        return wrapY? DispWrap(other.Ypt(),Ypt(),G().yDim):Ypt()-other.Ypt();
+    }
+    public<T extends AgentPT2D> double Xdisp(T other){
+        return G().wrapX? DispWrap(other.Xpt(),Xpt(),G().xDim):Xpt()-other.Xpt();
+    }
+    public <T extends AgentPT2D> double Ydisp(T other){
+        return G().wrapY? DispWrap(other.Ypt(),Ypt(),G().yDim):Ypt()-other.Ypt();
     }
 }

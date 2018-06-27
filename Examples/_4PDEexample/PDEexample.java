@@ -4,7 +4,7 @@ import Framework.GridsAndAgents.AgentGrid2D;
 import Framework.GridsAndAgents.AgentSQ2Dunstackable;
 import Framework.GridsAndAgents.PDEGrid2D;
 import Framework.Gui.GridWindow;
-import Framework.Gui.GuiGrid;
+import Framework.Gui.UIGrid;
 import Framework.Rand;
 import Framework.Util;
 
@@ -62,7 +62,7 @@ public class PDEexample extends AgentGrid2D<SrcOrSink> {
         diff.Advection(advectionX,advectionY);
         diff.Diffusion((Math.sin(stepI*1.0/250)+1)*0.12);
     }
-    public void Draw(GuiGrid visSrcSinks, GuiGrid visDiff){
+    public void Draw(UIGrid visSrcSinks, UIGrid visDiff){
         for (SrcOrSink srcOrSink : this) {
             visSrcSinks.SetPix(srcOrSink.Isq(),srcOrSink.type);//draw sources and sinks
         }
@@ -74,7 +74,7 @@ public class PDEexample extends AgentGrid2D<SrcOrSink> {
     public static void main(String[] args) {
         int x=400,y=400,scale=2;
         GridWindow visCells=new GridWindow(x,y,scale);
-        GuiGrid visDiff=new GuiGrid(x,y,scale);
+        UIGrid visDiff=new UIGrid(x,y,scale);
         visCells.AddAlphaGrid(visDiff);//facilitates alpha blending
         PDEexample ex=new PDEexample(x,y);
         ex.Setup(100,10);

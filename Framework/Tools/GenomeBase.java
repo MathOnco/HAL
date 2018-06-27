@@ -187,7 +187,7 @@ public abstract class GenomeBase<T extends GenomeBase> implements Iterable<T>{
         return myTracker.nTreeGenomes;
     }
 
-    public long GetTotalPop() {
+    public long Pop() {
         return myTracker.totalPop;
     }
 

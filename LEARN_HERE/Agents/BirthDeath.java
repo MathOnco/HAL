@@ -3,7 +3,7 @@ package LEARN_HERE.Agents;
 import Framework.GridsAndAgents.AgentSQ2Dunstackable;
 import Framework.Gui.GridWindow;
 import Framework.GridsAndAgents.AgentGrid2D;
-import Framework.Gui.GuiGrid;
+import Framework.Gui.UIGrid;
 import Framework.Rand;
 
 import static Framework.Util.*;
@@ -38,13 +38,12 @@ public class BirthDeath extends AgentGrid2D<Cell> {
     }
     public void Setup(double rad){
         int[]coords= CircleHood(true,rad);
-        int[]Is=new int[coords.length/2];
-        int nCoords= HoodToEmptyIs(coords,Is,xDim/2,yDim/2);
+        int nCoords= MapHood(coords,xDim/2,yDim/2);
         for (int i = 0; i < nCoords ; i++) {
-            NewAgentSQ(Is[i]);
+            NewAgentSQ(coords[i]);
         }
     }
-    public void Step(GuiGrid vis) {
+    public void Step(UIGrid vis) {
         for (Cell c : this) {
             c.Step();
         }

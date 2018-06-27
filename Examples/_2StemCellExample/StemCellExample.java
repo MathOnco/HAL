@@ -85,11 +85,11 @@ class StemCellCA extends AgentGrid2D<CACell> {
     int TICK_PAUSE;
     FileIO outFile;
 
-    GuiGrid vis;
-    GuiLabel tickLabel;
-    GuiLabel popLabel;
+    UIGrid vis;
+    UILabel tickLabel;
+    UILabel popLabel;
     final Rand rn;
-    public void Init(double DIV_PROB, double DEATH_PROB, double STEM_DIV_PROB, int MAX_DIVS, int TICK_PAUSE, int RUN_DURATION, String outFileName, boolean record, GuiGrid vis, GuiLabel tickLabel, GuiLabel popLabel, GuiWindow win){
+    public void Init(double DIV_PROB, double DEATH_PROB, double STEM_DIV_PROB, int MAX_DIVS, int TICK_PAUSE, int RUN_DURATION, String outFileName, boolean record, UIGrid vis, UILabel tickLabel, UILabel popLabel, UIWindow win){
         this.Reset();
         this.DIV_PROB =DIV_PROB;
         this.DEATH_PROB =DEATH_PROB;
@@ -105,7 +105,7 @@ class StemCellCA extends AgentGrid2D<CACell> {
     }
     public void Run(){
         for (int i = 0; i < RUN_DURATION; i++) {
-            if(GetPop()==0){
+            if(Pop()==0){
                 //seed a new agent if grid is empty
                 NewAgentSQ(xDim/2,yDim/2).Init(MAX_DIVS,true);
             }
@@ -124,7 +124,7 @@ class StemCellCA extends AgentGrid2D<CACell> {
             vis.TickPause(TICK_PAUSE);
             //displays the current tick
             tickLabel.SetText("Timestep"+i);
-            popLabel.SetText("Population "+GetPop());
+            popLabel.SetText("Population "+ Pop());
         }
     }
 
@@ -135,26 +135,26 @@ class StemCellCA extends AgentGrid2D<CACell> {
     }
     public static void main(String[] args){
         //main menu gui defined
-        GuiWindow win=new GuiWindow("StemCellCA menu",true);
+        UIWindow win=new UIWindow("StemCellCA menu",true);
         //ParamSet stores all menu options
-        win.AddCol(0, new GuiFileChooserField("OUTPUT_FILE","buf.csv").SetColor(RED,BLACK));
-        win.AddCol(0, new GuiDoubleField("DIV_PROB",1.0/24,0,1).SetColor(WHITE, BLACK));
-        win.AddCol(0, new GuiDoubleField("DEATH_PROB",1.0/1000,0,1).SetColor(WHITE, BLACK));
-        win.AddCol(1, new GuiDoubleField("STEM_DIV_PROB",7.0/10,0,1).SetColor(WHITE, BLACK));
-        win.AddCol(1, new GuiIntField("MAX_DIVS",11,1,100).SetColor(RED, BLACK));
-        win.AddCol(1, new GuiIntField("RUN_TICKS",20000,0,1000000).SetColor(WHITE, BLACK));
-        win.AddCol(1, new GuiIntField("TICK_PAUSE",0,0,1000).SetColor(WHITE, BLACK));
+        win.AddCol(0, new UIFileChooserInput("OUTPUT_FILE","buf.csv").SetColor(RED,BLACK));
+        win.AddCol(0, new UIDoubleInput("DIV_PROB",1.0/24,0,1).SetColor(WHITE, BLACK));
+        win.AddCol(0, new UIDoubleInput("DEATH_PROB",1.0/1000,0,1).SetColor(WHITE, BLACK));
+        win.AddCol(1, new UIDoubleInput("STEM_DIV_PROB",7.0/10,0,1).SetColor(WHITE, BLACK));
+        win.AddCol(1, new UIIntInput("MAX_DIVS",11,1,100).SetColor(RED, BLACK));
+        win.AddCol(1, new UIIntInput("RUN_TICKS",20000,0,1000000).SetColor(WHITE, BLACK));
+        win.AddCol(1, new UIIntInput("TICK_PAUSE",0,0,1000).SetColor(WHITE, BLACK));
         //Run button definition, includes run button action
         win.SetColor(BLACK);
         final StemCellCA runGrid=new StemCellCA(200,200);
-        GuiGrid vis=new GuiGrid(runGrid.xDim,runGrid.yDim,5,2,1,true);
-        GuiLabel tickLabel=new GuiLabel("TimeStep                       ");
-        GuiLabel popLabel=new GuiLabel("Population                       ");
-        win.AddCol(0,new GuiBoolField("Record",false).SetColor(RED,WHITE));
-        win.AddCol(0, new GuiButton("Run",true,(clickEvent)->{//inline function defines what happens when the run button is clicked
+        UIGrid vis=new UIGrid(runGrid.xDim,runGrid.yDim,5,2,1,true);
+        UILabel tickLabel=new UILabel("TimeStep                       ");
+        UILabel popLabel=new UILabel("Population                       ");
+        win.AddCol(0,new UIBoolInput("Record",false).SetColor(RED,WHITE));
+        win.AddCol(0, new UIButton("Run",true,(clickEvent)->{//inline function defines what happens when the run button is clicked
             //greys out the menu gui while the model is running
             win.GreyOut(true);
-            GuiWindow visGui=new GuiWindow("StemCellCA",false,(closeEvent)->{//guiwindow inline function defines what happens when the agent visualization gui is closed
+            UIWindow visGui=new UIWindow("StemCellCA",false,(closeEvent)->{//guiwindow inline function defines what happens when the agent visualization gui is closed
                 win.GreyOut(false);//allow interaction with the menu gui again
                 if(runGrid.outFile!=null) {
                     runGrid.outFile.Close();//make sure to close the file, even if execution is cut off

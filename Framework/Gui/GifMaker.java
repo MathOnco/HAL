@@ -118,7 +118,7 @@ public class GifMaker {
         }
     }
 
-    public void AddFrame(GuiGrid vis){
+    public void AddFrame(UIGrid vis){
         if(scaledBuff==null||scaledBuff.getHeight()!=vis.panel.scaleX *vis.yDim||scaledBuff.getWidth()!=vis.panel.scaleX *vis.xDim) {
             scaledBuff = new BufferedImage(vis.panel.scaleX * vis.xDim, vis.panel.scaleX * vis.yDim, BufferedImage.TYPE_INT_RGB);
             g=scaledBuff.createGraphics();
@@ -137,7 +137,7 @@ public class GifMaker {
                     imageWriteParam);
         }
         catch (Exception e){
-            System.err.println("unable to write GuiGrid to gif sequence");
+            System.err.println("unable to write UIGrid to gif sequence");
         }
     }
 

@@ -1,28 +1,28 @@
 package Testing;
 
 import Framework.Gui.GridWindow;
-import Framework.Gui.GuiGrid;
+import Framework.Gui.UIGrid;
 import Framework.Util;
 
 /**
  * Created by rafael on 9/7/17.
  */
 public class SigmoidTest {
-    public static void PlotSigmoid(GuiGrid vis,double stretch,double inflectionValue,double min,double max,int color){
+    public static void PlotSigmoid(UIGrid vis, double stretch, double inflectionValue, double min, double max, int color){
         for (int i = 0; i < vis.xDim; i++) {
             double val=Util.Rescale(i,0,vis.xDim*-8,0,1);
             double sigRes=Util.Sigmoid(val,stretch,inflectionValue,min,max);
             vis.SetPix(i, (int) (sigRes*(vis.yDim-1)),color);
         }
     }
-    public static void PlotSigmoid2(GuiGrid vis, double stretch, double inflectionValue, double min, double max, int color){
+    public static void PlotSigmoid2(UIGrid vis, double stretch, double inflectionValue, double min, double max, int color){
         for (int i = 0; i < vis.xDim; i++) {
             double val=Util.Rescale(i,0,vis.xDim*-8,0,1);
             double sigRes=Util.Sigmoid(val,stretch,inflectionValue,min,max);
             vis.SetPix(i, (int) (sigRes*(vis.yDim-1)),color);
         }
     }
-    public static void ContactSigmoid(GuiGrid vis,double bias,double neighborWeight,int nNeighbors,int color){
+    public static void ContactSigmoid(UIGrid vis, double bias, double neighborWeight, int nNeighbors, int color){
         bias=bias*2;
         neighborWeight=Math.exp(-neighborWeight*4);
         for (int i = 0; i < vis.xDim; i++) {

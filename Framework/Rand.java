@@ -67,38 +67,19 @@ public class Rand implements Serializable{
             return;
         }
         for (int i = 0; i < probabilities.length; i++) {
-            int ni = bn.SampleInt(n, probabilities[i] / pSum,this);
-            ret[i] = ni;
-            n -= ni;
-            pSum -= probabilities[i];
-        }
-        if (Math.abs(pSum - 1) > DOUBLE_EPSILON) {
-            throw new IllegalArgumentException("Multinomial probabilities array must sum to 1");
-        }
-    }
-
-    public void Multinomial(double[] probabilities, int n, int[] ret, int lenProbsToUse) {
-        double pSum = 1;
-        if(lenProbsToUse==1){
-            ret[0]=n;
-            return;
-        }
-        for (int i = 0; i < lenProbsToUse; i++) {
             if(probabilities[i]==1){
                 ret[i]=n;
                 return;
             }
-            int ni = bn.SampleInt(n, probabilities[i] / pSum,this);
-            ret[i] = ni;
-            n -= ni;
-            pSum -= probabilities[i];
+            if(probabilities[i]!=0) {
+                int ni = bn.SampleInt(n, probabilities[i] / pSum, this);
+                ret[i] = ni;
+                n -= ni;
+                pSum -= probabilities[i];
+            }
         }
-//        if (Math.abs(pSum - 1) > DOUBLE_EPSILON) {
-//            throw new IllegalArgumentException("Multinomial probabilities array must sum to 1");
-//        }
     }
 
-    //TODO: multinomial is slow for low probs...
     public void Multinomial(double[] probabilities, long n, long[] ret) {
         double pSum = 1;
         if(probabilities.length==1){
@@ -117,31 +98,8 @@ public class Rand implements Serializable{
                 pSum -= probabilities[i];
             }
         }
-//        if (Math.abs(pSum - 1) > DOUBLE_EPSILON) {
-//            throw new IllegalArgumentException("Multinomial probabilities array must sum to 1");
-//        }
     }
 
-    public void Multinomial(double[] probabilities, long n, long[] ret, int lenProbsToUse) {
-        double pSum = 1;
-        if(lenProbsToUse==1){
-            ret[0]=n;
-            return;
-        }
-        for (int i = 0; i < lenProbsToUse; i++) {
-            if(probabilities[i]==1){
-                ret[i]=n;
-                return;
-            }
-            long ni = bn.SampleLong(n, probabilities[i] / pSum,this);
-            ret[i] = ni;
-            n -= ni;
-            pSum -= probabilities[i];
-        }
-//        if (Math.abs(pSum - 1) > DOUBLE_EPSILON) {
-//            throw new IllegalArgumentException("Multinomial probabilities array must sum to 1");
-//        }
-    }
 
     /**
      * gets a random point on the surface of a sphere centered at 0,0,0, with the provided radius. the x,y,z coords are put in the double[] ret

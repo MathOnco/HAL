@@ -280,6 +280,30 @@ public final class Util {
         double c3 = (val - 0.75) * 4;
         return RGB(c2, c3, c1);
     }
+
+    static int InterpComp(double val,int minComp,int maxComp){
+        return (int)((maxComp-minComp)*val)+minComp;
+    }
+    public static int ColorMap(double val,int minColor,int maxColor){
+        return ColorMap(val,0,1,minColor,maxColor);
+    }
+    public static int ColorMap(double val, double min,double max, int minColor,int maxColor){
+        if(val<=min){
+            return minColor;
+        }
+        if(val>=max){
+            return maxColor;
+        }
+        val=(val-min)/(max-min);
+        return RGB256(InterpComp(val,GetRed256(minColor),GetRed256(maxColor)),InterpComp(val,GetGreen256(minColor),GetGreen256(maxColor)),InterpComp(val,GetBlue256(minColor),GetBlue256(maxColor)));
+    }
+    public static int ColorMap2D(double valx,double valy,int bottomLeft,int bottomRight,int topLeft,int topRight){
+        return RGB(
+                Interpolate2D(valx, valy, GetRed(bottomLeft),GetRed(bottomRight),GetRed(topLeft),GetRed(topRight)),
+                Interpolate2D(valx, valy, GetGreen(bottomLeft),GetGreen(bottomRight),GetGreen(topLeft),GetGreen(topRight)),
+                Interpolate2D(valx, valy, GetBlue(bottomLeft),GetBlue(bottomRight),GetBlue(topLeft),GetBlue(topRight))
+        );
+    }
     public static String ColorString(int color){
         return "r: "+GetRed256(color)+", g: "+GetGreen256(color)+", b: "+GetBlue256(color)+", a: "+GetAlpha256(color);
     }
@@ -383,10 +407,13 @@ public final class Util {
         sb.append(arr[end - 1]);
         return sb.toString();
     }
-    public static double Interpolate2D(double bottomLeft, double bottomRight, double topLeft, double topRight, double x, double y){
-        if(x<0||x>1||y<0||y>1){
-            throw new IllegalArgumentException("x and y for interpolation must be between 0 and 1 x: "+x+" y: "+y);
-        }
+    public static double Interpolate(double val,double min,double max){
+        val=Util.Bound(val,0,1);
+        return (max-min)*val+min;
+    }
+    public static double Interpolate2D(double x, double y, double bottomLeft, double bottomRight, double topLeft, double topRight){
+        x=Util.Bound(x,0,1);
+        y=Util.Bound(y,0,1);
         double bottom =(bottomRight-bottomLeft)*x+bottomLeft;
         double top =(topRight-topLeft)*x+topLeft;
         return (top-bottom)*y+bottom;
@@ -841,60 +868,61 @@ public final class Util {
 //     * @param y2 the yDim coordinate of the ending position
 //     * @return coordinates return as an array of the form [xDim,yDim,xDim,yDim,...]
 //     */
-//    public static int AlongLineCoords(double x1, double y1, double x2, double y2, int[] returnCoords) {
-//        double dx = Math.abs(x2 - x1);
-//        double dy = Math.abs(y2 - y1);
-//
-//        int x = (int) (Math.floor(x1));
-//        int y = (int) (Math.floor(y1));
-//
-//        int n = 1;
-//        int x_inc, y_inc;
-//        double error;
-//
-//        if (dx == 0) {
-//            x_inc = 0;
-//            error = Double.MAX_VALUE;
-//        } else if (x2 > x1) {
-//            x_inc = 1;
-//            n += (int) (Math.floor(x2)) - x;
-//            error = (Math.floor(x1) + 1 - x1) * dy;
-//        } else {
-//            x_inc = -1;
-//            n += x - (int) (Math.floor(x2));
-//            error = (x1 - Math.floor(x1)) * dy;
-//        }
-//
-//        if (dy == 0) {
-//            y_inc = 0;
-//            error -= Double.MAX_VALUE;
-//        } else if (y2 > y1) {
-//            y_inc = 1;
-//            n += (int) (Math.floor(y2)) - y;
-//            error -= (Math.floor(y1) + 1 - y1) * dx;
-//        } else {
-//            y_inc = -1;
-//            n += y - (int) (Math.floor(y2));
-//            error -= (y1 - Math.floor(y1)) * dx;
-//        }
-//
-//        int Count = 0;
-//        for (; n > 0; --n) {
-//            returnCoords[Count * 2] = (int) Math.floor(x);
-//            returnCoords[Count * 2] = (int) Math.floor(y);
-//            Count++;
-//
-//            if (error > 0) {
-//                y += y_inc;
-//                error -= dx;
-//            } else {
-//                x += x_inc;
-//                error += dy;
-//            }
-//        }
-//        return Count;
-//    }
-    public static void AlongLineAction(double x1, double y1, double x2, double y2, CoordsAction Action) {
+    public static int AlongLineCoords(double x1, double y1, double x2, double y2, int[] returnCoords) {
+
+        double dx = Math.abs(x2 - x1);
+        double dy = Math.abs(y2 - y1);
+
+        int x = (int) (Math.floor(x1));
+        int y = (int) (Math.floor(y1));
+
+        int n = 1;
+        int x_inc, y_inc;
+        double error;
+
+        if (dx == 0) {
+            x_inc = 0;
+            error = Double.MAX_VALUE;
+        } else if (x2 > x1) {
+            x_inc = 1;
+            n += (int) (Math.floor(x2)) - x;
+            error = (Math.floor(x1) + 1 - x1) * dy;
+        } else {
+            x_inc = -1;
+            n += x - (int) (Math.floor(x2));
+            error = (x1 - Math.floor(x1)) * dy;
+        }
+
+        if (dy == 0) {
+            y_inc = 0;
+            error -= Double.MAX_VALUE;
+        } else if (y2 > y1) {
+            y_inc = 1;
+            n += (int) (Math.floor(y2)) - y;
+            error -= (Math.floor(y1) + 1 - y1) * dx;
+        } else {
+            y_inc = -1;
+            n += y - (int) (Math.floor(y2));
+            error -= (y1 - Math.floor(y1)) * dx;
+        }
+
+        int Count = 0;
+        for (; n > 0; --n) {
+            returnCoords[Count * 2] = (int) Math.floor(x);
+            returnCoords[Count * 2+1] = (int) Math.floor(y);
+            Count++;
+
+            if (error > 0) {
+                y += y_inc;
+                error -= dx;
+            } else {
+                x += x_inc;
+                error += dy;
+            }
+        }
+        return Count;
+    }
+   public static void AlongLineAction(double x1, double y1, double x2, double y2, Coords2DAction Action) {
         double dx = Math.abs(x2 - x1);
         double dy = Math.abs(y2 - y1);
 
@@ -1250,12 +1278,12 @@ public final class Util {
     public static double DistSquared(double x1, double y1, double x2, double y2, double xDim, double yDim, boolean wrapX, boolean wrapY) {
         double xDist, yDist;
         if (wrapX) {
-            xDist = DistWrap(x1, x2, xDim);
+            xDist = DispWrap(x1, x2, xDim);
         } else {
             xDist = x2 - x1;
         }
         if (wrapY) {
-            yDist = DistWrap(y1, y2, yDim);
+            yDist = DispWrap(y1, y2, yDim);
         } else {
             yDist = y2 - y1;
         }
@@ -1277,17 +1305,17 @@ public final class Util {
     public static double DistSquared(double x1, double y1, double z1, double x2, double y2, double z2, int xDim, int yDim, int zDim, boolean wrapX, boolean wrapY, boolean wrapZ) {
         double xDist, yDist, zDist;
         if (wrapX) {
-            xDist = DistWrap(x1, x2, xDim);
+            xDist = DispWrap(x1, x2, xDim);
         } else {
             xDist = x2 - x1;
         }
         if (wrapY) {
-            yDist = DistWrap(y1, y2, yDim);
+            yDist = DispWrap(y1, y2, yDim);
         } else {
             yDist = y2 - y1;
         }
         if (wrapZ) {
-            zDist = DistWrap(z1, z2, zDim);
+            zDist = DispWrap(z1, z2, zDim);
         } else {
             zDist = z2 - z1;
         }
@@ -1407,7 +1435,7 @@ public final class Util {
 //        }
 //    }
 //
-    public static double DistWrap(double p1, double p2, double dim) {
+    public static double DispWrap(double p1, double p2, double dim) {
         if (Math.abs(p2 - p1) > dim / 2) {
             if (p1 > p2) {
                 p2 = p2 + dim;
@@ -1424,8 +1452,8 @@ public final class Util {
 //        GetAgentsRadApprox(searchMe,putAgentsHere,agent.Xpt(),agent.Ypt(),searchRad,wrapX,wrapY);
 //        for (Q a : putAgentsHere) {
 //            if(a!=agent){
-//                double xComp=wrapX?DistWrap(agent.Xpt(), a.Xpt(), searchMe.xDim):a.Xpt()-agent.Xpt();
-//                double yComp=wrapY?DistWrap(agent.Ypt(),a.Ypt(),searchMe.yDim):a.Ypt()-agent.Ypt();
+//                double xComp=wrapX?DispWrap(agent.Xpt(), a.Xpt(), searchMe.xDim):a.Xpt()-agent.Xpt();
+//                double yComp=wrapY?DispWrap(agent.Ypt(),a.Ypt(),searchMe.yDim):a.Ypt()-agent.Ypt();
 //                double dist=Math.sqrt(xComp*xComp+yComp*yComp)-(agent.radius+a.radius);
 //                double force=ForceFun.DistToForce(dist);
 //                agent.AddForce(xComp,yComp,force);
@@ -1572,8 +1600,6 @@ public final class Util {
     }
 
 
-    //UTILITIES
-
     /**
      * returns a timestamp of the form "yyyy_MM_dd_HH_mm_ss" as a string
      */
@@ -1651,20 +1677,20 @@ public final class Util {
     /**
      * returns whether the input value is between 0 and the dimension value
      */
-    public static boolean InDim(int Dim, int Val) {
+    public static boolean InDim(int Val, int Dim) {
         return Val >= 0 && Val < Dim;
     }
 
     /**
      * returns whether the input value is between 0 and the dimension value
      */
-    public static boolean InDim(double Dim, double Val) {
+    public static boolean InDim(double Val, double Dim) {
         return Val >= 0 && Val < Dim;
     }
 
     public static double GradientX2D(double[] vals, int xDim, int yDim, int centerX, int centerY, boolean boundaryCond, double boundaryValue, boolean wrapX) {
         double xP1, xM1;
-        if (InDim(xDim, centerX + 1)) {
+        if (InDim(centerX + 1, xDim)) {
             xP1 = vals[(centerX + 1) * yDim + centerY];
         } else if (boundaryCond) {
             xP1 = boundaryValue;
@@ -1673,7 +1699,7 @@ public final class Util {
         } else {
             xP1 = vals[centerX * yDim + centerY];
         }
-        if (InDim(xDim, centerX - 1)) {
+        if (InDim(centerX - 1, xDim)) {
             xM1 = vals[(centerX - 1) * yDim + centerY];
         } else if (boundaryCond) {
             xM1 = boundaryValue;
@@ -1687,7 +1713,7 @@ public final class Util {
 
     public static double GradientY2D(double[] vals, int xDim, int yDim, int centerX, int centerY, boolean boundaryCond, double boundaryValue, boolean wrapY) {
         double yP1, yM1;
-        if (InDim(yDim, centerY + 1)) {
+        if (InDim(centerY + 1, yDim)) {
             yP1 = vals[centerX * yDim + (centerY + 1)];
         } else if (boundaryCond) {
             yP1 = boundaryValue;
@@ -1696,7 +1722,7 @@ public final class Util {
         } else {
             yP1 = vals[centerX * yDim + centerY];
         }
-        if (InDim(yDim, centerY - 1)) {
+        if (InDim(centerY - 1, yDim)) {
             yM1 = vals[centerX * yDim + (centerY - 1)];
         } else if (boundaryCond) {
             yM1 = boundaryValue;
@@ -1706,6 +1732,17 @@ public final class Util {
             yM1 = vals[centerX * yDim + centerY];
         }
         return yP1 - yM1;
+    }
+
+    public static int SubsetMappedHood(int[]hood,int lenToCheck,IndexBool eval){
+        int validCt=0;
+        for (int i = 0; i < lenToCheck; i++) {
+            if(eval.Eval(hood[i])){
+                hood[validCt]=hood[i];
+                validCt++;
+            }
+        }
+        return validCt;
     }
 
     //REFLECTION
@@ -1850,7 +1887,7 @@ public final class Util {
     //at some point it would be good to make a generic version of this function somehow
     private final static double interpInSide =2.0/3.0, interpOutSide =1.0/3.0, interpInCorner =4.0/9.0, interpOutCorner =5.0/18.0;
     static int InFallback(int val,int fallback,int dim){
-        return(Util.InDim(dim,val))?val:fallback;
+        return(Util.InDim(val, dim))?val:fallback;
     }
     public static double GetInterp3x3(int xCell,int yCell,PDEGrid2DCoarse diff){
         PDEGrid2D g=diff.grid;

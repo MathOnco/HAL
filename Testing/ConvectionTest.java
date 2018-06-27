@@ -1,8 +1,8 @@
 package Testing;
 
 import Framework.GridsAndAgents.PDEGrid2D;
-import Framework.Gui.GuiGrid;
-import Framework.Gui.GuiWindow;
+import Framework.Gui.UIGrid;
+import Framework.Gui.UIWindow;
 import Framework.Gui.TickTimer;
 import Framework.Util;
 
@@ -15,8 +15,8 @@ public class ConvectionTest {
     static int steps=1000000;
     static int time=0;
     public static void main(String[] args) {
-        GuiWindow win=new GuiWindow("ConvectionTest",true);
-        GuiGrid ggv=new GuiGrid(x,y,20);
+        UIWindow win=new UIWindow("ConvectionTest",true);
+        UIGrid ggv=new UIGrid(x,y,20);
         double[] xVels=new double[x*y];
         double[] yVels=new double[x*y];
         for (int xi = 0; xi < x; xi++) {

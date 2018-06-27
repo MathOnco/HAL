@@ -17,10 +17,9 @@ public class DiffusionExampleSimple {
 
         //initial condition here
         int[] circleCoords = CircleHood(true, 4 * spaceScale);
-        int[] Is = new int[circleCoords.length / 2];
-        int nPositions = diff.HoodToIs(circleCoords, Is, diff.xDim / 2, diff.yDim / 2);
+        int nPositions = diff.MapHood(circleCoords, diff.xDim / 2, diff.yDim / 2);
         for (int i = 0; i < nPositions; i++) {
-            diff.Set(Is[i], 1);
+            diff.Set(circleCoords[i], 1);
         }
         double[] xVels = new double[diff.length];
         double[] yVels = new double[diff.length];

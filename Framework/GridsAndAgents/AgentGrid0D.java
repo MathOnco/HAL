@@ -10,6 +10,7 @@ import java.util.*;
  */
 public class AgentGrid0D<T extends Agent0D> implements Iterable<T>{
     InternalGridAgentList<T> agents;
+    int tick;
 
     /**
      * @param agentClass pass T.class, used to instantiate agent instances within the typeGrid as needed
@@ -22,7 +23,7 @@ public class AgentGrid0D<T extends Agent0D> implements Iterable<T>{
      * returns an uninitialized agent at the specified coordinates
      */
     public T NewAgent(){
-        T newAgent=agents.GetNewAgent();
+        T newAgent=agents.GetNewAgent(tick);
         newAgent.alive=true;
         return newAgent;
     }
@@ -49,28 +50,10 @@ public class AgentGrid0D<T extends Agent0D> implements Iterable<T>{
         agents.CleanAgents();
     }
 
-    /**
-     * calls CleanAgents, then SuffleAgents, then IncTick. useful to call at the end of a tick
-     * do not call this while in the middle of iteration
-     * @param rn the Random number generator to be used
-     */
-//    public void CleanShuffInc(Rand rn){
-//        agents.CleanAgents();
-//        agents.ShuffleAgents(rn);
-//        IncTick();
-//    }
-//
-//    public void ShuffInc(Rand rn){
-//        agents.ShuffleAgents(rn);
-//        IncTick();
-//    }
-//    public void CleanInc(){
-//        agents.CleanAgents();
-//        IncTick();
-//    }
-//    public void IncTick(){
-//        agents.stateID++;
-//    }
+    public void CleanShuffle(Rand rn){
+        agents.CleanAgents();
+        agents.ShuffleAgents(rn);
+    }
 
     /**
      * returns an umodifiable copy of the complete agentlist, including dead and just born agents
@@ -109,6 +92,12 @@ public class AgentGrid0D<T extends Agent0D> implements Iterable<T>{
         return agents.agents.get(rn.Int(GetPop()));
     }
 
+    public int GetTick(){
+        return tick;
+    }
+    public void IncTick(){
+        tick++;
+    }
     /**
      * returns the number of agents that are alive in the typeGrid
      */

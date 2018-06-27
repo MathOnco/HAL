@@ -8,6 +8,7 @@ import java.io.Serializable;
 public abstract class AgentBase<T> implements Serializable{
     int stateID;
     int iList;
+    int birthTick;
     boolean alive;
     T myGrid;
     AgentListNode myNodes;
@@ -24,6 +25,10 @@ public abstract class AgentBase<T> implements Serializable{
      */
     public boolean IsAlive(){
         return alive;
+    }
+
+    public int GetBirthTick(){
+        return birthTick;
     }
 
     abstract public void Dispose();

@@ -7,7 +7,6 @@ import Framework.Tools.KeyRecorder;
 import Framework.Util;
 
 import java.awt.*;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.*;
@@ -60,8 +59,8 @@ class TreatmentBar {
     final ClinicianSim myLab;
     final SectionalGGV intensitySelect;
     final SectionalGGV treatline;
-    final GuiButton setAllBtn;
-    final GuiLabel nameLbl;
+    final UIButton setAllBtn;
+    final UILabel nameLbl;
     final double hue;
     int chosenIntensity;
     int chosenStart;
@@ -69,10 +68,10 @@ class TreatmentBar {
     TreatmentBar(ClinicianSim myLab, int index, int timescaleX, int timescaleY, int intensityScaleX) {
         this.index = index;
         this.myLab = myLab;
-        nameLbl = new GuiLabel(myLab.treatNames[index]+" ["+(index+1)+"]");
+        nameLbl = new UILabel(myLab.treatNames[index]+" ["+(index+1)+"]");
         intensitySelect = new SectionalGGV(myLab.maxIntensity + 1, 1, intensityScaleX, timescaleY, 1, 1);
         treatline = new SectionalGGV(myLab.nSteps, 1, timescaleX, timescaleY, 1, 1);
-        setAllBtn=new GuiButton("SetBlock Line",1,1,false,(e)->{
+        setAllBtn=new UIButton("SetBlock Line",1,1,false,(e)->{
             myLab.SavePlansToUndo();
             SetLine();
             myLab.AdjustDrawState(index);
@@ -151,7 +150,7 @@ class TreatmentBar {
     }
 }
 
-class SectionalGGV extends GuiGrid {
+class SectionalGGV extends UIGrid {
     final int entryX;
     final int entryY;
     public SectionalGGV(int gridW, int gridH, int entryX, int entryY, int compX, int compY) {
@@ -175,17 +174,17 @@ class SectionalGGV extends GuiGrid {
     }
 
     }
-public class ClinicianSim extends GuiWindow{
+public class ClinicianSim extends UIWindow {
     //GUI CONSTANTS
     VoidFunction stepExtra;
     final private static int PLAY=0,SET_START=1,SET_END=2;
-    final GuiLabel treatScoreLbl=new GuiLabel("Tolerable Toxicity:________________%");
-    final GuiLabel visLbl=new GuiLabel("Default_View______________________________________",4,1);
-    final GuiLabel burdenScoreLbl=new GuiLabel("Tolerable Burden:________________%");
+    final UILabel treatScoreLbl=new UILabel("Tolerable Toxicity:________________%");
+    final UILabel visLbl=new UILabel("Default_View______________________________________",4,1);
+    final UILabel burdenScoreLbl=new UILabel("Tolerable Burden:________________%");
     final SectionalGGV treatScoreBar;
     final SectionalGGV burdenScoreBar;
-    final GuiLabel totalScoreLbl=new GuiLabel("__________________score:____________________");
-    final GuiLabel winLbl =new GuiLabel("keep playing...______________________");
+    final UILabel totalScoreLbl=new UILabel("__________________score:____________________");
+    final UILabel winLbl =new UILabel("keep playing...______________________");
     final int maxIntensity;
     final int nTreatments;
     final int nSteps;
@@ -221,22 +220,22 @@ public class ClinicianSim extends GuiWindow{
 
     //GUI COMPONENTS
     TreatableTumor myModel;
-    final GuiLabel tickLbl;
-    final public GuiGrid vis;
-    final public GuiGrid alphaVis;
+    final UILabel tickLbl;
+    final public UIGrid vis;
+    final public UIGrid alphaVis;
     final SectionalGGV timeline;
     final SectionalGGV speedControl;
     //final SectionalGGV treatline;
-    final GuiButton pauseButton;
-    final GuiButton undoButton;
-    final GuiButton clearButton;
-    final GuiButton setAllButton;
-    final GuiButton resetButton;
-    //final GuiComboBoxField treatmentSelect;
-    //final GuiGrid intensitySelect;
+    final UIButton pauseButton;
+    final UIButton undoButton;
+    final UIButton clearButton;
+    final UIButton setAllButton;
+    final UIButton resetButton;
+    //final UIComboBoxInput treatmentSelect;
+    //final UIGrid intensitySelect;
     final ParamSet guiState;
     final TreatmentBar[]bars;
-    //final GuiBoolField[]guiSwitches;
+    //final UIBoolInput[]guiSwitches;
     final KeyRecorder keyRecorder=new KeyRecorder();
 
     //EXTRA
@@ -249,7 +248,7 @@ public class ClinicianSim extends GuiWindow{
         this.myModel =myModel;
         this.stateSaveFreq=stateSaveFreq;
         this.redrawOnSelectionSwitch =redrawOnTreatmentSwitch;
-        tickLbl = new GuiLabel("tick:____________");
+        tickLbl = new UILabel("tick:____________");
         //this.multiSwitch=myModel.AllowMultiswitch();
         treatNames =myModel.GetTreatmentNames();
         nTreatments=treatNames.length;
@@ -290,7 +289,7 @@ public class ClinicianSim extends GuiWindow{
 
         guiState=new ParamSet();
 
-        vis=new GuiGrid(myModel.VisPixX(),myModel.VisPixY(),visScale,4,1);
+        vis=new UIGrid(myModel.VisPixX(),myModel.VisPixY(),visScale,4,1);
         vis.AddMouseListeners(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -298,30 +297,30 @@ public class ClinicianSim extends GuiWindow{
             }
         });
         int alphaVisScale=myModel.AlphaGridScaleFactor();
-        alphaVis=new GuiGrid(myModel.VisPixX()/alphaVisScale,myModel.VisPixY()/alphaVisScale,alphaVisScale*visScale,4,1);
+        alphaVis=new UIGrid(myModel.VisPixX()/alphaVisScale,myModel.VisPixY()/alphaVisScale,alphaVisScale*visScale,4,1);
         vis.AddAlphaGrid(alphaVis);
         for (int i = 0; i < alphaVis.length; i++) {
             alphaVis.SetPix(i, RGBA((double) 0, (double) 0, (double) 0, (double) 0));
         }
         timeline=new SectionalGGV(nSteps,2,timeScaleX,barScaleY,1,2);
-        pauseButton=new GuiButton("Pause [Space]",false,(e)->{
+        pauseButton=new UIButton("Pause [Space]",false,(e)->{
             TogglePause();
         });
         paused=false;
         if(!quickStart) {
             TogglePause();
         }
-        undoButton =new GuiButton("Undo [U]",2,1,false,(e)->{
+        undoButton =new UIButton("Undo [U]",2,1,false,(e)->{
             LoadUndo();
         });
-        resetButton=new GuiButton("Reset [R]",1,1,false,e->{
+        resetButton=new UIButton("Reset [R]",1,1,false, e->{
             hopStep=1;
             if(paused) {
                 TogglePause();
                 pauseStep=1;
             }
         });
-        setAllButton=new GuiButton("SetBlock All [S]",1,1,false,(e)->{
+        setAllButton=new UIButton("SetBlock All [S]",1,1,false,(e)->{
             SavePlansToUndo();
             for (TreatmentBar bar : bars) {
                 bar.SetLine();
@@ -338,7 +337,7 @@ public class ClinicianSim extends GuiWindow{
                 stepMS=stepMSmax-(int)((stepMSmax-stepMSmin)*frac);
             }
         });
-        clearButton =new GuiButton("Clear [C]",false,(e)->{
+        clearButton =new UIButton("Clear [C]",false,(e)->{
             SavePlansToUndo();
             UpdateAfterTreatmentChange();
             ClearAllTreatments();
@@ -355,21 +354,21 @@ public class ClinicianSim extends GuiWindow{
         AddCol(2, winLbl);
         AddCol(2,totalScoreLbl);
         AddCol(3,tickLbl);
-        AddCol(2,new GuiLabel("Speed Control",2,1));
+        AddCol(2,new UILabel("Speed Control",2,1));
         AddCol(2,speedControl);
-        //guiSwitches=new GuiBoolField[nSwitches];
+        //guiSwitches=new UIBoolInput[nSwitches];
         //if(nSwitches>0){
             //init Switch Gui components, etc. (may want to add to side!)
         //    for (int i = 0; i < nSwitches; i++) {
-        //        GuiBoolField field = new GuiBoolField(switchNames[i],false);
+        //        UIBoolInput field = new UIBoolInput(switchNames[i],false);
         //        guiSwitches[i]=field;
         //        AddCol(i,field);
         //    }
         //}
         AddCol(0,vis);
         AddCol(0,visLbl);
-        AddCol(1,new GuiLabel("Tumor Burden",2,1));
-        AddCol(1,new GuiLabel("Treatment Toxicity",2,1));
+        AddCol(1,new UILabel("Tumor Burden",2,1));
+        AddCol(1,new UILabel("Treatment Toxicity",2,1));
         AddCol(0,setAllButton);
         AddCol(0,resetButton);
         AddCol(3,timeline);

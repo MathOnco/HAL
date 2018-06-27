@@ -39,4 +39,5 @@ public abstract class AgentBaseSpatial<T> extends AgentBase<T> {
     abstract int GetCountOnSquare();
     abstract int GetCountOnSquareEval(AgentToBool evalAgent);
     abstract void GetAllOnSquareEval(ArrayList<AgentBaseSpatial> putHere,AgentToBool evalAgent);
+    abstract int GetAge();
 }

@@ -6,11 +6,14 @@ import Framework.Interfaces.KeyResponse;
 /**
  * Created by Rafael on 9/5/2017.
  */
-public class GridWindow extends GuiGrid {
-    private GuiWindow win;
+public class GridWindow extends UIGrid {
+    private UIWindow win;
+    public GridWindow(int xDim, int yDim) {
+        this("",xDim,yDim,1,true,null,true);
+    }
     public GridWindow(String title, int xDim, int yDim, int scaleFactor, boolean killOnClose,GuiCloseAction closeAction, boolean active) {
         super(xDim,yDim,scaleFactor,active);
-        win=new GuiWindow(title, killOnClose,closeAction, active);
+        win=new UIWindow(title, killOnClose,closeAction, active);
         RunGui();
     }
     public GridWindow(String title, int xDim, int yDim, int scaleFactor, boolean killOnClose) {
@@ -20,7 +23,7 @@ public class GridWindow extends GuiGrid {
         this(title,xDim,yDim,scaleFactor,true,null,true);
     }
     public GridWindow(int xDim, int yDim, int scaleFactor) {
-        this("visualization",xDim,yDim,scaleFactor,true,null,true);
+        this("",xDim,yDim,scaleFactor,true,null,true);
     }
     public GridWindow(String title, int xDim, int yDim, int scaleFactor, boolean killOnClose, GuiCloseAction closeAction) {
         this(title,xDim,yDim,scaleFactor,killOnClose,closeAction,true);

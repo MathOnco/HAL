@@ -3,7 +3,7 @@ package Testing;
 import Framework.GridsAndAgents.AgentGrid2D;
 import Framework.GridsAndAgents.AgentSQ2Dunstackable;
 import Framework.Rand;
-import Framework.Tools.Timer;
+import Framework.Tools.LapTimer;
 import Framework.Util;
 
 import java.util.ArrayList;
@@ -15,14 +15,13 @@ public class IterationTest {
         int[]testHood= Util.RectangleHood(true,90,90);
         ArrayList<AgentSQ2Dunstackable> fair=new ArrayList<>();
         Rand rn=new Rand();
-        Timer t=new Timer();
-        int[]testIs=new int[100*100];
+        LapTimer t=new LapTimer();
         int[]storage=new int[100*100];
         for (int i = 0; i < g.length; i++) {
             g.NewAgentSQ(i);
         }
         for (int i = 0; i < 10000; i++) {
-            int num=g.HoodToIs(testHood,testIs,rn.Int(100),rn.Int(100));
+            int num=g.MapHood(testHood,rn.Int(100),rn.Int(100));
             for (int j = 0; j < num; j++) {
                 g.GetAgents(fair,j);
             }
@@ -33,10 +32,6 @@ public class IterationTest {
 
             }
             fair.clear();
-        }
-        t.Lap("old way");
-        for (int i = 0; i < 10000; i++) {
-            g.ApplyAgentsHood(testHood,rn.Int(100),rn.Int(100),(a,ct)->storage[a.Isq()]=a.Xsq());
         }
         t.Lap("new way");
         for (int i = 0; i < 10000; i++) {

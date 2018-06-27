@@ -1,9 +1,9 @@
 package LEARN_HERE.Diffusbiles;
 
 import Framework.GridsAndAgents.PDEGrid2D;
-import Framework.Gui.GuiGrid;
-import Framework.Gui.GuiLabel;
-import Framework.Gui.GuiWindow;
+import Framework.Gui.UIGrid;
+import Framework.Gui.UILabel;
+import Framework.Gui.UIWindow;
 import Framework.Gui.TickTimer;
 import Framework.Util;
 
@@ -19,12 +19,12 @@ public class ReactionDiffusion2D {
     public static void main(String[] args) {
         //set up gui
         TickTimer trt=new TickTimer();
-        GuiWindow win=new GuiWindow("2D Diffusion VesselOcclusion",true);
-        GuiGrid v1=new GuiGrid(x,y,visScale);
-        GuiGrid v2=new GuiGrid(x,y,visScale);
-        win.AddCol(0, new GuiLabel("advection"));
+        UIWindow win=new UIWindow("2D Diffusion VesselOcclusion",true);
+        UIGrid v1=new UIGrid(x,y,visScale);
+        UIGrid v2=new UIGrid(x,y,visScale);
+        win.AddCol(0, new UILabel("advection"));
         win.AddCol(0, v1);
-        win.AddCol(1, new GuiLabel("diffusion"));
+        win.AddCol(1, new UILabel("diffusion"));
         win.AddCol(1, v2);
         win.RunGui();
 

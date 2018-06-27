@@ -1,7 +1,6 @@
 package Framework.GridsAndAgents;
 
 import Framework.Interfaces.AgentToBool;
-import Framework.Interfaces.Coords3DToAction;
 
 import java.util.ArrayList;
 
@@ -171,31 +170,6 @@ public class AgentSQ3D<T extends AgentGrid3D> extends Agent3DBase<T>{
         iSq=iNext;
         AddSQ(iNext);
     }
-    public void MoveSafeSQ(int newX, int newY, int newZ, boolean wrapX, boolean wrapY, boolean wrapZ) {
-        if(!alive){
-            throw new RuntimeException("Attempting to move dead agent!");
-        }
-        if (G().In(newX, newY, newZ)) {
-            MoveSQ(newX, newY, newZ);
-            return;
-        }
-        if (wrapX) {
-            newX = ModWrap(newX, G().xDim);
-        } else if (!InDim(G().xDim, newX)) {
-            newX = Xsq();
-        }
-        if (wrapY) {
-            newY = ModWrap(newY, G().yDim);
-        } else if (!InDim(G().yDim, newY)) {
-            newY = Ysq();
-        }
-        if (wrapZ) {
-            newZ = ModWrap(newZ, G().zDim);
-        } else if (!InDim(G().zDim, newZ)) {
-            newZ = Zsq();
-        }
-        MoveSQ(newX,newY,newZ);
-    }
     public void MoveSafeSQ(int newX, int newY, int newZ) {
         if(!alive){
             throw new RuntimeException("Attempting to move dead agent!");
@@ -206,17 +180,17 @@ public class AgentSQ3D<T extends AgentGrid3D> extends Agent3DBase<T>{
         }
         if (G().wrapX) {
             newX = ModWrap(newX, G().xDim);
-        } else if (!InDim(G().xDim, newX)) {
+        } else if (!InDim(newX, G().xDim)) {
             newX = Xsq();
         }
         if (G().wrapY) {
             newY = ModWrap(newY, G().yDim);
-        } else if (!InDim(G().yDim, newY)) {
+        } else if (!InDim(newY, G().yDim)) {
             newY = Ysq();
         }
         if (G().wrapZ) {
             newZ = ModWrap(newZ, G().zDim);
-        } else if (!InDim(G().zDim, newZ)) {
+        } else if (!InDim(newZ, G().zDim)) {
             newZ = Zsq();
         }
         MoveSQ(newX,newY,newZ);
@@ -224,6 +198,10 @@ public class AgentSQ3D<T extends AgentGrid3D> extends Agent3DBase<T>{
     @Override
     int GetCountOnSquare() {
         return myGrid.counts[iSq];
+    }
+
+    public int GetAge(){
+        return G().GetTick()-birthTick;
     }
 
     @Override

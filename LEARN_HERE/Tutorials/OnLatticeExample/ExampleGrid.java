@@ -66,7 +66,7 @@ public class ExampleGrid extends AgentGrid2D<ExampleCell> {
 
         for (int i = 0; i < timesteps; i++) {
             win.TickPause(20);
-            if(model.GetPop()==0){
+            if(model.Pop()==0){
                 model.NewAgentSQ(model.xDim/2,model.yDim/2).Init();
             }
             //model step

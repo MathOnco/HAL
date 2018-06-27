@@ -135,12 +135,6 @@ public class PDEGrid2DCoarse implements Serializable{
     public void Diffusion(double diffRate,double boundaryValue){
         grid.Diffusion(diffRate*denom,boundaryValue);
     }
-    public void Diffusion(double diffRate,boolean wrapX,boolean wrapY){
-        grid.Diffusion(diffRate*denom,wrapX,wrapY);
-    }
-    public void Diffusion(double diffRate,double boundaryValue,boolean wrapX,boolean wrapY){
-        grid.Diffusion(diffRate*denom,boundaryValue,wrapX,wrapY);
-    }
     public double GradientX(int x,int y){
         return grid.GradientX(x/spaceFactor,y/spaceFactor);
     }

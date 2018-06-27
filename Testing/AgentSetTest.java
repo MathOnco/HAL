@@ -3,7 +3,7 @@ package Testing;
 import Framework.GridsAndAgents.Agent0D;
 import Framework.GridsAndAgents.AgentGrid0D;
 import Framework.GridsAndAgents.AgentList;
-import Framework.Tools.Timer;
+import Framework.Tools.LapTimer;
 
 class ListAgent extends Agent0D<AgentSetTest>{}
 
@@ -14,7 +14,7 @@ public class AgentSetTest extends AgentGrid0D<ListAgent>{
     }
 
     public static void main(String[] args) {
-        Timer t=new Timer();
+        LapTimer t=new LapTimer();
         AgentSetTest g=new AgentSetTest();
         for (int i = 0; i < 100000; i++) {
             ListAgent a=g.NewAgent();

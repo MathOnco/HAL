@@ -35,7 +35,8 @@ public abstract class SpatialGameCanonical extends SpatialGame {
         int nextTypeI;
         double fitnessSum=0;
         int[] hood=GetReplacementHood(x,y);
-        int nIs= HoodToIs(hood,localIs2,x,y);
+        int nIs= MapHood(hood,x,y);
+        System.arraycopy(hood,0,localIs,0,nIs);
         for (int j = 0; j < nIs; j++) {
             double fitness=fitnesses[localIs2[j]];
             fitnessCompare[j]=fitness;
@@ -74,7 +75,8 @@ public abstract class SpatialGameCanonical extends SpatialGame {
         int y=ItoY(i);
         double fitness = 0;
         int[] hood = GetFitnessHood(x, y);
-        int nIs = HoodToIs(hood, localIs, x, y);
+        int nIs = MapHood(hood, x, y);
+        System.arraycopy(hood,0,localIs,0,nIs);
         for (int j = 0; j < nIs; j++) {
             fitness += GetFitness(i,localIs[j]);
         }
@@ -88,7 +90,8 @@ public abstract class SpatialGameCanonical extends SpatialGame {
         int nextTypeI;
         double fitnessSum=0;
         int[] hood=GetReplacementHood(x,y);
-        int nIs= HoodToIs(hood,localIs2,x,y);
+        int nIs = MapHood(hood, x, y);
+        System.arraycopy(hood,0,localIs2,0,nIs);
         for (int j = 0; j < nIs; j++) {
             double fitness=fitnesses[localIs2[j]];
             fitnessCompare[j]=fitness;

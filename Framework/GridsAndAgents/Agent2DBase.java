@@ -1,7 +1,6 @@
 package Framework.GridsAndAgents;
 
 import Framework.Interfaces.*;
-import Framework.Rand;
 
 public abstract class Agent2DBase<T extends AgentGrid2D> extends AgentBaseSpatial<T>{
     public abstract int Xsq();
@@ -32,27 +31,8 @@ public abstract class Agent2DBase<T extends AgentGrid2D> extends AgentBaseSpatia
     public int MapOccupiedHood(int[] hood){
         return G().MapOccupiedHood(hood,Xsq(),Ysq());
     }
-    public int MapHood(int[] hood,Coords2DToBool Eval){
+    public int MapHood(int[] hood,IndexCoords2DBool Eval){
         return G().MapHood(hood,Xsq(),Ysq(),Eval);
     }
-    public int HoodToIs(int[]neighborhood,int[]retIs){
-        return G().HoodToIs(neighborhood,retIs,this.Xsq(),this.Ysq());
-    }
-    public int HoodToEmptyIs(int[]neighborhood,int[]retIs){
-        return G().HoodToEmptyIs(neighborhood,retIs,this.Xsq(),this.Ysq());
-    }
-    public int HoodToOccupiedIs(int[]neighborhood,int[]retIs){
-        return G().HoodToOccupiedIs(neighborhood,retIs,this.Xsq(),this.Ysq());
-    }
-    public int HoodToIs(int[]neighborhood,int[]retIs,boolean wrapX,boolean wrapY){
-        return G().HoodToIs(neighborhood,retIs,this.Xsq(),this.Ysq(),wrapX,wrapY);
-    }
-    public int HoodToEmptyIs(int[]neighborhood,int[]retIs,boolean wrapX,boolean wrapY){
-        return G().HoodToEmptyIs(neighborhood,retIs,this.Xsq(),this.Ysq(),wrapX,wrapY);
-    }
-    public int HoodToOccupiedIs(int[]neighborhood,int[]retIs,boolean wrapX,boolean wrapY){
-        return G().HoodToOccupiedIs(neighborhood,retIs,this.Xsq(),this.Ysq(),wrapX,wrapY);
-    }
-
 }
 

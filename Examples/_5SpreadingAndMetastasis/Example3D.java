@@ -53,7 +53,8 @@ class ExCell3D extends AgentSQ3D<Example3D>{
             if(Metastasis()){//choose random vessel location to metastasize to
                 Dispose();//kill cell that has entered the vessel
                 int whichVessel=G().rn.Int(G().vessels.size());//get a random vessel position
-                int nMetOpts=G().vessels.get(whichVessel).HoodToEmptyIs(G().vnHood,G().vnHood);//get any open positions around a particular vessel location
+                ExCell3D vessel=G().vessels.get(whichVessel);
+                int nMetOpts=G().MapEmptyHood(G().vnHood,vessel.Xsq(),vessel.Ysq(),vessel.Zsq());//get any open positions around a particular vessel location
                 if(nMetOpts>1){
                     G().NewAgentSQ(G().vnHood[G().rn.Int(nMetOpts)]).InitTumor();//create and initialize a new cell to model successful metastasis
                 }
@@ -106,7 +107,6 @@ public class Example3D extends AgentGrid3D<ExCell3D> {
         Grid2Ddouble openSpots=new Grid2Ddouble(xDim,zDim);
         //create a neighborhood that defines all indices that are too close
         int[]vesselSpacingHood=CircleHood(false,vesselSpacingMin);
-        int[]markIs=new int[vesselSpacingHood.length/2]; //shuffle an array of all indices, so we search them in random order
         int[]indicesToTry=GenIndicesArray(openSpots.length);
         rn.Shuffle(indicesToTry);
         int vesselCt=0;
@@ -116,10 +116,10 @@ public class Example3D extends AgentGrid3D<ExCell3D> {
                 int y=openSpots.ItoY(i);
                 GenVessel(x,y);
                 vesselCt++;
-                int nSpots=openSpots.HoodToIs(vesselSpacingHood,markIs,x,y,true,true);
+                int nSpots=openSpots.MapHood(vesselSpacingHood,x,y);
                 for (int j = 0; j < nSpots; j++) {
                     //mark spot as too close for another vessel
-                    openSpots.Set(markIs[j],-1);
+                    openSpots.Set(vesselSpacingHood[j],-1);
                 }
             }
         }

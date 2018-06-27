@@ -1,8 +1,8 @@
 package LEARN_HERE.Other;
 
 import Framework.Gui.GifMaker;
-import Framework.Gui.GuiGrid;
-import Framework.Gui.GuiWindow;
+import Framework.Gui.UIGrid;
+import Framework.Gui.UIWindow;
 import Framework.Util;
 
 import java.util.Random;
@@ -12,8 +12,8 @@ import java.util.Random;
  */
 public class GIFtest {
     public static void main(String[] args) {
-        GuiWindow testGui=new GuiWindow("test",true);
-        GuiGrid ggv=new GuiGrid(10,10,100);
+        UIWindow testGui=new UIWindow("test",true);
+        UIGrid ggv=new UIGrid(10,10,100);
         Random rn=new Random();
         testGui.AddCol(0, ggv);
         ggv.SetPix(4, 4, Util.RGB(rn.nextDouble(),rn.nextDouble(),rn.nextDouble()));

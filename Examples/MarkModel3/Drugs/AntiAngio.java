@@ -2,8 +2,7 @@ package Examples.MarkModel3.Drugs;
 
 import Examples.MarkModel3.Diff;
 import Examples.MarkModel3.Drug;
-import Framework.Extensions.PDEGrid2DCoarse;
-import Framework.Gui.GuiGrid;
+import Framework.Gui.UIGrid;
 
 import static Framework.Util.HeatMapRGB;
 import static Framework.Util.RGB;
@@ -36,7 +35,7 @@ public class AntiAngio extends Drug {
     }
 
     @Override
-    public void Draw(GuiGrid vis) {
+    public void Draw(UIGrid vis) {
         vis.DrawGridDiff(conc.grid,(v)->HeatMapRGB(v));
     }
 

@@ -22,7 +22,7 @@ class ExampleCell extends AgentPT2D<ExampleGrid> {
             return;
         }
         G().oxygen.Mul(Isq(),0.98);
-        if(G().rng.Double()<divProb&&G().CountAt(Isq())<5){
+        if(G().rng.Double()<divProb&&G().PopAt(Isq())<5){
             G().NewAgentPT(Xpt(),Ypt()).Init();
         }
         //cell will move
@@ -83,7 +83,7 @@ public class ExampleGrid extends AgentGrid2D<ExampleCell> {
 
         for (int i = 0; i < timesteps; i++) {
             win.TickPause(20);
-            if(model.GetPop()==0){
+            if(model.Pop()==0){
                 model.NewAgentPT(model.xDim/2.0,model.yDim/2.0).Init();
             }
             //model step

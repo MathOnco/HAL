@@ -3,10 +3,9 @@ package Testing;
 import Framework.GridsAndAgents.AgentGrid2D;
 import Framework.Gui.GridWindow;
 import Framework.GridsAndAgents.SphericalAgent2D;
-import Framework.Gui.GuiGrid;
+import Framework.Gui.UIGrid;
 import Framework.Util;
 
-import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -18,8 +17,7 @@ class Particle extends SphericalAgent2D<Particle,ParticleExample>{
         radius=0.3;
     }
     void Step1(){
-        G().neighbors.clear();
-       SumForces(radius*2,G().neighbors,(double overlap)->{
+       SumForces(radius*2,(double overlap,Particle other)->{
            return overlap;
        });
     }
@@ -29,7 +27,6 @@ class Particle extends SphericalAgent2D<Particle,ParticleExample>{
 }
 
 public class ParticleExample extends AgentGrid2D<Particle> {
-    ArrayList<Particle> neighbors=new ArrayList<>();
     Random rn=new Random();
 
     public ParticleExample(int x, int y){
@@ -39,7 +36,7 @@ public class ParticleExample extends AgentGrid2D<Particle> {
             p.Init();
         }
     }
-    public void Draw(GuiGrid vis){
+    public void Draw(UIGrid vis){
         for (int x = 0; x < xDim; x++) {
             for (int y = 0; y < yDim; y++) {
                 Particle p=GetAgent(x/5,y/5);

@@ -1,7 +1,6 @@
 package Framework.GridsAndAgents;
 
 import Framework.Interfaces.*;
-import Framework.Rand;
 
 public abstract class Agent3DBase<T extends AgentGrid3D> extends AgentBaseSpatial<T>{
     public abstract int Xsq();
@@ -34,7 +33,7 @@ public abstract class Agent3DBase<T extends AgentGrid3D> extends AgentBaseSpatia
     public int MapHood(int[] hood){
         return G().MapHood(hood,Xsq(),Ysq(),Zsq());
     }
-    public int MapHood(int[] hood,Coords3DToBool Eval){
+    public int MapHood(int[] hood,IndexCoords3DBool Eval){
         return G().MapHood(hood,Xsq(),Ysq(),Zsq(),Eval);
     }
     public int MapEmptyHood(int[] hood){
@@ -42,27 +41,5 @@ public abstract class Agent3DBase<T extends AgentGrid3D> extends AgentBaseSpatia
     }
     public int MapOccupiedHood(int[] hood){
         return G().MapOccupiedHood(hood,Xsq(),Ysq(),Zsq());
-    }
-    public int HoodToAction(int[]neighborhood, Coords3DToAction Action){
-        return G().HoodToAction(neighborhood,Xsq(),Ysq(),Zsq(),Action);
-    }
-
-    public int HoodToIs(int[]neighborhood,int[]retIs){
-        return G().HoodToIs(neighborhood,retIs,this.Xsq(),this.Ysq(),this.Zsq());
-    }
-    public int HoodToEmptyIs(int[]neighborhood,int[]retIs){
-        return G().HoodToEmptyIs(neighborhood,retIs,this.Xsq(),this.Ysq(),this.Zsq());
-    }
-    public int HoodToOccupiedIs(int[]neighborhood,int[]retIs){
-        return G().HoodToOccupiedIs(neighborhood,retIs,this.Xsq(),this.Ysq(),this.Zsq());
-    }
-    public int HoodToIs(int[]neighborhood,int[]retIs,boolean wrapX,boolean wrapY,boolean wrapZ){
-        return G().HoodToIs(neighborhood,retIs,this.Xsq(),this.Ysq(),this.Zsq(),wrapX,wrapY,wrapZ);
-    }
-    public int HoodToEmptyIs(int[]neighborhood,int[]retIs,boolean wrapX,boolean wrapY,boolean wrapZ){
-        return G().HoodToEmptyIs(neighborhood,retIs,this.Xsq(),this.Ysq(),this.Zsq(),wrapX,wrapY,wrapZ);
-    }
-    public int HoodToOccupiedIs(int[]neighborhood,int[]retIs,boolean wrapX,boolean wrapY,boolean wrapZ){
-        return G().HoodToOccupiedIs(neighborhood,retIs,this.Xsq(),this.Ysq(),this.Zsq(),wrapX,wrapY,wrapZ);
     }
 }

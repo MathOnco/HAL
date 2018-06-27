@@ -17,7 +17,6 @@ import static Framework.Util.*;
 class OnLatticeGrid extends AgentGrid2D<OnLatticeCell> {
     Rand rn;
     int[] mooreHood=MooreHood(false);
-    int[] validLocs=new int[mooreHood.length/2];
     OnLatticeGrid(int x,int y,int pop){
         super(x,y,OnLatticeCell.class);
         int[] popIs=new int[length];
@@ -32,9 +31,8 @@ class OnLatticeGrid extends AgentGrid2D<OnLatticeCell> {
     }
     void Step(){
         for (OnLatticeCell c : this) {
-            int nLocs= HoodToIs(mooreHood,validLocs,c.Xsq(),c.Ysq());
-            nLocs=FindEmptyIs(validLocs,nLocs);
-            c.chosenI=validLocs[rn.Int(nLocs)];
+            int nLocs=MapHood(mooreHood,c.Isq());
+            c.chosenI=mooreHood[rn.Int(nLocs)];
         }
     }
 }
@@ -64,7 +62,7 @@ class OffLatticeGrid extends AgentGrid2D<OffLatticeCell> {
     }
     void Step(){
         for (OffLatticeCell c : this) {
-            c.SumForces(cellRad*2,cellScratch,(overlap)->{return Math.abs(Math.pow(overlap/(interactionRad),forceExp))*forceMul;});
+            c.SumForces(cellRad*2,(overlap,agent)->Math.abs(Math.pow(overlap/interactionRad,forceExp))*forceMul);
         }
         for (OffLatticeCell c : this) {
             c.ApplyFriction(friction);

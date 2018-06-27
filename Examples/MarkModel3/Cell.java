@@ -141,7 +141,7 @@ public class Cell<C extends Cell,T extends Tissue<C>> extends AgentSQ2Dunstackab
             int index=G().tumorHood[i];
             C isVessel = (C)G().GetAgent(index);
             if (isVessel == null){
-                G().tumorHoodIs[nOptions]=index;
+                G().tumorHood[nOptions]=index;
                 nOptions++;
             }else if(isVessel.type == VESSEL) {
                 G().vesselIs[nVessels] = index;
@@ -149,7 +149,7 @@ public class Cell<C extends Cell,T extends Tissue<C>> extends AgentSQ2Dunstackab
             }
         }
         if (nOptions > 0) {
-            int chosenI = G().tumorHoodIs[G().rn.Int(nOptions)];
+            int chosenI = G().tumorHood[G().rn.Int(nOptions)];
             //division of tumor cell
             C c=Divide(chosenI);
             if(c==null){

@@ -1,7 +1,7 @@
 package Examples.MarkModel3;
 
 import Framework.Extensions.PDEGrid2DCoarse;
-import Framework.Gui.GuiGrid;
+import Framework.Gui.UIGrid;
 
 import java.io.Serializable;
 
@@ -45,7 +45,7 @@ public abstract class Drug<C extends Cell,T extends Tissue<C>> implements Serial
     public double DefaultToxCalc(double prevTox,double intensity,double toxPower,double toxDecay){
         return (prevTox+toxPower*intensity)*toxDecay;
     }
-    abstract public void Draw(GuiGrid vis);
+    abstract public void Draw(UIGrid vis);
 
     public abstract double ToxCalc(double prevTox,double intensity);
 

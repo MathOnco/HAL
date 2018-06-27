@@ -19,7 +19,7 @@ Refine Syntax and Methods
  * values and labels can also be loaded as arrays of strings, allowing for the menuset to be used without a gui
  */
 public class ParamSet {
-    GuiWindow win;
+    UIWindow win;
     final int typeID = 1;//integer
     boolean column;
     final ArrayList<MenuItem> items;
