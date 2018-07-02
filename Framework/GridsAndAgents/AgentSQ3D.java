@@ -200,7 +200,7 @@ public class AgentSQ3D<T extends AgentGrid3D> extends Agent3DBase<T>{
         return G.counts[iSq];
     }
 
-    public int GetAge(){
+    public int Age(){
         return G.GetTick()-birthTick;
     }
 

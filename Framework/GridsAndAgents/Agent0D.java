@@ -19,7 +19,7 @@ abstract public class Agent0D<T extends AgentGrid0D> extends AgentBase<T> {
         }
     }
 
-    public int GetAge(){
+    public int Age(){
         return birthTick- G.GetTick();
     }
 

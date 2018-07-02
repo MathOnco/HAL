@@ -119,6 +119,12 @@ public class UIWindow {
     public UIWindow(String title, boolean killOnClose) {
         this(title,killOnClose,null,true);
     }
+    public UIWindow() {
+        this("",true,null,true);
+    }
+    public UIWindow(boolean killOnClose,boolean active) {
+        this("",killOnClose,null,active);
+    }
     public void TickPause(int millis){
         if(active) {
             tt.TickPause(millis);

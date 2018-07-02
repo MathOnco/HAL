@@ -173,7 +173,7 @@ public class AgentSQ2D<T extends AgentGrid2D> extends Agent2DBase<T>{
         }
     }
 
-    public int GetAge(){
+    public int Age(){
         return G.GetTick()-birthTick;
     }
 

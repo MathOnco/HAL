@@ -179,7 +179,7 @@ public class AgentPT1D<T extends AgentGrid1D> extends Agent1DBase<T>{
     public int Xsq(){
         return (int) ptX;
     }
-    public int GetAge(){
+    public int Age(){
         return G.GetTick()-birthTick;
     }
 

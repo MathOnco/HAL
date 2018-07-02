@@ -247,7 +247,7 @@ public class AgentPT3D<T extends AgentGrid3D> extends Agent3DBase<T>{
     int GetCountOnSquare() {
         return G.counts[Isq()];
     }
-    public int GetAge(){
+    public int Age(){
         return G.GetTick()-birthTick;
     }
 

@@ -71,8 +71,14 @@ public class OpenGL3DWindow {
             //glTranslatef(transXY, transXY, transZ);
         }
     }
+    public OpenGL3DWindow(int xPix, int yPix, int xDim, int yDim, int zDim, boolean active) {
+        this("", xPix, yPix, xDim, yDim, zDim, true);
+    }
     public OpenGL3DWindow(String title, int xPix, int yPix, int xDim, int yDim, int zDim) {
         this(title,xPix,yPix,xDim,yDim,zDim,true);
+    }
+    public OpenGL3DWindow(int xPix, int yPix, int xDim, int yDim, int zDim) {
+        this("",xPix,yPix,xDim,yDim,zDim,true);
     }
     int GetDelta() {
         long time = System.currentTimeMillis();

@@ -47,6 +47,12 @@ public class OpenGL2DWindow {
             glMatrixMode(GL_MODELVIEW);
         }
     }
+    public OpenGL2DWindow(int xPix, int yPix, int xDim, int yDim, boolean active) {
+        this("",xPix,yPix,xDim,yDim,active);
+    }
+    public OpenGL2DWindow(int xPix, int yPix, int xDim, int yDim) {
+        this("",xPix,yPix,xDim,yDim,true);
+    }
     public OpenGL2DWindow(String title, int xPix, int yPix, int xDim, int yDim) {
         this(title,xPix,yPix,xDim,yDim,true);
     }

@@ -202,7 +202,7 @@ public class AgentSQ3Dunstackable<T extends AgentGrid3D> extends Agent3DBase<T>{
 
     }
 
-    public int GetAge(){
+    public int Age(){
         return G.GetTick()-birthTick;
     }
 

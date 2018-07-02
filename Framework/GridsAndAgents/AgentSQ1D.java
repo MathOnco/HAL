@@ -172,7 +172,7 @@ public class AgentSQ1D<T extends AgentGrid1D> extends Agent1DBase<T>{
         return ct;
     }
 
-    public int GetAge(){
+    public int Age(){
         return G.GetTick()-birthTick;
     }
     //addCoords

@@ -211,7 +211,7 @@ public class AgentPT2D<T extends AgentGrid2D> extends Agent2DBase<T>{
     public int Xsq(){
         return (int) ptX;
     }
-    public int GetAge(){
+    public int Age(){
         return G.GetTick()-birthTick;
     }
 

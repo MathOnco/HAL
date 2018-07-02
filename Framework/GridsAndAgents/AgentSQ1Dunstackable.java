@@ -146,7 +146,7 @@ public class AgentSQ1Dunstackable<T extends AgentGrid1D> extends Agent1DBase<T>{
      * Gets the index of the square that the agent occupies
      */
 
-    public int GetAge(){
+    public int Age(){
         return G.GetTick()-birthTick;
     }
     public int Isq(){

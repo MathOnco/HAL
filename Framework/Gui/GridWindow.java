@@ -19,11 +19,17 @@ public class GridWindow extends UIGrid {
     public GridWindow(String title, int xDim, int yDim, int scaleFactor, boolean killOnClose) {
         this(title,xDim,yDim,scaleFactor,killOnClose,null,true);
     }
+    public GridWindow(String title, int xDim, int yDim, int scaleFactor, boolean killOnClose,boolean active) {
+        this(title,xDim,yDim,scaleFactor,killOnClose,null,active);
+    }
     public GridWindow(String title, int xDim, int yDim, int scaleFactor) {
         this(title,xDim,yDim,scaleFactor,true,null,true);
     }
     public GridWindow(int xDim, int yDim, int scaleFactor) {
         this("",xDim,yDim,scaleFactor,true,null,true);
+    }
+    public GridWindow(int xDim, int yDim, int scaleFactor,boolean killOnClose,boolean active) {
+        this("",xDim,yDim,scaleFactor,killOnClose,null,active);
     }
     public GridWindow(String title, int xDim, int yDim, int scaleFactor, boolean killOnClose, GuiCloseAction closeAction) {
         this(title,xDim,yDim,scaleFactor,killOnClose,closeAction,true);

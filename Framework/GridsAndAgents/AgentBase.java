@@ -24,7 +24,7 @@ public abstract class AgentBase<T> implements Serializable{
         return alive;
     }
 
-    public int GetBirthTick(){
+    public int BirthTick(){
         return birthTick;
     }
 

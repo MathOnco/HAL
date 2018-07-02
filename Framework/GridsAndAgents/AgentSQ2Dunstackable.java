@@ -166,7 +166,7 @@ public class AgentSQ2Dunstackable<T extends AgentGrid2D> extends Agent2DBase<T>{
         putHere.add(this);
     }
 
-    public int GetAge(){
+    public int Age(){
         return G.GetTick()-birthTick;
     }
 
