@@ -16,28 +16,28 @@ class CellOL extends SphericalAgent2D<CellOL,ExampleOffLattice>{
     double forceSum;//used with contact inhibition calculation
     public void Init(int color){
         this.type =color;
-        this.radius=G().RADIUS;
+        this.radius= G.RADIUS;
     }
     double ForceCalc(double overlap,CellOL other){
         if(overlap<0) {
             return 0;//if cells aren't actually overlapping, then there is no force response
         }
-        return Math.pow(G().FORCE_SCALER*overlap,G().FORCE_EXPONENT);
+        return Math.pow(G.FORCE_SCALER*overlap, G.FORCE_EXPONENT);
     }
     public void CalcMove(){
         //sets x and y velocity components of cell
-        forceSum=SumForces(G().RADIUS*2,this::ForceCalc);
+        forceSum=SumForces(G.RADIUS*2,this::ForceCalc);
     }
     public boolean CanDivide(double div_bias,double inhib_weight){
-        return G().rn.Double()<Math.tanh(div_bias-forceSum*inhib_weight);
+        return G.rn.Double()<Math.tanh(div_bias-forceSum*inhib_weight);
     }
     public void MoveDiv(){
         //move cell and reduce x and y velocity components by friction constant
         ForceMove();
-        ApplyFriction(G().FRICTION);
+        ApplyFriction(G.FRICTION);
         //compute whether division can occur, using the constants
-        if((type == ExampleOffLattice.PURPLE &&CanDivide(G().PURP_DIV_BIAS,G().PURP_INHIB_WEIGHT))||(type == ExampleOffLattice.PINK &&CanDivide(G().PINK_DIV_BIAS,G().PINK_INHIB_WEIGHT))){
-            Divide(radius*2.0/3.0,G().divCoordStorage,G().rn).Init(type);
+        if((type == ExampleOffLattice.PURPLE &&CanDivide(G.PURP_DIV_BIAS, G.PURP_INHIB_WEIGHT))||(type == ExampleOffLattice.PINK &&CanDivide(G.PINK_DIV_BIAS, G.PINK_INHIB_WEIGHT))){
+            Divide(radius*2.0/3.0, G.divCoordStorage, G.rn).Init(type);
         }
     }
 }

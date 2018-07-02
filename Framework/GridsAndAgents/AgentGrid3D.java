@@ -138,43 +138,6 @@ public class AgentGrid3D<T extends AgentBaseSpatial> extends GridBase3D implemen
 //        CleanAgents();
 //        IncTick();
 //    }
-    public void ChangeGridsSQ(T foreignAgent,int newX,int newY,int newZ){
-        if(!foreignAgent.alive){
-            throw new IllegalStateException("can't move dead agent between grids!");
-        }
-        if(foreignAgent.myGrid.getClass()!=this.getClass()){
-            throw new IllegalStateException("can't move agent to a different type of typeGrid!");
-        }
-        foreignAgent.RemSQ();
-        ((AgentGrid3D)foreignAgent.myGrid).agents.RemoveAgent(foreignAgent);
-        agents.AddAgent(foreignAgent);
-        foreignAgent.Setup(newX,newY,newZ);
-    }
-    public void ChangeGridsPT(T foreignAgent,double newX,double newY,double newZ){
-        if(!foreignAgent.alive){
-            throw new IllegalStateException("can't move dead agent between grids!");
-        }
-        if(foreignAgent.myGrid.getClass()!=this.getClass()){
-            throw new IllegalStateException("can't move agent to a different type of typeGrid!");
-        }
-        foreignAgent.RemSQ();
-        ((AgentGrid3D)foreignAgent.myGrid).agents.RemoveAgent(foreignAgent);
-        agents.AddAgent(foreignAgent);
-        foreignAgent.Setup(newX,newY,newZ);
-    }
-    public void ChangeGridsSQ(T foreignAgent,int newI){
-        if(!foreignAgent.alive){
-            throw new IllegalStateException("can't move dead agent between grids!");
-        }
-        if(foreignAgent.myGrid.getClass()!=this.getClass()){
-            throw new IllegalStateException("can't move agent to a different type of typeGrid!");
-        }
-        foreignAgent.RemSQ();
-        ((AgentGrid3D)foreignAgent.myGrid).agents.RemoveAgent(foreignAgent);
-        agents.AddAgent(foreignAgent);
-        foreignAgent.Setup(newI);
-    }
-
     public int MapEmptyHood(int[] hood,int centerX,int centerY,int centerZ){
         return MapHood(hood,centerX,centerY,centerZ,(i,x,y,z)->GetAgent(i)==null);
     }
@@ -777,12 +740,12 @@ public class AgentGrid3D<T extends AgentBaseSpatial> extends GridBase3D implemen
         return ret;
     }
     private class AgentsIterator3D implements Iterator<T>,Iterable<T>{
-        final AgentGrid3D<T> myGrid;
+        final AgentGrid3D<T> G;
         ArrayList<T>myAgents;
         int numAgents;
         int iCount;
         AgentsIterator3D(AgentGrid3D<T> grid){
-            myGrid=grid;
+            G=grid;
         }
         public void Setup(ArrayList<T> myAgents){
             this.myAgents=myAgents;
@@ -793,8 +756,8 @@ public class AgentGrid3D<T extends AgentBaseSpatial> extends GridBase3D implemen
         @Override
         public boolean hasNext() {
             if(iCount== numAgents){
-                myGrid.usedAgentSearches.add(myAgents);
-                myGrid.usedIterIs.add(this);
+                G.usedAgentSearches.add(myAgents);
+                G.usedIterIs.add(this);
                 return false;
             }
             return true;

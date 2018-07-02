@@ -1,6 +1,5 @@
 package Examples.MarkModel3;
 
-import Framework.Extensions.PDEGrid2DCoarse;
 import Framework.GridsAndAgents.AgentSQ2Dunstackable;
 import Framework.Rand;
 
@@ -28,21 +27,21 @@ public class Cell<C extends Cell,T extends Tissue<C>> extends AgentSQ2Dunstackab
     public double vesselHP;
     public double cycleRemaining;
     public C Divide(int index){
-        return (C)G().NewAgentSQ(index);
+        return (C) G.NewAgentSQ(index);
     }
 
     public C InitVessel() {
         this.type = Tissue.VESSEL;
-        this.vesselHP = G().VESSEL_HP_MAX;
+        this.vesselHP = G.VESSEL_HP_MAX;
         this.drawColor = Tissue.VESSEL_COLOR;
-        G().vesselList.add((C)this);
+        G.vesselList.add((C)this);
         return (C) this;
     }
 
     public C InitNormal(double startCycleTime) {
         this.type = Tissue.NORMAL;
-        this.acidResistPH=G().NORMAL_PHENO_ACID_RESIST;
-        this.glycRate=G().NORMAL_PHENO_GLYC;
+        this.acidResistPH= G.NORMAL_PHENO_ACID_RESIST;
+        this.glycRate= G.NORMAL_PHENO_GLYC;
         this.drawColor = Tissue.NORMAL_COLOR;
         cycleRemaining=startCycleTime;
         return (C) this;
@@ -60,7 +59,7 @@ public class Cell<C extends Cell,T extends Tissue<C>> extends AgentSQ2Dunstackab
 
 
     public double GetConc(Diff diff) {
-        if(G().DIFF_SPACE_SCALE==1){
+        if(G.DIFF_SPACE_SCALE==1){
             return diff.grid.Get(Xsq(),Ysq());
         }
         else {
@@ -69,7 +68,7 @@ public class Cell<C extends Cell,T extends Tissue<C>> extends AgentSQ2Dunstackab
     }
 
     public void AddConc(Diff diff, double val) {
-        if(G().DIFF_SPACE_SCALE==1){
+        if(G.DIFF_SPACE_SCALE==1){
             diff.grid.Add(Xsq(),Ysq(),val);
         }
         else {
@@ -78,7 +77,7 @@ public class Cell<C extends Cell,T extends Tissue<C>> extends AgentSQ2Dunstackab
     }
 
     public void SetConc(Diff diff, double val) {
-        if(G().DIFF_SPACE_SCALE==1){
+        if(G.DIFF_SPACE_SCALE==1){
             diff.grid.Set(Xsq(),Ysq(),val);
         }
         else {
@@ -88,7 +87,7 @@ public class Cell<C extends Cell,T extends Tissue<C>> extends AgentSQ2Dunstackab
 
     public void Die(boolean necrotic) {
         if(type==VESSEL){
-            G().vesselList.remove(this);
+            G.vesselList.remove(this);
         }
         if(necrotic){
             this.type = Tissue.NECRO;
@@ -99,34 +98,34 @@ public class Cell<C extends Cell,T extends Tissue<C>> extends AgentSQ2Dunstackab
         }
     }
     public double GetGlycRate(double pheno) {
-        return G().GetGlycRate(pheno);
+        return G.GetGlycRate(pheno);
     }
 
     public double GetAcidResistPH(double pheno) {
-        return G().GetAcidResistPH(pheno);
+        return G.GetAcidResistPH(pheno);
     }
 
     public double GetGlycPheno(double glycRate) {
-        return G().GetGlycPheno(glycRate);
+        return G.GetGlycPheno(glycRate);
     } //***
 
     public double GetAcidResistPheno(double acidResistPH) {
-        return G().GetAcidResistPheno(acidResistPH);
+        return G.GetAcidResistPheno(acidResistPH);
     }  //***
 
     public double GetGlycPheno() {
-        return G().GetGlycPheno(glycRate);
+        return G.GetGlycPheno(glycRate);
     } //***
 
     public double GetAcidResistPheno() {
-        return G().GetAcidResistPheno(acidResistPH);
+        return G.GetAcidResistPheno(acidResistPH);
     }  //***
 
 
     public C Mutate(Rand rn) {
         //uniform for acid resist, exponential for glycolytic
-        double newGlycPheno=Bound(GetGlycPheno(glycRate) + (rn.Double() * 2 - 1) * G().MUT_RATE_GLYC, 0, 1);
-        double newAcidResistPheno=Bound(GetAcidResistPheno(acidResistPH) + (rn.Double() * 2 - 1) * G().MUT_RATE_ACID_RESIST, 0, 1);
+        double newGlycPheno=Bound(GetGlycPheno(glycRate) + (rn.Double() * 2 - 1) * G.MUT_RATE_GLYC, 0, 1);
+        double newAcidResistPheno=Bound(GetAcidResistPheno(acidResistPH) + (rn.Double() * 2 - 1) * G.MUT_RATE_ACID_RESIST, 0, 1);
         glycRate=GetGlycRate(newGlycPheno);
         acidResistPH= GetAcidResistPH(newAcidResistPheno);
         drawColor = CbCrPlaneColor(newAcidResistPheno,newGlycPheno);
@@ -136,33 +135,33 @@ public class Cell<C extends Cell,T extends Tissue<C>> extends AgentSQ2Dunstackab
         //tumor cells can either divide into empty space or degrade vessels
         int nOptions = 0;
         int nVessels = 0;
-        int len=G().MapHood(G().tumorHood,Isq());
+        int len= G.MapHood(G.tumorHood,Isq());
         for (int i = 0; i < len; i++) {
-            int index=G().tumorHood[i];
-            C isVessel = (C)G().GetAgent(index);
+            int index= G.tumorHood[i];
+            C isVessel = (C) G.GetAgent(index);
             if (isVessel == null){
-                G().tumorHood[nOptions]=index;
+                G.tumorHood[nOptions]=index;
                 nOptions++;
             }else if(isVessel.type == VESSEL) {
-                G().vesselIs[nVessels] = index;
+                G.vesselIs[nVessels] = index;
                 nVessels++;
             }
         }
         if (nOptions > 0) {
-            int chosenI = G().tumorHood[G().rn.Int(nOptions)];
+            int chosenI = G.tumorHood[G.rn.Int(nOptions)];
             //division of tumor cell
             C c=Divide(chosenI);
             if(c==null){
                 return false;
             }
-            c.InitTumor(glycRate, acidResistPH,G().MIN_CELL_CYCLE_TIME).Mutate(G().rn);
-            Mutate(G().rn);
+            c.InitTumor(glycRate, acidResistPH, G.MIN_CELL_CYCLE_TIME).Mutate(G.rn);
+            Mutate(G.rn);
             cycleRemaining = 1;
             return true;
         } else if (nVessels > 0) {
-            C degradeMe = (C)G().GetAgent(G().vesselIs[G().rn.Int(nVessels)]);
-            if (degradeMe != null&&(G().VESSEL_DEGRADE_PROB ==1||G().rn.Double()<G().VESSEL_DEGRADE_PROB)) {
-                degradeMe.vesselHP-=G().VESSEL_DEGRADATION_RATE;
+            C degradeMe = (C) G.GetAgent(G.vesselIs[G.rn.Int(nVessels)]);
+            if (degradeMe != null&&(G.VESSEL_DEGRADE_PROB ==1|| G.rn.Double()< G.VESSEL_DEGRADE_PROB)) {
+                degradeMe.vesselHP-= G.VESSEL_DEGRADATION_RATE;
                 if (degradeMe.vesselHP <= 0) {
                     //vessel degraded
                     degradeMe.Die(false);
@@ -174,17 +173,17 @@ public class Cell<C extends Cell,T extends Tissue<C>> extends AgentSQ2Dunstackab
 
     public boolean AttemptDivideNormal() {
         //look for open positions to divide into
-        int options=MapEmptyHood(G().normalHood);
-        if (options <= G().NORMAL_EMPTY_DIV_REQ) {
+        int options=MapEmptyHood(G.normalHood);
+        if (options <= G.NORMAL_EMPTY_DIV_REQ) {
             return false;
         }
-        C newC = Divide(G().normalHood[G().rn.Int(options)]);
+        C newC = Divide(G.normalHood[G.rn.Int(options)]);
         if (newC == null) {
             return false;
         }
-        G().cellDivided = true;
+        G.cellDivided = true;
         cycleRemaining = 1;
-        newC.InitNormal(G().MIN_CELL_CYCLE_TIME);
+        newC.InitNormal(G.MIN_CELL_CYCLE_TIME);
         return true;
     }
     public boolean AttemptDivide(){
@@ -221,9 +220,9 @@ public class Cell<C extends Cell,T extends Tissue<C>> extends AgentSQ2Dunstackab
 //    }
 
     public double DivideProb(){
-        double acidRMult=Math.min(1,G().ACID_RES_CYCLE_COST*-GetAcidResistPheno(acidResistPH)+1);
-        double glycMult=Math.min(1,G().GLYC_CYCLE_COST*-GetGlycPheno(glycRate)+1);
-        double ret= G().CELL_TIMESTEP*acidRMult*glycMult* 24/G().MIN_CELL_CYCLE_TIME*(Math.atan((availableATPprop-G().ATP_HALF_MAX)*2)/Math.PI+0.5);
+        double acidRMult=Math.min(1, G.ACID_RES_CYCLE_COST*-GetAcidResistPheno(acidResistPH)+1);
+        double glycMult=Math.min(1, G.GLYC_CYCLE_COST*-GetGlycPheno(glycRate)+1);
+        double ret= G.CELL_TIMESTEP*acidRMult*glycMult* 24/ G.MIN_CELL_CYCLE_TIME*(Math.atan((availableATPprop- G.ATP_HALF_MAX)*2)/Math.PI+0.5);
 
         return ret;
     }
@@ -241,17 +240,17 @@ public class Cell<C extends Cell,T extends Tissue<C>> extends AgentSQ2Dunstackab
 //    }
     public double DieProb(double[]intensities){
         //Random Death Check
-        double surviveProb=1.0-G().DEATH_PROB_NORM_COND;
+        double surviveProb=1.0- G.DEATH_PROB_NORM_COND;
         //Acid Death Check
-        if (ProtonsToPh(G().acid.GetInterp(Xsq(),Ysq())) < acidResistPH) {
-            surviveProb*=1.0-G().DEATH_PROB_POOR_COND;
+        if (ProtonsToPh(G.acid.GetInterp(Xsq(),Ysq())) < acidResistPH) {
+            surviveProb*=1.0- G.DEATH_PROB_POOR_COND;
         }
         //ATP Death Check
-        if (availableATPprop < G().DEATH_THRESH_ATP) {
+        if (availableATPprop < G.DEATH_THRESH_ATP) {
             surviveProb*=0;
         }
         if(intensities!=null) {
-            for (Drug drug : G().modDeathProb) {
+            for (Drug drug : G.modDeathProb) {
                 surviveProb*=1.0-drug.DeathProb(this, intensities[drug.I()]);
             }
         }
@@ -262,12 +261,12 @@ public class Cell<C extends Cell,T extends Tissue<C>> extends AgentSQ2Dunstackab
     public void CellStep(double[]intensities) {
         //TODO may want to return an int that maps to an event code system for the sake of display
         if (type == DEAD) {
-            if (G().rn.Double() < G().DISPOSE_PROB_DEAD) {
+            if (G.rn.Double() < G.DISPOSE_PROB_DEAD) {
                 Dispose();
             }
         }
         else if(type==NECRO){
-            if(G().rn.Double()<G().DISPOSE_PROB_NECRO){
+            if(G.rn.Double()< G.DISPOSE_PROB_NECRO){
                 Dispose();
             }
         }
@@ -280,19 +279,19 @@ public class Cell<C extends Cell,T extends Tissue<C>> extends AgentSQ2Dunstackab
 
         else if (type == NORMAL||type==TUMOR) {
             if(intensities!=null){
-                for (Drug drug : G().onCellStep) {
+                for (Drug drug : G.onCellStep) {
                     drug.OnCellStep(this,intensities[drug.I()]);
                 }
             }
-            if(G().rn.Double()<DieProb(intensities)){
-                if(availableATPprop<G().DEATH_THRESH_ATP){
+            if(G.rn.Double()<DieProb(intensities)){
+                if(availableATPprop< G.DEATH_THRESH_ATP){
                     Die(true);
                 }else {
                     Die(false);
                 }
                 return;//death event
             }
-            if (availableATPprop < G().QUIESCENCE_THRESH_ATP) {
+            if (availableATPprop < G.QUIESCENCE_THRESH_ATP) {
                 return;
             }
             //decrement cell cycle
@@ -307,29 +306,29 @@ public class Cell<C extends Cell,T extends Tissue<C>> extends AgentSQ2Dunstackab
     }
 
     public void ATPComp(){
-        double consumedO2 = MichaelisMenten(G().oxygen.GetInterp(Xsq(),Ysq()), G().MAX_CONSUMPTION_O2, G().HALF_MAX_CONC_O2);
-        double consumedGluc = MichaelisMenten(G().glucose.GetInterp(Xsq(),Ysq()), (glycRate * G().ATP_TARGET) / 2 - (27 * consumedO2) / 10, G().HALF_MAX_CONC_GLUCOSE);
-        availableATPprop = (2 * consumedGluc + (27 * consumedO2) / 5) / G().ATP_TARGET;
+        double consumedO2 = MichaelisMenten(G.oxygen.GetInterp(Xsq(),Ysq()), G.MAX_CONSUMPTION_O2, G.HALF_MAX_CONC_O2);
+        double consumedGluc = MichaelisMenten(G.glucose.GetInterp(Xsq(),Ysq()), (glycRate * G.ATP_TARGET) / 2 - (27 * consumedO2) / 10, G.HALF_MAX_CONC_GLUCOSE);
+        availableATPprop = (2 * consumedGluc + (27 * consumedO2) / 5) / G.ATP_TARGET;
     }
     public void Metabolism(double[]intensities) {
         if (type == DEAD || type == VESSEL) {
             return;
         }
         if (intensities != null) {
-            for (Drug drug : G().onCellDiffStep) {
+            for (Drug drug : G.onCellDiffStep) {
                 drug.OnCellDiffStep(this, intensities[drug.I()]);
             }
         }
         //oxygen consumption
-        double consumedO2 = MichaelisMenten(G().oxygen.GetInterp(Xsq(),Ysq()), G().MAX_CONSUMPTION_O2, G().HALF_MAX_CONC_O2);
-        G().oxygen.AddSwap(Xsq(), Ysq(), -consumedO2 * G().CELLS_PER_SQ * G().DIFF_TIMESTEP);
+        double consumedO2 = MichaelisMenten(G.oxygen.GetInterp(Xsq(),Ysq()), G.MAX_CONSUMPTION_O2, G.HALF_MAX_CONC_O2);
+        G.oxygen.AddSwap(Xsq(), Ysq(), -consumedO2 * G.CELLS_PER_SQ * G.DIFF_TIMESTEP);
         //Glucose consumption
-        double consumedGluc = MichaelisMenten(G().glucose.GetInterp(Xsq(),Ysq()), (glycRate * G().ATP_TARGET) / 2 - (27 * consumedO2) / 10, G().HALF_MAX_CONC_GLUCOSE);
-        G().glucose.AddSwap(Xsq(), Ysq(), -consumedGluc * G().CELLS_PER_SQ * G().DIFF_TIMESTEP);
+        double consumedGluc = MichaelisMenten(G.glucose.GetInterp(Xsq(),Ysq()), (glycRate * G.ATP_TARGET) / 2 - (27 * consumedO2) / 10, G.HALF_MAX_CONC_GLUCOSE);
+        G.glucose.AddSwap(Xsq(), Ysq(), -consumedGluc * G.CELLS_PER_SQ * G.DIFF_TIMESTEP);
         //Conversion to ATP
         //availableATPprop = (2 * consumedGluc + (27 * consumedO2) / 5) / G().ATP_TARGET;
         //Production of acid
-        G().acid.AddSwap(Xsq(), Ysq(), G().PROTON_BUFFERING_COEFF * (consumedGluc - consumedO2 / 5) * G().CELLS_PER_SQ * G().DIFF_TIMESTEP);
+        G.acid.AddSwap(Xsq(), Ysq(), G.PROTON_BUFFERING_COEFF * (consumedGluc - consumedO2 / 5) * G.CELLS_PER_SQ * G.DIFF_TIMESTEP);
     }
 }
 

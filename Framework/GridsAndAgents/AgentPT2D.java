@@ -25,7 +25,7 @@ public class AgentPT2D<T extends AgentGrid2D> extends Agent2DBase<T>{
     void Setup(double xPos,double yPos){
         this.ptX =xPos;
         this.ptY =yPos;
-        iSq=this.myGrid.I(xPos,yPos);
+        iSq=this.G.I(xPos,yPos);
         AddSQ(iSq);
     }
 
@@ -36,8 +36,8 @@ public class AgentPT2D<T extends AgentGrid2D> extends Agent2DBase<T>{
 
     @Override
     void Setup(int i) {
-        ptX =myGrid.ItoX(i)+0.5;
-        ptY =myGrid.ItoY(i)+0.5;
+        ptX =G.ItoX(i)+0.5;
+        ptY =G.ItoY(i)+0.5;
         iSq =i;
         AddSQ(i);
     }
@@ -48,7 +48,7 @@ public class AgentPT2D<T extends AgentGrid2D> extends Agent2DBase<T>{
             throw new RuntimeException("attepting to dispose already dead agent");
         }
         RemSQ();
-        myGrid.agents.RemoveAgent(this);
+        G.agents.RemoveAgent(this);
         if(myNodes!=null){
             myNodes.DisposeAll();
         }
@@ -65,7 +65,7 @@ public class AgentPT2D<T extends AgentGrid2D> extends Agent2DBase<T>{
 
     @Override
     int GetCountOnSquare() {
-        return myGrid.counts[Isq()];
+        return G.counts[Isq()];
     }
 
     @Override
@@ -102,16 +102,16 @@ public class AgentPT2D<T extends AgentGrid2D> extends Agent2DBase<T>{
     }
 
     void AddSQ(int i){
-        if(myGrid.grid[i]!=null){
-            ((AgentPT2D)myGrid.grid[i]).prevSq=this;
-            this.nextSq=(AgentPT2D)myGrid.grid[i];
+        if(G.grid[i]!=null){
+            ((AgentPT2D)G.grid[i]).prevSq=this;
+            this.nextSq=(AgentPT2D)G.grid[i];
         }
-        myGrid.grid[i]=this;
-        myGrid.counts[i]++;
+        G.grid[i]=this;
+        G.counts[i]++;
     }
     void RemSQ(){
-        if(myGrid.grid[iSq]==this){
-            myGrid.grid[iSq]=this.nextSq;
+        if(G.grid[iSq]==this){
+            G.grid[iSq]=this.nextSq;
         }
         if(nextSq!=null){
             nextSq.prevSq=prevSq;
@@ -121,7 +121,7 @@ public class AgentPT2D<T extends AgentGrid2D> extends Agent2DBase<T>{
         }
         prevSq=null;
         nextSq=null;
-        myGrid.counts[iSq]--;
+        G.counts[iSq]--;
     }
     /**
      * Moves the agent to the center of the square at the specified coordinates
@@ -131,7 +131,7 @@ public class AgentPT2D<T extends AgentGrid2D> extends Agent2DBase<T>{
             throw new RuntimeException("Attempting to move dead agent");
         }
         RemSQ();
-        iSq=myGrid.I(newX,newY);
+        iSq=G.I(newX,newY);
         AddSQ(iSq);
         ptX =newX+0.5;
         ptY =newY+0.5;
@@ -142,8 +142,8 @@ public class AgentPT2D<T extends AgentGrid2D> extends Agent2DBase<T>{
             throw new RuntimeException("attempting to move dead agent");
         }
         RemSQ();
-        int x=G().ItoX(i);
-        int y=G().ItoY(i);
+        int x= G.ItoX(i);
+        int y= G.ItoY(i);
         iSq=i;
         this.ptX=x+0.5;
         this.ptY=y+0.5;
@@ -164,7 +164,7 @@ public class AgentPT2D<T extends AgentGrid2D> extends Agent2DBase<T>{
         int yIntOld=(int) ptY;
         if(xIntNew!=xIntOld||yIntNew!=yIntOld) {
             RemSQ();
-            iSq=myGrid.I(xIntNew,yIntNew);
+            iSq=G.I(xIntNew,yIntNew);
             AddSQ(iSq);
         }
         ptX =newX;
@@ -175,18 +175,18 @@ public class AgentPT2D<T extends AgentGrid2D> extends Agent2DBase<T>{
         if(!alive){
             throw new RuntimeException("Attempting to move dead agent");
         }
-        if (G().In(newX, newY)) {
+        if (G.In(newX, newY)) {
             MovePT(newX, newY);
             return;
         }
-        if (G().wrapX) {
-            newX = ModWrap(newX, G().moveSafeXdim);
-        } else if (!InDim(newX, G().xDim)) {
+        if (G.wrapX) {
+            newX = ModWrap(newX, G.moveSafeXdim);
+        } else if (!InDim(newX, G.xDim)) {
             newX = Xpt();
         }
-        if (G().wrapY) {
-            newY = ModWrap(newY, G().moveSafeYdim);
-        } else if (!InDim(newY, G().yDim))
+        if (G.wrapY) {
+            newY = ModWrap(newY, G.moveSafeYdim);
+        } else if (!InDim(newY, G.yDim))
             newY = Ypt();
         MovePT(newX,newY);
     }
@@ -212,7 +212,7 @@ public class AgentPT2D<T extends AgentGrid2D> extends Agent2DBase<T>{
         return (int) ptX;
     }
     public int GetAge(){
-        return G().GetTick()-birthTick;
+        return G.GetTick()-birthTick;
     }
 
     /**
@@ -222,15 +222,15 @@ public class AgentPT2D<T extends AgentGrid2D> extends Agent2DBase<T>{
         return (int) ptY;
     }
     public<T extends AgentPT2D> double Xdisp(T other, boolean wrapX){
-        return wrapX? DispWrap(other.Xpt(),Xpt(),G().xDim):Xpt()-other.Xpt();
+        return wrapX? DispWrap(other.Xpt(),Xpt(), G.xDim):Xpt()-other.Xpt();
     }
     public <T extends AgentPT2D> double Ydisp(T other, boolean wrapY){
-        return wrapY? DispWrap(other.Ypt(),Ypt(),G().yDim):Ypt()-other.Ypt();
+        return wrapY? DispWrap(other.Ypt(),Ypt(), G.yDim):Ypt()-other.Ypt();
     }
     public<T extends AgentPT2D> double Xdisp(T other){
-        return G().wrapX? DispWrap(other.Xpt(),Xpt(),G().xDim):Xpt()-other.Xpt();
+        return G.wrapX? DispWrap(other.Xpt(),Xpt(), G.xDim):Xpt()-other.Xpt();
     }
     public <T extends AgentPT2D> double Ydisp(T other){
-        return G().wrapY? DispWrap(other.Ypt(),Ypt(),G().yDim):Ypt()-other.Ypt();
+        return G.wrapY? DispWrap(other.Ypt(),Ypt(), G.yDim):Ypt()-other.Ypt();
     }
 }

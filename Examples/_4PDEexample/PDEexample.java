@@ -19,7 +19,7 @@ class SrcOrSink extends AgentSQ2Dunstackable<PDEexample>{
         this.type=type;
     }
     void Reaction(){
-        G().diff.Set(Isq(),type==PDEexample.SRC?1:0);//set the local concentration to 1 if source, 0 if sink
+        G.diff.Set(Isq(),type==PDEexample.SRC?1:0);//set the local concentration to 1 if source, 0 if sink
     }
 }
 

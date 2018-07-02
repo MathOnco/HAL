@@ -7,6 +7,7 @@ import Framework.Rand;
 
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.util.*;
 
 /**
@@ -17,6 +18,7 @@ class InternalGridAgentList<T extends AgentBase> implements Iterable<T>,Serializ
     ArrayList<T> deads;
     ArrayList<AgentListIterator> usedIters=new ArrayList<>();
     transient Constructor<?> builder;
+    Field gridField;
     int iLastAlive;
     int pop;
     final Object myGrid;
@@ -26,6 +28,12 @@ class InternalGridAgentList<T extends AgentBase> implements Iterable<T>,Serializ
     InternalGridAgentList(Class<T> type, Object myGrid){
         this.builder=type.getDeclaredConstructors()[0];
         this.builder.setAccessible(true);
+        try {
+            gridField=type.getField("G");
+            gridField.setAccessible(true);
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
         this.agents=new ArrayList<>();
         this.deads=new ArrayList<>();
         this.iLastAlive=-1;
@@ -56,13 +64,14 @@ class InternalGridAgentList<T extends AgentBase> implements Iterable<T>,Serializ
     else {
         try {
             newAgent = (T)builder.newInstance();
+            gridField.set(newAgent,this.myGrid);
         }
         catch (Exception e){
             e.printStackTrace();
             throw new RuntimeException("Could not instantiate");
         }
         agents.add(newAgent);
-        newAgent.myGrid=this.myGrid;
+        //newAgent.myGrid=this.myGrid;
         iLastAlive++;
         newAgent.iList=iLastAlive;
         //agent.iList= iLastAlive;
@@ -79,8 +88,14 @@ class InternalGridAgentList<T extends AgentBase> implements Iterable<T>,Serializ
         }
         if(iLastAlive+1<agents.size()) {
             agents.add(agents.get(iLastAlive + 1));
+            agents.set(iLastAlive+1,newAgent);
+            newAgent.iList=iLastAlive+1;
         }
-        agents.add(iLastAlive+1,newAgent);
+        else {
+            agents.add(newAgent);
+            newAgent.iList=agents.size()-1;
+        }
+        //newAgent.myGrid=this.myGrid;
         iLastAlive++;
         pop++;
         newAgent.stateID=stateID;
@@ -138,7 +153,7 @@ class InternalGridAgentList<T extends AgentBase> implements Iterable<T>,Serializ
             while(iAgent<=iLastAlive) {
                 T possibleRet=agents.get(iAgent);
                 iAgent += 1;
-                if (possibleRet != null && possibleRet.alive && possibleRet.stateID < stateID) {
+                if (possibleRet.alive && possibleRet.stateID < stateID) {
                     ret=possibleRet;
                     return true;
                 }
@@ -166,33 +181,34 @@ class InternalGridAgentList<T extends AgentBase> implements Iterable<T>,Serializ
             int iSwap2=rn.Int(iSwap1+1);
             T swap1=agents.get(iSwap1);
             T swap2=agents.get(iSwap2);
-            swap1.iList = iSwap2;
-            swap2.iList = iSwap1;
+                swap1.iList = iSwap2;
+                swap2.iList = iSwap1;
             agents.set(iSwap2,swap1);
             agents.set(iSwap1,swap2);
         }
     }
-    public void CleanAgents(){
+    public void CleanAgents() {
         stateID++;
-        int iSwap=iLastAlive;
-        iLastAlive=pop-1;
-        while(deads.size()>0&&iSwap>iLastAlive){
-            T dead=deads.remove(deads.size()-1);
-            int iDead=dead.iList;
-            if(iDead<=iLastAlive){
-                T swap=agents.get(iSwap);
-                while(!swap.alive){
+        //deal with cleaning agent list second
+        int iSwap = iLastAlive;
+        iLastAlive = pop - 1;
+        while (deads.size() > 0 && iSwap > iLastAlive) {
+            T dead = deads.remove(deads.size() - 1);
+            int iDead = dead.iList;
+            if (iDead <= iLastAlive) {
+                T swap = agents.get(iSwap);
+                while (!swap.alive) {
                     iSwap--;
-                    if(iSwap<=iLastAlive){
+                    if (iSwap <= iLastAlive) {
                         deads.clear();
                         return;
                     }
-                    swap=agents.get(iSwap);
+                    swap = agents.get(iSwap);
                 }
-                swap.iList=iDead;
-                dead.iList=iSwap;
-                agents.set(iDead,swap);
-                agents.set(iSwap,dead);
+                swap.iList = iDead;
+                dead.iList = iSwap;
+                agents.set(iDead, swap);
+                agents.set(iSwap, dead);
                 iSwap--;
             }
         }

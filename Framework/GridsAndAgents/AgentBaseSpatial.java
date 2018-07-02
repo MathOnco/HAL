@@ -16,7 +16,7 @@ public abstract class AgentBaseSpatial<T> extends AgentBase<T> {
         if(!alive||!other.alive){
             throw new RuntimeException("attempting to move dead agent");
         }
-        if(other.myGrid!=myGrid){
+        if(other.G!=G){
             throw new IllegalStateException("can't swap positions between agents on different grids!");
         }
         int iOther=other.Isq();

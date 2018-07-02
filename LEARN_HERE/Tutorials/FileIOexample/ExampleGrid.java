@@ -13,22 +13,22 @@ class ExampleCell extends AgentPT2D<ExampleGrid> {
     int color;
 
     public void Init(){
-        this.color=Util.RGB(G().rng.Double(),G().rng.Double(),G().rng.Double());
+        this.color=Util.RGB(G.rng.Double(), G.rng.Double(), G.rng.Double());
     }
 
     public void StepCell(double dieProb,double divProb){
-        if(G().oxygen.Get(Isq())<0.7||G().rng.Double()<dieProb){
+        if(G.oxygen.Get(Isq())<0.7|| G.rng.Double()<dieProb){
             //cell will die
             Dispose();
             return;
         }
-        G().oxygen.Mul(Isq(),0.98);
-        if(G().rng.Double()<divProb&&G().PopAt(Isq())<5){
-            G().NewAgentPT(Xpt(),Ypt()).Init();
+        G.oxygen.Mul(Isq(),0.98);
+        if(G.rng.Double()<divProb&& G.PopAt(Isq())<5){
+            G.NewAgentPT(Xpt(),Ypt()).Init();
         }
         //cell will move
-        G().rng.RandomPointInCircle(0.5,G().moveCoords);
-        MoveSafePT(Xpt()+G().moveCoords[0],Ypt()+G().moveCoords[1]);
+        G.rng.RandomPointInCircle(0.5, G.moveCoords);
+        MoveSafePT(Xpt()+ G.moveCoords[0],Ypt()+ G.moveCoords[1]);
     }
 }
 

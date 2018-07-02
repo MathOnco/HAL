@@ -81,12 +81,12 @@ class OCCell extends Cell<OCCell,OCTissue> //custom cell/vessel code here
                                                  then these can't be turned on or off, so don't need the attribute */
     {
         this.type = Tissue.VESSEL;
-        this.vesselHP = G().VESSEL_HP_MAX;
+        this.vesselHP = G.VESSEL_HP_MAX;
         this.drawColor = Tissue.VESSEL_COLOR;
         this.occluded = false;   //Adds a boolean attribute to each vessel; each vessel keeps track of whether it should be on or off
         this.m_i_angio = false;  //Initializes vessels to not having been made during angiogenesis
         this.prop_occ = 0;  //All vessels start off not occluded; colors occluded vessels in different shades of red --> more red = more occlusion; 1 = fully occlude
-        G().vesselList.add(this);
+        G.vesselList.add(this);
         return this;
     }
 
@@ -116,7 +116,7 @@ class OCCell extends Cell<OCCell,OCTissue> //custom cell/vessel code here
         //TODO may want to return an int that maps to an event code system for the sake of display
         if (type == DEAD)
         {
-            if (G().rn.Double() < G().DISPOSE_PROB_DEAD)
+            if (G.rn.Double() < G.DISPOSE_PROB_DEAD)
             {
                 Dispose();
             }
@@ -124,7 +124,7 @@ class OCCell extends Cell<OCCell,OCTissue> //custom cell/vessel code here
         else if(type==NECRO)
 
         {
-            if(G().rn.Double()<G().DISPOSE_PROB_NECRO)
+            if(G.rn.Double()< G.DISPOSE_PROB_NECRO)
             {
                 Dispose();
             }
@@ -140,7 +140,7 @@ class OCCell extends Cell<OCCell,OCTissue> //custom cell/vessel code here
 
         else if (type == VESSEL && this.m_i_angio)
         {
-            if(G().rn.Double()<G().VESSEL_SWITCH_PROB)
+            if(G.rn.Double()< G.VESSEL_SWITCH_PROB)
             {
                 Vessel_Switch();       //Switch the vessel's state
             }
@@ -150,12 +150,12 @@ class OCCell extends Cell<OCCell,OCTissue> //custom cell/vessel code here
         else if (type == NORMAL||type==TUMOR)
         {
             if(intensities!=null){
-                for (Drug drug : G().onCellStep) {
+                for (Drug drug : G.onCellStep) {
                     drug.OnCellStep(this,intensities[drug.I()]);
                 }
             }
-            if(G().rn.Double()<DieProb(intensities)){
-                if(availableATPprop<G().DEATH_THRESH_ATP)
+            if(G.rn.Double()<DieProb(intensities)){
+                if(availableATPprop< G.DEATH_THRESH_ATP)
                 {
                     Die(true);
                 }else
@@ -164,7 +164,7 @@ class OCCell extends Cell<OCCell,OCTissue> //custom cell/vessel code here
                 }
                 return;//death event
             }
-            if (availableATPprop < G().QUIESCENCE_THRESH_ATP)
+            if (availableATPprop < G.QUIESCENCE_THRESH_ATP)
             {
                 return;
             }

@@ -13,14 +13,14 @@ abstract public class Agent0D<T extends AgentGrid0D> extends AgentBase<T> {
      */
     public void Dispose(){
         //kills agent
-        myGrid.RemoveAgent(this);
+        G.RemoveAgent(this);
         if(myNodes!=null){
             myNodes.DisposeAll();
         }
     }
 
     public int GetAge(){
-        return birthTick-G().GetTick();
+        return birthTick- G.GetTick();
     }
 
     /**

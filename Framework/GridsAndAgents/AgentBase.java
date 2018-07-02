@@ -10,14 +10,11 @@ public abstract class AgentBase<T> implements Serializable{
     int iList;
     int birthTick;
     boolean alive;
-    T myGrid;
+    public final T G;
     AgentListNode myNodes;
 
-    /**
-     * Returns the typeGrid that the agent lives in
-     */
-    public T G(){
-        return myGrid;
+    public AgentBase(){
+        G=null;
     }
 
     /**

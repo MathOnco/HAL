@@ -25,9 +25,9 @@ public class AgentPT3D<T extends AgentGrid3D> extends Agent3DBase<T>{
             throw new RuntimeException("attempting to move dead agent");
         }
         RemSQ();
-        xPos=myGrid.ItoX(iNext)+0.5;
-        yPos=myGrid.ItoY(iNext)+0.5;
-        zPos=myGrid.ItoZ(iNext)+0.5;
+        xPos=G.ItoX(iNext)+0.5;
+        yPos=G.ItoY(iNext)+0.5;
+        zPos=G.ItoZ(iNext)+0.5;
         iSq=iNext;
         AddSQ(iNext);
     }
@@ -46,16 +46,16 @@ public class AgentPT3D<T extends AgentGrid3D> extends Agent3DBase<T>{
         this.xPos=xPos;
         this.yPos=yPos;
         this.zPos=zPos;
-        iSq=myGrid.I(xPos,yPos,zPos);
+        iSq=G.I(xPos,yPos,zPos);
         AddSQ(iSq);
     }
 
     @Override
     void Setup(int i) {
-        this.xPos=myGrid.ItoX(i)+0.5;
-        this.yPos=myGrid.ItoY(i)+0.5;
-        this.zPos=myGrid.ItoZ(i)+0.5;
-        iSq=myGrid.I(xPos,yPos,zPos);
+        this.xPos=G.ItoX(i)+0.5;
+        this.yPos=G.ItoY(i)+0.5;
+        this.zPos=G.ItoZ(i)+0.5;
+        iSq=G.I(xPos,yPos,zPos);
         AddSQ(iSq);
     }
 
@@ -68,16 +68,16 @@ public class AgentPT3D<T extends AgentGrid3D> extends Agent3DBase<T>{
         this.xPos=xPos+0.5;
         this.yPos=yPos+0.5;
         this.zPos=zPos+0.5;
-        iSq=myGrid.I(xPos,yPos,zPos);
+        iSq=G.I(xPos,yPos,zPos);
         AddSQ(iSq);
     }
     void AddSQ(int i){
-        if(myGrid.grid[i]!=null){
-            ((AgentPT3D)myGrid.grid[i]).prevSq=this;
-            this.nextSq=(AgentPT3D)myGrid.grid[i];
+        if(G.grid[i]!=null){
+            ((AgentPT3D)G.grid[i]).prevSq=this;
+            this.nextSq=(AgentPT3D)G.grid[i];
         }
-        myGrid.grid[i]=this;
-        myGrid.counts[i]++;
+        G.grid[i]=this;
+        G.counts[i]++;
     }
     @Override
     int GetCountOnSquareEval(AgentToBool evalAgent) {
@@ -92,8 +92,8 @@ public class AgentPT3D<T extends AgentGrid3D> extends Agent3DBase<T>{
         return ct;
     }
     void RemSQ(){
-        if(myGrid.grid[iSq]==this){
-            myGrid.grid[iSq]=this.nextSq;
+        if(G.grid[iSq]==this){
+            G.grid[iSq]=this.nextSq;
         }
         if(nextSq!=null){
             nextSq.prevSq=prevSq;
@@ -103,7 +103,7 @@ public class AgentPT3D<T extends AgentGrid3D> extends Agent3DBase<T>{
         }
         prevSq=null;
         nextSq=null;
-        myGrid.counts[iSq]--;
+        G.counts[iSq]--;
     }
     /**
      * Moves the agent to the specified coordinates
@@ -116,7 +116,7 @@ public class AgentPT3D<T extends AgentGrid3D> extends Agent3DBase<T>{
         int oldY=(int)yPos;
         int oldZ=(int)zPos;
         RemSQ();
-        iSq=myGrid.I(newX,newY,newZ);
+        iSq=G.I(newX,newY,newZ);
         AddSQ(iSq);
         this.xPos=newX+0.5;
         this.yPos=newY+0.5;
@@ -138,7 +138,7 @@ public class AgentPT3D<T extends AgentGrid3D> extends Agent3DBase<T>{
         }
         if(xIntNew!=xIntOld||yIntNew!=yIntOld||zIntNew!=zIntOld) {
             RemSQ();
-            iSq=myGrid.I(xIntNew,yIntNew,zIntNew);
+            iSq=G.I(xIntNew,yIntNew,zIntNew);
             AddSQ(iSq);
         }
         xPos=newX;
@@ -151,23 +151,23 @@ public class AgentPT3D<T extends AgentGrid3D> extends Agent3DBase<T>{
         if(!alive){
             throw new RuntimeException("Attempting to move dead agent!");
         }
-        if (G().In(newX, newY, newZ)) {
+        if (G.In(newX, newY, newZ)) {
             MovePT(newX, newY, newZ);
             return;
         }
-        if (G().wrapX) {
-            newX = ModWrap(newX, G().moveSafeXdim);
-        } else if (!InDim(newX, G().xDim)) {
+        if (G.wrapX) {
+            newX = ModWrap(newX, G.moveSafeXdim);
+        } else if (!InDim(newX, G.xDim)) {
             newX = Xpt();
         }
-        if (G().wrapY) {
-            newY = ModWrap(newY, G().moveSafeYdim);
-        } else if (!InDim(newY, G().yDim)) {
+        if (G.wrapY) {
+            newY = ModWrap(newY, G.moveSafeYdim);
+        } else if (!InDim(newY, G.yDim)) {
             newY = Ypt();
         }
-        if (G().wrapZ) {
-            newZ = ModWrap(newZ, G().moveSafeZdim);
-        } else if (!InDim(newZ, G().zDim)) {
+        if (G.wrapZ) {
+            newZ = ModWrap(newZ, G.moveSafeZdim);
+        } else if (!InDim(newZ, G.zDim)) {
             newZ = Zpt();
         }
         MovePT(newX,newY,newZ);
@@ -217,7 +217,7 @@ public class AgentPT3D<T extends AgentGrid3D> extends Agent3DBase<T>{
             throw new RuntimeException("attepting to dispose already dead agent");
         }
         RemSQ();
-        myGrid.agents.RemoveAgent(this);
+        G.agents.RemoveAgent(this);
         if(myNodes!=null){
             myNodes.DisposeAll();
         }
@@ -245,29 +245,29 @@ public class AgentPT3D<T extends AgentGrid3D> extends Agent3DBase<T>{
 
     @Override
     int GetCountOnSquare() {
-        return myGrid.counts[Isq()];
+        return G.counts[Isq()];
     }
     public int GetAge(){
-        return G().GetTick()-birthTick;
+        return G.GetTick()-birthTick;
     }
 
     public<T extends AgentPT3D> double Xdisp(T other, boolean wrapX){
-        return wrapX? DispWrap(other.Xpt(),Xpt(),G().xDim):Xpt()-other.Xpt();
+        return wrapX? DispWrap(other.Xpt(),Xpt(), G.xDim):Xpt()-other.Xpt();
     }
     public<T extends AgentPT3D> double Xdisp(T other){
-        return G().wrapX? DispWrap(other.Xpt(),Xpt(),G().xDim):Xpt()-other.Xpt();
+        return G.wrapX? DispWrap(other.Xpt(),Xpt(), G.xDim):Xpt()-other.Xpt();
     }
     public <T extends AgentPT3D> double Ydisp(T other, boolean wrapY){
-        return wrapY? DispWrap(other.Ypt(),Ypt(),G().yDim):Ypt()-other.Ypt();
+        return wrapY? DispWrap(other.Ypt(),Ypt(), G.yDim):Ypt()-other.Ypt();
     }
     public <T extends AgentPT3D> double Ydisp(T other){
-        return G().wrapY? DispWrap(other.Ypt(),Ypt(),G().yDim):Ypt()-other.Ypt();
+        return G.wrapY? DispWrap(other.Ypt(),Ypt(), G.yDim):Ypt()-other.Ypt();
     }
     public <T extends AgentPT3D> double Zdisp(T other, boolean wrapZ){
-        return wrapZ? DispWrap(other.Zpt(),Zpt(),G().zDim):Zpt()-other.Zpt();
+        return wrapZ? DispWrap(other.Zpt(),Zpt(), G.zDim):Zpt()-other.Zpt();
     }
     public <T extends AgentPT3D> double Zdisp(T other){
-        return G().wrapZ? DispWrap(other.Zpt(),Zpt(),G().zDim):Zpt()-other.Zpt();
+        return G.wrapZ? DispWrap(other.Zpt(),Zpt(), G.zDim):Zpt()-other.Zpt();
     }
 
     public <T extends AgentPT3D> double disp(T other, boolean wrap){
@@ -277,9 +277,9 @@ public class AgentPT3D<T extends AgentGrid3D> extends Agent3DBase<T>{
         return Norm(dx, dy, dz);
     }
     public <T extends AgentPT3D> double disp(T other){
-        double dx = Xdisp(other, G().wrapX);
-        double dy = Ydisp(other, G().wrapY);
-        double dz = Zdisp(other, G().wrapZ);
+        double dx = Xdisp(other, G.wrapX);
+        double dy = Ydisp(other, G.wrapY);
+        double dz = Zdisp(other, G.wrapZ);
         return Norm(dx, dy, dz);
     }
 }

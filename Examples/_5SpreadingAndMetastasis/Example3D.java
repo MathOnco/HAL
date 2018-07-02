@@ -1,8 +1,5 @@
 package Examples._5SpreadingAndMetastasis;
-import Framework.GridsAndAgents.AgentGrid3D;
-import Framework.GridsAndAgents.AgentSQ3D;
-import Framework.GridsAndAgents.Grid2Ddouble;
-import Framework.GridsAndAgents.PDEGrid3D;
+import Framework.GridsAndAgents.*;
 import Framework.Gui.GridWindow;
 import Framework.Gui.OpenGL3DWindow;
 import Framework.Rand;
@@ -16,47 +13,49 @@ class ExCell3D extends AgentSQ3D<Example3D>{
     int type;
     void InitVessel(){
         type= VESSEL;
-        G().vessels.add(this);
+        G.vessels.add(this);
     }
     void InitTumor(){
         type= TUMOR;
     }
     boolean Metastasis(){
-        return G().oxygen.Get(Isq())>G().METASTASIS_CONC&&G().rn.Double()<G().METASTASIS_PROB;
+        return G.oxygen.Get(Isq())> G.METASTASIS_CONC&& G.rn.Double()< G.METASTASIS_PROB;
     }
     void Metabolism(){
         switch (type){
-            case VESSEL: G().oxygen.Set(Isq(),G().VESSEL_CONC); break; //vessel source
-            case TUMOR: G().oxygen.Mul(Isq(),G().TUMOR_METABOLISM_RATE); break; //instead of simple multiplication, Util.MichaelisMenten may be more appropriate
+            case VESSEL:
+                G.oxygen.Set(Isq(), G.VESSEL_CONC); break; //vessel source
+            case TUMOR:
+                G.oxygen.Mul(Isq(), G.TUMOR_METABOLISM_RATE); break; //instead of simple multiplication, Util.MichaelisMenten may be more appropriate
         }
     }
     boolean Death(){
-        double resVal=G().oxygen.Get(Isq());
-        return resVal<G().DEATH_CONC && G().rn.Double()<(1.0-resVal/G().DEATH_CONC);
+        double resVal= G.oxygen.Get(Isq());
+        return resVal< G.DEATH_CONC && G.rn.Double()<(1.0-resVal/ G.DEATH_CONC);
     }
     boolean Divide(){
-        return G().rn.Double()<G().oxygen.Get(Isq());
+        return G.rn.Double()< G.oxygen.Get(Isq());
     }
     void CellStep(){
         if(type== TUMOR){
-            G().countTumor++;
+            G.countTumor++;
             if(Death()){
                 Dispose();
                 return;
             }
             if(Divide()){
-                int nDivOpts=MapEmptyHood(G().vnHood);//get indices of empty locations in 3D Von Neumann neighborhood around cell
+                int nDivOpts=MapEmptyHood(G.vnHood);//get indices of empty locations in 3D Von Neumann neighborhood around cell
                 if(nDivOpts>1){
-                    G().NewAgentSQ(G().vnHood[G().rn.Int(nDivOpts)]).InitTumor();
+                    G.NewAgentSQ(G.vnHood[G.rn.Int(nDivOpts)]).InitTumor();
                 }
             }
             if(Metastasis()){//choose random vessel location to metastasize to
                 Dispose();//kill cell that has entered the vessel
-                int whichVessel=G().rn.Int(G().vessels.size());//get a random vessel position
-                ExCell3D vessel=G().vessels.get(whichVessel);
-                int nMetOpts=G().MapEmptyHood(G().vnHood,vessel.Xsq(),vessel.Ysq(),vessel.Zsq());//get any open positions around a particular vessel location
+                int whichVessel= G.rn.Int(G.vessels.size());//get a random vessel position
+                ExCell3D vessel= G.vessels.get(whichVessel);
+                int nMetOpts= G.MapEmptyHood(G.vnHood,vessel.Xsq(),vessel.Ysq(),vessel.Zsq());//get any open positions around a particular vessel location
                 if(nMetOpts>1){
-                    G().NewAgentSQ(G().vnHood[G().rn.Int(nMetOpts)]).InitTumor();//create and initialize a new cell to model successful metastasis
+                    G.NewAgentSQ(G.vnHood[G.rn.Int(nMetOpts)]).InitTumor();//create and initialize a new cell to model successful metastasis
                 }
             }
         }

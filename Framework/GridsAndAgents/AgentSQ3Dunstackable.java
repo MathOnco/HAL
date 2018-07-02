@@ -22,7 +22,7 @@ public class AgentSQ3Dunstackable<T extends AgentGrid3D> extends Agent3DBase<T>{
         this.xSq=xSq;
         this.ySq=ySq;
         this.zSq=zSq;
-        this.iSq=myGrid.I(xSq,ySq,zSq);
+        this.iSq=G.I(xSq,ySq,zSq);
         AddSQ(iSq);
     }
     void Setup(double xPos,double yPos,double zPos){
@@ -32,9 +32,9 @@ public class AgentSQ3Dunstackable<T extends AgentGrid3D> extends Agent3DBase<T>{
     @Override
     void Setup(int i) {
         this.iSq=i;
-        this.xSq=myGrid.ItoX(i);
-        this.ySq=myGrid.ItoY(i);
-        this.zSq=myGrid.ItoZ(i);
+        this.xSq=G.ItoX(i);
+        this.ySq=G.ItoY(i);
+        this.zSq=G.ItoZ(i);
         AddSQ(iSq);
     }
 
@@ -50,7 +50,7 @@ public class AgentSQ3Dunstackable<T extends AgentGrid3D> extends Agent3DBase<T>{
         if(!alive||!other.alive){
             throw new RuntimeException("attempting to move dead agent");
         }
-        if(other.myGrid!=myGrid){
+        if(other.G!=G){
             throw new IllegalStateException("can't swap positions between agents on different grids!");
         }
         int iNew=other.Isq();
@@ -69,7 +69,7 @@ public class AgentSQ3Dunstackable<T extends AgentGrid3D> extends Agent3DBase<T>{
         if(!alive){
             throw new RuntimeException("attempting to move dead agent");
         }
-        int iNewPos=myGrid.I(x,y,z);
+        int iNewPos=G.I(x,y,z);
         RemSQ();
         this.xSq=x;
         this.ySq=y;
@@ -78,15 +78,15 @@ public class AgentSQ3Dunstackable<T extends AgentGrid3D> extends Agent3DBase<T>{
         AddSQ(iNewPos);
     }
     void AddSQ(int i){
-        if(myGrid.grid[i]!=null){
+        if(G.grid[i]!=null){
             throw new RuntimeException("Adding multiple unstackable agents to the same square!");
         }
-        myGrid.grid[i]=this;
+        G.grid[i]=this;
     }
 
 
     void RemSQ(){
-        myGrid.grid[iSq]=null;
+        G.grid[iSq]=null;
     }
 
     /**
@@ -137,7 +137,7 @@ public class AgentSQ3Dunstackable<T extends AgentGrid3D> extends Agent3DBase<T>{
             throw new RuntimeException("attempting to dispose already dead agent");
         }
         RemSQ();
-        myGrid.agents.RemoveAgent(this);
+        G.agents.RemoveAgent(this);
         if(myNodes!=null){
             myNodes.DisposeAll();
         }
@@ -165,9 +165,9 @@ public class AgentSQ3Dunstackable<T extends AgentGrid3D> extends Agent3DBase<T>{
             throw new RuntimeException("Attempting to move dead agent!");
         }
         RemSQ();
-        xSq=myGrid.ItoX(i);
-        ySq=myGrid.ItoY(i);
-        zSq=myGrid.ItoZ(i);
+        xSq=G.ItoX(i);
+        ySq=G.ItoY(i);
+        zSq=G.ItoZ(i);
         iSq=i;
         AddSQ(i);
     }
@@ -176,23 +176,23 @@ public class AgentSQ3Dunstackable<T extends AgentGrid3D> extends Agent3DBase<T>{
         if(!alive){
             throw new RuntimeException("Attempting to move dead agent!");
         }
-        if (G().In(newX, newY, newZ)) {
+        if (G.In(newX, newY, newZ)) {
             MoveSQ(newX, newY, newZ);
             return;
         }
-        if (G().wrapX) {
-            newX = ModWrap(newX, G().xDim);
-        } else if (!InDim(newX, G().xDim)) {
+        if (G.wrapX) {
+            newX = ModWrap(newX, G.xDim);
+        } else if (!InDim(newX, G.xDim)) {
             newX = Xsq();
         }
-        if (G().wrapY) {
-            newY = ModWrap(newY, G().yDim);
-        } else if (!InDim(newY, G().yDim)) {
+        if (G.wrapY) {
+            newY = ModWrap(newY, G.yDim);
+        } else if (!InDim(newY, G.yDim)) {
             newY = Ysq();
         }
-        if (G().wrapZ) {
-            newZ = ModWrap(newZ, G().zDim);
-        } else if (!InDim(newZ, G().zDim)) {
+        if (G.wrapZ) {
+            newZ = ModWrap(newZ, G.zDim);
+        } else if (!InDim(newZ, G.zDim)) {
             newZ = Zsq();
         }
         MoveSQ(newX,newY,newZ);
@@ -203,7 +203,7 @@ public class AgentSQ3Dunstackable<T extends AgentGrid3D> extends Agent3DBase<T>{
     }
 
     public int GetAge(){
-        return G().GetTick()-birthTick;
+        return G.GetTick()-birthTick;
     }
 
     @Override

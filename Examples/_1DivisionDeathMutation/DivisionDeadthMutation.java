@@ -16,14 +16,14 @@ class CellEx extends AgentSQ2Dunstackable<DivisionDeadthMutation>{
     int nMutations;
 
     void Mutate(){
-        if(nMutations<G().MAX_MUTATIONS &&G().rn.Double()<G().MUT_PROB){
+        if(nMutations< G.MAX_MUTATIONS && G.rn.Double()< G.MUT_PROB){
             nMutations++;
             Draw();
         }
     }
 
     void Draw(){
-        G().vis.SetPix(Isq(), Util.CategorialColor(nMutations));//sets a single pixel
+        G.vis.SetPix(Isq(), Util.CategorialColor(nMutations));//sets a single pixel
     }
 
     void Divide(){
@@ -34,10 +34,10 @@ class CellEx extends AgentSQ2Dunstackable<DivisionDeadthMutation>{
         //    Mutate();
         //    daughter.Mutate();
         //});
-        int nOpts=MapEmptyHood(G().hood);//finds von neumann neighborhood indices around cell.
+        int nOpts=MapEmptyHood(G.hood);//finds von neumann neighborhood indices around cell.
         if(nOpts>0){
-            int iDaughter=G().hood[G().rn.Int(nOpts)];
-            CellEx daughter=G().NewAgentSQ(iDaughter);//generate a daughter, the other is technically the original cell
+            int iDaughter= G.hood[G.rn.Int(nOpts)];
+            CellEx daughter= G.NewAgentSQ(iDaughter);//generate a daughter, the other is technically the original cell
             daughter.nMutations=nMutations;//start both daughters with same number of mutations
             daughter.Draw();
             Mutate();//during division, there is a possibility of mutation of one or both daughters

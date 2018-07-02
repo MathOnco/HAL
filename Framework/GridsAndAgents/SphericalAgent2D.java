@@ -20,14 +20,14 @@ public class SphericalAgent2D<A extends SphericalAgent2D,G extends AgentGrid2D<A
         this.yVel=0;
     }
     public double SumForces(double interactionRad, OverlapForceResponse2D<A> OverlapFun){
-        ArrayList<A> scratchAgentList=G().GetFreshAgentSearchArr();
+        ArrayList<A> scratchAgentList= G.GetFreshAgentSearchArr();
         scratchAgentList.clear();
         double sum=0;
-        G().GetAgentsRadApprox(scratchAgentList,Xpt(),Ypt(),interactionRad,G().wrapX,G().wrapY);
+        G.GetAgentsRadApprox(scratchAgentList,Xpt(),Ypt(),interactionRad, G.wrapX, G.wrapY);
         for (A a : scratchAgentList) {
             if(a!=this){
-                double xComp=Xdisp(a,G().wrapX);
-                double yComp=Ydisp(a,G().wrapY);
+                double xComp=Xdisp(a, G.wrapX);
+                double yComp=Ydisp(a, G.wrapY);
                 if(xComp==0&&yComp==0){
                     xComp=Math.random()-0.5;
                     yComp=Math.random()-0.5;
@@ -50,11 +50,11 @@ public class SphericalAgent2D<A extends SphericalAgent2D,G extends AgentGrid2D<A
         ArrayList<T> scratchAgentList=otherGrid.GetFreshAgentSearchArr();
         scratchAgentList.clear();
         double sum=0;
-        otherGrid.GetAgentsRadApprox(scratchAgentList,Xpt(),Ypt(),interactionRad,G().wrapX,G().wrapY);
+        otherGrid.GetAgentsRadApprox(scratchAgentList,Xpt(),Ypt(),interactionRad, G.wrapX, G.wrapY);
         for (T a : scratchAgentList) {
             if(a!=this){
-                double xComp=Xdisp(a,G().wrapX);
-                double yComp=Ydisp(a,G().wrapY);
+                double xComp=Xdisp(a, G.wrapX);
+                double yComp=Ydisp(a, G.wrapY);
                 if(xComp==0&&yComp==0){
                     xComp=Math.random()-0.5;
                     yComp=Math.random()-0.5;
@@ -94,7 +94,7 @@ public class SphericalAgent2D<A extends SphericalAgent2D,G extends AgentGrid2D<A
         if(rn!=null){
             rn.RandomPointOnCircleEdge(divRadius, scratchCoordArr);
         }
-        A child=G().NewAgentPTSafe(Xpt()+scratchCoordArr[0],Ypt()+scratchCoordArr[1],Xpt(),Ypt());
+        A child= G.NewAgentPTSafe(Xpt()+scratchCoordArr[0],Ypt()+scratchCoordArr[1],Xpt(),Ypt());
         MoveSafePT(Xpt()-scratchCoordArr[0], Ypt()-scratchCoordArr[1]);
         return child;
     }

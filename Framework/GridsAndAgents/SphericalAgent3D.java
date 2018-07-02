@@ -22,15 +22,15 @@ public class SphericalAgent3D<A extends SphericalAgent3D,G extends AgentGrid3D<A
         this.zVel=zVel;
     }
     public double SumForces(double interactionRad, OverlapForceResponse3D<A> OverlapFun){
-        ArrayList<A> scratchAgentList=G().GetFreshAgentSearchArr();
+        ArrayList<A> scratchAgentList= G.GetFreshAgentSearchArr();
         scratchAgentList.clear();
         double sum=0;
-        G().GetAgentsRadApprox(scratchAgentList,Xpt(),Ypt(),Zpt(),interactionRad,G().wrapX,G().wrapY,G().wrapZ);
+        G.GetAgentsRadApprox(scratchAgentList,Xpt(),Ypt(),Zpt(),interactionRad, G.wrapX, G.wrapY, G.wrapZ);
         for (A a : scratchAgentList) {
             if(a!=this){
-                double xComp=Xdisp(a,G().wrapX);
-                double yComp=Ydisp(a,G().wrapY);
-                double zComp=Zdisp(a,G().wrapZ);
+                double xComp=Xdisp(a, G.wrapX);
+                double yComp=Ydisp(a, G.wrapY);
+                double zComp=Zdisp(a, G.wrapZ);
                 double dist=Norm(xComp,yComp,zComp);
                 if(dist<interactionRad) {
                     double touchDist = (radius + a.radius) - dist;
@@ -50,12 +50,12 @@ public class SphericalAgent3D<A extends SphericalAgent3D,G extends AgentGrid3D<A
         ArrayList<T> scratchAgentList=otherGrid.GetFreshAgentSearchArr();
         scratchAgentList.clear();
         double sum=0;
-        otherGrid.GetAgentsRadApprox(scratchAgentList,Xpt(),Ypt(),Zpt(),interactionRad,G().wrapX,G().wrapY,G().wrapZ);
+        otherGrid.GetAgentsRadApprox(scratchAgentList,Xpt(),Ypt(),Zpt(),interactionRad, G.wrapX, G.wrapY, G.wrapZ);
         for (T a : scratchAgentList) {
             if(a!=this){
-                double xComp=Xdisp(a,G().wrapX);
-                double yComp=Ydisp(a,G().wrapY);
-                double zComp=Zdisp(a,G().wrapZ);
+                double xComp=Xdisp(a, G.wrapX);
+                double yComp=Ydisp(a, G.wrapY);
+                double zComp=Zdisp(a, G.wrapZ);
                 double dist=Norm(xComp,yComp,zComp);
                 if(dist<interactionRad) {
                     double touchDist = (radius + a.radius) - dist;
@@ -96,7 +96,7 @@ public class SphericalAgent3D<A extends SphericalAgent3D,G extends AgentGrid3D<A
         if(rn!=null){
             rn.RandomPointOnSphereEdge(divRadius, scratchCoordArr);
         }
-        A child=(G().NewAgentPTSafe(Xpt()+scratchCoordArr[0],Ypt()+scratchCoordArr[1],Zpt()+scratchCoordArr[2],Xpt(),Ypt(),Zpt()));
+        A child=(G.NewAgentPTSafe(Xpt()+scratchCoordArr[0],Ypt()+scratchCoordArr[1],Zpt()+scratchCoordArr[2],Xpt(),Ypt(),Zpt()));
         MoveSafePT(Xpt()-scratchCoordArr[0], Ypt()-scratchCoordArr[1], Zpt()-scratchCoordArr[2]);
         return child;
     }

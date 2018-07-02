@@ -104,28 +104,28 @@ class ExampleCell extends AgentSQ2Dunstackable<ExampleModel> {
 
     public void CellStep() {
         //Consumption of Drug
-        G().drug.Mul(Isq(), G().DRUG_UPTAKE);
+        G.drug.Mul(Isq(), G.DRUG_UPTAKE);
         double deathProb, divProb;
         //Chance of Death, depends on resistance and drug concentration
         if (this.type == RESISTANT) {
-            deathProb = G().DEATH_PROB;
+            deathProb = G.DEATH_PROB;
         } else {
-            deathProb = G().DEATH_PROB + G().drug.Get(Isq()) * G().DRUG_TOXICITY;
+            deathProb = G.DEATH_PROB + G.drug.Get(Isq()) * G.DRUG_TOXICITY;
         }
-        if (G().rng.Double() < deathProb) {
+        if (G.rng.Double() < deathProb) {
             Dispose();
             return;
         }
         //Chance of Division, depends on resistance
         if (this.type == RESISTANT) {
-            divProb = G().DIV_PROB_RES;
+            divProb = G.DIV_PROB_RES;
         } else {
-            divProb = G().DIV_PROB_SEN;
+            divProb = G.DIV_PROB_SEN;
         }
-        if (G().rng.Double() < divProb) {
-            int options = MapEmptyHood(G().divHood);
+        if (G.rng.Double() < divProb) {
+            int options = MapEmptyHood(G.divHood);
             if (options > 0) {
-                G().NewAgentSQ(G().divHood[G().rng.Int(options)]).type = this.type;
+                G.NewAgentSQ(G.divHood[G.rng.Int(options)]).type = this.type;
             }
         }
     }

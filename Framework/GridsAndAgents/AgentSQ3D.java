@@ -24,7 +24,7 @@ public class AgentSQ3D<T extends AgentGrid3D> extends Agent3DBase<T>{
         this.xSq=xSq;
         this.ySq=ySq;
         this.zSq=zSq;
-        this.iSq=myGrid.I(xSq,ySq,zSq);
+        this.iSq=G.I(xSq,ySq,zSq);
         AddSQ(iSq);
     }
     void Setup(double xPos,double yPos,double zPos){
@@ -34,9 +34,9 @@ public class AgentSQ3D<T extends AgentGrid3D> extends Agent3DBase<T>{
     @Override
     void Setup(int i) {
         this.iSq=i;
-        this.xSq=myGrid.ItoX(i);
-        this.ySq=myGrid.ItoY(i);
-        this.zSq=myGrid.ItoZ(i);
+        this.xSq=G.ItoX(i);
+        this.ySq=G.ItoY(i);
+        this.zSq=G.ItoZ(i);
         AddSQ(iSq);
     }
 
@@ -45,17 +45,17 @@ public class AgentSQ3D<T extends AgentGrid3D> extends Agent3DBase<T>{
         throw new IllegalStateException("shouldn't be adding 3D agent to 2D typeGrid");
     }
     void AddSQ(int i){
-        if(myGrid.grid[i]!=null){
-            ((AgentSQ3D)myGrid.grid[i]).prevSq=this;
-            this.nextSq=(AgentSQ3D)myGrid.grid[i];
+        if(G.grid[i]!=null){
+            ((AgentSQ3D)G.grid[i]).prevSq=this;
+            this.nextSq=(AgentSQ3D)G.grid[i];
         }
-        myGrid.grid[i]=this;
-        myGrid.counts[i]++;
+        G.grid[i]=this;
+        G.counts[i]++;
     }
 
     void RemSQ(){
-        if(myGrid.grid[iSq]==this){
-            myGrid.grid[iSq]=this.nextSq;
+        if(G.grid[iSq]==this){
+            G.grid[iSq]=this.nextSq;
         }
         if(nextSq!=null){
             nextSq.prevSq=prevSq;
@@ -65,7 +65,7 @@ public class AgentSQ3D<T extends AgentGrid3D> extends Agent3DBase<T>{
         }
         prevSq=null;
         nextSq=null;
-        myGrid.counts[iSq]--;
+        G.counts[iSq]--;
     }
     /**
      * Moves the agent to the specified coordinates
@@ -75,7 +75,7 @@ public class AgentSQ3D<T extends AgentGrid3D> extends Agent3DBase<T>{
         if(!alive){
             throw new RuntimeException("attempting to move dead agent");
         }
-        int iNewPos=myGrid.I(x,y,z);
+        int iNewPos=G.I(x,y,z);
         RemSQ();
         this.xSq=x;
         this.ySq=y;
@@ -132,7 +132,7 @@ public class AgentSQ3D<T extends AgentGrid3D> extends Agent3DBase<T>{
             throw new RuntimeException("attempting to dispose already dead agent");
         }
         RemSQ();
-        myGrid.agents.RemoveAgent(this);
+        G.agents.RemoveAgent(this);
         if(myNodes!=null){
             myNodes.DisposeAll();
         }
@@ -164,9 +164,9 @@ public class AgentSQ3D<T extends AgentGrid3D> extends Agent3DBase<T>{
             throw new RuntimeException("attempting to move dead agent");
         }
         RemSQ();
-        xSq=myGrid.ItoX(iNext);
-        ySq=myGrid.ItoY(iNext);
-        zSq=myGrid.ItoZ(iNext);
+        xSq=G.ItoX(iNext);
+        ySq=G.ItoY(iNext);
+        zSq=G.ItoZ(iNext);
         iSq=iNext;
         AddSQ(iNext);
     }
@@ -174,34 +174,34 @@ public class AgentSQ3D<T extends AgentGrid3D> extends Agent3DBase<T>{
         if(!alive){
             throw new RuntimeException("Attempting to move dead agent!");
         }
-        if (G().In(newX, newY, newZ)) {
+        if (G.In(newX, newY, newZ)) {
             MoveSQ(newX, newY, newZ);
             return;
         }
-        if (G().wrapX) {
-            newX = ModWrap(newX, G().xDim);
-        } else if (!InDim(newX, G().xDim)) {
+        if (G.wrapX) {
+            newX = ModWrap(newX, G.xDim);
+        } else if (!InDim(newX, G.xDim)) {
             newX = Xsq();
         }
-        if (G().wrapY) {
-            newY = ModWrap(newY, G().yDim);
-        } else if (!InDim(newY, G().yDim)) {
+        if (G.wrapY) {
+            newY = ModWrap(newY, G.yDim);
+        } else if (!InDim(newY, G.yDim)) {
             newY = Ysq();
         }
-        if (G().wrapZ) {
-            newZ = ModWrap(newZ, G().zDim);
-        } else if (!InDim(newZ, G().zDim)) {
+        if (G.wrapZ) {
+            newZ = ModWrap(newZ, G.zDim);
+        } else if (!InDim(newZ, G.zDim)) {
             newZ = Zsq();
         }
         MoveSQ(newX,newY,newZ);
     }
     @Override
     int GetCountOnSquare() {
-        return myGrid.counts[iSq];
+        return G.counts[iSq];
     }
 
     public int GetAge(){
-        return G().GetTick()-birthTick;
+        return G.GetTick()-birthTick;
     }
 
     @Override

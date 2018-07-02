@@ -11,11 +11,11 @@ class ExampleCell extends SphericalAgent2D<ExampleCell,ExampleGrid> {
 
     public void Init(){
         super.Init(0.2);
-        this.color=Util.RGB(G().rng.Double(),G().rng.Double(),G().rng.Double());
+        this.color=Util.RGB(G.rng.Double(), G.rng.Double(), G.rng.Double());
     }
 
     public void StepCell(){
-        if(G().rng.Double()<0.01){
+        if(G.rng.Double()<0.01){
             //cell will die
             Dispose();
             return;
@@ -29,7 +29,7 @@ class ExampleCell extends SphericalAgent2D<ExampleCell,ExampleGrid> {
         ApplyFriction(0.5);
         ForceMove();
         if(force<0.01){
-            Divide(0.2,G().divCoords,G().rng).Init();
+            Divide(0.2, G.divCoords, G.rng).Init();
         }
     }
 }
@@ -68,7 +68,7 @@ public class ExampleGrid extends AgentGrid2D<ExampleCell> {
         //initialize model
 
         for (int i = 0; i < timesteps; i++) {
-            win.TickPause(100);
+            //win.TickPause(100);
             if(model.Pop()==0){
                 model.NewAgentPT(model.xDim/2.0,model.yDim/2.0).Init();
             }

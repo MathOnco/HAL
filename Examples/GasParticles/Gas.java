@@ -11,9 +11,9 @@ import static Framework.Util.HeatMapRGB;
 class Particle extends AgentPT2D<Gas> {
     public void BrownianMotion(){
         //loads moveCoords with a random x,y pair
-        G().rng.RandomPointInCircle(0.5,G().moveCoords);
+        G.rng.RandomPointInCircle(0.5, G.moveCoords);
         //displaces the particle, particle will not move if movement would cause it to move out of the grid
-        MoveSafePT(Xpt()+G().moveCoords[0],Ypt()+G().moveCoords[1]);
+        MoveSafePT(Xpt()+ G.moveCoords[0],Ypt()+ G.moveCoords[1]);
     }
 }
 

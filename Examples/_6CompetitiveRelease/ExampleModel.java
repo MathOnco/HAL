@@ -90,17 +90,17 @@ class ExampleCell extends AgentSQ2Dunstackable<ExampleModel> {
 
     public void CellStep() {
         //Consumption of Drug
-        G().drug.Mul(Isq(), G().DRUG_UPTAKE);
+        G.drug.Mul(Isq(), G.DRUG_UPTAKE);
         //Chance of Death, depends on resistance and drug concentration
-        if (G().rn.Double() < G().DEATH_PROB + (type == RESISTANT ? 0 : G().drug.Get(Isq()) * G().DRUG_DEATH)) {
+        if (G.rn.Double() < G.DEATH_PROB + (type == RESISTANT ? 0 : G.drug.Get(Isq()) * G.DRUG_DEATH)) {
             Dispose();
             return;
         }
         //Chance of Division, depends on resistance
-        else if (G().rn.Double() < (type == RESISTANT ? G().DIV_PROB_RES : G().DIV_PROB_SEN)) {
-            int options=MapEmptyHood(G().divHood);
+        else if (G.rn.Double() < (type == RESISTANT ? G.DIV_PROB_RES : G.DIV_PROB_SEN)) {
+            int options=MapEmptyHood(G.divHood);
             if(options>0){
-                G().NewAgentSQ(G().divHood[G().rn.Int(options)]).type=this.type;
+                G.NewAgentSQ(G.divHood[G.rn.Int(options)]).type=this.type;
             }
         }
     }

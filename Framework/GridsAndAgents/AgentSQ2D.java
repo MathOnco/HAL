@@ -34,8 +34,8 @@ public class AgentSQ2D<T extends AgentGrid2D> extends Agent2DBase<T>{
 
     @Override
     void Setup(int i) {
-        xSq=myGrid.ItoX(i);
-        ySq=myGrid.ItoY(i);
+        xSq=G.ItoX(i);
+        ySq=G.ItoY(i);
         iSq=i;
         AddSQ(i);
 
@@ -45,7 +45,7 @@ public class AgentSQ2D<T extends AgentGrid2D> extends Agent2DBase<T>{
     void Setup(int x, int y) {
         this.xSq=x;
         this.ySq=y;
-        iSq=myGrid.I(xSq,ySq);
+        iSq=G.I(xSq,ySq);
         AddSQ(iSq);
 
     }
@@ -63,7 +63,7 @@ public class AgentSQ2D<T extends AgentGrid2D> extends Agent2DBase<T>{
         if(!alive){
             throw new RuntimeException("attempting to move dead agent");
         }
-        int iNewPos=myGrid.I(x,y);
+        int iNewPos=G.I(x,y);
         RemSQ();
         AddSQ(iNewPos);
         this.xSq=x;
@@ -74,8 +74,8 @@ public class AgentSQ2D<T extends AgentGrid2D> extends Agent2DBase<T>{
         if(!alive){
             throw new RuntimeException("attempting to move dead agent");
         }
-        int x=G().ItoX(i);
-        int y=G().ItoY(i);
+        int x= G.ItoX(i);
+        int y= G.ItoY(i);
         RemSQ();
         AddSQ(i);
         this.xSq=x;
@@ -83,17 +83,17 @@ public class AgentSQ2D<T extends AgentGrid2D> extends Agent2DBase<T>{
         iSq=i;
     }
     void AddSQ(int i){
-        if(myGrid.grid[i]!=null){
-            ((AgentSQ2D)myGrid.grid[i]).prevSq=this;
-            this.nextSq=(AgentSQ2D)myGrid.grid[i];
+        if(G.grid[i]!=null){
+            ((AgentSQ2D)G.grid[i]).prevSq=this;
+            this.nextSq=(AgentSQ2D)G.grid[i];
         }
-        myGrid.grid[i]=this;
-        myGrid.counts[i]++;
+        G.grid[i]=this;
+        G.counts[i]++;
     }
 
     void RemSQ(){
-        if(myGrid.grid[iSq]==this){
-            myGrid.grid[iSq]=this.nextSq;
+        if(G.grid[iSq]==this){
+            G.grid[iSq]=this.nextSq;
         }
         if(nextSq!=null){
             nextSq.prevSq=prevSq;
@@ -103,7 +103,7 @@ public class AgentSQ2D<T extends AgentGrid2D> extends Agent2DBase<T>{
         }
         prevSq=null;
         nextSq=null;
-        myGrid.counts[iSq]--;
+        G.counts[iSq]--;
     }
 
     /**
@@ -113,18 +113,18 @@ public class AgentSQ2D<T extends AgentGrid2D> extends Agent2DBase<T>{
         if(!alive){
             throw new RuntimeException("Attempting to move dead agent");
         }
-        if (G().In(newX, newY)) {
+        if (G.In(newX, newY)) {
             MoveSQ(newX, newY);
             return;
         }
-        if (G().wrapX) {
-            newX = ModWrap(newX, G().xDim);
-        } else if (!InDim(newX, G().xDim)) {
+        if (G.wrapX) {
+            newX = ModWrap(newX, G.xDim);
+        } else if (!InDim(newX, G.xDim)) {
             newX = Xsq();
         }
-        if (G().wrapY) {
-            newY = ModWrap(newY, G().yDim);
-        } else if (!InDim(newY, G().yDim))
+        if (G.wrapY) {
+            newY = ModWrap(newY, G.yDim);
+        } else if (!InDim(newY, G.yDim))
             newY = Ysq();
         MoveSQ(newX,newY);
     }
@@ -167,14 +167,14 @@ public class AgentSQ2D<T extends AgentGrid2D> extends Agent2DBase<T>{
             throw new RuntimeException("attempting to dispose already dead agent");
         }
         RemSQ();
-        myGrid.agents.RemoveAgent(this);
+        G.agents.RemoveAgent(this);
         if(myNodes!=null){
             myNodes.DisposeAll();
         }
     }
 
     public int GetAge(){
-        return G().GetTick()-birthTick;
+        return G.GetTick()-birthTick;
     }
 
     @Override
@@ -199,7 +199,7 @@ public class AgentSQ2D<T extends AgentGrid2D> extends Agent2DBase<T>{
 
     @Override
     int GetCountOnSquare() {
-        return myGrid.counts[Isq()];
+        return G.counts[Isq()];
     }
     @Override
     int GetCountOnSquareEval(AgentToBool evalAgent) {

@@ -19,23 +19,23 @@ class GOLAgent extends AgentSQ2Dunstackable<GOLGrid> {
     final int[] state =new int[2];
     int GetCurrState(){
         //modular division used to determine current state entry
-        return state[G().tick%2];
+        return state[G.tick%2];
     }
     void SetNextState(int state){
         //modular division used to determine next state entry
-        this.state[(G().tick+1)%2]=state;
+        this.state[(G.tick+1)%2]=state;
     }
     public void Step(){
         int countNeighbors=0;
-        int hoodLen=MapHood(G().mooreHood);
+        int hoodLen=MapHood(G.mooreHood);
         for (int i = 0; i < hoodLen; i++) {
-            if(G().GetAgent(G().mooreHood[i]).GetCurrState()==LIVE){
+            if(G.GetAgent(G.mooreHood[i]).GetCurrState()==LIVE){
                 countNeighbors++;
             }
         }
         //classic game of life rules
         if((GetCurrState()==LIVE&&(countNeighbors==2||countNeighbors==3))||(GetCurrState()==DEAD&&countNeighbors==3)){
-            G().liveCt++;
+            G.liveCt++;
             SetNextState(LIVE);
         }
         else{

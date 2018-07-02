@@ -150,18 +150,18 @@ class Cell extends AgentSQ2Dunstackable<ContactInhibitionInteractive> {
 
     public void CellStep(Rand rn) {
         //Consumption of Drug
-        G().drug.Mul(Isq(), G().drugUptake);
+        G.drug.Mul(Isq(), G.drugUptake);
         //Chance of Death, depends on resistance and drug concentration
-        if (rn.Double() < G().deathProb + (isRes ? 0 : G().drug.Get(Isq()) * G().drugDeath)) {
+        if (rn.Double() < G.deathProb + (isRes ? 0 : G.drug.Get(Isq()) * G.drugDeath)) {
 
             Dispose();
         }
         //Chance of Division, depends on resistance
-        else if (rn.Double() < (isRes ? G().divProbRes : G().divProb)) {
-            int nEmptySpaces = G().MapEmptyHood(G().divHood, Xsq(), Ysq());
+        else if (rn.Double() < (isRes ? G.divProbRes : G.divProb)) {
+            int nEmptySpaces = G.MapEmptyHood(G.divHood, Xsq(), Ysq());
             //If any empty spaces exist, randomly choose one and create a daughter cell there
             if (nEmptySpaces > 0) {
-                Cell daughter = G().NewAgentSQ(G().divHood[rn.Int(nEmptySpaces)]);
+                Cell daughter = G.NewAgentSQ(G.divHood[rn.Int(nEmptySpaces)]);
                 daughter.isRes = this.isRes;
             }
         }

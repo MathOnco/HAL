@@ -60,19 +60,19 @@ public class AgentSQ1D<T extends AgentGrid1D> extends Agent1DBase<T>{
         iSq=x;
     }
     void AddSQ(int x){
-        if(myGrid.grid[x]!=null){
-            ((AgentSQ1D)myGrid.grid[x]).prevSq=this;
-            this.nextSq=(AgentSQ1D)myGrid.grid[x];
+        if(G.grid[x]!=null){
+            ((AgentSQ1D)G.grid[x]).prevSq=this;
+            this.nextSq=(AgentSQ1D)G.grid[x];
         }
-        myGrid.grid[x]=this;
-        if(myGrid.counts!=null) {
-            myGrid.counts[x]++;
+        G.grid[x]=this;
+        if(G.counts!=null) {
+            G.counts[x]++;
         }
     }
 
     void RemSQ(){
-        if(myGrid.grid[iSq]==this){
-            myGrid.grid[iSq]=this.nextSq;
+        if(G.grid[iSq]==this){
+            G.grid[iSq]=this.nextSq;
         }
         if(nextSq!=null){
             nextSq.prevSq=prevSq;
@@ -82,8 +82,8 @@ public class AgentSQ1D<T extends AgentGrid1D> extends Agent1DBase<T>{
         }
         prevSq=null;
         nextSq=null;
-        if(myGrid.counts!=null) {
-            myGrid.counts[iSq]--;
+        if(G.counts!=null) {
+            G.counts[iSq]--;
         }
     }
 
@@ -94,13 +94,13 @@ public class AgentSQ1D<T extends AgentGrid1D> extends Agent1DBase<T>{
         if(!alive){
             throw new RuntimeException("Attempting to move dead agent");
         }
-        if (G().In(newX)) {
+        if (G.In(newX)) {
             MoveSQ(newX);
             return;
         }
-        if (G().wrapX) {
-            newX = ModWrap(newX, G().xDim);
-        } else if (!InDim(newX, G().xDim)) {
+        if (G.wrapX) {
+            newX = ModWrap(newX, G.xDim);
+        } else if (!InDim(newX, G.xDim)) {
             newX = Xsq();
         }
         MoveSQ(newX);
@@ -129,7 +129,7 @@ public class AgentSQ1D<T extends AgentGrid1D> extends Agent1DBase<T>{
             throw new RuntimeException("attempting to dispose already dead agent");
         }
         RemSQ();
-        myGrid.agents.RemoveAgent(this);
+        G.agents.RemoveAgent(this);
         if(myNodes!=null){
             myNodes.DisposeAll();
         }
@@ -157,7 +157,7 @@ public class AgentSQ1D<T extends AgentGrid1D> extends Agent1DBase<T>{
 
     @Override
     int GetCountOnSquare() {
-        return myGrid.counts[Isq()];
+        return G.counts[Isq()];
     }
     @Override
     int GetCountOnSquareEval(AgentToBool evalAgent) {
@@ -173,7 +173,7 @@ public class AgentSQ1D<T extends AgentGrid1D> extends Agent1DBase<T>{
     }
 
     public int GetAge(){
-        return G().GetTick()-birthTick;
+        return G.GetTick()-birthTick;
     }
     //addCoords
 }

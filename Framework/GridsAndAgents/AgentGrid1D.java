@@ -156,42 +156,6 @@ public class AgentGrid1D<T extends AgentBaseSpatial> extends GridBase1D implemen
     public void CleanAgents(){
         agents.CleanAgents();
     }
-    public void ChangeGridsSQ(T foreignAgent,int newX,int newY){
-        if(!foreignAgent.alive){
-            throw new IllegalStateException("can't move dead agent between grids!");
-        }
-        if(foreignAgent.myGrid.getClass()!=this.getClass()){
-            throw new IllegalStateException("can't move agent to a different type of typeGrid!");
-        }
-        foreignAgent.RemSQ();
-        ((AgentGrid1D)foreignAgent.myGrid).agents.RemoveAgent(foreignAgent);
-        agents.AddAgent(foreignAgent);
-        foreignAgent.Setup(newX,newY);
-    }
-    public void ChangeGridsPT(T foreignAgent,double newX,double newY){
-        if(!foreignAgent.alive){
-            throw new IllegalStateException("can't move dead agent between grids!");
-        }
-        if(foreignAgent.myGrid.getClass()!=this.getClass()){
-            throw new IllegalStateException("can't move agent to a different type of typeGrid!");
-        }
-        foreignAgent.RemSQ();
-        ((AgentGrid1D)foreignAgent.myGrid).agents.RemoveAgent(foreignAgent);
-        agents.AddAgent(foreignAgent);
-        foreignAgent.Setup(newX,newY);
-    }
-    public void ChangeGridsSQ(T foreignAgent,int newI){
-        if(!foreignAgent.alive){
-            throw new IllegalStateException("can't move dead agent between grids!");
-        }
-        if(foreignAgent.myGrid.getClass()!=this.getClass()){
-            throw new IllegalStateException("can't move agent to a different type of typeGrid!");
-        }
-        foreignAgent.RemSQ();
-        ((AgentGrid1D)foreignAgent.myGrid).agents.RemoveAgent(foreignAgent);
-        agents.AddAgent(foreignAgent);
-        foreignAgent.Setup(newI);
-    }
 
     public Iterator<T> iterator(){
         return agents.iterator();

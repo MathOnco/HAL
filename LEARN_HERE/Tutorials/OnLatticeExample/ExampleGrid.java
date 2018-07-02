@@ -10,20 +10,20 @@ class ExampleCell extends AgentPT2D<ExampleGrid> {
     int color;
 
     public void Init(){
-        this.color=Util.RGB(G().rng.Double(),G().rng.Double(),G().rng.Double());
+        this.color=Util.RGB(G.rng.Double(), G.rng.Double(), G.rng.Double());
     }
 
     public void StepCell(double dieProb,double divProb){
-        if(G().rng.Double()<dieProb){
+        if(G.rng.Double()<dieProb){
             //cell will die
             Dispose();
             return;
         }
-        if(G().rng.Double()<divProb){
+        if(G.rng.Double()<divProb){
             //cell will divide
-            int options=MapEmptyHood(G().divHood);
+            int options=MapEmptyHood(G.divHood);
             if(options>0){
-                G().NewAgentSQ(G().divHood[G().rng.Int(options)]).Init();
+                G.NewAgentSQ(G.divHood[G.rng.Int(options)]).Init();
             }
         }
     }

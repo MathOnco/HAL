@@ -45,7 +45,7 @@ public class AgentPT1D<T extends AgentGrid1D> extends Agent1DBase<T>{
             throw new RuntimeException("attepting to dispose already dead agent");
         }
         RemSQ();
-        myGrid.agents.RemoveAgent(this);
+        G.agents.RemoveAgent(this);
         if(myNodes!=null){
             myNodes.DisposeAll();
         }
@@ -62,7 +62,7 @@ public class AgentPT1D<T extends AgentGrid1D> extends Agent1DBase<T>{
 
     @Override
     int GetCountOnSquare() {
-        return myGrid.counts[Isq()];
+        return G.counts[Isq()];
     }
 
     @Override
@@ -99,16 +99,16 @@ public class AgentPT1D<T extends AgentGrid1D> extends Agent1DBase<T>{
     }
 
     void AddSQ(int i){
-        if(myGrid.grid[i]!=null){
-            ((AgentPT1D)myGrid.grid[i]).prevSq=this;
-            this.nextSq=(AgentPT1D)myGrid.grid[i];
+        if(G.grid[i]!=null){
+            ((AgentPT1D)G.grid[i]).prevSq=this;
+            this.nextSq=(AgentPT1D)G.grid[i];
         }
-        myGrid.grid[i]=this;
-        myGrid.counts[i]++;
+        G.grid[i]=this;
+        G.counts[i]++;
     }
     void RemSQ(){
-        if(myGrid.grid[iSq]==this){
-            myGrid.grid[iSq]=this.nextSq;
+        if(G.grid[iSq]==this){
+            G.grid[iSq]=this.nextSq;
         }
         if(nextSq!=null){
             nextSq.prevSq=prevSq;
@@ -118,7 +118,7 @@ public class AgentPT1D<T extends AgentGrid1D> extends Agent1DBase<T>{
         }
         prevSq=null;
         nextSq=null;
-        myGrid.counts[iSq]--;
+        G.counts[iSq]--;
     }
     /**
      * Moves the agent to the center of the square at the specified coordinates
@@ -154,13 +154,13 @@ public class AgentPT1D<T extends AgentGrid1D> extends Agent1DBase<T>{
         if(!alive){
             throw new RuntimeException("Attempting to move dead agent");
         }
-        if (G().In(newX)) {
+        if (G.In(newX)) {
             MovePT(newX);
             return;
         }
-        if (G().wrapX) {
-            newX = ModWrap(newX, G().moveSafeXdim);
-        } else if (!InDim(newX, G().xDim)) {
+        if (G.wrapX) {
+            newX = ModWrap(newX, G.moveSafeXdim);
+        } else if (!InDim(newX, G.xDim)) {
             newX = Xpt();
         }
         MovePT(newX);
@@ -180,10 +180,10 @@ public class AgentPT1D<T extends AgentGrid1D> extends Agent1DBase<T>{
         return (int) ptX;
     }
     public int GetAge(){
-        return G().GetTick()-birthTick;
+        return G.GetTick()-birthTick;
     }
 
     public<T extends AgentPT1D> double Xdisp(T other){
-        return G().wrapX? DispWrap(other.Xpt(),Xpt(),G().xDim):Xpt()-other.Xpt();
+        return  G.wrapX? DispWrap(other.Xpt(),Xpt(), G.xDim):Xpt()-other.Xpt();
     }
 }

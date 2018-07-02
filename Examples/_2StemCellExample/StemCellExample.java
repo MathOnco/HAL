@@ -19,19 +19,19 @@ class CACell extends AgentSQ2Dunstackable<StemCellCA> {
         this.stem=stem;
 
         //draw agent on vis if it exists
-        if(G().vis!=null) {
+        if(G.vis!=null) {
             if (stem) {
-                G().vis.SetPix(Xsq(), Ysq(), StemCellCA.RED);
+                G.vis.SetPix(Xsq(), Ysq(), StemCellCA.RED);
             }
             else{
-                G().vis.SetPix(Xsq(), Ysq(), RGB(0,0,(divs+1.0)/(G().MAX_DIVS)));
+                G.vis.SetPix(Xsq(), Ysq(), RGB(0,0,(divs+1.0)/(G.MAX_DIVS)));
             }
         }
     }
     void Die(){
         //win visActions square to black if visActions exists
-        if(G().vis!=null) {
-            G().vis.SetPix(Xsq(), Ysq(), StemCellCA.BLACK);
+        if(G.vis!=null) {
+            G.vis.SetPix(Xsq(), Ysq(), StemCellCA.BLACK);
         }
         Dispose();
     }
@@ -39,31 +39,31 @@ class CACell extends AgentSQ2Dunstackable<StemCellCA> {
     void Divide(int iChildLoc) {
         boolean stemChild=false;
         int divsChild=divs;
-        if(stem&&G().rn.Double()<G().STEM_DIV_PROB){ stemChild=true; }
+        if(stem&& G.rn.Double()< G.STEM_DIV_PROB){ stemChild=true; }
         else{ divsChild--; }
-        G().NewAgentSQ(iChildLoc).Init(divsChild,stemChild);//create a new cell and initialize it
+        G.NewAgentSQ(iChildLoc).Init(divsChild,stemChild);//create a new cell and initialize it
         if(!stem) {
             divs--;
         }
     }
 
     void Step(){
-        G().cellCts[stem?0:1]++;//add 1 to either 0th or 1st entry, depending on whether cell is stem
+        G.cellCts[stem?0:1]++;//add 1 to either 0th or 1st entry, depending on whether cell is stem
         //random death
-        if(G().rn.Double()<G().DEATH_PROB){
+        if(G.rn.Double()< G.DEATH_PROB){
             Die();
             return;
         }
         //check if division event will occur
-        if(G().rn.Double()<G().DIV_PROB){
+        if(G.rn.Double()< G.DIV_PROB){
             //get moore neighborhood around cell, ignores indices that fall outside the bounds of the model
-            int ct=MapEmptyHood(G().mooreHood);
+            int ct=MapEmptyHood(G.mooreHood);
             if(ct>0){
                 if(divs==0){
                     Die();
                     return;
                 }
-                Divide(G().mooreHood[G().rn.Int(ct)]);
+                Divide(G.mooreHood[G.rn.Int(ct)]);
             }
         }
     }

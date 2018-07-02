@@ -23,7 +23,7 @@ public class AgentSQ1Dunstackable<T extends AgentGrid1D> extends Agent1DBase<T>{
         if(!alive||!other.alive){
             throw new RuntimeException("attempting to move dead agent");
         }
-        if(other.myGrid!=myGrid){
+        if(other.G!=G){
             throw new IllegalStateException("can't swap positions between agents on different grids!");
         }
         int iNew=other.Isq();
@@ -67,18 +67,18 @@ public class AgentSQ1Dunstackable<T extends AgentGrid1D> extends Agent1DBase<T>{
         if(!this.alive){
             throw new RuntimeException("Attempting to move dead agent!");
         }
-        myGrid.grid[iSq]=null;
+        G.grid[iSq]=null;
         iSq=x;
         AddSQ(x);
     }
     void AddSQ(int i){
-        if(myGrid.grid[i]!=null){
+        if(G.grid[i]!=null){
             throw new RuntimeException("Adding multiple unstackable agents to the same square!");
         }
-        myGrid.grid[i]=this;
+        G.grid[i]=this;
     }
     void RemSQ(){
-        myGrid.grid[iSq]=null;
+        G.grid[iSq]=null;
     }
 
 
@@ -86,13 +86,13 @@ public class AgentSQ1Dunstackable<T extends AgentGrid1D> extends Agent1DBase<T>{
         if(!alive){
             throw new RuntimeException("Attempting to move dead agent");
         }
-        if (G().In(newX)) {
+        if (G.In(newX)) {
             MoveSQ(newX);
             return;
         }
-        if (G().wrapX) {
-            newX = ModWrap(newX, G().xDim);
-        } else if (!InDim(newX, G().xDim)) {
+        if (G.wrapX) {
+            newX = ModWrap(newX, G.xDim);
+        } else if (!InDim(newX, G.xDim)) {
             newX = Xsq();
         }
         MoveSQ(newX);
@@ -117,7 +117,7 @@ public class AgentSQ1Dunstackable<T extends AgentGrid1D> extends Agent1DBase<T>{
             throw new RuntimeException("Attempting to dispose already dead agent!");
         }
         RemSQ();
-        myGrid.agents.RemoveAgent(this);
+        G.agents.RemoveAgent(this);
         if(myNodes!=null){
             myNodes.DisposeAll();
         }
@@ -147,7 +147,7 @@ public class AgentSQ1Dunstackable<T extends AgentGrid1D> extends Agent1DBase<T>{
      */
 
     public int GetAge(){
-        return G().GetTick()-birthTick;
+        return G.GetTick()-birthTick;
     }
     public int Isq(){
         return iSq;

@@ -25,7 +25,7 @@ public class AgentSQ2Dunstackable<T extends AgentGrid2D> extends Agent2DBase<T>{
         if(!alive||!other.alive){
             throw new RuntimeException("attempting to move dead agent");
         }
-        if(other.myGrid!=myGrid){
+        if(other.G!=G){
             throw new IllegalStateException("can't swap positions between agents on different grids!");
         }
         int iNew=other.Isq();
@@ -47,8 +47,8 @@ public class AgentSQ2Dunstackable<T extends AgentGrid2D> extends Agent2DBase<T>{
 
     @Override
     void Setup(int i) {
-        xSq=myGrid.ItoX(i);
-        ySq=myGrid.ItoY(i);
+        xSq=G.ItoX(i);
+        ySq=G.ItoY(i);
         iSq=i;
         AddSQ(i);
     }
@@ -57,7 +57,7 @@ public class AgentSQ2Dunstackable<T extends AgentGrid2D> extends Agent2DBase<T>{
     void Setup(int x, int y) {
         this.xSq=x;
         this.ySq=y;
-        iSq=myGrid.I(xSq,ySq);
+        iSq=G.I(xSq,ySq);
         AddSQ(iSq);
     }
 
@@ -74,20 +74,20 @@ public class AgentSQ2Dunstackable<T extends AgentGrid2D> extends Agent2DBase<T>{
         if(!this.alive){
             throw new RuntimeException("Attempting to move dead agent!");
         }
-        this.xSq=myGrid.ItoX(i);
-        this.ySq=myGrid.ItoY(i);
-        myGrid.grid[iSq]=null;
+        this.xSq=G.ItoX(i);
+        this.ySq=G.ItoY(i);
+        G.grid[iSq]=null;
         iSq=i;
         AddSQ(i);
     }
     void AddSQ(int i){
-        if(myGrid.grid[i]!=null){
+        if(G.grid[i]!=null){
             throw new RuntimeException("Adding multiple unstackable agents to the same square!");
         }
-        myGrid.grid[i]=this;
+        G.grid[i]=this;
     }
     void RemSQ(){
-        myGrid.grid[iSq]=null;
+        G.grid[iSq]=null;
     }
 
     /**
@@ -97,7 +97,7 @@ public class AgentSQ2Dunstackable<T extends AgentGrid2D> extends Agent2DBase<T>{
         if(!this.alive){
             throw new RuntimeException("Attempting to move dead agent!");
         }
-        int iNewPos=myGrid.I(x,y);
+        int iNewPos=G.I(x,y);
         RemSQ();
         AddSQ(iNewPos);
         this.xSq=x;
@@ -109,18 +109,18 @@ public class AgentSQ2Dunstackable<T extends AgentGrid2D> extends Agent2DBase<T>{
         if(!alive){
             throw new RuntimeException("Attempting to move dead agent");
         }
-        if (G().In(newX, newY)) {
+        if (G.In(newX, newY)) {
             MoveSQ(newX, newY);
             return;
         }
-        if (G().wrapX) {
-            newX = ModWrap(newX, G().xDim);
-        } else if (!InDim(newX, G().xDim)) {
+        if (G.wrapX) {
+            newX = ModWrap(newX, G.xDim);
+        } else if (!InDim(newX, G.xDim)) {
             newX = Xsq();
         }
-        if (G().wrapY) {
-            newY = ModWrap(newY, G().yDim);
-        } else if (!InDim(newY, G().yDim))
+        if (G.wrapY) {
+            newY = ModWrap(newY, G.yDim);
+        } else if (!InDim(newY, G.yDim))
             newY = Ysq();
         MoveSQ(newX,newY);
     }
@@ -153,11 +153,11 @@ public class AgentSQ2Dunstackable<T extends AgentGrid2D> extends Agent2DBase<T>{
      * Deletes the agent
      */
     public void Dispose(){
-        if(!this.alive){
-            throw new RuntimeException("Attempting to dispose already dead agent!");
-        }
+//        if(!this.alive){
+//            throw new RuntimeException("Attempting to dispose already dead agent!");
+//        }
         RemSQ();
-        myGrid.agents.RemoveAgent(this);
+        G.agents.RemoveAgent(this);
         if(myNodes!=null){
             myNodes.DisposeAll();
         }
@@ -167,7 +167,7 @@ public class AgentSQ2Dunstackable<T extends AgentGrid2D> extends Agent2DBase<T>{
     }
 
     public int GetAge(){
-        return G().GetTick()-birthTick;
+        return G.GetTick()-birthTick;
     }
 
     @Override
