@@ -47,16 +47,18 @@ public class BirthDeath extends AgentGrid2D<Cell> {
             NewAgentSQ(coords[i]).color=color;
         }
     }
-    public void Step(UIGrid vis) {
+    public void Step() {
         for (Cell c : this) {
             c.Step();
         }
+        CleanAgents();
+        ShuffleAgents(rn);
+    }
+    public void Draw(GridWindow vis){
         for (int i = 0; i < vis.length; i++) {
             Cell c = GetAgent(i);
             vis.SetPix(i, c == null ? BLACK : c.color);
         }
-        CleanAgents();
-        ShuffleAgents(rn);
     }
 
 
@@ -66,7 +68,8 @@ public class BirthDeath extends AgentGrid2D<Cell> {
         t.Setup(10);
         for (int i = 0; i < 100000; i++) {
             win.TickPause(10);
-            t.Step(win);
+            t.Step();
+            t.Draw(win);
         }
     }
 }

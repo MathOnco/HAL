@@ -75,7 +75,7 @@ public class ExampleOffLattice extends AgentGrid2D<CellOL> {
         OpenGL2DWindow vis=new OpenGL2DWindow("Off Lattice Example", 1000,1000,x,y);
         ex.Setup(50,5,0.5);
         int i=0;
-        while(i<10000&&!vis.CheckClosed()) {//check for click on close button on window
+        while(i<10000&&!vis.IsClosed()) {//check for click on close button on window
             vis.TickPause(0);
             ex.StepCells();
             ex.DrawCells(vis);
@@ -84,7 +84,7 @@ public class ExampleOffLattice extends AgentGrid2D<CellOL> {
         if(ex.out!=null){
             ex.out.Close();//be sure to call Close when finished writing output to make sure everything is recorded.
         }
-        vis.Dispose();
+        vis.Close();
     }
     public void Setup(double initPop,double initRadius,double propRed){
         for (int i = 0; i < initPop; i++) {

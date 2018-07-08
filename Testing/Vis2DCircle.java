@@ -15,12 +15,12 @@ public class Vis2DCircle {
         float[] pts= Util.GenCirclePoints(1.0f,4);
         TickTimer trt=new TickTimer();
         float x=0;
-        while(!vis.CheckClosed()){
+        while(!vis.IsClosed()){
             vis.Clear(RGB(x, (float) 0, (float) 0));
             vis.FanShape((float) 10, (float) 10, (float) 1, pts,RGB((float) 1, (float) 1, (float) 1));
             vis.Show();
             x+=0.000001;
         }
-        vis.Dispose();
+        vis.Close();
     }
 }

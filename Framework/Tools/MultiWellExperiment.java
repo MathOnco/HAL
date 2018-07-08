@@ -61,7 +61,7 @@ public class MultiWellExperiment <T>{
         Stepper.Step(wells[iWell],iWell,tick);
     }
     public void DrawWell(int i){
-        int xStart=(i/wellsX)*(visXdim+1);
+        int xStart=(i/wellsY)*(visXdim+1);
         int yStart=(i%wellsY)*(visYdim+1);
         win.SetRect(xStart,yStart, visXdim, visYdim,(x, y)->Drawer.GetPixColor(wells[i],x,y));
 

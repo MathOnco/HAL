@@ -73,7 +73,7 @@ public class ExampleGrid extends AgentGrid2D<ExampleCell> {
         //initialize model
 
         for (int i = 0; i < timesteps; i++) {
-            if(win.CheckClosed()){
+            if(win.IsClosed()){
                 break;
             }
             if (model.Pop() == 0) {
@@ -85,7 +85,7 @@ public class ExampleGrid extends AgentGrid2D<ExampleCell> {
             //draw
             model.DrawModel(win);
         }
-        win.Dispose();
+        win.Close();
     }
 }
 

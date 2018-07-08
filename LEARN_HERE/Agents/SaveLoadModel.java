@@ -31,7 +31,8 @@ public class SaveLoadModel extends BirthDeath implements SerializableModel{
                 }
             }
             win.TickPause(10);
-            model.Step(win);
+            model.Step();
+            model.Draw(win);
         }
     }
 }

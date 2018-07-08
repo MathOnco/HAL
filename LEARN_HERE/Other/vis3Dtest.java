@@ -12,7 +12,7 @@ class Vis3Dtest {
     public static void main(String[] args) {
         OpenGL3DWindow v3d=new OpenGL3DWindow("testing", 640,480,20,10,10, true);
         float[] circ=GenCirclePoints(0.5f,100);
-        while(!v3d.CheckClosed()) {
+        while(!v3d.IsClosed()) {
             v3d.TickPause(0);
             v3d.ClearBox(RGB(0.5f, 0.5f, 0.5f),RGB(1,1,1));
             v3d.Circle(20,0,0,1,RGB(1,0,0));

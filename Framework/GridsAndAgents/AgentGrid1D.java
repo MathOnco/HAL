@@ -282,7 +282,7 @@ public class AgentGrid1D<T extends AgentBaseSpatial> extends GridBase1D implemen
         if(Pop()>0){
             throw new IllegalStateException("Something is wrong with Reset, tell Rafael Bravo to fix this!");
         }
-//        tick=0;
+        ResetTick();
     }
     public void ResetHard(){
 //        IncTick();
