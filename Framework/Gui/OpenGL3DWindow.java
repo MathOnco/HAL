@@ -127,13 +127,13 @@ public class OpenGL3DWindow {
             Display.update();
         }
     }
-    public boolean CheckClosed(){
+    public boolean IsClosed(){
         if(active) {
             return Display.isCloseRequested();
         }
         return true;
     }
-    public void Dispose(){
+    public void Close(){
         if(active) {
             Display.destroy();
         }

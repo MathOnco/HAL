@@ -394,7 +394,7 @@ public class AgentGrid3D<T extends AgentBaseSpatial> extends GridBase3D implemen
         if(Pop()>0){
             throw new IllegalStateException("Something is wrong with Reset, tell Rafael Bravo to fix this!");
         }
-//        tick=0;
+        ResetTick();
     }
     public void ResetHard(){
 //        IncTick();

@@ -169,14 +169,14 @@ public class Example3D extends AgentGrid3D<ExCell3D> {
         }
         GridWindow visResource=new GridWindow(x,y,5);
         OpenGL3DWindow vis=new OpenGL3DWindow("TumorVis", 1000,1000,x,z,y);
-        while (!vis.CheckClosed()){
+        while (!vis.IsClosed()){
             ex.StepAll();
             ex.DrawCells(vis);
             visResource.DrawGridDiffXZ(ex.oxygen, (val)->HeatMapBRG(Math.pow(val,0.5)));
             ex.CleanAgents();//Equivalent to calling CleanAgents, ShuffleAgents, and IncTick grid functions
             ex.ShuffleAgents(ex.rn);//Equivalent to calling CleanAgents, ShuffleAgents, and IncTick grid functions
         }
-        vis.Dispose();
+        vis.Close();
         visResource.Close();
     }
 }

@@ -43,11 +43,11 @@ public class mover3DoffLattice extends AgentGrid3D<MoveAgentoffLattice> {
             win3D.Clear(BLUE);
             win3D.Circle(ourHero.Xpt(),ourHero.Ypt(),ourHero.Zpt(),0.5,RED);//draw 3d
             win3D.Show();
-            if(win3D.CheckClosed()){//quit if close button is clicked
+            if(win3D.IsClosed()){//quit if close button is clicked
                 break;
             }
         }
-        win3D.Dispose();//destroy guis
+        win3D.Close();//destroy guis
         win2D.Close();
     }
 }

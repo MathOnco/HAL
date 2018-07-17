@@ -434,7 +434,7 @@ public class AgentGrid2D<T extends AgentBaseSpatial> extends GridBase2D implemen
         if(Pop()>0){
             throw new IllegalStateException("Something is wrong with Reset, tell Rafael Bravo to fix this!");
         }
-//        tick=0;
+        ResetTick();
     }
     public void ResetHard(){
 //        IncTick();

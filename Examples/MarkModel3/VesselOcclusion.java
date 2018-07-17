@@ -407,7 +407,7 @@ public class VesselOcclusion {
             }
 
         }
-        //visAll.win.Dispose();
+        //visAll.win.Close();
 
         stepsTillTumorEdge[index] = i*(m.CELL_TIMESTEP);
         //gif0.Close();
@@ -508,13 +508,13 @@ public class VesselOcclusion {
             }
             if (TumorOnEdge(m))
             {
-                //visAll.win.Dispose();
+                //visAll.win.Close();
                 break;
             }
 
 
         }
-        //visAll.win.Dispose();
+        //visAll.win.Close();
         gif0.Close();
         inputsOutputs[index][3]=i*(m.CELL_TIMESTEP);
 
@@ -586,14 +586,14 @@ public class VesselOcclusion {
             }
             if (TumorOnEdge(m))
             {
-                //visAll.win.Dispose();
+                //visAll.win.Close();
                 break;
             }
 
 
         }
 
-        //visAll.win.Dispose();
+        //visAll.win.Close();
         gif0.Close();
         inputsOutputs[index][3]=i*(m.CELL_TIMESTEP);
 

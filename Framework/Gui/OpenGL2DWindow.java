@@ -72,7 +72,7 @@ public class OpenGL2DWindow {
             Display.update();
         }
     }
-    public boolean CheckClosed(){
+    public boolean IsClosed(){
         if(active) {
             return Display.isCloseRequested();
         }
@@ -80,7 +80,7 @@ public class OpenGL2DWindow {
             return true;
         }
     }
-    public void Dispose(){
+    public void Close(){
         if(active) {
             Display.destroy();
         }
