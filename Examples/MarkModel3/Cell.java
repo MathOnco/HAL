@@ -222,7 +222,7 @@ public class Cell<C extends Cell,T extends Tissue<C>> extends AgentSQ2Dunstackab
     public double DivideProb(){
         double acidRMult=Math.min(1, G.ACID_RES_CYCLE_COST*-GetAcidResistPheno(acidResistPH)+1);
         double glycMult=Math.min(1, G.GLYC_CYCLE_COST*-GetGlycPheno(glycRate)+1);
-        double ret= G.CELL_TIMESTEP*acidRMult*glycMult* 24/ G.MIN_CELL_CYCLE_TIME*(Math.atan((availableATPprop- G.ATP_HALF_MAX)*2)/Math.PI+0.5);
+        double ret= G.CELL_TIMESTEP*acidRMult*glycMult* 24* G.MIN_CELL_CYCLE_TIME*(Math.atan((availableATPprop- G.ATP_HALF_MAX)*2)/Math.PI+0.5);
 
         return ret;
     }
