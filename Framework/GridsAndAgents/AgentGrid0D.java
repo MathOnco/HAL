@@ -98,7 +98,9 @@ public class AgentGrid0D<T extends Agent0D> implements Iterable<T>{
     public void IncTick(){
         tick++;
     }
-    public void ResetTick(){tick=0;}
+    public void ResetTick(){
+        tick=0;
+    }
     /**
      * returns the number of agents that are alive in the typeGrid
      */

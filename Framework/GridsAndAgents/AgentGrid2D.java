@@ -59,8 +59,8 @@ public class AgentGrid2D<T extends AgentBaseSpatial> extends GridBase2D implemen
         agents=new InternalGridAgentList<T>(agentClass,this);
         grid=(T[])new AgentBaseSpatial[length];
         counts= new int[length];
-        moveSafeXdim=xDim-Math.nextAfter(xDim,0);
-        moveSafeYdim=xDim-Math.nextAfter(yDim,0);
+        moveSafeXdim=Math.nextAfter(xDim,0);
+        moveSafeYdim=Math.nextAfter(yDim,0);
     }
     public AgentGrid2D(int x, int y, Class<T> agentClass){
         this(x,y,agentClass,false,false);

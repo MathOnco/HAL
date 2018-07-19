@@ -233,7 +233,6 @@ public abstract class GridBase3D{
     public int GetTick(){
         return tick;
     }
-    public void ResetTick(){tick=0;}
 
     public int ConvXsq(int x,GridBase3D other){
         return (int)(((x+0.5)*other.xDim)/xDim);
@@ -388,6 +387,10 @@ public abstract class GridBase3D{
         double zDisp=DispZ(z1,z2);
         return xDisp*xDisp+yDisp*yDisp+zDisp*zDisp;
 
+    }
+
+    public void ResetTick(){
+        tick=0;
     }
 }
 

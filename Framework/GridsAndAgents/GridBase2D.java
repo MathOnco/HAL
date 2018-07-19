@@ -259,7 +259,6 @@ public abstract class GridBase2D{
     public int GetTick(){
         return tick;
     }
-    public void ResetTick(){tick=0;}
 
     public int AlongLineIs(double x1, double y1, double x2, double y2, int[] writeHere) {
         double dx = Math.abs(x2 - x1);
@@ -338,6 +337,10 @@ public abstract class GridBase2D{
         double yDisp=DispY(y1,y2);
         return xDisp*xDisp+yDisp*yDisp;
 
+    }
+
+    public void ResetTick(){
+        tick=0;
     }
 
 }

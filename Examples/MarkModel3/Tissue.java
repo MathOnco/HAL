@@ -26,7 +26,7 @@ public class Tissue <C extends Cell> extends AgentGrid2D<C>
     //OPTIMIZATION VARS
     public final int DIFF_SPACE_SCALE;
     //WTF VARS
-    public double ADI_STOP_DIF =1E-5;//defines when steady state has been reached and diffusion steps can stop
+    public double ADI_STOP_DIF =1E-3;//defines when steady state has been reached and diffusion steps can stop
     public int ADI_MIN_STEPS=5;//minimum number of diffusion steps allowed per timestep.
     public double ATP_HALF_MAX=1.1;//used with division calculation, see michaelis menten equation
     public double COURANT_NUM=0.1;//?
@@ -136,7 +136,6 @@ public class Tissue <C extends Cell> extends AgentGrid2D<C>
     public int ADI_MAX_STEPS;
     public int ADI_MAX_STEPS_START;
     public double DIFF_TIMESTEP;
-    public double DIFF_SCALE_FACTOR;
 
     //SET DURING SETUP_CONSTANTS()
     public double DEATH_PROB_NORM_COND;
@@ -285,11 +284,10 @@ public class Tissue <C extends Cell> extends AgentGrid2D<C>
         MAX_DIFF_RATE=GetMaxDiffRate();
         ADI_MAX_STEPS =(int)(Math.max(10,Math.round(ADI_MAX_SIM_STEPS *(Math.pow(MAX_DIFF_RATE,0.5))/(COURANT_NUM*SQUARE_DIAM* DIFF_SPACE_SCALE * DIFF_SPACE_SCALE))));
         ADI_MAX_STEPS_START =(int)(Math.max(10,Math.round(ADI_MAX_SIM_TIME_START *(Math.pow(MAX_DIFF_RATE,0.5))/(COURANT_NUM*SQUARE_DIAM* DIFF_SPACE_SCALE * DIFF_SPACE_SCALE))));
-        DIFF_TIMESTEP= ADI_MAX_SIM_STEPS / ADI_MAX_STEPS;
-        DIFF_SCALE_FACTOR = DIFF_TIMESTEP / (SQUARE_DIAM * SQUARE_DIAM);
-        oxygen.diffRate=oxygen.diffRate*DIFF_SCALE_FACTOR;
-        glucose.diffRate=glucose.diffRate*DIFF_SCALE_FACTOR;
-        acid.diffRate=acid.diffRate*DIFF_SCALE_FACTOR;
+        DIFF_TIMESTEP= (ADI_MAX_SIM_STEPS / ADI_MAX_STEPS);
+        oxygen.diffRate=oxygen.diffRate*DIFF_TIMESTEP / (SQUARE_DIAM * SQUARE_DIAM);
+        glucose.diffRate=glucose.diffRate*DIFF_TIMESTEP / (SQUARE_DIAM * SQUARE_DIAM);
+        acid.diffRate=acid.diffRate*DIFF_TIMESTEP / (SQUARE_DIAM * SQUARE_DIAM);
         CalcVesselDegradationRate();
         vesselAngioHood=CircleHood(true,(VESSEL_SPACING_MIN-SQUARE_DIAM)*1.0/SQUARE_DIAM);
         vesselAngioIs=new int[vesselAngioHood.length/2];
@@ -518,11 +516,7 @@ public class Tissue <C extends Cell> extends AgentGrid2D<C>
         boolean steady;
         int step = 0;
         do {
-            if(step==maxSteps)
-            {
-                steady=true;
-                System.err.println("Steady state calculation went all the way! steps: "+maxSteps);
-            } else if(step<minSteps-1) {
+            if(step<minSteps-1) {
                 steady = DiffStep(false,intensities);
             } else if(step==minSteps-1){
                 //set the internal compare array for the steady state calculations in subsequent steps
@@ -539,7 +533,7 @@ public class Tissue <C extends Cell> extends AgentGrid2D<C>
                 glucose.boundaryValue=glucose.grid.GetAvg();
                 acid.boundaryValue=acid.grid.GetAvg();
             }
-        } while (!steady&&step<maxSteps);
+        } while (!steady&&step<=maxSteps);
         for (C cell:this)
         {
             cell.ATPComp();
@@ -618,9 +612,12 @@ public class Tissue <C extends Cell> extends AgentGrid2D<C>
     public boolean IsSteady()
     {
         double maxMaxDif=Double.MIN_VALUE;
-            maxMaxDif=Math.max(maxMaxDif,oxygen.grid.MaxDifferenceScaled(EPS));
-            maxMaxDif=Math.max(maxMaxDif,glucose.grid.MaxDifferenceScaled(EPS));
-            maxMaxDif=Math.max(maxMaxDif,acid.grid.MaxDifferenceScaled(EPS));
+        double maxDifO2=oxygen.grid.MaxDifferenceScaled(EPS);
+        double maxDifGlu=glucose.grid.MaxDifferenceScaled(EPS);
+        double maxDifAcid=acid.grid.MaxDifferenceScaled(EPS);
+            maxMaxDif=Math.max(maxMaxDif,maxDifO2);
+            maxMaxDif=Math.max(maxMaxDif,maxDifGlu);
+            maxMaxDif=Math.max(maxMaxDif,maxDifAcid);
             if(maxMaxDif> ADI_STOP_DIF)
             {
                 return false;
