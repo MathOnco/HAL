@@ -151,9 +151,9 @@ public class PDEGrid2D extends GridBase2D implements Serializable{
         nextField[i]+=val;}
 
     public void Mul(int i, double val){
-        nextField[i]*=val;}
+        nextField[i]+=field[i]*(val-1);}
     public void Mul(int x,int y, double val){
-        nextField[x*yDim+y]*=val;}
+        nextField[x*yDim+y]+=field[x*yDim+y]*(val-1);}
     /**
      * copies the current field into the prev field
      */
@@ -179,6 +179,7 @@ public class PDEGrid2D extends GridBase2D implements Serializable{
      */
     public void Update(){
         System.arraycopy(nextField,0,field,0,length);
+        IncTick();
     }
     void SwapFields(){
         double[]temp=field;

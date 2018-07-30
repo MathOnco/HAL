@@ -89,15 +89,14 @@ public class PDEGrid3D extends GridBase3D implements Serializable{
     public void Add(int i, double val) {
         nextField[i] += val;
     }
-    public void Mul(int x, int y, int z, double val){
-        nextField[x*yDim*zDim+y*zDim+z]*=val;
-    }
     public void Mul(int i, double val){
-        nextField[i]*=val;
-    }
+        nextField[i]+=field[i]*(val-1);}
+    public void Mul(int x,int y,int z, double val){
+        nextField[x*yDim*zDim+y*zDim+z]+=field[x*yDim*zDim+y*zDim+z]*(val-1);}
 
     public void Update(){
         System.arraycopy(nextField,0,field,0,length);
+        IncTick();
     }
 
     /**

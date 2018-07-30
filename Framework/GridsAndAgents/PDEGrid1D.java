@@ -67,10 +67,11 @@ public class PDEGrid1D extends GridBase1D implements Serializable{
         nextField[x]+=val;}
 
     public void Mul(int x, double val){
-        nextField[x]*=val;}
+        nextField[x]+=field[x]*(val-1);}
 
     public void Update(){
         System.arraycopy(nextField,0,field,0,length);
+        IncTick();
     }
     /**
      * Swaps the prev and current field
