@@ -6,77 +6,77 @@ import static Framework.Util.*;
  */
 public class PDEequations {
 
-    /**
-     * runs the finite differences equation in 2 dimensions explicitly
-     *
-     * @param inGrid        an array of values holding the starting state of the diffusible
-     * @param outGrid       an array into which the result of diffusion will be written
-     * @param xDim          xDim dimenison of the inGrid and outGrid
-     * @param yDim          yDim dimension of the inGrid and outGrid
-     * @param diffRate      diffusion rate for the diffusion equaition
-     * @param boundaryCond  defines whether a constant boundary condition value should diffuse in from the boundaries
-     * @param boundaryValue only impacts diffusion if boundaryCond is true, sets the boundary condition value
-     * @param wrapX         whether to wrap around diffusion over the left and right boundaries
-     */
-    public static void Diffusion(double[] inGrid, double[] outGrid, int xDim, int yDim, double diffRate, boolean boundaryCond, double boundaryValue, final boolean wrapX, final boolean wrapY) {
-        //This code is ugly and repetitive to improve performance by getting around bounds checking
-        int x, y;
-        //first we do the corners
-        if (boundaryCond) {
-            outGrid[0] = inGrid[0] + diffRate * (-inGrid[0] * 4 + inGrid[1] + inGrid[yDim] + 2 * boundaryValue);
-            outGrid[(xDim - 1) * yDim] = inGrid[(xDim - 1) * yDim] + diffRate * (-inGrid[(xDim - 1) * yDim] * 4 + inGrid[(xDim - 2) * yDim] + inGrid[(xDim - 1) * yDim + 1] + 2 * boundaryValue);
-            outGrid[(xDim - 1) * yDim + yDim - 1] = inGrid[(xDim - 1) * yDim + yDim - 1] + diffRate * (-inGrid[(xDim - 1) * yDim + yDim - 1] * 4 + inGrid[(xDim - 2) * yDim + yDim - 1] + inGrid[(xDim - 1) * yDim + yDim - 2] + 2 * boundaryValue);
-            outGrid[yDim - 1] = inGrid[yDim - 1] + diffRate * (-inGrid[yDim - 1] * 4 + inGrid[yDim + yDim - 1] + inGrid[yDim - 2] + 2 * boundaryValue);
-        } else {
-            outGrid[0] = inGrid[0] + diffRate * (-inGrid[0] * 4 + (wrapX?inGrid[1*yDim+0]+inGrid[(xDim-1)*yDim]:inGrid[(1*yDim)+0]*2) + (wrapY?inGrid[0*yDim+yDim]+inGrid[0*yDim+1]:inGrid[0*yDim+1]*2));
-            outGrid[(xDim - 1) * yDim] = inGrid[(xDim - 1) * yDim] + diffRate * (-inGrid[(xDim - 1) * yDim] * 4 + (wrapX?inGrid[(xDim - 2) * yDim]+inGrid[0]:2*inGrid[(xDim - 2)*yDim]) + (wrapY?inGrid[(xDim - 1) * yDim + 1]+inGrid[xDim*yDim-1]:2*inGrid[(xDim - 1) * yDim + 1]));
-            outGrid[(xDim - 1) * yDim + yDim - 1] = inGrid[(xDim - 1) * yDim + yDim - 1] + diffRate * (-inGrid[(xDim - 1) * yDim + yDim - 1] * 4 + (wrapX?inGrid[(xDim - 2) * yDim + yDim - 1]+inGrid[yDim-1]:2*inGrid[(xDim - 2) * yDim + yDim - 1]) + (wrapY?inGrid[(xDim-1)*yDim]+inGrid[(xDim - 1) * yDim + yDim - 2]:2*inGrid[(xDim - 1) * yDim + yDim - 2]));
-            outGrid[yDim - 1] = inGrid[yDim - 1] + diffRate * (-inGrid[yDim - 1] * 4 + (wrapX?inGrid[yDim + yDim - 1]+inGrid[(xDim-1)*yDim+yDim-1]:2*inGrid[yDim + yDim - 1]) + (wrapY?inGrid[0]+inGrid[yDim - 2]:2*inGrid[yDim - 2]));
-        }
-        //then we do the sides
-        if (boundaryCond) {
-            x = 0;
-            for (y = 1; y < yDim - 1; y++) {
-                outGrid[x * yDim + y] = inGrid[x * yDim + y] + diffRate * (-inGrid[x * yDim + y] * 4 + inGrid[(x + 1) * yDim + y] + inGrid[x * yDim + y + 1] + inGrid[x * yDim + y - 1] + boundaryValue);
-            }
-            x = xDim - 1;
-            for (y = 1; y < yDim - 1; y++) {
-                outGrid[x * yDim + y] = inGrid[x * yDim + y] + diffRate * (-inGrid[x * yDim + y] * 4 + inGrid[(x - 1) * yDim + y] + inGrid[x * yDim + y + 1] + inGrid[x * yDim + y - 1] + boundaryValue);
-            }
-            y = 0;
-            for (x = 1; x < xDim - 1; x++) {
-                outGrid[x * yDim + y] = inGrid[x * yDim + y] + diffRate * (-inGrid[x * yDim + y] * 4 + inGrid[x * yDim + y + 1] + inGrid[(x + 1) * yDim + y] + inGrid[(x - 1) * yDim + y] + boundaryValue);
-            }
-            y = yDim - 1;
-            for (x = 1; x < xDim - 1; x++) {
-                outGrid[x * yDim + y] = inGrid[x * yDim + y] + diffRate * (-inGrid[x * yDim + y] * 4 + inGrid[x * yDim + y - 1] + inGrid[(x + 1) * yDim + y] + inGrid[(x - 1) * yDim + y] + boundaryValue);
-            }
-        } else{
-            x = 0;
-            for (y = 1; y < yDim - 1; y++) {
-                outGrid[x * yDim + y] = inGrid[x * yDim + y] + diffRate * (-inGrid[x * yDim + y] * 4 + inGrid[(x + 1) * yDim + y] + inGrid[x * yDim + y + 1] + inGrid[x * yDim + y - 1] + (wrapX?inGrid[(xDim - 1) * yDim + y]:inGrid[(x + 1) * yDim + y]));
-            }
-            x = xDim - 1;
-            for (y = 1; y < yDim - 1; y++) {
-                outGrid[x * yDim + y] = inGrid[x * yDim + y] + diffRate * (-inGrid[x * yDim + y] * 4 + inGrid[(x - 1) * yDim + y] + inGrid[x * yDim + y + 1] + inGrid[x * yDim + y - 1] + (wrapX?inGrid[0 * yDim + y]:inGrid[(x-1)*yDim+y]));
-            }
-            y = 0;
-            for (x = 1; x < xDim - 1; x++) {
-                outGrid[x * yDim + y] = inGrid[x * yDim + y] + diffRate * (-inGrid[x * yDim + y] * 4 + inGrid[x * yDim + y + 1] + inGrid[(x + 1) * yDim + y] + inGrid[(x - 1) * yDim + y]+(wrapY?inGrid[x*yDim+yDim-1]:inGrid[x*yDim+1]));
-            }
-            y = yDim - 1;
-            for (x = 1; x < xDim - 1; x++) {
-                outGrid[x * yDim + y] = inGrid[x * yDim + y] + diffRate * (-inGrid[x * yDim + y] * 4 + inGrid[x * yDim + y - 1] + inGrid[(x + 1) * yDim + y] + inGrid[(x - 1) * yDim + y]+(wrapY?inGrid[x*yDim]:inGrid[x*yDim+y-2]));
-            }
-        }
-        //then we do the middle
-        for (x = 1; x < xDim - 1; x++) {
-            for (y = 1; y < yDim - 1; y++) {
-                int i = x * yDim + y;
-                outGrid[i] = inGrid[i] + diffRate * (-inGrid[i] * 4 + inGrid[(x + 1) * yDim + y] + inGrid[(x - 1) * yDim + y] + inGrid[x * yDim + y + 1] + inGrid[x * yDim + y - 1]);
-            }
-        }
-    }
+//    /**
+//     * runs the finite differences equation in 2 dimensions explicitly
+//     *
+//     * @param inGrid        an array of values holding the starting state of the diffusible
+//     * @param outGrid       an array into which the result of diffusion will be written
+//     * @param xDim          xDim dimenison of the inGrid and outGrid
+//     * @param yDim          yDim dimension of the inGrid and outGrid
+//     * @param diffRate      diffusion rate for the diffusion equaition
+//     * @param boundaryCond  defines whether a constant boundary condition value should diffuse in from the boundaries
+//     * @param boundaryValue only impacts diffusion if boundaryCond is true, sets the boundary condition value
+//     * @param wrapX         whether to wrap around diffusion over the left and right boundaries
+//     */
+//    public static void Diffusion(double[] inGrid, double[] outGrid, int xDim, int yDim, double diffRate, boolean boundaryCond, double boundaryValue, final boolean wrapX, final boolean wrapY) {
+//        //This code is ugly and repetitive to improve performance by getting around bounds checking
+//        int x, y;
+//        //first we do the corners
+//        if (boundaryCond) {
+//            outGrid[0] = inGrid[0] + diffRate * (-inGrid[0] * 4 + inGrid[1] + inGrid[yDim] + 2 * boundaryValue);
+//            outGrid[(xDim - 1) * yDim] = inGrid[(xDim - 1) * yDim] + diffRate * (-inGrid[(xDim - 1) * yDim] * 4 + inGrid[(xDim - 2) * yDim] + inGrid[(xDim - 1) * yDim + 1] + 2 * boundaryValue);
+//            outGrid[(xDim - 1) * yDim + yDim - 1] = inGrid[(xDim - 1) * yDim + yDim - 1] + diffRate * (-inGrid[(xDim - 1) * yDim + yDim - 1] * 4 + inGrid[(xDim - 2) * yDim + yDim - 1] + inGrid[(xDim - 1) * yDim + yDim - 2] + 2 * boundaryValue);
+//            outGrid[yDim - 1] = inGrid[yDim - 1] + diffRate * (-inGrid[yDim - 1] * 4 + inGrid[yDim + yDim - 1] + inGrid[yDim - 2] + 2 * boundaryValue);
+//        } else {
+//            outGrid[0] = inGrid[0] + diffRate * (-inGrid[0] * 4 + (wrapX?inGrid[1*yDim+0]+inGrid[(xDim-1)*yDim]:inGrid[(1*yDim)+0]*2) + (wrapY?inGrid[0*yDim+yDim]+inGrid[0*yDim+1]:inGrid[0*yDim+1]*2));
+//            outGrid[(xDim - 1) * yDim] = inGrid[(xDim - 1) * yDim] + diffRate * (-inGrid[(xDim - 1) * yDim] * 4 + (wrapX?inGrid[(xDim - 2) * yDim]+inGrid[0]:2*inGrid[(xDim - 2)*yDim]) + (wrapY?inGrid[(xDim - 1) * yDim + 1]+inGrid[xDim*yDim-1]:2*inGrid[(xDim - 1) * yDim + 1]));
+//            outGrid[(xDim - 1) * yDim + yDim - 1] = inGrid[(xDim - 1) * yDim + yDim - 1] + diffRate * (-inGrid[(xDim - 1) * yDim + yDim - 1] * 4 + (wrapX?inGrid[(xDim - 2) * yDim + yDim - 1]+inGrid[yDim-1]:2*inGrid[(xDim - 2) * yDim + yDim - 1]) + (wrapY?inGrid[(xDim-1)*yDim]+inGrid[(xDim - 1) * yDim + yDim - 2]:2*inGrid[(xDim - 1) * yDim + yDim - 2]));
+//            outGrid[yDim - 1] = inGrid[yDim - 1] + diffRate * (-inGrid[yDim - 1] * 4 + (wrapX?inGrid[yDim + yDim - 1]+inGrid[(xDim-1)*yDim+yDim-1]:2*inGrid[yDim + yDim - 1]) + (wrapY?inGrid[0]+inGrid[yDim - 2]:2*inGrid[yDim - 2]));
+//        }
+//        //then we do the sides
+//        if (boundaryCond) {
+//            x = 0;
+//            for (y = 1; y < yDim - 1; y++) {
+//                outGrid[x * yDim + y] = inGrid[x * yDim + y] + diffRate * (-inGrid[x * yDim + y] * 4 + inGrid[(x + 1) * yDim + y] + inGrid[x * yDim + y + 1] + inGrid[x * yDim + y - 1] + boundaryValue);
+//            }
+//            x = xDim - 1;
+//            for (y = 1; y < yDim - 1; y++) {
+//                outGrid[x * yDim + y] = inGrid[x * yDim + y] + diffRate * (-inGrid[x * yDim + y] * 4 + inGrid[(x - 1) * yDim + y] + inGrid[x * yDim + y + 1] + inGrid[x * yDim + y - 1] + boundaryValue);
+//            }
+//            y = 0;
+//            for (x = 1; x < xDim - 1; x++) {
+//                outGrid[x * yDim + y] = inGrid[x * yDim + y] + diffRate * (-inGrid[x * yDim + y] * 4 + inGrid[x * yDim + y + 1] + inGrid[(x + 1) * yDim + y] + inGrid[(x - 1) * yDim + y] + boundaryValue);
+//            }
+//            y = yDim - 1;
+//            for (x = 1; x < xDim - 1; x++) {
+//                outGrid[x * yDim + y] = inGrid[x * yDim + y] + diffRate * (-inGrid[x * yDim + y] * 4 + inGrid[x * yDim + y - 1] + inGrid[(x + 1) * yDim + y] + inGrid[(x - 1) * yDim + y] + boundaryValue);
+//            }
+//        } else{
+//            x = 0;
+//            for (y = 1; y < yDim - 1; y++) {
+//                outGrid[x * yDim + y] = inGrid[x * yDim + y] + diffRate * (-inGrid[x * yDim + y] * 4 + inGrid[(x + 1) * yDim + y] + inGrid[x * yDim + y + 1] + inGrid[x * yDim + y - 1] + (wrapX?inGrid[(xDim - 1) * yDim + y]:inGrid[(x + 1) * yDim + y]));
+//            }
+//            x = xDim - 1;
+//            for (y = 1; y < yDim - 1; y++) {
+//                outGrid[x * yDim + y] = inGrid[x * yDim + y] + diffRate * (-inGrid[x * yDim + y] * 4 + inGrid[(x - 1) * yDim + y] + inGrid[x * yDim + y + 1] + inGrid[x * yDim + y - 1] + (wrapX?inGrid[0 * yDim + y]:inGrid[(x-1)*yDim+y]));
+//            }
+//            y = 0;
+//            for (x = 1; x < xDim - 1; x++) {
+//                outGrid[x * yDim + y] = inGrid[x * yDim + y] + diffRate * (-inGrid[x * yDim + y] * 4 + inGrid[x * yDim + y + 1] + inGrid[(x + 1) * yDim + y] + inGrid[(x - 1) * yDim + y]+(wrapY?inGrid[x*yDim+yDim-1]:inGrid[x*yDim+1]));
+//            }
+//            y = yDim - 1;
+//            for (x = 1; x < xDim - 1; x++) {
+//                outGrid[x * yDim + y] = inGrid[x * yDim + y] + diffRate * (-inGrid[x * yDim + y] * 4 + inGrid[x * yDim + y - 1] + inGrid[(x + 1) * yDim + y] + inGrid[(x - 1) * yDim + y]+(wrapY?inGrid[x*yDim]:inGrid[x*yDim+y-2]));
+//            }
+//        }
+//        //then we do the middle
+//        for (x = 1; x < xDim - 1; x++) {
+//            for (y = 1; y < yDim - 1; y++) {
+//                int i = x * yDim + y;
+//                outGrid[i] = inGrid[i] + diffRate * (-inGrid[i] * 4 + inGrid[(x + 1) * yDim + y] + inGrid[(x - 1) * yDim + y] + inGrid[x * yDim + y + 1] + inGrid[x * yDim + y - 1]);
+//            }
+//        }
+//    }
 
     //boolean in3(int compX,int compY,int zDim,int xDim,int yDim,int z){
     //    return xDim>=0&&xDim<compX&&yDim>=0&&yDim<compY&&z>=0&&z<zDim;
@@ -167,7 +167,7 @@ public class PDEequations {
                         valSum += inGrid[(x) * yDim * zDim + (y) * zDim + (z+1)];
                     }
                     int i = x * yDim * zDim + y * zDim + z;
-                    outGrid[i] = inGrid[i] + diffRate * (-inGrid[i] * 6 + valSum);
+                    outGrid[i] += diffRate * (-inGrid[i] * 6 + valSum);
                 }
             }
         }
@@ -198,7 +198,7 @@ public class PDEequations {
         currRate = DisplacedY2D(x, y-1, diffRates, xDim, yDim, y + 1, false, boundaryValue, wrapY);
         valSum += DisplacedY2D(x, y-1, inGrid, xDim, yDim, y + 1, boundaryCond, boundaryValue, wrapY) * currRate;
         rateSum += currRate;
-        outGrid[i] = inGrid[i] + (-inGrid[i] * rateSum + valSum) / 2;
+        outGrid[i] += (-inGrid[i] * rateSum + valSum) / 2;
     }
     public static void Diffusion1inhomogeneous(int x,final double[] inGrid, final double[] outGrid, final double[] diffRates, final int xDim, final boolean boundaryCond, final double boundaryValue, final boolean wrapX) {
         double valSum;
@@ -219,7 +219,7 @@ public class PDEequations {
         currRate = Displaced1D(x - 1, diffRates, xDim, x + 1, false, boundaryValue, wrapX);
         valSum += Displaced1D(x - 1, inGrid, xDim, x + 1, boundaryCond, boundaryValue, wrapX) * currRate;
         rateSum += currRate;
-        outGrid[x] = inGrid[x] + (-inGrid[x] * rateSum + valSum) / 2;
+        outGrid[x] += (-inGrid[x] * rateSum + valSum) / 2;
     }
     public static void Diffusion2(int x,int y,final double[] inGrid, final double[] outGrid, final int xDim, final int yDim, final double diffRate, final boolean boundaryCond, final double boundaryValue, final boolean wrapX,final boolean wrapY) {
         //4 squares to check
@@ -229,14 +229,21 @@ public class PDEequations {
         valSum+= DisplacedY2D(x,y+1,inGrid,xDim,yDim,y,boundaryCond,boundaryValue,wrapY);
         valSum+= DisplacedY2D(x,y-1,inGrid,xDim,yDim,y,boundaryCond,boundaryValue,wrapY);
         int i=x*yDim+y;
-        outGrid[i]=inGrid[i]+diffRate*(-inGrid[i]*4+valSum);
+        outGrid[i]+=diffRate*(-inGrid[i]*4+valSum);
     }
     public static void Diffusion1(int x,final double[] inGrid, final double[] outGrid, final int xDim, final double diffRate, final boolean boundaryCond, final double boundaryValue, final boolean wrapX) {
         //4 squares to check
 
         double valSum= Displaced1D(x+1,inGrid,xDim,x,boundaryCond,boundaryValue,wrapX);
         valSum+= Displaced1D(x-1,inGrid,xDim,x,boundaryCond,boundaryValue,wrapX);
-        outGrid[x]=inGrid[x]+diffRate*(-inGrid[x]*2+valSum);
+        outGrid[x]+=diffRate*(-inGrid[x]*2+valSum);
+    }
+    public static void Diffusion1Swap(int x,final double[] inGrid, final double[] outGrid, final int xDim, final double diffRate, final boolean boundaryCond, final double boundaryValue, final boolean wrapX) {
+        //4 squares to check
+
+        double valSum= Displaced1D(x+1,inGrid,xDim,x,boundaryCond,boundaryValue,wrapX);
+        valSum+= Displaced1D(x-1,inGrid,xDim,x,boundaryCond,boundaryValue,wrapX);
+        outGrid[x]+=diffRate*(-inGrid[x]*2+valSum);
     }
 
 
@@ -270,7 +277,7 @@ public class PDEequations {
                     - DisplacedY2D(x,y+2,inGrid,xDim,yDim,-1,boundaryCond,boundaryValue,true));
 
         }
-        outGrid[i]=inGrid[i]-xFlux-yFlux;
+        outGrid[i]+=-xFlux-yFlux;
     }
 
 
@@ -305,7 +312,7 @@ public class PDEequations {
                     - DisplacedY2D(x,y+2,intGrid,xDim,yDim,-1,boundaryCond,boundaryValue,true));
 
         }
-        outGrid[i]=outGrid[i]-xFlux-yFlux;
+        outGrid[i]+=-xFlux-yFlux;
     }
 
     public static void Advection2ndOrderPrediction(int x,int y,final double[]inGrid,final double[]outGrid,int xDim,int yDim,double xVel,double yVel,boolean boundaryCond,double boundaryValue) {
@@ -338,7 +345,7 @@ public class PDEequations {
                     - DisplacedY2D(x,y+2,inGrid,xDim,yDim,-1,boundaryCond,boundaryValue,true));
 
         }
-        outGrid[i]=inGrid[i]-xFlux/2-yFlux/2;
+        outGrid[i]+=-xFlux/2-yFlux/2;
     }
 
 
@@ -372,7 +379,7 @@ public class PDEequations {
                     - DisplacedY2D(x,y+2,inGrid,xDim,yDim,-1,boundaryCond,boundaryValue,true));
 
         }
-        outGrid[i]=inGrid[i]-xFlux-yFlux;
+        outGrid[i]+=-xFlux-yFlux;
     }
 
 
@@ -402,7 +409,7 @@ public class PDEequations {
         if(xVel<0){
             xFlux=xVel*(Displaced1D(x+1,inGrid,xDim,-1,boundaryCond,boundaryValue,true)-prev);
         }
-        outGrid[x]=inGrid[x]-xFlux-yFlux;
+        outGrid[x]+=-xFlux-yFlux;
     }
 
     public static void Advection1stOrder(int x, int y, final double[] inGrid, final double[] outGrid, int xDim, int yDim, double xVel, double yVel, boolean boundaryCond, double boundaryValue){
@@ -422,7 +429,7 @@ public class PDEequations {
         if(yVel<0){
             yFlux=yVel*(DisplacedY2D(x,y+1,inGrid,xDim,yDim,-1,boundaryCond,boundaryValue,true)-prev);
         }
-        outGrid[i]=inGrid[i]-xFlux-yFlux;
+        outGrid[i]+=-xFlux-yFlux;
     }
 
     public static void Advection3D1stOrder(int x,int y,int z,final double[]inGrid,final double[]outGrid,int xDim,int yDim,int zDim,double xVel,double yVel,double zVel,boolean boundaryCond,double boundaryValue){
@@ -449,7 +456,7 @@ public class PDEequations {
         if(zVel<0){
             zFlux=zVel*(DisplacedZ3D(x,y,z+1,inGrid,xDim,yDim,zDim,-1,boundaryCond,boundaryValue,true)-prev);
         }
-        outGrid[i]=inGrid[i]-xFlux-yFlux-zFlux;
+        outGrid[i]+=-xFlux-yFlux-zFlux;
     }
 
     //final answer
@@ -704,6 +711,9 @@ public class PDEequations {
         }
         if(!inX&&wrapX){
             x=ModWrap(x,xDim);
+        }
+        else{
+            x=fallbackX;
         }
         return vals[x];
     }

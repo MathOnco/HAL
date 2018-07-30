@@ -99,13 +99,7 @@ public class Grid1Ddouble extends GridBase1D implements Serializable{
         }
         return min;
     }
-    public double MaxDifOtherScaled(double[]compareTo, double denomOffset){
-        double maxDif=0;
-        for(int i = 0; i< field.length; i++){
-            maxDif=Math.max(maxDif,Math.abs(field[i]- compareTo[i])/ (compareTo[i]+denomOffset));
-        }
-        return maxDif;
-    }
+
 
     public double GradientX(int x){
         double left=PDEequations.Displaced1D(x-1,field,xDim,x,false,0,wrapX);

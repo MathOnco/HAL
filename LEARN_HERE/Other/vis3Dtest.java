@@ -21,7 +21,7 @@ class Vis3Dtest {
             //v3d.CelSphere((double) 5, (double) 5, (double) 10, (double) 1,RGB((double) 1, (double) 0, (double) 0));
             //v3d.CelSphere((double) 0, (double) 0, (double) 10, (double) 1,RGB((double) 0, (double) 1, (double) 0));
             //v3d.CelSphere((double) 10, (double) 10, (double) 0, (double) 1,RGB((double) 0, (double) 0, (double) 1));
-            v3d.Show();
+            v3d.Update();
         }
     }
 }

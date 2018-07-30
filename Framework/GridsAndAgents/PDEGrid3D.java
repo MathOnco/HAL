@@ -12,10 +12,11 @@ import static Framework.Tools.PDEequations.*;
 /**
  * PDEGrid3D class facilitates 2D diffusion with two arrays of doubles called fields
  * the intended usage is that during a diffusion tick, the current values will be read, and the next values will be written to
- * after updates, SwapFields is called to set the next field as the current field.
+ * after updates, Update is called to set the next field as the current field.
  */
-public class PDEGrid3D extends Grid3Ddouble implements Serializable{
-    public double[] swapField;
+public class PDEGrid3D extends GridBase3D implements Serializable{
+    public double[] field;
+    public double[] nextField;
     public double[] scratch;
     public double[] maxDifscratch;
     //public double[] middleField;
@@ -24,7 +25,8 @@ public class PDEGrid3D extends Grid3Ddouble implements Serializable{
         super(xDim,yDim,zDim,wrapX,wrapY,wrapZ);
         int numElements = this.xDim * this.yDim * this.zDim;
 
-        swapField = new double[numElements];
+        field=new double[numElements];
+        nextField = new double[numElements];
         scratch=null;
         //middleField = new double[numElements];
     }
@@ -33,7 +35,8 @@ public class PDEGrid3D extends Grid3Ddouble implements Serializable{
         super(xDim,yDim,zDim,false,false,false);
 
         int numElements = this.xDim * this.yDim * this.zDim;
-        swapField = new double[numElements];
+        field=new double[numElements];
+        nextField = new double[numElements];
         scratch=null;
         //middleField = new double[numElements];
     }
@@ -53,61 +56,64 @@ public class PDEGrid3D extends Grid3Ddouble implements Serializable{
     /**
      * gets to the current field value at the specified coordinates
      */
-    public double GetSwap(int x, int y, int z){
-        return swapField[x*yDim*zDim+y*zDim+z];
+    public double Get(int x, int y, int z){
+        return field[x*yDim*zDim+y*zDim+z];
     }
 
     /**
      * gets the next field value at the specified index
      */
-    public double GetSwap(int i){return swapField[i];}
+    public double Get(int i){return field[i];}
 
     /**
      * gets to the current field value at the specified coordinates
      */
-    public void SetSwap(int x, int y, int z, double val){
-        swapField[x*yDim*zDim+y*zDim+z]=val;
+    public void Set(int x, int y, int z, double val){
+        nextField[x*yDim*zDim+y*zDim+z]=val;
     }
 
     /**
      * sets the current field value at the specified index
      */
-    public void SetSwap(int i, double val){
-        swapField[i]=val;}
+    public void Set(int i, double val){
+        nextField[i]=val;}
 
 
 
     /**
      * adds to the next field value at the specified index
      */
-    public void AddSwap(int x, int y, int z, double val){
-        swapField[x*yDim*zDim+y*zDim+z]+=val;
+    public void Add(int x, int y, int z, double val){
+        nextField[x*yDim*zDim+y*zDim+z]+=val;
     }
-    public void AddSwap(int i, double val) {
-        swapField[i] += val;
+    public void Add(int i, double val) {
+        nextField[i] += val;
+    }
+    public void Mul(int x, int y, int z, double val){
+        nextField[x*yDim*zDim+y*zDim+z]*=val;
+    }
+    public void Mul(int i, double val){
+        nextField[i]*=val;
     }
 
-    /**
-     * copies the current field into the next field
-     */
-    public void NextCopyCurr(){
-        System.arraycopy(field,0, swapField,0, field.length);
+    public void Update(){
+        System.arraycopy(nextField,0,field,0,length);
     }
 
     /**
      * swaps the next and current field
      */
-    public void SwapFields(){
+    void SwapFields(){
         double[] temp= field;
-        field = swapField;
-        swapField =temp;
+        field = nextField;
+        nextField =temp;
     }
 
     /**
      * Swaps the next and current field, and increments the tick
      */
 //    public void SwapInc(){
-//        SwapFields();
+//        Update();
 //        IncTick();
 //    }
 
@@ -116,7 +122,7 @@ public class PDEGrid3D extends Grid3Ddouble implements Serializable{
      */
     public void BoundAllSwap(double min, double max){
         for(int i=0;i<length;i++){
-            swapField[i]= Util.Bound(swapField[i],min,max);
+            nextField[i]= Util.Bound(nextField[i],min,max);
         }
     }
     /**
@@ -126,26 +132,24 @@ public class PDEGrid3D extends Grid3Ddouble implements Serializable{
         if(diffCoef>1.0/6){
             throw new IllegalArgumentException("3D Diffusion is unstable if rate is above 0.1666666! rate: "+diffCoef);
         }
-        Diffusion3(field, swapField,xDim,yDim,zDim,diffCoef,false,0.0,wrapX,wrapY,wrapZ);
-        SwapFields();
+        Diffusion3(field, nextField,xDim,yDim,zDim,diffCoef,false,0.0,wrapX,wrapY,wrapZ);
     }
     public void Diffusion(double diffCoef, double boundaryValue){
         if(diffCoef>1.0/6){
             throw new IllegalArgumentException("3D Diffusion is unstable if rate is above 0.1666666! rate: "+diffCoef);
         }
-        Diffusion3(field, swapField,xDim,yDim,zDim,diffCoef,true,boundaryValue,wrapX,wrapY,wrapZ);
-        SwapFields();
+        Diffusion3(field, nextField,xDim,yDim,zDim,diffCoef,true,boundaryValue,wrapX,wrapY,wrapZ);
     }
     //    public void ADITripleDiffSwap(final double diffCoef){
 //        if(scratch==null){
 //            scratch=new double[Math.max(Math.max(xDim,yDim),zDim)*2];
 //        }
-//        Util.DiffusionADI3(0,field,swapField,scratch,xDim,yDim,zDim,diffCoef/3);
-//        SwapFields();
-//        Util.DiffusionADI3(1,field,swapField,scratch,xDim,yDim,zDim,diffCoef/3);
-//        SwapFields();
-//        Util.DiffusionADI3(2,field,swapField,scratch,xDim,yDim,zDim,diffCoef/3);
-//        SwapFields();
+//        Util.DiffusionADI3(0,field,nextField,scratch,xDim,yDim,zDim,diffCoef/3);
+//        Update();
+//        Util.DiffusionADI3(1,field,nextField,scratch,xDim,yDim,zDim,diffCoef/3);
+//        Update();
+//        Util.DiffusionADI3(2,field,nextField,scratch,xDim,yDim,zDim,diffCoef/3);
+//        Update();
 //    }
 
     /**
@@ -154,7 +158,7 @@ public class PDEGrid3D extends Grid3Ddouble implements Serializable{
     public double MaxDif() {
         double maxDif = 0;
         for (int i = 0; i < field.length; i++) {
-            maxDif = Math.max(maxDif, Math.abs((field[i] - swapField[i]) / field[i]));
+            maxDif = Math.max(maxDif, Math.abs((field[i] - nextField[i]) / field[i]));
         }
         return maxDif;
     }
@@ -170,63 +174,57 @@ public class PDEGrid3D extends Grid3Ddouble implements Serializable{
         for (int x = 0; x < xDim; x++) {
             for (int y = 0; y < yDim; y++) {
                 for (int z = 0; z < zDim; z++) {
-                    Advection3D1stOrder(x,y,z,field,swapField,xDim,yDim,zDim,xVel,yVel,zVel,true,boundaryVal);
+                    Advection3D1stOrder(x,y,z,field, nextField,xDim,yDim,zDim,xVel,yVel,zVel,true,boundaryVal);
                 }
             }
         }
-        SwapFields();
     }
     public void Advection(double[] xVels,double[] yVels,double[] zVels,double boundaryVal){
         for (int x = 0; x < xDim; x++) {
             for (int y = 0; y < yDim; y++) {
                 for (int z = 0; z < zDim; z++) {
-                    Advection3D1stOrder(x,y,z,field,swapField,xDim,yDim,zDim,xVels[I(x,y,z)],yVels[I(x,y,z)],zVels[I(x,y,z)],true,boundaryVal);
+                    Advection3D1stOrder(x,y,z,field, nextField,xDim,yDim,zDim,xVels[I(x,y,z)],yVels[I(x,y,z)],zVels[I(x,y,z)],true,boundaryVal);
                 }
             }
         }
-        SwapFields();
     }
     public void Advection(Coords3DSetArray CoordsToVel, double boundaryVal,double[]scratch){
         for (int x = 0; x < xDim; x++) {
             for (int y = 0; y < yDim; y++) {
                 for (int z = 0; z < zDim; z++) {
                     CoordsToVel.SetArray(x,y,z,scratch);
-                    Advection3D1stOrder(x,y,z,field,swapField,xDim,yDim,zDim,scratch[0],scratch[1],scratch[2],true,boundaryVal);
+                    Advection3D1stOrder(x,y,z,field, nextField,xDim,yDim,zDim,scratch[0],scratch[1],scratch[2],true,boundaryVal);
                 }
             }
         }
-        SwapFields();
     }
     public void Advection(double xVel,double yVel,double zVel){
         for (int x = 0; x < xDim; x++) {
             for (int y = 0; y < yDim; y++) {
                 for (int z = 0; z < zDim; z++) {
-                    Advection3D1stOrder(x,y,z,field,swapField,xDim,yDim,zDim,xVel,yVel,zVel,false,0);
+                    Advection3D1stOrder(x,y,z,field, nextField,xDim,yDim,zDim,xVel,yVel,zVel,false,0);
                 }
             }
         }
-        SwapFields();
     }
     public void Advection(double[] xVels,double[] yVels,double[] zVels){
         for (int x = 0; x < xDim; x++) {
             for (int y = 0; y < yDim; y++) {
                 for (int z = 0; z < zDim; z++) {
-                    Advection3D1stOrder(x,y,z,field,swapField,xDim,yDim,zDim,xVels[I(x,y,z)],yVels[I(x,y,z)],zVels[I(x,y,z)],false,0);
+                    Advection3D1stOrder(x,y,z,field, nextField,xDim,yDim,zDim,xVels[I(x,y,z)],yVels[I(x,y,z)],zVels[I(x,y,z)],false,0);
                 }
             }
         }
-        SwapFields();
     }
     public void Advection(Coords3DSetArray CoordsToVel,double[]scratch){
         for (int x = 0; x < xDim; x++) {
             for (int y = 0; y < yDim; y++) {
                 for (int z = 0; z < zDim; z++) {
                     CoordsToVel.SetArray(x,y,z,scratch);
-                    Advection3D1stOrder(x,y,z,field,swapField,xDim,yDim,zDim,scratch[0],scratch[1],scratch[2],false,0);
+                    Advection3D1stOrder(x,y,z,field, nextField,xDim,yDim,zDim,scratch[0],scratch[1],scratch[2],false,0);
                 }
             }
         }
-        SwapFields();
     }
 
     public double MaxDifInternal(){
@@ -234,7 +232,7 @@ public class PDEGrid3D extends Grid3Ddouble implements Serializable{
             maxDifscratch=new double[length];
         }
         double ret=MaxDif();
-        System.arraycopy(GetField(),0,maxDifscratch,0,length);
+        System.arraycopy(field,0,maxDifscratch,0,length);
         return ret;
     }
 
@@ -242,19 +240,19 @@ public class PDEGrid3D extends Grid3Ddouble implements Serializable{
     /**
      * sets all squares in the next field to the specified value
      */
-    public void SetAllSwap(double val){
-        Arrays.fill(swapField,val);
+    public void SetAll(double val){
+        Arrays.fill(nextField,val);
     }
 
 
-    public void AddAllSwap(double val){
+    public void AddAll(double val){
         for (int i = 0; i < length; i++) {
-            swapField[i]+=val;
+            nextField[i]+=val;
         }
     }
-    public void MulAllSwap(double val){
+    public void MulAll(double val){
         for (int i = 0; i < length; i++) {
-            swapField[i]*=val;
+            nextField[i]*=val;
         }
     }
 
@@ -264,15 +262,9 @@ public class PDEGrid3D extends Grid3Ddouble implements Serializable{
     public double GetAvgNext(){
         double tot=0;
         for(int i=0;i<length;i++){
-            tot+= swapField[i];
+            tot+= nextField[i];
         }
         return tot/length;
     }
 
-    /**
-     * Copies the values currently contained in field into swapField
-     */
-    public void CurrIntoNext() {
-        System.arraycopy(field,0, swapField,0,length);
-    }
 }

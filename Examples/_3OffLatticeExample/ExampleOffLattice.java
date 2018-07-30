@@ -103,7 +103,7 @@ public class ExampleOffLattice extends AgentGrid2D<CellOL> {
             //draw colored "nucleus" on top of cytoplasm
             vis.Circle(cell.Xpt(), cell.Ypt(), cell.radius / 3, cell.type);
         }
-        vis.Show();
+        vis.Update();
     }
     public void StepCells(){
         for (CellOL cell : this) {

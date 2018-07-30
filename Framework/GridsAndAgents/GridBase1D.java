@@ -184,9 +184,7 @@ public abstract class GridBase1D {
     public int GetTick(){
         return tick;
     }
-    public void ResetTick(){
-        tick=0;
-    }
+    public void ResetTick(){tick=0;}
 
 }
 

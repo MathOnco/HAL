@@ -18,7 +18,7 @@ public class Vis2DCircle {
         while(!vis.IsClosed()){
             vis.Clear(RGB(x, (float) 0, (float) 0));
             vis.FanShape((float) 10, (float) 10, (float) 1, pts,RGB((float) 1, (float) 1, (float) 1));
-            vis.Show();
+            vis.Update();
             x+=0.000001;
         }
         vis.Close();

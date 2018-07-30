@@ -75,7 +75,7 @@ public abstract class Drug<C extends Cell,T extends Tissue<C>> implements Serial
             }
             if (diffRate > 0) {
 //            System.out.println(diffRate* G().DIFF_TIMESTEP * timeScale / (G().DIFF_SPACE_SCALE * G().DIFF_SPACE_SCALE * G().SQUARE_DIAM * G().SQUARE_DIAM));
-                diff.DiffusionADI(diffRate * G().DIFF_TIMESTEP * timeScale / (G().DIFF_SPACE_SCALE * G().DIFF_SPACE_SCALE * G().SQUARE_DIAM * G().SQUARE_DIAM));
+                diff.DiffusionADIupdate(diffRate * G().DIFF_TIMESTEP * timeScale / (G().DIFF_SPACE_SCALE * G().DIFF_SPACE_SCALE * G().SQUARE_DIAM * G().SQUARE_DIAM));
             }
         }while (diff.grid.MaxDifference()>STEADY_STATE&&i<MAX_STEPS);
         System.out.println(i);

@@ -85,11 +85,11 @@ public class HAP<C extends Cell<C,T>,T extends Tissue<C>> extends Drug<C,T> {
             }
             if (diffRate1 > 0) {
 //            System.out.println(diffRate* G().DIFF_TIMESTEP * timeScale / (G().DIFF_SPACE_SCALE * G().DIFF_SPACE_SCALE * G().SQUARE_DIAM * G().SQUARE_DIAM));
-                diff.DiffusionADI(diffRate1 * G().DIFF_TIMESTEP * timeScale / (G().DIFF_SPACE_SCALE * G().DIFF_SPACE_SCALE * G().SQUARE_DIAM * G().SQUARE_DIAM));
+                diff.DiffusionADIupdate(diffRate1 * G().DIFF_TIMESTEP * timeScale / (G().DIFF_SPACE_SCALE * G().DIFF_SPACE_SCALE * G().SQUARE_DIAM * G().SQUARE_DIAM));
             }
             if (diffRate2 > 0) {
 //            System.out.println(diffRate* G().DIFF_TIMESTEP * timeScale / (G().DIFF_SPACE_SCALE * G().DIFF_SPACE_SCALE * G().SQUARE_DIAM * G().SQUARE_DIAM));
-                activated.DiffusionADI(diffRate2 * G().DIFF_TIMESTEP * timeScale / (G().DIFF_SPACE_SCALE * G().DIFF_SPACE_SCALE * G().SQUARE_DIAM * G().SQUARE_DIAM));
+                activated.DiffusionADIupdate(diffRate2 * G().DIFF_TIMESTEP * timeScale / (G().DIFF_SPACE_SCALE * G().DIFF_SPACE_SCALE * G().SQUARE_DIAM * G().SQUARE_DIAM));
             }
             //ACTIVATION
             for (int j = 0; j < diff.grid.length; j++) {

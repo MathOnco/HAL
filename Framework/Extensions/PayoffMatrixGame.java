@@ -31,7 +31,7 @@ public abstract class PayoffMatrixGame extends SpatialGameCanonical {
     @Override
     public void ChangeState(int idTo, int idFrom) {
         if(singleUpdate){ types.Set(idTo,types.Get(idFrom)); }
-        else { types.SetSwap(idTo, types.Get(idFrom)); }
+        else { types.Set(idTo, types.Get(idFrom)); }
     }
     public void DrawTypes(UIGrid vis, int[]colors){
         if(colors.length!=nTypes){
@@ -96,7 +96,7 @@ public abstract class PayoffMatrixGame extends SpatialGameCanonical {
         }
         else{
             StepAll();
-            types.SwapFields();
+            types.Update();
         }
     }
 }

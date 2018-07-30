@@ -1,6 +1,4 @@
 package Framework.GridsAndAgents;
-import Framework.Interfaces.Coords2DSetArray;
-import Framework.Interfaces.GridDiff2MultiThreadFunction;
 import Framework.Util;
 
 import java.io.Serializable;
@@ -12,10 +10,11 @@ import static Framework.Tools.PDEequations.*;
 /**
  * PDEGrid2D class facilitates 2D diffusion with two arrays of doubles called fields
  * the intended usage is that during a diffusion tick, the current values will be read, and the prev values will be written to
- * after updates, SwapFields is called to set the prev field as the current field.
+ * after updates, Update is called to set the prev field as the current field.
  */
-public class PDEGrid1D extends Grid1Ddouble implements Serializable{
-    double[] swapField;
+public class PDEGrid1D extends GridBase1D implements Serializable{
+    double[] nextField;
+    double[]field;
     //double[] intermediateScratch;
     double[] scratch;
     double[] maxDifscratch;
@@ -23,11 +22,11 @@ public class PDEGrid1D extends Grid1Ddouble implements Serializable{
     boolean adiX=true;
     public PDEGrid1D(int xDim){
         super(xDim,false);
-        swapField =new double[this.xDim];
+        nextField =new double[this.xDim];
     }
     public PDEGrid1D(int xDim, int yDim, boolean wrapX, boolean wrapY){
         super(xDim,wrapX);
-        swapField =new double[this.xDim];
+        nextField =new double[this.xDim];
     }
 //    public double[]GetIntermediateScratch(){
 //        if(intermediateScratch==null){
@@ -46,7 +45,7 @@ public class PDEGrid1D extends Grid1Ddouble implements Serializable{
 
 
     public double[] GetSwapField(){
-        return this.swapField;
+        return this.nextField;
     }
 
 
@@ -54,40 +53,32 @@ public class PDEGrid1D extends Grid1Ddouble implements Serializable{
     /**
      * gets the prev field value at the specified coordinates
      */
-    public double GetSwap(int x){ return swapField[x]; }
+    public double Get(int x){ return field[x]; }
 
     /**
      * sets the prev field value at the specified coordinates
      */
-    public void SetSwap(int x, double val){ swapField[x]=val; }
+    public void Set(int x, double val){ nextField[x]=val; }
 
     /**
      * adds to the prev field value at the specified index
      */
-    public void AddSwap(int x, double val){
-        swapField[x]+=val;}
+    public void Add(int x, double val){
+        nextField[x]+=val;}
 
-    /**
-     * copies the current field into the prev field
-     */
-    public void CurrIntoSwap(){ System.arraycopy(field, 0, swapField, 0, field.length); }
+    public void Mul(int x, double val){
+        nextField[x]*=val;}
 
-
-    /**
-     * Bounds all values in the prev field between min and max
-     */
-    public void BoundAllSwap(double min, double max){
-        for(int i=0;i<length;i++){
-            swapField[i]= Util.Bound(swapField[i],min,max);
-        }
+    public void Update(){
+        System.arraycopy(nextField,0,field,0,length);
     }
     /**
      * Swaps the prev and current field
      */
-    public void SwapFields(){
+    void SwapFields(){
         double[]temp= field;
-        field = swapField;
-        swapField =temp;
+        field = nextField;
+        nextField =temp;
 
     }
 
@@ -95,34 +86,30 @@ public class PDEGrid1D extends Grid1Ddouble implements Serializable{
      * Swaps the prev and current field, and increments the tick
      */
 //    public void SwapInc(){
-//        SwapFields();
+//        Update();
 //        IncTick();
 //    }
 
     //assumed wrap around if non-periodic
     public void Advection(double xVel){
         for (int x = 0; x < xDim; x++) {
-            Advection1stOrder1D(x,field, swapField, xDim, xVel, false, 0.0);
+            Advection1stOrder1D(x,field, nextField, xDim, xVel, false, 0.0);
         }
-        SwapFields();
     }
     public void Advection(double xVel, double yVel, double boundaryValue){
         for (int x = 0; x < xDim; x++) {
-                Advection1stOrder1D(x, field, swapField, xDim, xVel, true, boundaryValue);
+                Advection1stOrder1D(x, field, nextField, xDim, xVel, true, boundaryValue);
         }
-        SwapFields();
     }
     public void Advection(double[] xVels,double boundaryValue){
         for (int x = 0; x < xDim; x++) {
-                Advection1stOrder1D(x,field, swapField,xDim,xVels[x],true,boundaryValue);
+                Advection1stOrder1D(x,field, nextField,xDim,xVels[x],true,boundaryValue);
         }
-        SwapFields();
     }
     public void Advection(double[] xVels){
         for (int x = 0; x < xDim; x++) {
-                Advection1stOrder1D(x,field, swapField,xDim,xVels[x],false,0.0);
+                Advection1stOrder1D(x,field, nextField,xDim,xVels[x],false,0.0);
         }
-        SwapFields();
     }
     /**
      * Runs diffusion on the current field, putting the result into the prev field, then swaps current and prev
@@ -133,9 +120,16 @@ public class PDEGrid1D extends Grid1Ddouble implements Serializable{
             throw new IllegalArgumentException("Diffusion rate above stable maximum value of 0.25 value: "+diffCoef);
         }
         for (int x = 0; x < xDim; x++) {
-                Diffusion1(x, field, swapField, xDim, diffCoef, false, 0.0, wrapX);
+                Diffusion1(x, field, nextField, xDim, diffCoef, false, 0.0, wrapX);
         }
-        SwapFields();
+    }
+    public void DiffusionSwap(double diffCoef){
+        if(diffCoef>0.25){
+            throw new IllegalArgumentException("Diffusion rate above stable maximum value of 0.25 value: "+diffCoef);
+        }
+        for (int x = 0; x < xDim; x++) {
+            Diffusion1Swap(x, field, nextField, xDim, diffCoef, false, 0.0, wrapX);
+        }
     }
     /**
      * Runs diffusion on the current field, putting the result into the prev field, then swaps current and prev
@@ -147,23 +141,20 @@ public class PDEGrid1D extends Grid1Ddouble implements Serializable{
             throw new IllegalArgumentException("Diffusion rate above stable maximum value of 0.25 value: "+diffCoef);
         }
         for (int x = 0; x < xDim; x++) {
-                Diffusion1(x, field, swapField, xDim,  diffCoef, true, boundaryValue, wrapX);
+                Diffusion1(x, field, nextField, xDim,  diffCoef, true, boundaryValue, wrapX);
         }
-        SwapFields();
     }
 
 
     public void Diffusion(double[] diffCoefs){
         for (int x = 0; x < xDim; x++) {
-                Diffusion1inhomogeneous(x, field, swapField, diffCoefs, xDim, false, 0.0, wrapX);
+                Diffusion1inhomogeneous(x, field, nextField, diffCoefs, xDim, false, 0.0, wrapX);
         }
-        SwapFields();
     }
     public void Diffusion(double[] diffCoefs,double boundaryValue){
         for (int x = 0; x < xDim; x++) {
-                Diffusion1inhomogeneous(x,field, swapField, diffCoefs, xDim, true, boundaryValue, wrapX);
+                Diffusion1inhomogeneous(x,field, nextField, diffCoefs, xDim, true, boundaryValue, wrapX);
         }
-        SwapFields();
     }
 
     /**
@@ -175,26 +166,26 @@ public class PDEGrid1D extends Grid1Ddouble implements Serializable{
      */
   //  public void DiffSwapInc(double diffCoef,boolean boundaryCond,double boundaryValue,boolean wrapX,boolean wrapY){
   //      //NOTE: EXPLICIT DIFFUSION WILL ONLY BE STABLE IF diffCoef <= 1/4
-  //      Util.Diffusion2(field, swapField,xDim,yDim,diffCoef,boundaryCond,boundaryValue,wrapX,wrapY);
-  //      SwapFields();
+  //      Util.Diffusion2(field, nextField,xDim,yDim,diffCoef,boundaryCond,boundaryValue,wrapX,wrapY);
+  //      Update();
   //      IncTick();
   //  }
   //  public void DiffSwapInc(double diffCoef,boolean boundaryCond,double boundaryValue){
   //      //NOTE: EXPLICIT DIFFUSION WILL ONLY BE STABLE IF diffCoef <= 1/4
-  //      Util.Diffusion2(field, swapField,xDim,yDim,diffCoef,boundaryCond,boundaryValue,wrapX,wrapY);
-  //      SwapFields();
+  //      Util.Diffusion2(field, nextField,xDim,yDim,diffCoef,boundaryCond,boundaryValue,wrapX,wrapY);
+  //      Update();
   //      IncTick();
   //  }
   //  public void DiffSwapInc1(double diffCoef,boolean boundaryCond,double boundaryValue,boolean wrapX,boolean wrapY){
   //      //NOTE: EXPLICIT DIFFUSION WILL ONLY BE STABLE IF diffCoef <= 1/4
-  //      Util.Diffusion(field, swapField,xDim,yDim,diffCoef,boundaryCond,boundaryValue,wrapX,wrapY);
-  //      SwapFields();
+  //      Util.Diffusion(field, nextField,xDim,yDim,diffCoef,boundaryCond,boundaryValue,wrapX,wrapY);
+  //      Update();
   //      IncTick();
   //  }
   //  public void DiffSwapInc1(double diffCoef,boolean boundaryCond,double boundaryValue){
   //      //NOTE: EXPLICIT DIFFUSION WILL ONLY BE STABLE IF diffCoef <= 1/4
-  //      Util.Diffusion(field, swapField,xDim,yDim,diffCoef,boundaryCond,boundaryValue,wrapX,wrapY);
-  //      SwapFields();
+  //      Util.Diffusion(field, nextField,xDim,yDim,diffCoef,boundaryCond,boundaryValue,wrapX,wrapY);
+  //      Update();
   //      IncTick();
   //  }
 
@@ -202,27 +193,26 @@ public class PDEGrid1D extends Grid1Ddouble implements Serializable{
     /**
      * sets all squares in the prev field to the specified value
      */
-    public void SetAllSwap(double val){
-        Arrays.fill(swapField,val);
+    public void SetAll(double val){
+        Arrays.fill(nextField,val);
     }
 
-
-    public void MulAllSwap(double val){
+    public void MulAll(double val){
         for (int i = 0; i < length; i++) {
-            swapField[i]*=val;
+            nextField[i]*=val;
         }
     }
 
-    public void SetAllSwap(double[] vals){
-        System.arraycopy(vals,0, swapField,0,length);
+    public void SetAll(double[] vals){
+        System.arraycopy(vals,0, nextField,0,length);
     }
 
     /**
      * adds specified value to all entries of the prev field
      */
-    public void AddAllSwap(double val){
+    public void AddAll(double val){
         for (int i = 0; i < length; i++) {
-            swapField[i]+=val;
+            nextField[i]+=val;
         }
     }
 
@@ -230,27 +220,27 @@ public class PDEGrid1D extends Grid1Ddouble implements Serializable{
     /**
      * gets the average value of all squares in the prev field
      */
-    public double GetAvgSwap(){
+    public double GetAvg(){
         double tot=0;
         for(int i=0;i<length;i++){
-            tot+= swapField[i];
+            tot+= field[i];
         }
         return tot/length;
     }
     /**
      * returns the maximum difference between the current field and the prev field
      */
-    public double MaxDifSwap(){
+    public double MaxDifNext(){
         double maxDif=0;
         for(int i = 0; i< field.length; i++){
-            maxDif=Math.max(maxDif,Math.abs((field[i]- swapField[i])));
+            maxDif=Math.max(maxDif,Math.abs((field[i]- nextField[i])));
         }
         return maxDif;
     }
     public double MaxDifSwapScaled(double denomOffset){
         double maxDif=0;
         for(int i = 0; i< field.length; i++){
-            maxDif=Math.max(maxDif,Math.abs(field[i]- swapField[i])/ (swapField[i]+denomOffset));
+            maxDif=Math.max(maxDif,Math.abs(field[i]- nextField[i])/ (nextField[i]+denomOffset));
         }
         return maxDif;
     }
@@ -264,12 +254,20 @@ public class PDEGrid1D extends Grid1Ddouble implements Serializable{
         return maxDif;
     }
 
+    public double MaxDifOtherScaled(double[]compareTo, double denomOffset){
+        double maxDif=0;
+        for(int i = 0; i< field.length; i++){
+            maxDif=Math.max(maxDif,Math.abs(field[i]- compareTo[i])/ (compareTo[i]+denomOffset));
+        }
+        return maxDif;
+    }
+
     public double MaxDifference(){
         if(maxDifscratch==null){
             maxDifscratch=new double[length];
         }
         double ret= MaxDifOther(maxDifscratch);
-        System.arraycopy(GetField(),0,maxDifscratch,0,length);
+        System.arraycopy(field,0,maxDifscratch,0,length);
         return ret;
     }
     public double MaxDifferenceScaled(double denomOffset){
@@ -277,7 +275,7 @@ public class PDEGrid1D extends Grid1Ddouble implements Serializable{
             maxDifscratch=new double[length];
         }
         double ret= MaxDifOtherScaled(maxDifscratch,denomOffset);
-        System.arraycopy(GetField(),0,maxDifscratch,0,length);
+        System.arraycopy(field,0,maxDifscratch,0,length);
         return ret;
     }
 }

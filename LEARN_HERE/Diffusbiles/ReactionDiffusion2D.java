@@ -44,7 +44,7 @@ public class ReactionDiffusion2D {
             //advection
             g1.Advection(0.01,0.01,0);
             //diffusion
-            g2.DiffusionADI(0.01);
+            g2.DiffusionADIupdate(0.01);
             //draw results
             v1.DrawGridDiff(g1, Util::HeatMapRGB);
             v2.DrawGridDiff(g2, Util::HeatMapRGB);

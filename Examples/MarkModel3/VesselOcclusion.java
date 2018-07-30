@@ -211,16 +211,13 @@ class OCTissue extends Tissue<OCCell>
             glucose.SetVesselConcProp(x,y, vessel.prop_occ);
             acid.SetVesselConcProp(x,y,vessel.prop_occ);
         }
-        oxygen.grid.CurrIntoSwap();
-        glucose.grid.CurrIntoSwap();
-        acid.grid.CurrIntoSwap();
         for (OCCell c : this) //this = m for pheno***
         {
             c.Metabolism(intensities);
         }
-        oxygen.grid.SwapFields();
-        glucose.grid.SwapFields();
-        acid.grid.SwapFields();
+        oxygen.grid.Update();
+        glucose.grid.Update();
+        acid.grid.Update();
         RunDiffusion();
         return checkSteady && IsSteady();
     }

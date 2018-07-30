@@ -66,9 +66,9 @@ public class Example3D extends AgentGrid3D<ExCell3D> {
     int countTumor;
     final static int BACKGROUND_COLOR =RGB256(38,1,5), VESSEL_COLOR =RGB256(255,78,68);
     final static int VESSEL=0,TUMOR=1;
-    double DIFF_RATE=1.0/6;//maximum stable diffusion rate
+    double DIFF_RATE=0.7/6;//maximum stable diffusion rate
     double TUMOR_METABOLISM_RATE =0.96;
-    double NORMAL_METABOLISM_RATE =0.99;
+    double NORMAL_METABOLISM_RATE =0.995;
     double VESSEL_CONC=1;
     double DEATH_CONC=0.01;
     double METASTASIS_PROB=0.00001;
@@ -87,6 +87,7 @@ public class Example3D extends AgentGrid3D<ExCell3D> {
         }
         oxygen.MulAll(NORMAL_METABOLISM_RATE);
         oxygen.Diffusion(DIFF_RATE);
+        oxygen.Update();
     }
     public void StepAll(){
         countTumor=0;
@@ -132,7 +133,7 @@ public class Example3D extends AgentGrid3D<ExCell3D> {
                 case TUMOR: vis.Circle(cellOrVessel.Xpt(),cellOrVessel.Ypt(),cellOrVessel.Zpt(),0.3,HeatMapBRG(Math.pow(oxygen.Get(cellOrVessel.Isq()),0.5)*0.8+0.2));
             }
         }
-        vis.Show();
+        vis.Update();
     }
     public void GenVessel(int x,int z){
         for (int y = 0; y < yDim; y++) {
@@ -160,7 +161,7 @@ public class Example3D extends AgentGrid3D<ExCell3D> {
         }
     }
     public static void main(String[] args) {
-        int x=150,y=150,z=10;
+        int x=150,y=150,z=4;
         Example3D ex=new Example3D(x,z,y);
         ex.GenVessels(20);
         //Diffuse to steady state

@@ -283,7 +283,6 @@ public class AgentGrid1D<T extends AgentBaseSpatial> extends GridBase1D implemen
             throw new IllegalStateException("Something is wrong with Reset, tell Rafael Bravo to fix this!");
         }
         ResetTick();
-//        tick=0;
     }
     public void ResetHard(){
 //        IncTick();
@@ -587,8 +586,6 @@ public class AgentGrid1D<T extends AgentBaseSpatial> extends GridBase1D implemen
         usedAgentSearches.add(agents);
         return ret;
     }
-
-
 
     private class AgentsIterator1D implements Iterator<T>,Iterable<T>{
         final AgentGrid1D<T> myGrid;

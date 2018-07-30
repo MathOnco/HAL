@@ -79,10 +79,10 @@ public class ExampleModel extends AgentGrid2D<ExampleCell> {
         int periodTick = (tick - DRUG_START) % DRUG_CYCLE;
         if (periodTick > 0 && periodTick < DRUG_DURATION) {
             //drug will enter through boundaries
-            drug.DiffusionADI(DRUG_DIFF_RATE, DRUG_BOUNDARY_VAL);
+            drug.DiffusionADIupdate(DRUG_DIFF_RATE, DRUG_BOUNDARY_VAL);
         } else {
             //drug will not enter through boundaries
-            drug.DiffusionADI(DRUG_DIFF_RATE);
+            drug.DiffusionADIupdate(DRUG_DIFF_RATE);
         }
     }
 

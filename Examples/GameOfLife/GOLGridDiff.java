@@ -48,18 +48,18 @@ public class GOLGridDiff extends PDEGrid2D {
                     }
                     int status = (int) Get(x, y);
                     if ((status == 1 && (countNeighbors == 2 || countNeighbors == 3)) || (status == 0 && countNeighbors == 3)) {
-                        SetSwap(x, y, 1);
+                        Set(x, y, 1);
                     } else {
-                        SetSwap(x, y, 0);
+                        Set(x, y, 0);
                     }
                     if (vis != null) {
-                        double nextPop= GetSwap(x, y);
+                        double nextPop= Get(x, y);
                         vis.SetPix(x, y, nextPop==0?BLACK:RED);
                         totalPop+=nextPop;
                     }
                 }
             }
-            SwapFields();
+            Update();
             if(popLbl!=null){ popLbl.SetText("Population: "+totalPop); }
             if(tickLbl!=null){ tickLbl.SetText("Tick: "+ tick); }
         }

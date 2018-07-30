@@ -67,7 +67,7 @@ public class OpenGL2DWindow {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         }
     }
-    public void Show(){
+    public void Update(){
         if(active) {
             Display.update();
         }

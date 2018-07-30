@@ -60,27 +60,30 @@ public class PDEexample extends AgentGrid2D<SrcOrSink> {
             srcOrSink.Reaction();
         }
         diff.Advection(advectionX,advectionY);
-        diff.Diffusion((Math.sin(stepI*1.0/250)+1)*0.12);
+        double drate=(Math.sin(stepI*1.0/250)+1)*0.05;
+        diff.Diffusion(drate);
+        diff.Update();
     }
     public void Draw(UIGrid visSrcSinks, UIGrid visDiff){
         for (SrcOrSink srcOrSink : this) {
             visSrcSinks.SetPix(srcOrSink.Isq(),srcOrSink.type);//draw sources and sinks
         }
         for (int i = 0; i < length; i++) {//length of the Grid
-            visDiff.SetPix(i,SetAlpha(HeatMapRGB(diff.Get(i)*4),diff.Get(i)*4));
+            //visDiff.SetPix(i,SetAlpha(HeatMapRGB(diff.Get(i)*4),diff.Get(i)*4));
+            visDiff.SetPix(i,HeatMapRGB(diff.Get(i)*4));
         }
     }
 
     public static void main(String[] args) {
         int x=400,y=400,scale=2;
-        GridWindow visCells=new GridWindow(x,y,scale);
-        UIGrid visDiff=new UIGrid(x,y,scale);
-        visCells.AddAlphaGrid(visDiff);//facilitates alpha blending
+        GridWindow visCells=new GridWindow(x,y,scale,true,false);
+        GridWindow visDiff=new GridWindow(x,y,scale);
+        //visCells.AddAlphaGrid(visDiff);//facilitates alpha blending
         PDEexample ex=new PDEexample(x,y);
         ex.Setup(100,10);
         int i=0;
         while(true){
-            visCells.TickPause(0);//slows down simulation for presentation
+            visCells.TickPause(100);//slows down simulation for presentation
             ex.Step(i);
             ex.Draw(visCells,visDiff);
             i++;

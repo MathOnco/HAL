@@ -61,7 +61,7 @@ public class PDEGrid2DCoarse implements Serializable{
             nSetsPrev=nSets;
         }
         double oldVal=grid.Get(xc,yc);
-        grid.AddSwap(xc,yc,(val-oldVal)*mul);
+        grid.Add(xc,yc,(val-oldVal)*mul);
     }
     public void SetPartialSwapToSwap(int x,int y,double val,double nSets){
         int xc=x/spaceFactor;
@@ -74,8 +74,8 @@ public class PDEGrid2DCoarse implements Serializable{
             setPartialMulPrev=mul;
             nSetsPrev=nSets;
         }
-        double oldVal=grid.GetSwap(xc,yc);
-        grid.AddSwap(xc,yc,(val-oldVal)*mul);
+        double oldVal=grid.Get(xc,yc);
+        grid.Add(xc,yc,(val-oldVal)*mul);
     }
     public void Mul(int x,int y,double val){
 //        if(val!=mulPrevIn){
@@ -88,46 +88,46 @@ public class PDEGrid2DCoarse implements Serializable{
         grid.Add(x/spaceFactor,y/spaceFactor,val*denom);
     }
 
-    public void DiffusionADIChangeOrder(double diffRate) {
-        grid.DiffusionADIChangeOrder(diffRate*denom);
+    public void DiffusionADIChangeOrderUpdate(double diffRate) {
+        grid.DiffusionADIChangeOrderUpdate(diffRate*denom);
     }
 
-    public void DiffusionADIChangeOrder(double diffRate, double boundaryValue) {
-        grid.DiffusionADIChangeOrder(diffRate*denom,boundaryValue);
+    public void DiffusionADIChangeOrderUpdate(double diffRate, double boundaryValue) {
+        grid.DiffusionADIChangeOrderUpdate(diffRate*denom,boundaryValue);
     }
-    public void DiffusionADI(double diffRate) {
-        grid.DiffusionADI(diffRate*denom);
-    }
-
-    public void DiffusionADI(double diffRate, double boundaryValue) {
-        grid.DiffusionADI(diffRate*denom,boundaryValue);
+    public void DiffusionADIupdate(double diffRate) {
+        grid.DiffusionADIupdate(diffRate*denom);
     }
 
-    public void DiffusionADIHalf(double diffRate) {
-        grid.DiffusionADIHalf(diffRate*denom);
+    public void DiffusionADIupdate(double diffRate, double boundaryValue) {
+        grid.DiffusionADIupdate(diffRate*denom,boundaryValue);
     }
 
-    public void DiffusionADIHalfX(double diffRate, boolean boundaryCond, double boundaryValue) {
-        grid.DiffusionADIHalfX(diffRate*denom, boundaryCond, boundaryValue);
+    public void DiffusionADIHalfUpdate(double diffRate) {
+        grid.DiffusionADIHalfUpdate(diffRate*denom);
     }
 
-    public void DiffusionADIHalfY(double diffRate, boolean boundaryCond, double boundaryValue) {
-        grid.DiffusionADIHalfY(diffRate*denom, boundaryCond, boundaryValue);
+    public void DiffusionADIHalfXupdate(double diffRate, boolean boundaryCond, double boundaryValue) {
+        grid.DiffusionADIHalfXupdate(diffRate*denom, boundaryCond, boundaryValue);
     }
 
-    public void DiffusionADIHalf(double diffRate, double boundaryValue) {
-        grid.DiffusionADIHalf(diffRate*denom, boundaryValue);
+    public void DiffusionADIHalfYupdate(double diffRate, boolean boundaryCond, double boundaryValue) {
+        grid.DiffusionADIHalfYupdate(diffRate*denom, boundaryCond, boundaryValue);
+    }
+
+    public void DiffusionADIHalfUpdate(double diffRate, double boundaryValue) {
+        grid.DiffusionADIHalfUpdate(diffRate*denom, boundaryValue);
     }
 
     public double GetSwap(int x,int y){
-        return grid.GetSwap(x/spaceFactor,y/spaceFactor);
+        return grid.Get(x/spaceFactor,y/spaceFactor);
     }
     public void SetSwap(int x,int y,double val){
-        grid.SetSwap(x/spaceFactor,y/spaceFactor,val);
+        grid.Set(x/spaceFactor,y/spaceFactor,val);
     }
 
     public void AddSwap(int x,int y,double val){
-        grid.AddSwap(x/spaceFactor,y/spaceFactor,val*denom);
+        grid.Add(x/spaceFactor,y/spaceFactor,val*denom);
     }
     public void Diffusion(double diffRate){
         grid.Diffusion(diffRate*denom);

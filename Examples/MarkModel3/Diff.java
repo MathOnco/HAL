@@ -22,18 +22,18 @@ public class Diff extends PDEGrid2DCoarse implements Serializable{
         if(g.DIFF_SPACE_SCALE==1){
             if (active) {
                 if (isReflectve) {
-                    grid.DiffusionADI(diffRate);
+                    grid.DiffusionADIupdate(diffRate);
                 } else {
-                    grid.DiffusionADI(diffRate, boundaryValue);
+                    grid.DiffusionADIupdate(diffRate, boundaryValue);
                 }
             }
         }
         else {
             if (active) {
                 if (isReflectve) {
-                    DiffusionADI(diffRate);
+                    DiffusionADIupdate(diffRate);
                 } else {
-                    DiffusionADI(diffRate, boundaryValue);
+                    DiffusionADIupdate(diffRate, boundaryValue);
                 }
             }
         }

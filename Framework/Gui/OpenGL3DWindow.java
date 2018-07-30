@@ -118,7 +118,7 @@ public class OpenGL3DWindow {
         Line(0,0,zDim,0,yDim,zDim,lineColor);
     }
 
-    public void Show(){
+    public void Update(){
         if(active) {
             camera.acceptInputRotate(1);
             camera.acceptInputGrab();

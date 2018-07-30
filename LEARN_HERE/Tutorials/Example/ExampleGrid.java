@@ -57,7 +57,7 @@ public class ExampleGrid extends AgentGrid2D<ExampleCell> {
         for (ExampleCell cell : this) {
             win.Circle(cell.Xpt(), cell.Ypt(), cell.radius, cell.color);
         }
-        win.Show();
+        win.Update();
     }
 
     public static void main(String[] args) {

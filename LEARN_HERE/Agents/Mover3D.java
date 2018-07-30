@@ -39,7 +39,7 @@ public class Mover3D extends AgentGrid3D<MoveAgent> {
 
             win3D.Clear(BLACK);
             win3D.Circle(ourHero.Xsq(),ourHero.Ysq(),ourHero.Zsq(),0.5,WHITE);//draw 3d
-            win3D.Show();
+            win3D.Update();
             if(win3D.IsClosed()){//quit if close button is clicked
                 break;
             }

@@ -26,7 +26,7 @@ public class Tissue <C extends Cell> extends AgentGrid2D<C>
     //OPTIMIZATION VARS
     public final int DIFF_SPACE_SCALE;
     //WTF VARS
-    public double ADI_STOP_DIF =1E-3;//defines when steady state has been reached and diffusion steps can stop
+    public double ADI_STOP_DIF =1E-5;//defines when steady state has been reached and diffusion steps can stop
     public int ADI_MIN_STEPS=5;//minimum number of diffusion steps allowed per timestep.
     public double ATP_HALF_MAX=1.1;//used with division calculation, see michaelis menten equation
     public double COURANT_NUM=0.1;//?
@@ -205,7 +205,7 @@ public class Tissue <C extends Cell> extends AgentGrid2D<C>
         SetupVessels();
         SetupTissue(0.8);
         SetupBoundaryConds();
-        SetupTumor(tumorRad, GetGlycRate(0), GetAcidResistPH(0));
+        SetupTumor(tumorRad, GetGlycRate(0.5), GetAcidResistPH(0.5));
     }
 
     public void SetupDrugs(){
@@ -496,16 +496,13 @@ public class Tissue <C extends Cell> extends AgentGrid2D<C>
             glucose.SetVesselConc(x,y);
             acid.SetVesselConc(x,y);
         }
-        oxygen.grid.CurrIntoSwap();
-        glucose.grid.CurrIntoSwap();
-        acid.grid.CurrIntoSwap();
         for (C c : this)
         {
             c.Metabolism(intensities);
         }
-        oxygen.grid.SwapFields();
-        glucose.grid.SwapFields();
-        acid.grid.SwapFields();
+        oxygen.grid.Update();
+        glucose.grid.Update();
+        acid.grid.Update();
         RunDiffusion();
         return checkSteady && IsSteady();
     }
@@ -653,27 +650,6 @@ public class Tissue <C extends Cell> extends AgentGrid2D<C>
         SetupBoundaryConds();
         SetupTumor(tumorRad, NORMAL_PHENO_GLYC, NORMAL_PHENO_ACID_RESIST);
         tick=0;
-    }
-    public void PrintDiffs()
-    {
-        System.out.println("Oxygen:");
-        System.out.println(oxygen.grid.ToMatrixString("\t", 4));
-        System.out.println("Glucose:");
-        System.out.println(glucose.grid.ToMatrixString("\t", 4));
-        System.out.println("Acid:");
-        System.out.println(acid.grid.ToMatrixString("\t", Util::ProtonsToPh, 4));
-        if (!REFLECTIVE_BOUNDARY)
-        {
-            System.out.println("Oxygen BC:" + oxygen.boundaryValue);
-        }
-        if (!REFLECTIVE_BOUNDARY)
-        {
-            System.out.println("Glucose BC:" + glucose.boundaryValue);
-        }
-        if (!REFLECTIVE_BOUNDARY)
-        {
-            System.out.println("Acid BC:" + ProtonsToPh(acid.boundaryValue));
-        }
     }
 
     public int AlphaColorDiff(double val,double min,double max,double alphaMin,double alphaMax,int color)

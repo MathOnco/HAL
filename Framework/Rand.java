@@ -211,7 +211,7 @@ public class Rand implements Serializable{
      * Shuffles an array of integers
      *
      * @param arr          array to be shuffled
-     * @param sampleSize number of elements from array that shuffling can swapField
+     * @param sampleSize number of elements from array that shuffling can nextField
      * @param numberOfShuffles        number of elements that will be shuffled, should not exceed lenToShuffle
      */
     public void Shuffle(int[] arr, int sampleSize, int numberOfShuffles) {
@@ -236,7 +236,7 @@ public class Rand implements Serializable{
      * Shuffles an array of doubles
      *
      * @param arr          array to be shuffled
-     * @param sampleSize number of elements from array that shuffling can swapField
+     * @param sampleSize number of elements from array that shuffling can nextField
      * @param numberOfShuffles        number of elements that will be shuffled, should not exceed lenToShuffle
      */
     public void Shuffle(double[] arr, int sampleSize, int numberOfShuffles) {
@@ -261,7 +261,7 @@ public class Rand implements Serializable{
      * Shuffles an array of objects
      *
      * @param arr          array to be shuffled
-     * @param sampleSize number of elements from array that shuffling can swapField
+     * @param sampleSize number of elements from array that shuffling can nextField
      * @param numberOfShuffles        number of elements that will be shuffled, should not exceed lenToShuffle
      */
     public void Shuffle(Object[] arr, int sampleSize, int numberOfShuffles) {
