@@ -79,7 +79,7 @@ public class SphericalAgent3D<A extends SphericalAgent3D,G extends AgentGrid3D<A
     }
     public void CapVelocity(double maxVel){
         double maxVelSq=maxVel*maxVel;
-        double normSq=NormSq(xVel,yVel,zVel);
+        double normSq= NormSquared(xVel,yVel,zVel);
         if(normSq>maxVelSq){
             double convFactor=maxVel/Math.sqrt(normSq);
             xVel*=convFactor;

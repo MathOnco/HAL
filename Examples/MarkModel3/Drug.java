@@ -77,7 +77,7 @@ public abstract class Drug<C extends Cell,T extends Tissue<C>> implements Serial
 //            System.out.println(diffRate* G().DIFF_TIMESTEP * timeScale / (G().DIFF_SPACE_SCALE * G().DIFF_SPACE_SCALE * G().SQUARE_DIAM * G().SQUARE_DIAM));
                 diff.DiffusionADIupdate(diffRate * G().DIFF_TIMESTEP * timeScale / (G().DIFF_SPACE_SCALE * G().DIFF_SPACE_SCALE * G().SQUARE_DIAM * G().SQUARE_DIAM));
             }
-        }while (diff.grid.MaxDifference()>STEADY_STATE&&i<MAX_STEPS);
+        }while (diff.grid.MaxDifInternal()>STEADY_STATE&&i<MAX_STEPS);
         System.out.println(i);
         if(i==MAX_STEPS){
             System.out.println("drug "+name+" ran diffusion for max steps");

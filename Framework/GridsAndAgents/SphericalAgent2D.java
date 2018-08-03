@@ -2,6 +2,7 @@ package Framework.GridsAndAgents;
 
 import Framework.Interfaces.OverlapForceResponse2D;
 import Framework.Rand;
+import Framework.Util;
 
 import java.util.ArrayList;
 
@@ -80,7 +81,7 @@ public class SphericalAgent2D<A extends SphericalAgent2D,G extends AgentGrid2D<A
     }
     public void CapVelocity(double maxVel){
         double maxVelSq=maxVel*maxVel;
-        double normSq=NormSq(xVel,yVel);
+        double normSq= NormSquared(xVel,yVel);
         if(normSq>maxVelSq){
             double convFactor=maxVel/Math.sqrt(normSq);
             xVel*=convFactor;
@@ -93,6 +94,12 @@ public class SphericalAgent2D<A extends SphericalAgent2D,G extends AgentGrid2D<A
     public A Divide(double divRadius, double[] scratchCoordArr, Rand rn){
         if(rn!=null){
             rn.RandomPointOnCircleEdge(divRadius, scratchCoordArr);
+        }
+        double normSq= Util.NormSquared(scratchCoordArr[0],scratchCoordArr[1]);
+        if(normSq!=divRadius*divRadius){
+            double norm=Math.sqrt(normSq);
+            scratchCoordArr[0]=scratchCoordArr[0]*divRadius/norm;
+            scratchCoordArr[1]=scratchCoordArr[1]*divRadius/norm;
         }
         A child= G.NewAgentPTSafe(Xpt()+scratchCoordArr[0],Ypt()+scratchCoordArr[1],Xpt(),Ypt());
         MoveSafePT(Xpt()-scratchCoordArr[0], Ypt()-scratchCoordArr[1]);

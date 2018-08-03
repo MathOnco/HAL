@@ -1,4 +1,6 @@
 package Framework.Tools;
+import Framework.Interfaces.Coords2DDouble;
+
 import static Framework.Util.*;
 
 /**
@@ -230,6 +232,12 @@ public class PDEequations {
         valSum+= DisplacedY2D(x,y-1,inGrid,xDim,yDim,y,boundaryCond,boundaryValue,wrapY);
         int i=x*yDim+y;
         outGrid[i]+=diffRate*(-inGrid[i]*4+valSum);
+    }
+    public static void Diffusion2Boundary(int x,int y,final double[] inGrid, final double[] outGrid, final int xDim, final int yDim, final double diffRate, Coords2DDouble BoundaryGen, final boolean wrapX,final boolean wrapY) {
+        double valSum= DisplacedX2DFn(x+1,y,inGrid,xDim,yDim,BoundaryGen,wrapX);
+        valSum+= DisplacedX2DFn(x-1,y,inGrid,xDim,yDim,BoundaryGen,wrapX);
+        valSum+= DisplacedY2DFn(x,y+1,inGrid,xDim,yDim,BoundaryGen,wrapY);
+        valSum+= DisplacedY2DFn(x,y-1,inGrid,xDim,yDim,BoundaryGen,wrapY);
     }
     public static void Diffusion1(int x,final double[] inGrid, final double[] outGrid, final int xDim, final double diffRate, final boolean boundaryCond, final double boundaryValue, final boolean wrapX) {
         //4 squares to check
@@ -738,6 +746,31 @@ public class PDEequations {
         }
         else{
             y=fallbackY;
+        }
+        return vals[x*yDim+y];
+    }
+    public static double DisplacedX2DFn(int x, int y, double[] vals, int xDim, int yDim, Coords2DDouble Fallback, boolean wrapX){
+        if(InDim(x, xDim)){
+            return vals[x*yDim+y];
+        }
+        if(wrapX){
+            x=ModWrap(x,xDim);
+        }
+        else{
+            return Fallback.GenDouble(x,y);
+        }
+        return vals[x*yDim+y];
+    }
+
+    public static double DisplacedY2DFn(int x, int y, double[] vals, int xDim, int yDim, Coords2DDouble Fallback, boolean wrapY){
+        if(InDim(y, yDim)){
+            return vals[x*yDim+y];
+        }
+        if(wrapY){
+            y=ModWrap(y,yDim);
+        }
+        else{
+            return Fallback.GenDouble(x,y);
         }
         return vals[x*yDim+y];
     }

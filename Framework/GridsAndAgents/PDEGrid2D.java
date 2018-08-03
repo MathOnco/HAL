@@ -1,4 +1,5 @@
 package Framework.GridsAndAgents;
+import Framework.Interfaces.Coords2DDouble;
 import Framework.Interfaces.Coords2DSetArray;
 import Framework.Interfaces.GridDiff2MultiThreadFunction;
 import Framework.Tools.PDEequations;
@@ -442,6 +443,13 @@ public class PDEGrid2D extends GridBase2D implements Serializable{
             }
         }
     }
+    public void Diffusion(double diffCoef,Coords2DDouble BoundaryGen){
+        for (int x = 0; x < xDim; x++) {
+            for (int y = 0; y < yDim; y++) {
+                Diffusion2Boundary(x,y, field, nextField, xDim, yDim, diffCoef,BoundaryGen, wrapX, wrapY);
+            }
+        }
+    }
     public void Diffusion(double[] diffCoefs,double boundaryValue){
         for (int x = 0; x < xDim; x++) {
             for (int y = 0; y < yDim; y++) {
@@ -548,7 +556,7 @@ public class PDEGrid2D extends GridBase2D implements Serializable{
         return maxDif;
     }
 
-    public double MaxDifference(){
+    public double MaxDifInternal(){
         if(maxDifscratch==null){
             maxDifscratch=new double[length];
         }

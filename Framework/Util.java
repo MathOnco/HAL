@@ -1365,18 +1365,18 @@ public final class Util {
         }
     }
 
-    public static double NormSq(double v1, double v2) {
+    public static double NormSquared(double v1, double v2) {
         return (v1 * v1) + (v2 * v2);
     }
 
-    public static double NormSq(double v1, double v2, double v3) {
+    public static double NormSquared(double v1, double v2, double v3) {
         return (v1 * v1) + (v2 * v2) + (v3 * v3);
     }
 
-    public static double NormSq(double v1, double v2, double v3, double v4) {
+    public static double NormSquared(double v1, double v2, double v3, double v4) {
         return (v1 * v1) + (v2 * v2) + (v3 * v3) + (v4 * v4);
     }
-    public static double NormSq(double [] vals) {
+    public static double NormSquared(double [] vals) {
         double tot = 0;
         for (double val : vals) {
             tot += val * val;
@@ -1746,7 +1746,7 @@ public final class Util {
     }
 
     //REFLECTION
-    public static<T,O extends T> boolean IsMethodOverridden(Class<O> derived,Class<T> base,String methodName){
+    public static boolean IsMethodOverridden(Class derived,Class base,String methodName){
             Method[] meths=derived.getDeclaredMethods();
             Method[] baseMeths=base.getDeclaredMethods();
         for (Method meth : meths) {
@@ -1763,6 +1763,16 @@ public final class Util {
         }
         if(!found) {
             throw new IllegalArgumentException("name "+methodName+" not found in base class "+base.getName()+"!");
+        }
+        return false;
+    }
+
+    public static<T,O extends T> boolean IsMethodOverridden(Class<O> derived,String methodName){
+        Method[] meths=derived.getDeclaredMethods();
+        for (Method meth : meths) {
+            if(meth.getName().equals(methodName)) {
+                return true;
+            }
         }
         return false;
     }
