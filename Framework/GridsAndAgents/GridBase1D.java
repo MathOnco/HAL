@@ -3,12 +3,12 @@ package Framework.GridsAndAgents;
 import Framework.Interfaces.*;
 import Framework.Util;
 
-import java.util.Iterator;
+import java.io.Serializable;
 
 /**
  * Created by bravorr on 5/17/17.
  */
-public abstract class GridBase1D {
+public abstract class GridBase1D implements Serializable {
     public final int xDim;
     public final int length;
     public boolean wrapX;
@@ -46,6 +46,187 @@ public abstract class GridBase1D {
         return In(xInt);
     }
 
+    /**
+     * gets the displacement from the first coorinate to the second. using wraparound if allowed over the given axis to
+     * find the shortest displacement.
+     */
+    public double DispX(double x1, double x2) {
+        if (wrapX) {
+            return Util.DistWrap(x2, x1, xDim);
+        } else {
+            return x2 - x1;
+        }
+    }
+
+    /**
+     * gets the distance between two positions with or without grid wrap around (if wraparound is enabled, the shortest
+     * distance taking this into account will be returned)
+     */
+    public double Dist(double x1, double x2) {
+        return Math.abs(DispX(x1, x2));
+    }
+
+    /**
+     * gets the distance between two positions squared with or without grid wrap around
+     */
+    public double DistSquared(double x1, double x2) {
+        double dist = DispX(x1, x2);
+        return dist * dist;
+    }
+
+    /**
+     * applies the action function to all positions in the rectangle, will use wraparound if appropriate
+     */
+    public void ApplyRectangle(int startX, int width, IndexAction Action) {
+        for (int x = startX; x < startX + width; x++) {
+            int xFinal = x;
+            if (wrapX) {
+                xFinal = Util.ModWrap(x, xDim);
+            }
+            Action.Action(xFinal);
+        }
+    }
+
+    /**
+     * applies the action function to all positions in the neighborhood
+     */
+    int ApplyHood(int[] hood, int centerX, IndexAction Action) {
+        int ptCt = 0;
+        int iStart = hood.length / 2;
+        for (int i = iStart; i < hood.length; i++) {
+            int x = hood[i] + centerX;
+            if (!Util.InDim(x, xDim)) {
+                if (wrapX) {
+                    x = Util.ModWrap(x, xDim);
+                } else {
+                    continue;
+                }
+            }
+            Action.Action(x);
+        }
+        return ptCt;
+    }
+
+    /**
+     * applies the action function to all positions in the neighborhood up to validCount, assumes the neighborhood is
+     * already mapped
+     */
+    void ApplyHoodMapped(int[] hood, int validCount, IndexAction Action) {
+        for (int i = 0; i < validCount; i++) {
+            Action.Action(hood[i]);
+        }
+    }
+
+    /**
+     * This function is very similar to the previous definition of MapHood, only it additionally takes as argument an
+     * EvaluationFunctoin. this function should take as argument (i,x,y) of a location and return a boolean that decides
+     * whether that location should be included as a valid one.
+     */
+    public int MapHood(int[] hood, int centerX, Coords1DBool Eval) {
+        //moves coordinates to be around origin
+        //if any of the coordinates are outside the bounds, they will not be added
+        int ptCt = 0;
+        int iStart = hood.length / 2;
+        for (int i = iStart; i < hood.length; i++) {
+            int x = hood[i] + centerX;
+            if (!Util.InDim(x, xDim)) {
+                if (wrapX) {
+                    x = Util.ModWrap(x, xDim);
+                } else {
+                    continue;
+                }
+            }
+            if (Eval.Eval(x)) {
+                hood[ptCt] = x;
+                ptCt++;
+            }
+        }
+        return ptCt;
+    }
+
+    /**
+     * This function takes a neighborhood centered around the origin, translates the set of coordinates to be centered
+     * around a particular central location, and computes which indices the translated coordinates map to. The function
+     * returns the number of valid locations it set. this function differs from HoodToIs and CoordsToIs in that it takes
+     * no ret[], MapHood instead puts the result of the mapping back into the hood array.
+     */
+    public int MapHood(int[] hood, int centerX) {
+        //moves coordinates to be around origin
+        //if any of the coordinates are outside the bounds, they will not be added
+        int ptCt = 0;
+        int iStart = hood.length / 2;
+        for (int i = iStart; i < hood.length; i++) {
+            int x = hood[i] + centerX;
+            if (!Util.InDim(x, xDim)) {
+                if (wrapX) {
+                    x = Util.ModWrap(x, xDim);
+                } else {
+                    continue;
+                }
+            }
+            hood[ptCt] = x;
+            ptCt++;
+        }
+        return ptCt;
+    }
+
+    /**
+     * returns whether a valid index exists in the neighborhood
+     */
+    public boolean ContainsValidI(int[] hood, int centerX, IndexBool IsValid) {
+        int iStart = hood.length / 2;
+        for (int i = iStart; i < hood.length; i++) {
+            int x = hood[i] + centerX;
+            if (!Util.InDim(x, xDim)) {
+                if (wrapX) {
+                    x = Util.ModWrap(x, xDim);
+                } else {
+                    continue;
+                }
+            }
+            if (IsValid.Eval(x)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * returns the index of the center of the square in otherGrid that the coordinate maps to.
+     */
+    public int ConvXsq(int x, GridBase1D other) {
+        return (int) (((x + 0.5) * other.xDim) / xDim);
+    }
+
+    /**
+     * returns the position that x rescales to in the other grid
+     */
+    public double ConvXpt(double x, GridBase1D other) {
+        return x * other.xDim / xDim;
+    }
+
+    /**
+     * increments the internal grid tick counter by 1, used with the Age() and BirthTick() functions to get age
+     * information about the agents on an AgentGrid. can otherwise be used as a counter with the other grid types.
+     */
+    public void IncTick() {
+        tick++;
+    }
+
+    /**
+     * gets the current grid timestep.
+     */
+    public int GetTick() {
+        return tick;
+    }
+
+    /**
+     * sets the tick to 0.
+     */
+    public void ResetTick() {
+        tick = 0;
+    }
+
 //    /**
 //     * gets the indices of the squares that lie within a given radius of a position
 //     * argument array must be large enough to fit all indices in the maximum case, something like (rad*2)^2
@@ -72,119 +253,6 @@ public abstract class GridBase1D {
 //        }
 //        return retCt;
 //    }
-
-    public double DispX(double x1,double x2){
-        if(wrapX){
-            return Util.DispWrap(x1,x2,xDim);
-        }
-        else{
-            return x2-x1;
-        }
-    }
-    public double Dist(double x1,double x2){
-        return Math.abs(x1-x2);
-    }
-
-    public void ApplyRectangle(int startX, int width, IndexAction Action) {
-        for (int x = startX; x < startX+width; x++) {
-            int xFinal=x;
-            if(wrapX){
-                xFinal=Util.ModWrap(x,xDim);
-            }
-                Action.Action(xFinal);
-        }
-    }
-
-    int ApplyHood(int[] hood, int centerX,IndexAction Action) {
-        int ptCt = 0;
-        int iStart = hood.length / 2;
-        for (int i = iStart; i < hood.length; i ++) {
-            int x = hood[i] + centerX;
-            if (!Util.InDim(x, xDim)) {
-                if (wrapX) {
-                    x = Util.ModWrap(x, xDim);
-                } else {
-                    continue;
-                }
-            }
-            Action.Action(x);
-        }
-        return ptCt;
-    }
-    public int MapHood(int[] hood, int centerX,Coords1DBool Eval){
-        //moves coordinates to be around origin
-        //if any of the coordinates are outside the bounds, they will not be added
-        int ptCt = 0;
-        int iStart = hood.length / 2;
-        for (int i = iStart; i < hood.length; i ++) {
-            int x = hood[i] + centerX;
-            if (!Util.InDim(x, xDim)) {
-                if (wrapX) {
-                    x = Util.ModWrap(x, xDim);
-                } else {
-                    continue;
-                }
-            }
-            if(Eval.Eval(x)) {
-                hood[ptCt] = x;
-                ptCt++;
-            }
-        }
-        return ptCt;
-    }
-    public int MapHood(int[] hood, int centerX) {
-        //moves coordinates to be around origin
-        //if any of the coordinates are outside the bounds, they will not be added
-        int ptCt = 0;
-        int iStart = hood.length / 2;
-        for (int i = iStart; i < hood.length; i ++) {
-            int x = hood[i] + centerX;
-            if (!Util.InDim(x, xDim)) {
-                if (wrapX) {
-                    x = Util.ModWrap(x, xDim);
-                } else {
-                    continue;
-                }
-            }
-            hood[ptCt] = x;
-            ptCt++;
-        }
-        return ptCt;
-    }
-
-    public boolean ContainsValidI(int[] hood, int centerX, IndexBool IsValid) {
-        int iStart = hood.length / 2;
-        for (int i = iStart; i < hood.length; i ++) {
-            int x = hood[i] + centerX;
-            if (!Util.InDim(x, xDim)) {
-                if (wrapX) {
-                    x = Util.ModWrap(x, xDim);
-                } else {
-                    continue;
-                }
-            }
-            if(IsValid.Eval(x)){
-                return true;
-            }
-        }
-        return false;
-    }
-
-
-    public int ConvXsq(int x, GridBase1D other) {
-        return (int)(((x+0.5) * other.xDim) / xDim);
-    }
-
-    public double ConvXpt(double x, GridBase1D other) {
-        return x * other.xDim / xDim;
-    }
-    public void IncTick(){
-        tick++;
-    }
-    public int GetTick(){
-        return tick;
-    }
-    public void ResetTick(){tick=0;}
 
 }
 

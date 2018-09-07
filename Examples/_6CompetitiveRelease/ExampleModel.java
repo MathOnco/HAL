@@ -4,10 +4,9 @@ package Examples._6CompetitiveRelease;
         import Framework.GridsAndAgents.PDEGrid2D;
         import Framework.Gui.GridWindow;
         import Framework.GridsAndAgents.AgentSQ2Dunstackable;
-        import Framework.Gui.UIGrid;
         import Framework.Tools.FileIO;
         import Framework.Rand;
-        import static Examples.CompetitiveReleaseVerbose.ExampleModel.*;
+        import static Examples._6CompetitiveRelease.ExampleModel.*;
         import static Framework.Util.*;
 
 public class ExampleModel extends AgentGrid2D<ExampleCell> {
@@ -78,7 +77,7 @@ public class ExampleModel extends AgentGrid2D<ExampleCell> {
         }
     }
 
-    public void DrawModel(UIGrid vis, int iModel) {
+    public void DrawModel(GridWindow vis, int iModel) {
         for (int i = 0; i < length; i++) {
             ExampleCell drawMe = GetAgent(i);
             //if the cell does not exist, draw the drug concentration

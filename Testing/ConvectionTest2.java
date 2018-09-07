@@ -44,7 +44,7 @@ public class ConvectionTest2 {
             //    Util.Diffusion2(x,y,g.GetField(),g.GetSwapField(),g.xDim,g.yDim,0.1,true,1,false,false);
             //});
             g.Diffusion(0.1,1);
-            vis.DrawGridDiff(g,(val)->{
+            vis.DrawPDEGrid(g,(val)->{
                 return Util.HeatMapRBG(Util.ScaleMinToMax(val, (double) 0, (double) 1));
             });
         }

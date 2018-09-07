@@ -18,7 +18,7 @@ class InternalGridAgentList<T extends AgentBase> implements Iterable<T>,Serializ
     ArrayList<T> deads;
     ArrayList<AgentListIterator> usedIters=new ArrayList<>();
     transient Constructor<?> builder;
-    Field gridField;
+    transient Field gridField;
     int iLastAlive;
     int pop;
     final Object myGrid;
@@ -26,14 +26,7 @@ class InternalGridAgentList<T extends AgentBase> implements Iterable<T>,Serializ
     AgentListIterator outerIter;
 
     InternalGridAgentList(Class<T> type, Object myGrid){
-        this.builder=type.getDeclaredConstructors()[0];
-        this.builder.setAccessible(true);
-        try {
-            gridField=type.getField("G");
-            gridField.setAccessible(true);
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        }
+        SetupConstructor(type);
         this.agents=new ArrayList<>();
         this.deads=new ArrayList<>();
         this.iLastAlive=-1;
@@ -50,6 +43,12 @@ class InternalGridAgentList<T extends AgentBase> implements Iterable<T>,Serializ
     void SetupConstructor(Class<T> type){
         this.builder=type.getDeclaredConstructors()[0];
         this.builder.setAccessible(true);
+        try {
+            gridField=type.getField("G");
+            gridField.setAccessible(true);
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
     }
     T GetNewAgent(int birthTick){
     T newAgent;
@@ -136,7 +135,7 @@ class InternalGridAgentList<T extends AgentBase> implements Iterable<T>,Serializ
         }
         return ret;
     }
-    private class AgentListIterator implements Iterator<T>{
+    private class AgentListIterator implements Iterator<T>,Serializable{
         int stateID;
         InternalGridAgentList<T> myList;
         int iAgent;

@@ -4,7 +4,7 @@ import Framework.GridsAndAgents.SphericalAgent2D;
 import Framework.GridsAndAgents.AgentGrid2D;
 import Framework.Gui.OpenGL2DWindow;
 import Framework.Tools.FileIO;
-import Framework.Tools.Gaussian;
+import Framework.Tools.Internal.Gaussian;
 import Framework.Rand;
 
 import java.util.ArrayList;

@@ -1,77 +1,88 @@
 package Framework;
 
 import Framework.Interfaces.RNG;
-import Framework.Tools.Binomial;
-import Framework.Tools.Gaussian;
-import Framework.Tools.SplittableRN;
+import Framework.Tools.Internal.Binomial;
+import Framework.Tools.Internal.Gaussian;
+import Framework.Tools.Internal.SplittableRN;
 
 import java.io.Serializable;
 
-import static Framework.Util.DOUBLE_EPSILON;
 import static Framework.Util.DistSquared;
 import static Framework.Util.Norm;
 
 /**
  * Created by Rafael on 11/16/2017.
  */
-public class Rand implements Serializable{
+public class Rand implements Serializable {
     public final RNG rn;
     public final Gaussian gn;
     public final Binomial bn;
+
     public Rand(RNG rng) {
-        this.rn=rng;
-        this.gn=new Gaussian();
-        this.bn=new Binomial();
+        this.rn = rng;
+        this.gn = new Gaussian();
+        this.bn = new Binomial();
     }
+
     public Rand(long seed) {
-        this.rn=new SplittableRN(seed);
-        this.gn=new Gaussian();
-        this.bn=new Binomial();
+        this.rn = new SplittableRN(seed);
+        this.gn = new Gaussian();
+        this.bn = new Binomial();
     }
+
     public Rand() {
-        this.rn=new SplittableRN();
-        this.gn=new Gaussian();
-        this.bn=new Binomial();
+        this.rn = new SplittableRN();
+        this.gn = new Gaussian();
+        this.bn = new Binomial();
     }
-    public int Int(int bound){
-        if(bound==1){
+
+    public int Int(int bound) {
+        if (bound == 1) {
             return 0;
         }
         return rn.Int(bound);
     }
-    public double Double(double bound){
+
+    public double Double(double bound) {
         return rn.Double(bound);
     }
-    public double Double(){
+
+    public double Double() {
         return rn.Double();
     }
-    public long Long(long bound){
+
+    public long Long(long bound) {
         return rn.Long(bound);
     }
-    public boolean Bool(){
+
+    public boolean Bool() {
         return rn.Bool();
     }
-    public long Binomial(long n,double p){
-        return bn.SampleLong(n,p,this);
+
+    public long Binomial(long n, double p) {
+        return bn.SampleLong(n, p, this);
     }
-    public int Binomial(int n,double p){
-        return bn.SampleInt(n,p,this);
+
+    public int Binomial(int n, double p) {
+        return bn.SampleInt(n, p, this);
     }
-    public double Gaussian(double mean,double stdDev){
-        return gn.Sample(mean,stdDev,this);
+
+    public double Gaussian(double mean, double stdDev) {
+        return gn.Sample(mean, stdDev, this);
     }
+
     public void Multinomial(double[] probabilities, int n, int[] ret) {
         double pSum = 1;
-        if(probabilities.length==1){
-            ret[0]=n;
+        if (probabilities.length == 1) {
+            ret[0] = n;
             return;
         }
         for (int i = 0; i < probabilities.length; i++) {
-            if(probabilities[i]==1){
-                ret[i]=n;
+            if (probabilities[i] == 1) {
+                ret[i] = n;
                 return;
             }
-            if(probabilities[i]!=0) {
+            if (probabilities[i] != 0) {
                 int ni = bn.SampleInt(n, probabilities[i] / pSum, this);
                 ret[i] = ni;
                 n -= ni;
@@ -82,16 +93,16 @@ public class Rand implements Serializable{
 
     public void Multinomial(double[] probabilities, long n, long[] ret) {
         double pSum = 1;
-        if(probabilities.length==1){
-            ret[0]=n;
+        if (probabilities.length == 1) {
+            ret[0] = n;
             return;
         }
         for (int i = 0; i < probabilities.length; i++) {
-            if(probabilities[i]==1){
-                ret[i]=n;
+            if (probabilities[i] == 1) {
+                ret[i] = n;
                 return;
             }
-            if(probabilities[i]!=0) {
+            if (probabilities[i] != 0) {
                 long ni = bn.SampleLong(n, probabilities[i] / pSum, this);
                 ret[i] = ni;
                 n -= ni;
@@ -102,7 +113,8 @@ public class Rand implements Serializable{
 
 
     /**
-     * gets a random point on the surface of a sphere centered at 0,0,0, with the provided radius. the x,y,z coords are put in the double[] ret
+     * gets a random point on the surface of a sphere centered at 0,0,0, with the provided radius. the x,y,z coords are
+     * put in the double[] ret
      */
     public void RandomPointOnSphereEdge(double radius, double[] ret) {
         double x = gn.Sample(0, radius, this);
@@ -127,7 +139,8 @@ public class Rand implements Serializable{
     }
 
     /**
-     * gets a random point on the surface of a circle centered at 0,0, with the provided radius. the x,y coords are put in the double[] ret
+     * gets a random point on the surface of a circle centered at 0,0, with the provided radius. the x,y coords are put
+     * in the double[] ret
      */
     public void RandomPointOnCircleEdge(double radius, double[] ret) {
         double x = gn.Sample(0, radius, this);
@@ -190,7 +203,9 @@ public class Rand implements Serializable{
 
     /**
      * Fills out with random doubles between min and max inclusive
-     *  @param out the array the random doubles should be written to. the length of the input array defines the number of doubles to be generated
+     *
+     * @param out the array the random doubles should be written to. the length of the input array defines the number of
+     *            doubles to be generated
      */
     public void RandomDS(double[] out, double min, double max) {
         for (int i = 0; i < out.length; i++) {
@@ -200,19 +215,22 @@ public class Rand implements Serializable{
 
     /**
      * Fills out with random integers between min (inclusive) and max (exclusive)
-     *  @param out the array the random doubles should be written to. the length of the input array defines the number of doubles to be generated
+     *
+     * @param out the array the random doubles should be written to. the length of the input array defines the number of
+     *            doubles to be generated
      */
     public void RandomIS(int[] out, int min, int max) {
         for (int i = 0; i < out.length; i++) {
             out[i] = rn.Int(max - min) + min;
         }
     }
+
     /**
      * Shuffles an array of integers
      *
-     * @param arr          array to be shuffled
-     * @param sampleSize number of elements from array that shuffling can nextField
-     * @param numberOfShuffles        number of elements that will be shuffled, should not exceed lenToShuffle
+     * @param arr              array to be shuffled
+     * @param sampleSize       number of elements from array that shuffling can nextField
+     * @param numberOfShuffles number of elements that will be shuffled, should not exceed lenToShuffle
      */
     public void Shuffle(int[] arr, int sampleSize, int numberOfShuffles) {
         for (int i = 0; i < numberOfShuffles; i++) {
@@ -235,9 +253,9 @@ public class Rand implements Serializable{
     /**
      * Shuffles an array of doubles
      *
-     * @param arr          array to be shuffled
-     * @param sampleSize number of elements from array that shuffling can nextField
-     * @param numberOfShuffles        number of elements that will be shuffled, should not exceed lenToShuffle
+     * @param arr              array to be shuffled
+     * @param sampleSize       number of elements from array that shuffling can nextField
+     * @param numberOfShuffles number of elements that will be shuffled, should not exceed lenToShuffle
      */
     public void Shuffle(double[] arr, int sampleSize, int numberOfShuffles) {
         for (int i = 0; i < numberOfShuffles; i++) {
@@ -260,9 +278,9 @@ public class Rand implements Serializable{
     /**
      * Shuffles an array of objects
      *
-     * @param arr          array to be shuffled
-     * @param sampleSize number of elements from array that shuffling can nextField
-     * @param numberOfShuffles        number of elements that will be shuffled, should not exceed lenToShuffle
+     * @param arr              array to be shuffled
+     * @param sampleSize       number of elements from array that shuffling can nextField
+     * @param numberOfShuffles number of elements that will be shuffled, should not exceed lenToShuffle
      */
     public void Shuffle(Object[] arr, int sampleSize, int numberOfShuffles) {
         for (int i = 0; i < numberOfShuffles; i++) {
@@ -281,8 +299,9 @@ public class Rand implements Serializable{
             arr[i] = swap;
         }
     }
-    public int UniformDist(int min,int max){
-        return rn.Int(max-min)+min;
+
+    public int UniformDist(int min, int max) {
+        return rn.Int(max - min) + min;
     }
 
 }

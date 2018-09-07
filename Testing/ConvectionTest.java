@@ -56,7 +56,7 @@ public class ConvectionTest {
         }
         for (int i = 0; i < steps; i++) {
             trt.TickPause(time);
-            ggv.DrawGridDiff(g,(val)->{
+            ggv.DrawPDEGrid(g,(val)->{
                 return Util.HeatMapRBG(Util.ScaleMinToMax(val, (double) 0, (double) 1));
             });
             //g.ConvInhomogeneousSwap(xVels,yVels);

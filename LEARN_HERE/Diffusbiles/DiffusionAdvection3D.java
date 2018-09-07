@@ -16,9 +16,9 @@ public class DiffusionAdvection3D {
             win.TickPause(100);
             grid.Advection(0.1,0,0.1);//advection
             grid.Diffusion(0.13);//diffusion
-            win.DrawGridDiffXY(grid, (val)->(Util.HeatMapBGR(val*1000)));
-            //win.DrawGridDiffXZ(grid, (val)->(Util.HeatMapBGR(val*1000)));//uncomment to view from different angles
-            //win.DrawGridDiffYZ(grid, (val)->(Util.HeatMapBGR(val*1000)));
+            win.DrawPDEGridXY(grid, (val)->(Util.HeatMapBGR(val*1000)));
+            //win.DrawPDEGridXZ(grid, (val)->(Util.HeatMapBGR(val*1000)));//uncomment to view from different angles
+            //win.DrawPDEGridYZ(grid, (val)->(Util.HeatMapBGR(val*1000)));
         }
     }
 }

@@ -1,4 +1,4 @@
-package Framework.Tools;
+package Framework.Tools.Internal;
 
 import Framework.Interfaces.ParallelFunction;
 

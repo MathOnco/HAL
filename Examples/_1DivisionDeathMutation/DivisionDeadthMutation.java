@@ -6,7 +6,6 @@ import Framework.Gui.GridWindow;
 import Framework.Gui.UIGrid;
 import Framework.Tools.FileIO;
 import Framework.Rand;
-import Framework.Tools.LapTimer;
 import Framework.Util;
 
 import java.util.Arrays;
@@ -107,11 +106,9 @@ public class DivisionDeadthMutation extends AgentGrid2D<CellEx> {
         GridWindow vis=new GridWindow(x,y,scaleFactor);//used for visualization
         DivisionDeadthMutation grid=new DivisionDeadthMutation(x,y,vis);
         grid.InitTumor(5);
-        LapTimer pt=new LapTimer();
         for (int tick = 0; tick < 1000; tick++) {
             vis.TickPause(0);//set to nonzero value to cap tick rate.
             grid.StepCells();
         }
-        pt.Lap("test");
     }
 }

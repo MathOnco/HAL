@@ -53,7 +53,7 @@ public class Painter extends GridWindow {
         win.AddKeyResponses(new KeyResponse() {
             @Override
             public void Response(char c, int keyCode) {
-                win.DrawChar(c,1,5,GREEN,BLUE);
+                win.SetChar(c,1,5,GREEN,BLUE);
             }
         },null);
             //public void RunEvent(KeyEvent e) {

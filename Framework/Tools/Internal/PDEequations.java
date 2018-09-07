@@ -1,4 +1,4 @@
-package Framework.Tools;
+package Framework.Tools.Internal;
 import Framework.Interfaces.Coords2DDouble;
 
 import static Framework.Util.*;
@@ -7,82 +7,6 @@ import static Framework.Util.*;
  * Created by Rafael on 10/14/2017.
  */
 public class PDEequations {
-
-//    /**
-//     * runs the finite differences equation in 2 dimensions explicitly
-//     *
-//     * @param inGrid        an array of values holding the starting state of the diffusible
-//     * @param outGrid       an array into which the result of diffusion will be written
-//     * @param xDim          xDim dimenison of the inGrid and outGrid
-//     * @param yDim          yDim dimension of the inGrid and outGrid
-//     * @param diffRate      diffusion rate for the diffusion equaition
-//     * @param boundaryCond  defines whether a constant boundary condition value should diffuse in from the boundaries
-//     * @param boundaryValue only impacts diffusion if boundaryCond is true, sets the boundary condition value
-//     * @param wrapX         whether to wrap around diffusion over the left and right boundaries
-//     */
-//    public static void Diffusion(double[] inGrid, double[] outGrid, int xDim, int yDim, double diffRate, boolean boundaryCond, double boundaryValue, final boolean wrapX, final boolean wrapY) {
-//        //This code is ugly and repetitive to improve performance by getting around bounds checking
-//        int x, y;
-//        //first we do the corners
-//        if (boundaryCond) {
-//            outGrid[0] = inGrid[0] + diffRate * (-inGrid[0] * 4 + inGrid[1] + inGrid[yDim] + 2 * boundaryValue);
-//            outGrid[(xDim - 1) * yDim] = inGrid[(xDim - 1) * yDim] + diffRate * (-inGrid[(xDim - 1) * yDim] * 4 + inGrid[(xDim - 2) * yDim] + inGrid[(xDim - 1) * yDim + 1] + 2 * boundaryValue);
-//            outGrid[(xDim - 1) * yDim + yDim - 1] = inGrid[(xDim - 1) * yDim + yDim - 1] + diffRate * (-inGrid[(xDim - 1) * yDim + yDim - 1] * 4 + inGrid[(xDim - 2) * yDim + yDim - 1] + inGrid[(xDim - 1) * yDim + yDim - 2] + 2 * boundaryValue);
-//            outGrid[yDim - 1] = inGrid[yDim - 1] + diffRate * (-inGrid[yDim - 1] * 4 + inGrid[yDim + yDim - 1] + inGrid[yDim - 2] + 2 * boundaryValue);
-//        } else {
-//            outGrid[0] = inGrid[0] + diffRate * (-inGrid[0] * 4 + (wrapX?inGrid[1*yDim+0]+inGrid[(xDim-1)*yDim]:inGrid[(1*yDim)+0]*2) + (wrapY?inGrid[0*yDim+yDim]+inGrid[0*yDim+1]:inGrid[0*yDim+1]*2));
-//            outGrid[(xDim - 1) * yDim] = inGrid[(xDim - 1) * yDim] + diffRate * (-inGrid[(xDim - 1) * yDim] * 4 + (wrapX?inGrid[(xDim - 2) * yDim]+inGrid[0]:2*inGrid[(xDim - 2)*yDim]) + (wrapY?inGrid[(xDim - 1) * yDim + 1]+inGrid[xDim*yDim-1]:2*inGrid[(xDim - 1) * yDim + 1]));
-//            outGrid[(xDim - 1) * yDim + yDim - 1] = inGrid[(xDim - 1) * yDim + yDim - 1] + diffRate * (-inGrid[(xDim - 1) * yDim + yDim - 1] * 4 + (wrapX?inGrid[(xDim - 2) * yDim + yDim - 1]+inGrid[yDim-1]:2*inGrid[(xDim - 2) * yDim + yDim - 1]) + (wrapY?inGrid[(xDim-1)*yDim]+inGrid[(xDim - 1) * yDim + yDim - 2]:2*inGrid[(xDim - 1) * yDim + yDim - 2]));
-//            outGrid[yDim - 1] = inGrid[yDim - 1] + diffRate * (-inGrid[yDim - 1] * 4 + (wrapX?inGrid[yDim + yDim - 1]+inGrid[(xDim-1)*yDim+yDim-1]:2*inGrid[yDim + yDim - 1]) + (wrapY?inGrid[0]+inGrid[yDim - 2]:2*inGrid[yDim - 2]));
-//        }
-//        //then we do the sides
-//        if (boundaryCond) {
-//            x = 0;
-//            for (y = 1; y < yDim - 1; y++) {
-//                outGrid[x * yDim + y] = inGrid[x * yDim + y] + diffRate * (-inGrid[x * yDim + y] * 4 + inGrid[(x + 1) * yDim + y] + inGrid[x * yDim + y + 1] + inGrid[x * yDim + y - 1] + boundaryValue);
-//            }
-//            x = xDim - 1;
-//            for (y = 1; y < yDim - 1; y++) {
-//                outGrid[x * yDim + y] = inGrid[x * yDim + y] + diffRate * (-inGrid[x * yDim + y] * 4 + inGrid[(x - 1) * yDim + y] + inGrid[x * yDim + y + 1] + inGrid[x * yDim + y - 1] + boundaryValue);
-//            }
-//            y = 0;
-//            for (x = 1; x < xDim - 1; x++) {
-//                outGrid[x * yDim + y] = inGrid[x * yDim + y] + diffRate * (-inGrid[x * yDim + y] * 4 + inGrid[x * yDim + y + 1] + inGrid[(x + 1) * yDim + y] + inGrid[(x - 1) * yDim + y] + boundaryValue);
-//            }
-//            y = yDim - 1;
-//            for (x = 1; x < xDim - 1; x++) {
-//                outGrid[x * yDim + y] = inGrid[x * yDim + y] + diffRate * (-inGrid[x * yDim + y] * 4 + inGrid[x * yDim + y - 1] + inGrid[(x + 1) * yDim + y] + inGrid[(x - 1) * yDim + y] + boundaryValue);
-//            }
-//        } else{
-//            x = 0;
-//            for (y = 1; y < yDim - 1; y++) {
-//                outGrid[x * yDim + y] = inGrid[x * yDim + y] + diffRate * (-inGrid[x * yDim + y] * 4 + inGrid[(x + 1) * yDim + y] + inGrid[x * yDim + y + 1] + inGrid[x * yDim + y - 1] + (wrapX?inGrid[(xDim - 1) * yDim + y]:inGrid[(x + 1) * yDim + y]));
-//            }
-//            x = xDim - 1;
-//            for (y = 1; y < yDim - 1; y++) {
-//                outGrid[x * yDim + y] = inGrid[x * yDim + y] + diffRate * (-inGrid[x * yDim + y] * 4 + inGrid[(x - 1) * yDim + y] + inGrid[x * yDim + y + 1] + inGrid[x * yDim + y - 1] + (wrapX?inGrid[0 * yDim + y]:inGrid[(x-1)*yDim+y]));
-//            }
-//            y = 0;
-//            for (x = 1; x < xDim - 1; x++) {
-//                outGrid[x * yDim + y] = inGrid[x * yDim + y] + diffRate * (-inGrid[x * yDim + y] * 4 + inGrid[x * yDim + y + 1] + inGrid[(x + 1) * yDim + y] + inGrid[(x - 1) * yDim + y]+(wrapY?inGrid[x*yDim+yDim-1]:inGrid[x*yDim+1]));
-//            }
-//            y = yDim - 1;
-//            for (x = 1; x < xDim - 1; x++) {
-//                outGrid[x * yDim + y] = inGrid[x * yDim + y] + diffRate * (-inGrid[x * yDim + y] * 4 + inGrid[x * yDim + y - 1] + inGrid[(x + 1) * yDim + y] + inGrid[(x - 1) * yDim + y]+(wrapY?inGrid[x*yDim]:inGrid[x*yDim+y-2]));
-//            }
-//        }
-//        //then we do the middle
-//        for (x = 1; x < xDim - 1; x++) {
-//            for (y = 1; y < yDim - 1; y++) {
-//                int i = x * yDim + y;
-//                outGrid[i] = inGrid[i] + diffRate * (-inGrid[i] * 4 + inGrid[(x + 1) * yDim + y] + inGrid[(x - 1) * yDim + y] + inGrid[x * yDim + y + 1] + inGrid[x * yDim + y - 1]);
-//            }
-//        }
-//    }
-
-    //boolean in3(int compX,int compY,int zDim,int xDim,int yDim,int z){
-    //    return xDim>=0&&xDim<compX&&yDim>=0&&yDim<compY&&z>=0&&z<zDim;
-    //}
 
 
     /**
@@ -238,6 +162,8 @@ public class PDEequations {
         valSum+= DisplacedX2DFn(x-1,y,inGrid,xDim,yDim,BoundaryGen,wrapX);
         valSum+= DisplacedY2DFn(x,y+1,inGrid,xDim,yDim,BoundaryGen,wrapY);
         valSum+= DisplacedY2DFn(x,y-1,inGrid,xDim,yDim,BoundaryGen,wrapY);
+        int i=x*yDim+y;
+        outGrid[i]+=diffRate*(-inGrid[i]*4+valSum);
     }
     public static void Diffusion1(int x,final double[] inGrid, final double[] outGrid, final int xDim, final double diffRate, final boolean boundaryCond, final double boundaryValue, final boolean wrapX) {
         //4 squares to check
@@ -246,179 +172,8 @@ public class PDEequations {
         valSum+= Displaced1D(x-1,inGrid,xDim,x,boundaryCond,boundaryValue,wrapX);
         outGrid[x]+=diffRate*(-inGrid[x]*2+valSum);
     }
-    public static void Diffusion1Swap(int x,final double[] inGrid, final double[] outGrid, final int xDim, final double diffRate, final boolean boundaryCond, final double boundaryValue, final boolean wrapX) {
-        //4 squares to check
-
-        double valSum= Displaced1D(x+1,inGrid,xDim,x,boundaryCond,boundaryValue,wrapX);
-        valSum+= Displaced1D(x-1,inGrid,xDim,x,boundaryCond,boundaryValue,wrapX);
-        outGrid[x]+=diffRate*(-inGrid[x]*2+valSum);
-    }
 
 
-    public static void Advection2ndOrder(int x,int y,final double[]inGrid,final double[]outGrid,int xDim,int yDim,double xVel,double yVel,boolean boundaryCond,double boundaryValue) {
-        int i=x*yDim+y;
-        //if(inGrid[i]>0.5){
-        //    System.out.println("");
-        //}
-        double xFlux=0;
-        double yFlux=0;
-        double prev=inGrid[i];
-        if(xVel>0){
-            xFlux=(xVel/2)*(3*prev
-                    -4* DisplacedX2D(x-1,y,inGrid,xDim,yDim,-1,boundaryCond,boundaryValue,true)
-                    + DisplacedX2D(x-2,y,inGrid,xDim,yDim,-1,boundaryCond,boundaryValue,true));
-        }
-        if(xVel<0){
-            xFlux=(xVel/2)*(-3*prev
-                    +4* DisplacedX2D(x+1,y,inGrid,xDim,yDim,-1,boundaryCond,boundaryValue,true)
-                    - DisplacedX2D(x+2,y,inGrid,xDim,yDim,-1,boundaryCond,boundaryValue,true));
-        }
-        if(yVel>0){
-            yFlux=(yVel/2)*(3*prev
-                    -4* DisplacedY2D(x,y-1,inGrid,xDim,yDim,-1,boundaryCond,boundaryValue,true)
-                    + DisplacedY2D(x,y-2,inGrid,xDim,yDim,-1,boundaryCond,boundaryValue,true));
-
-        }
-        if(yVel<0){
-            yFlux=(yVel/2)*(-3*prev
-                    +4* DisplacedY2D(x,y+1,inGrid,xDim,yDim,-1,boundaryCond,boundaryValue,true)
-                    - DisplacedY2D(x,y+2,inGrid,xDim,yDim,-1,boundaryCond,boundaryValue,true));
-
-        }
-        outGrid[i]+=-xFlux-yFlux;
-    }
-
-
-    public static void Advection2ndOrderCorrection(int x,int y,final double[]intGrid,final double[]outGrid,int xDim,int yDim,double xVel,double yVel,boolean boundaryCond,double boundaryValue) {
-        int i=x*yDim+y;
-        //if(inGrid[i]>0.5){
-        //    System.out.println("");
-        //}
-        double xFlux=0;
-        double yFlux=0;
-        double prev=intGrid[i];
-
-        if(xVel>0){
-            xFlux=(xVel/2)*(3*prev
-                    -4* DisplacedX2D(x-1,y,intGrid,xDim,yDim,-1,boundaryCond,boundaryValue,true)
-                    + DisplacedX2D(x-2,y,intGrid,xDim,yDim,-1,boundaryCond,boundaryValue,true));
-        }
-        if(xVel<0){
-            xFlux=(xVel/2)*(-3*prev
-                    +4* DisplacedX2D(x+1,y,intGrid,xDim,yDim,-1,boundaryCond,boundaryValue,true)
-                    - DisplacedX2D(x+2,y,intGrid,xDim,yDim,-1,boundaryCond,boundaryValue,true));
-        }
-        if(yVel>0){
-            yFlux=(yVel/2)*(3*prev
-                    -4* DisplacedY2D(x,y-1,intGrid,xDim,yDim,-1,boundaryCond,boundaryValue,true)
-                    + DisplacedY2D(x,y-2,intGrid,xDim,yDim,-1,boundaryCond,boundaryValue,true));
-
-        }
-        if(yVel<0){
-            yFlux=(yVel/2)*(-3*prev
-                    +4* DisplacedY2D(x,y+1,intGrid,xDim,yDim,-1,boundaryCond,boundaryValue,true)
-                    - DisplacedY2D(x,y+2,intGrid,xDim,yDim,-1,boundaryCond,boundaryValue,true));
-
-        }
-        outGrid[i]+=-xFlux-yFlux;
-    }
-
-    public static void Advection2ndOrderPrediction(int x,int y,final double[]inGrid,final double[]outGrid,int xDim,int yDim,double xVel,double yVel,boolean boundaryCond,double boundaryValue) {
-        int i=x*yDim+y;
-        //if(inGrid[i]>0.5){
-        //    System.out.println("");
-        //}
-        double xFlux=0;
-        double yFlux=0;
-        double prev=inGrid[i];
-        if(xVel>0){
-            xFlux=(xVel/2)*(3*prev
-                    -4* DisplacedX2D(x-1,y,inGrid,xDim,yDim,-1,boundaryCond,boundaryValue,true)
-                    + DisplacedX2D(x-2,y,inGrid,xDim,yDim,-1,boundaryCond,boundaryValue,true));
-        }
-        if(xVel<0){
-            xFlux=(xVel/2)*(-3*prev
-                    +4* DisplacedX2D(x+1,y,inGrid,xDim,yDim,-1,boundaryCond,boundaryValue,true)
-                    - DisplacedX2D(x+2,y,inGrid,xDim,yDim,-1,boundaryCond,boundaryValue,true));
-        }
-        if(yVel>0){
-            yFlux=(yVel/2)*(3*prev
-                    -4* DisplacedY2D(x,y-1,inGrid,xDim,yDim,-1,boundaryCond,boundaryValue,true)
-                    + DisplacedY2D(x,y-2,inGrid,xDim,yDim,-1,boundaryCond,boundaryValue,true));
-
-        }
-        if(yVel<0){
-            yFlux=(yVel/2)*(-3*prev
-                    +4* DisplacedY2D(x,y+1,inGrid,xDim,yDim,-1,boundaryCond,boundaryValue,true)
-                    - DisplacedY2D(x,y+2,inGrid,xDim,yDim,-1,boundaryCond,boundaryValue,true));
-
-        }
-        outGrid[i]+=-xFlux/2-yFlux/2;
-    }
-
-
-    public static void Advection3rdOrder(int x,int y,final double[]inGrid,final double[]outGrid,int xDim,int yDim,double xVel,double yVel,boolean boundaryCond,double boundaryValue) {
-        int i=x*yDim+y;
-        //if(inGrid[i]>0.5){
-        //    System.out.println("");
-        //}
-        double xFlux=0;
-        double yFlux=0;
-        double prev=inGrid[i];
-        if(xVel>0){
-            xFlux=(xVel/6)*(2* DisplacedX2D(x+1,y,inGrid,xDim,yDim,-1,boundaryCond,boundaryValue,true)+3*prev
-                    -6* DisplacedX2D(x-1,y,inGrid,xDim,yDim,-1,boundaryCond,boundaryValue,true)
-                    + DisplacedX2D(x-2,y,inGrid,xDim,yDim,-1,boundaryCond,boundaryValue,true));
-        }
-        if(xVel<0){
-            xFlux=(xVel/6)*(-2* DisplacedX2D(x-1,y,inGrid,xDim,yDim,-1,boundaryCond,boundaryValue,true)-3*prev
-                    +6* DisplacedX2D(x+1,y,inGrid,xDim,yDim,-1,boundaryCond,boundaryValue,true)
-                    - DisplacedX2D(x+2,y,inGrid,xDim,yDim,-1,boundaryCond,boundaryValue,true));
-        }
-        if(yVel>0){
-            yFlux=(yVel/2)*(2* DisplacedX2D(x,y+1,inGrid,xDim,yDim,-1,boundaryCond,boundaryValue,true)+3*prev
-                    -6* DisplacedY2D(x,y-1,inGrid,xDim,yDim,-1,boundaryCond,boundaryValue,true)
-                    + DisplacedY2D(x,y-2,inGrid,xDim,yDim,-1,boundaryCond,boundaryValue,true));
-
-        }
-        if(yVel<0){
-            yFlux=(yVel/2)*(-2* DisplacedX2D(x,y+1,inGrid,xDim,yDim,-1,boundaryCond,boundaryValue,true)-3*prev
-                    +6* DisplacedY2D(x,y+1,inGrid,xDim,yDim,-1,boundaryCond,boundaryValue,true)
-                    - DisplacedY2D(x,y+2,inGrid,xDim,yDim,-1,boundaryCond,boundaryValue,true));
-
-        }
-        outGrid[i]+=-xFlux-yFlux;
-    }
-
-
-
-    public static void Advection2ndOrderLW(int x, int y, final double[] inGrid, final double[] outGrid, int xDim, int yDim, double xVel, double yVel, boolean boundaryCond, double boundaryValue){
-        int i=x*yDim+y;
-        double xFlux=0;
-        double yFlux=0;
-        double xyFlux=0;
-        double xxFlux=0;
-        double yyFlux=0;
-        double prev=inGrid[i];
-        xFlux=(xVel/2)*(DisplacedX2D(x+1,y,inGrid,xDim,yDim,-1,boundaryCond,boundaryValue,true)- DisplacedX2D(x-1,y,inGrid,xDim,yDim,-1,boundaryCond,boundaryValue,true));
-        yFlux=(yVel/2)*(DisplacedY2D(x,y+1,inGrid,xDim,yDim,-1,boundaryCond,boundaryValue,true)- DisplacedY2D(x,y-1,inGrid,xDim,yDim,-1,boundaryCond,boundaryValue,true));
-        //xyFlux=-(xVel*yVel/4)*(Displaced2D(x+1,y+1,inGrid,xDim,yDim,-1,-1,boundaryCond,boundaryValue,true,true)-Displaced2D(x-1,y+1,inGrid,xDim,yDim,-1,-1,boundaryCond,boundaryValue,true,true)-Displaced2D(x+1,y-1,inGrid,xDim,yDim,-1,-1,boundaryCond,boundaryValue,true,true)+Displaced2D(x-1,y-1,inGrid,xDim,yDim,-1,-1,boundaryCond,boundaryValue,true,true));
-        xxFlux=-(xVel*xVel/2)*(DisplacedX2D(x+1,y,inGrid,xDim,yDim,-1,boundaryCond,boundaryValue,true)-2*prev+ DisplacedX2D(x-1,y,inGrid,xDim,yDim,-1,boundaryCond,boundaryValue,true));
-        yyFlux=-(yVel*yVel/2)*(DisplacedY2D(x,y+1,inGrid,xDim,yDim,-1,boundaryCond,boundaryValue,true)-2*prev+ DisplacedY2D(x,y-1,inGrid,xDim,yDim,-1,boundaryCond,boundaryValue,true));
-        outGrid[i]=inGrid[i]-xFlux-yFlux-xyFlux-xxFlux-yyFlux;
-    }
-    public static void Advection1stOrder1D(int x, final double[] inGrid, final double[] outGrid, int xDim, double xVel, boolean boundaryCond, double boundaryValue){
-        double xFlux=0;
-        double yFlux=0;
-        double prev=inGrid[x];
-        if(xVel>0){
-            xFlux=xVel*(prev- Displaced1D(x-1,inGrid,xDim,-1,boundaryCond,boundaryValue,true));
-        }
-        if(xVel<0){
-            xFlux=xVel*(Displaced1D(x+1,inGrid,xDim,-1,boundaryCond,boundaryValue,true)-prev);
-        }
-        outGrid[x]+=-xFlux-yFlux;
-    }
 
     public static void Advection1stOrder(int x, int y, final double[] inGrid, final double[] outGrid, int xDim, int yDim, double xVel, double yVel, boolean boundaryCond, double boundaryValue){
         int i=x*yDim+y;
@@ -714,11 +469,11 @@ public class PDEequations {
         if(inX){
             return vals[x];
         }
-        if(boundaryCond){
-            return boundaryValue;
-        }
-        if(!inX&&wrapX){
+        else if(!inX&&wrapX){
             x=ModWrap(x,xDim);
+        }
+        else if(boundaryCond){
+            return boundaryValue;
         }
         else{
             x=fallbackX;
@@ -732,17 +487,20 @@ public class PDEequations {
         if(inX&&inY){
             return vals[x*yDim+y];
         }
-        if(boundaryCond){
-            return boundaryValue;
-        }
         if(!inX&&wrapX){
             x=ModWrap(x,xDim);
+        }
+        else if(boundaryCond){
+            return boundaryValue;
         }
         else{
             x=fallbackX;
         }
         if(!inY&&wrapY){
             y=ModWrap(y,yDim);
+        }
+        else if(boundaryCond){
+            return boundaryValue;
         }
         else{
             y=fallbackY;
@@ -753,7 +511,7 @@ public class PDEequations {
         if(InDim(x, xDim)){
             return vals[x*yDim+y];
         }
-        if(wrapX){
+        else if(wrapX){
             x=ModWrap(x,xDim);
         }
         else{
@@ -779,11 +537,11 @@ public class PDEequations {
         if(InDim(x, xDim)){
             return vals[x*yDim+y];
         }
-        if(boundaryCond){
-            return boundaryValue;
-        }
-        if(wrapX){
+        else if(wrapX){
             x=ModWrap(x,xDim);
+        }
+        else if(boundaryCond){
+            return boundaryValue;
         }
         else{
             x=fallbackX;
@@ -795,11 +553,11 @@ public class PDEequations {
         if(InDim(y, yDim)){
             return vals[x*yDim+y];
         }
-        if(boundaryCond){
-            return boundaryValue;
-        }
-        if(wrapY){
+        else if(wrapY){
             y=ModWrap(y,yDim);
+        }
+        else if(boundaryCond){
+            return boundaryValue;
         }
         else{
             y=fallbackY;
@@ -810,11 +568,11 @@ public class PDEequations {
         if(InDim(x, xDim)){
             return vals[x*yDim*zDim+y*zDim+z];
         }
-        if(boundaryCond){
-            return boundaryValue;
-        }
-        if(wrapX){
+        else if(wrapX){
             x=ModWrap(x,xDim);
+        }
+        else if(boundaryCond){
+            return boundaryValue;
         }
         else{
             x=fallbackX;
@@ -825,11 +583,11 @@ public class PDEequations {
         if(InDim(y, yDim)){
             return vals[x*yDim*zDim+y*zDim+z];
         }
-        if(boundaryCond){
-            return boundaryValue;
-        }
-        if(wrapY){
+        else if(wrapY){
             y=ModWrap(y,yDim);
+        }
+        else if(boundaryCond){
+            return boundaryValue;
         }
         else{
             y=fallbackY;
@@ -840,18 +598,29 @@ public class PDEequations {
         if(InDim(z, zDim)){
             return vals[x*yDim*zDim+y*zDim+z];
         }
-        if(boundaryCond){
-            return boundaryValue;
-        }
-        if(wrapZ){
+        else if(wrapZ){
             z=ModWrap(z,zDim);
+        }
+        else if(boundaryCond){
+            return boundaryValue;
         }
         else{
             z=fallbackZ;
         }
         return vals[x*yDim*zDim+y*zDim+z];
     }
-
+    public static void Advection1stOrder1D(int x, final double[] inGrid, final double[] outGrid, int xDim, double xVel, boolean boundaryCond, double boundaryValue){
+        double xFlux=0;
+        double yFlux=0;
+        double prev=inGrid[x];
+        if(xVel>0){
+            xFlux=xVel*(prev- Displaced1D(x-1,inGrid,xDim,-1,boundaryCond,boundaryValue,true));
+        }
+        if(xVel<0){
+            xFlux=xVel*(Displaced1D(x+1,inGrid,xDim,-1,boundaryCond,boundaryValue,true)-prev);
+        }
+        outGrid[x]+=-xFlux-yFlux;
+    }
 }
 
 //THE BELOW CODE IS A 3D ADI IMPLEMENTATION THAT SO FAR IS NOT WORKING!

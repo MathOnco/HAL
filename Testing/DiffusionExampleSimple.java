@@ -21,23 +21,15 @@ public class DiffusionExampleSimple {
         for (int i = 0; i < nPositions; i++) {
             diff.Set(circleCoords[i], 1);
         }
-        double[] xVels = new double[diff.length];
-        double[] yVels = new double[diff.length];
-        for (int x = 0; x < diff.xDim; x++) {
-            for (int y = 0; y < diff.yDim; y++) {
-                //if(x>0.)
-                //xVels[diff.I(x,y)]=((x+0.1)*0.01)/xDim;
-                xVels[diff.I(x, y)] = 0.5;
-                yVels[diff.I(x, y)] = 0;
-            }
-
-        }
+        double xVel=0.2;
+        double yVel=0.1;
         for (int i = 0; i < 500; i++) {
 
-            win.TickPause(0);
+            //win.TickPause(0);
             //step condition here
             for (int j = 0; j < spaceScale; j++) {
-                diff.Advection2ndLW(xVels, yVels);
+                diff.Advection(xVel, yVel);
+                diff.Update();
             }
             //System.out.println(diff.GetAvg());
 

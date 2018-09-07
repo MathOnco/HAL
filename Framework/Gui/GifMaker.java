@@ -118,6 +118,9 @@ public class GifMaker {
         }
     }
 
+    /**
+     * adds the current UIGrid state to the GIF as a single frame
+     */
     public void AddFrame(UIGrid vis){
         if(scaledBuff==null||scaledBuff.getHeight()!=vis.panel.scaleX *vis.yDim||scaledBuff.getWidth()!=vis.panel.scaleX *vis.xDim) {
             scaledBuff = new BufferedImage(vis.panel.scaleX * vis.xDim, vis.panel.scaleX * vis.yDim, BufferedImage.TYPE_INT_RGB);
@@ -142,8 +145,7 @@ public class GifMaker {
     }
 
     /**
-     * Close this GifMaker object. This does not Close the underlying
-     * stream, just finishes off the GIF.
+     * Close this GifMaker object
      */
     public void Close() {
         try {

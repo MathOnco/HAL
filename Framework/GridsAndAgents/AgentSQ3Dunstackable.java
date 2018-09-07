@@ -2,6 +2,7 @@ package Framework.GridsAndAgents;
 
 import Framework.Interfaces.AgentToBool;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import static Framework.Util.InDim;
@@ -13,132 +14,93 @@ import static Framework.Util.ModWrap;
  * @param <T> the extended AgentGrid3D class that the agents will live in
  * Created by rafael on 11/18/16.
  */
-public class AgentSQ3Dunstackable<T extends AgentGrid3D> extends Agent3DBase<T>{
+public class AgentSQ3Dunstackable<T extends AgentGrid3D> extends Agent3DBase<T> implements Serializable {
     int xSq;
     int ySq;
     int zSq;
 
-    void Setup(int xSq,int ySq,int zSq){
-        this.xSq=xSq;
-        this.ySq=ySq;
-        this.zSq=zSq;
-        this.iSq=G.I(xSq,ySq,zSq);
-        AddSQ(iSq);
-    }
-    void Setup(double xPos,double yPos,double zPos){
-        Setup((int)xPos,(int)yPos,(int)zPos);
-    }
-
-    @Override
-    void Setup(int i) {
-        this.iSq=i;
-        this.xSq=G.ItoX(i);
-        this.ySq=G.ItoY(i);
-        this.zSq=G.ItoZ(i);
-        AddSQ(iSq);
-    }
-
-    @Override
-    void Setup(int x, int y) {
-        throw new IllegalStateException("shouldn't be adding 3D agent to 2D typeGrid");
-    }
-
-    public void SwapPosition(AgentBaseSpatial other){
-        if(this.Isq()==other.Isq()){
-            return;
-        }
-        if(!alive||!other.alive){
-            throw new RuntimeException("attempting to move dead agent");
-        }
-        if(other.G!=G){
-            throw new IllegalStateException("can't swap positions between agents on different grids!");
-        }
-        int iNew=other.Isq();
-        int iNewOther=Isq();
-        other.RemSQ();
-        this.RemSQ();
-        other.Setup(iNewOther);
-        this.Setup(iNew);
-    }
-
     /**
      * Moves the agent to the specified coordinates
      */
-    public void MoveSQ(int x, int y, int z){
+    public void MoveSQ(int x, int y, int z) {
         //moves agent discretely
-        if(!alive){
+        if (!alive) {
             throw new RuntimeException("attempting to move dead agent");
         }
-        int iNewPos=G.I(x,y,z);
+        int iNewPos = G.I(x, y, z);
         RemSQ();
-        this.xSq=x;
-        this.ySq=y;
-        this.zSq=z;
-        this.iSq=iNewPos;
+        this.xSq = x;
+        this.ySq = y;
+        this.zSq = z;
+        this.iSq = iNewPos;
         AddSQ(iNewPos);
     }
-    void AddSQ(int i){
-        if(G.grid[i]!=null){
+
+    void AddSQ(int i) {
+        if (G.grid[i] != null) {
             throw new RuntimeException("Adding multiple unstackable agents to the same square!");
         }
-        G.grid[i]=this;
+        G.grid[i] = this;
     }
 
 
-    void RemSQ(){
-        G.grid[iSq]=null;
+    void RemSQ() {
+        G.grid[iSq] = null;
     }
 
     /**
      * gets the xDim coordinate of the square that the agent occupies
      */
-    public int Xsq(){
+    public int Xsq() {
         return xSq;
     }
 
     /**
      * gets the yDim coordinate of the square that the agent occupies
      */
-    public int Ysq(){
+    public int Ysq() {
         return ySq;
     }
 
     /**
      * gets the z coordinate of the square that the agent occupies
      */
-    public int Zsq(){
+    public int Zsq() {
         return zSq;
     }
 
     /**
      * gets the xDim coordinate of the agent
      */
-    public double Xpt(){
-        return xSq+0.5;
+    public double Xpt() {
+        return xSq + 0.5;
     }
 
     /**
      * gets the yDim coordinate of the agent
      */
-    public double Ypt(){
-        return ySq+0.5;
+    public double Ypt() {
+        return ySq + 0.5;
     }
 
     /**
      * gets the z coordinate of the agent
      */
-    public double Zpt(){ return zSq+0.5;}
+    public double Zpt() {
+        return zSq + 0.5;
+    }
+
     /**
      * deletes the agent
      */
-    public void Dispose(){
+    public void Dispose() {
         //kills agent
-        if(!alive){
+        if (!alive) {
             throw new RuntimeException("attempting to dispose already dead agent");
         }
         RemSQ();
         G.agents.RemoveAgent(this);
-        if(myNodes!=null){
+        if (myNodes != null) {
             myNodes.DisposeAll();
         }
     }
@@ -149,31 +111,37 @@ public class AgentSQ3Dunstackable<T extends AgentGrid3D> extends Agent3DBase<T>{
     }
 
     @Override
-    void GetAllOnSquareEval(ArrayList<AgentBaseSpatial> putHere, AgentToBool evalAgent) {
-        if(evalAgent.EvalAgent(this)){
+    void GetAllOnSquare(ArrayList<AgentBaseSpatial> putHere, AgentToBool evalAgent) {
+        if (evalAgent.EvalAgent(this)) {
             putHere.add(this);
         }
 
     }
+
     @Override
-    int GetCountOnSquareEval(AgentToBool evalAgent) {
-        return evalAgent.EvalAgent(this)?1:0;
+    int GetCountOnSquare(AgentToBool evalAgent) {
+        return evalAgent.EvalAgent(this) ? 1 : 0;
     }
+
     @Override
     public void MoveSQ(int i) {
-        if(!alive){
+        if (!alive) {
             throw new RuntimeException("Attempting to move dead agent!");
         }
         RemSQ();
-        xSq=G.ItoX(i);
-        ySq=G.ItoY(i);
-        zSq=G.ItoZ(i);
-        iSq=i;
+        xSq = G.ItoX(i);
+        ySq = G.ItoY(i);
+        zSq = G.ItoZ(i);
+        iSq = i;
         AddSQ(i);
     }
 
+    /**
+     * Similar to the move functions, only it will automatically either apply wraparound, or prevent moving along a
+     * partiular axis if movement would cause the agent to go out of bounds.
+     */
     public void MoveSafeSQ(int newX, int newY, int newZ) {
-        if(!alive){
+        if (!alive) {
             throw new RuntimeException("Attempting to move dead agent!");
         }
         if (G.In(newX, newY, newZ)) {
@@ -195,15 +163,20 @@ public class AgentSQ3Dunstackable<T extends AgentGrid3D> extends Agent3DBase<T>{
         } else if (!InDim(newZ, G.zDim)) {
             newZ = Zsq();
         }
-        MoveSQ(newX,newY,newZ);
+        MoveSQ(newX, newY, newZ);
     }
+
     @Override
     void Setup(double i) {
 
     }
 
-    public int Age(){
-        return G.GetTick()-birthTick;
+    /**
+     * returns the age of the agent, in ticks. Be sure to use IncTick on the AgentGrid appropriately for this function
+     * to work.
+     */
+    public int Age() {
+        return G.GetTick() - birthTick;
     }
 
     @Override
@@ -215,4 +188,32 @@ public class AgentSQ3Dunstackable<T extends AgentGrid3D> extends Agent3DBase<T>{
     void Setup(double x, double y) {
 
     }
+
+    @Override
+    void Setup(int xSq, int ySq, int zSq) {
+        this.xSq = xSq;
+        this.ySq = ySq;
+        this.zSq = zSq;
+        this.iSq = G.I(xSq, ySq, zSq);
+        AddSQ(iSq);
+    }
+
+    void Setup(double xPos, double yPos, double zPos) {
+        Setup((int) xPos, (int) yPos, (int) zPos);
+    }
+
+    @Override
+    void Setup(int i) {
+        this.iSq = i;
+        this.xSq = G.ItoX(i);
+        this.ySq = G.ItoY(i);
+        this.zSq = G.ItoZ(i);
+        AddSQ(iSq);
+    }
+
+    @Override
+    void Setup(int x, int y) {
+        throw new IllegalStateException("shouldn't be adding 3D agent to 2D typeGrid");
+    }
+
 }

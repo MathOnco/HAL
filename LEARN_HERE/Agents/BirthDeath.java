@@ -3,7 +3,6 @@ package LEARN_HERE.Agents;
 import Framework.GridsAndAgents.AgentSQ2Dunstackable;
 import Framework.Gui.GridWindow;
 import Framework.GridsAndAgents.AgentGrid2D;
-import Framework.Gui.UIGrid;
 import Framework.Rand;
 import Framework.Util;
 

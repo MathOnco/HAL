@@ -9,162 +9,154 @@ import java.util.Arrays;
 /**
  * Created by Rafael on 10/24/2017.
  */
-public class Grid2Dint extends GridBase2D implements Serializable{
+public class Grid2Dint extends GridBase2D implements Serializable {
     int[] field;
-    public Grid2Dint(int xDim, int yDim){
-        super(xDim,yDim,false,false);
-        field =new int[this.xDim * this.yDim];
+
+    public Grid2Dint(int xDim, int yDim) {
+        super(xDim, yDim, false, false);
+        field = new int[this.xDim * this.yDim];
     }
-    public Grid2Dint(int xDim, int yDim, boolean wrapX, boolean wrapY){
-        super(xDim,yDim,wrapX,wrapY);
-        field =new int[this.xDim * this.yDim];
+
+    public Grid2Dint(int xDim, int yDim, boolean wrapX, boolean wrapY) {
+        super(xDim, yDim, wrapX, wrapY);
+        field = new int[this.xDim * this.yDim];
     }
+
     /**
      * gets the current field value at the specified index
      */
-    public int Get(int i){return field[i];}
-    public int[] GetField(){
+    public int Get(int i) {
+        return field[i];
+    }
+
+    /**
+     * returns the complete field as an array
+     */
+    public int[] GetField() {
         return this.field;
     }
+
     /**
      * gets the current field value at the specified coordinates
      */
-    public int Get(int x, int y) { return field[x*yDim+y]; }
+    public int Get(int x, int y) {
+        return field[x * yDim + y];
+    }
 
     /**
      * sets the current field value at the specified index
      */
-    public void Set(int i, int val){
-        field[i]=val;}
+    public void Set(int i, int val) {
+        field[i] = val;
+    }
 
     /**
      * sets the current field value at the specified coordinates
      */
-    public void Set(int x, int y, int val){ field[x*yDim+y]=val; }
+    public void Set(int x, int y, int val) {
+        field[x * yDim + y] = val;
+    }
 
     /**
      * adds to the current field value at the specified coordinates
      */
-    public void Add(int x, int y, int val){ field[x*yDim+y]+=val; }
+    public void Add(int x, int y, int val) {
+        field[x * yDim + y] += val;
+    }
 
-    public void Mul(int x, int y, int val){ field[x*yDim+y]*=val; }
-    public void Mul(int i, int val){ field[i]*=val; }
+    /**
+     * multiplies the current field value at the specified coordinates
+     */
+    public void Mul(int x, int y, double val) {
+        field[x * yDim + y] *= val;
+    }
+
+    /**
+     * multiplies the current field value at the specified index
+     */
+    public void Mul(int i, double val) {
+        field[i] *= val;
+    }
+
     /**
      * adds to the current field value at the specified index
      */
-    public void Add(int i, int val){
-        field[i]+=val;}
+    public void Add(int i, int val) {
+        field[i] += val;
+    }
+
     /**
      * Bounds all values in the current field between min and max
      */
-    public void BoundAll(int min, int max){
-        for(int i=0;i<length;i++){
-            field[i]= Util.Bound(field[i],min,max);
+    public void BoundAll(int min, int max) {
+        for (int i = 0; i < length; i++) {
+            field[i] = Util.Bound(field[i], min, max);
         }
     }
 
     /**
      * sets all squares in current the field to the specified value
      */
-    public void SetAll(int val){
-        Arrays.fill(field,val);
+    public void SetAll(int val) {
+        Arrays.fill(field, val);
     }
+
     /**
      * adds specified value to all entries of the curr field
      */
-    public void AddAll(int val){
+    public void AddAll(int val) {
         for (int i = 0; i < length; i++) {
-            field[i]+=val;
-        }
-    }
-    /**
-     * adds specified value to all entries of the curr field
-     */
-    public void MulAll(double val){
-        for (int i = 0; i < length; i++) {
-            field[i]*=val;
+            field[i] += val;
         }
     }
 
-    public void SetAll(int[]vals){
-        System.arraycopy(vals,0, field,0,length);
+    /**
+     * adds specified value to all entries of the curr field
+     */
+    public void MulAll(double val) {
+        for (int i = 0; i < length; i++) {
+            field[i] *= val;
+        }
     }
+
+    /**
+     * sets all squares in the field to the specified value
+     */
+    public void SetAll(int[] vals) {
+        System.arraycopy(vals, 0, field, 0, length);
+    }
+
     /**
      * gets the average value of all squares in the current field
      */
-    public int GetAvg(){
-        int tot=0;
-        for(int i=0;i<length;i++){
-            tot+= field[i];
-        }
-        return tot/length;
-    }
-    public int GetMax(){
-        int max=Integer.MIN_VALUE;
+    public int GetAvg() {
+        int tot = 0;
         for (int i = 0; i < length; i++) {
-            max=Math.max(Get(i),max);
+            tot += field[i];
+        }
+        return tot / length;
+    }
+
+    /**
+     * returns the max value in the grid
+     */
+    public int GetMax() {
+        int max = Integer.MIN_VALUE;
+        for (int i = 0; i < length; i++) {
+            max = Math.max(Get(i), max);
         }
         return max;
     }
-    public int GetMin(){
-        int min=Integer.MAX_VALUE;
+
+    /**
+     * returns the min value in the grid
+     */
+    public int GetMin() {
+        int min = Integer.MAX_VALUE;
         for (int i = 0; i < length; i++) {
-            min=Math.min(Get(i),min);
+            min = Math.min(Get(i), min);
         }
         return min;
-    }
-    public int MaxDifScaled(int[]compareTo, int denomOffset){
-        int maxDif=0;
-        for(int i = 0; i< field.length; i++){
-            maxDif=Math.max(maxDif,Math.abs(field[i]- compareTo[i])/ (compareTo[i]+denomOffset));
-        }
-        return maxDif;
-    }
-    public void SetOuterLayer(int val){
-        for (int x = 0; x < xDim; x++) {
-            Set(x,0,val);
-            Set(x,yDim-1,val);
-        }
-        for (int y = 1; y < yDim; y++) {
-            Set(0,y,val);
-            Set(xDim-1,y,val);
-        }
-    }
-    public String ToMatrixString(String delim,int decimalDigits){
-        String dfStr="#.";
-        for (int i = 0; i < decimalDigits; i++) {
-            dfStr+="0";
-        }
-        DecimalFormat df=new DecimalFormat(dfStr);
-        StringBuilder sb = new StringBuilder();
-        for (int x = 0; x < xDim; x++) {
-            for (int y = 0; y < yDim; y++) {
-                if(y==yDim-1){
-                    sb.append(df.format(Get(x,y)));
-                }
-                else{
-                    sb.append(df.format(Get(x,y))+delim);
-                }
-            }
-            sb.append("\n");
-        }
-        return sb.toString();
-    }
-
-    public String ToMatrixString(String delim){
-        StringBuilder sb = new StringBuilder();
-        for (int x = 0; x < xDim; x++) {
-            for (int y = 0; y < yDim; y++) {
-                if(y==yDim-1){
-                    sb.append(Get(x,y));
-                }
-                else{
-                    sb.append(Get(x,y)+delim);
-                }
-            }
-            sb.append("\n");
-        }
-        return sb.toString();
     }
 
 //    public Grid2Ddouble DotProduct(Grid2Ddouble rightMatrix){

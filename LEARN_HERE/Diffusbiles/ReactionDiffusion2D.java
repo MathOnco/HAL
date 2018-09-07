@@ -46,8 +46,8 @@ public class ReactionDiffusion2D {
             //diffusion
             g2.DiffusionADIupdate(0.01);
             //draw results
-            v1.DrawGridDiff(g1, Util::HeatMapRGB);
-            v2.DrawGridDiff(g2, Util::HeatMapRGB);
+            v1.DrawPDEGrid(g1, Util::HeatMapRGB);
+            v2.DrawPDEGrid(g2, Util::HeatMapRGB);
         }
         win.Close();
     }

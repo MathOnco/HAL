@@ -3,10 +3,15 @@ package Framework.GridsAndAgents;
 import Framework.Interfaces.*;
 import Framework.Util;
 
+import java.io.Serializable;
+
+import static Framework.Util.Norm;
+import static Framework.Util.NormSquared;
+
 /**
  * Created by bravorr on 5/17/17.
  */
-public abstract class GridBase2D{
+public abstract class GridBase2D implements Serializable {
     public final int xDim;
     public final int yDim;
     public final int length;
@@ -22,6 +27,9 @@ public abstract class GridBase2D{
         this.length = xDim * yDim;
     }
 
+    /**
+     * gets the index of the square at the specified coordinates
+     */
     public int I(int x, int y) {
         //gets typeGrid index from location
         return x * yDim + y;
@@ -76,27 +84,46 @@ public abstract class GridBase2D{
         return In(xInt, yInt);
     }
 
-
+    /**
+     * applies the action function to all positions in the rectangle, will use wraparound if appropriate
+     */
     public void ApplyRectangle(int startX, int startY, int width, int height, Coords2DAction Action) {
-        for (int x = startX; x < startX+width; x++) {
-            for (int y = startY; y < startY+height; y++) {
-                int xFinal=x;
-                int yFinal=y;
-                if(wrapX){
-                    xFinal=Util.ModWrap(x,xDim);
+        for (int x = startX; x < startX + width; x++) {
+            for (int y = startY; y < startY + height; y++) {
+                int xFinal = x;
+                int yFinal = y;
+                if (wrapX) {
+                    xFinal = Util.ModWrap(x, xDim);
                 }
-                if(wrapY){
-                    yFinal=Util.ModWrap(y,yDim);
+                if (wrapY) {
+                    yFinal = Util.ModWrap(y, yDim);
                 }
                 Action.Action(xFinal, yFinal);
             }
         }
     }
 
-    int ApplyHood(int[] hood, int centerI, Coords2DAction Action){
-        return ApplyHood(hood,ItoX(centerI),ItoY(centerI),Action);
+    /**
+     * applies the action function to all positions in the neighborhood up to validCount, assumes the neighborhood is
+     * already mapped
+     */
+    public void ApplyHoodMapped(int[] hood, int validCount, IndexAction Action) {
+        for (int i = 0; i < validCount; i++) {
+            Action.Action(hood[i]);
+        }
     }
-    int ApplyHood(int[] hood, int centerX, int centerY, Coords2DAction Action){
+
+    /**
+     * applies the action function to all positions in the neighborhood
+     */
+    public int ApplyHood(int[] hood, int centerI, Coords2DAction Action) {
+        return ApplyHood(hood, ItoX(centerI), ItoY(centerI), Action);
+    }
+
+    /**
+     * applies the action function to all positions in the neighborhood
+     */
+    public int ApplyHood(int[] hood, int centerX, int centerY, Coords2DAction Action) {
         int ptCt = 0;
         int iStart = hood.length / 3;
         for (int i = iStart; i < hood.length; i += 2) {
@@ -121,12 +148,24 @@ public abstract class GridBase2D{
         return ptCt;
     }
 
+    /**
+     * This function takes a neighborhood centered around the origin, translates the set of coordinates to be centered
+     * around a particular central location, and computes which indices the translated coordinates map to. The function
+     * returns the number of valid locations it set. this function differs from HoodToIs and CoordsToIs in that it takes
+     * no ret[], MapHood instead puts the result of the mapping back into the hood array.
+     */
     public int MapHood(int[] hood, int iCenter) {
         //moves coordinates to be around origin
         //if any of the coordinates are outside the bounds, they will not be added
         return MapHood(hood, ItoX(iCenter), ItoY(iCenter));
     }
-    public int MapHood(int[] hood, int centerX,int centerY,IndexCoords2DBool Eval){
+
+    /**
+     * This function is very similar to the previous definition of MapHood, only it additionally takes as argument an
+     * EvaluationFunctoin. this function should take as argument (i,x,y) of a location and return a boolean that decides
+     * whether that location should be included as a valid one.
+     */
+    public int MapHood(int[] hood, int centerX, int centerY, IndexCoords2DBool Eval) {
         //moves coordinates to be around origin
         //if any of the coordinates are outside the bounds, they will not be added
         int ptCt = 0;
@@ -148,18 +187,30 @@ public abstract class GridBase2D{
                     continue;
                 }
             }
-            int j=I(x,y);
-            if(Eval.Eval(j,x,y)) {
+            int j = I(x, y);
+            if (Eval.Eval(j, x, y)) {
                 hood[ptCt] = j;
                 ptCt++;
             }
         }
         return ptCt;
     }
-    public int MapHood(int[] hood, int iCenter,IndexCoords2DBool Eval){
-        return MapHood(hood,ItoX(iCenter),ItoY(iCenter),Eval);
+
+    /**
+     * This function is very similar to the previous definition of MapHood, only it additionally takes as argument an
+     * EvaluationFunctoin. this function should take as argument (i,x,y) of a location and return a boolean that decides
+     * whether that location should be included as a valid one.
+     */
+    public int MapHood(int[] hood, int iCenter, IndexCoords2DBool Eval) {
+        return MapHood(hood, ItoX(iCenter), ItoY(iCenter), Eval);
     }
 
+    /**
+     * This function takes a neighborhood centered around the origin, translates the set of coordinates to be centered
+     * around a particular central location, and computes which indices the translated coordinates map to. The function
+     * returns the number of valid locations it set. this function differs from HoodToIs and CoordsToIs in that it takes
+     * no ret[], MapHood instead puts the result of the mapping back into the hood array.
+     */
     public int MapHood(int[] hood, int centerX, int centerY) {
         //moves coordinates to be around origin
         //if any of the coordinates are outside the bounds, they will not be added
@@ -188,6 +239,9 @@ public abstract class GridBase2D{
         return ptCt;
     }
 
+    /**
+     * returns a list of indices, where each index maps to one square on the boundary of the grid
+     */
     public int[] BoundaryIs() {
         int[] ret = new int[(xDim + yDim) * 2];
         for (int x = 0; x < xDim; x++) {
@@ -201,10 +255,16 @@ public abstract class GridBase2D{
         return ret;
     }
 
+    /**
+     * returns whether a valid index exists in the neighborhood
+     */
     public boolean ContainsValidI(int[] hood, int centerI, Coords2DBool IsValid) {
         return ContainsValidI(hood, ItoX(centerI), ItoY(centerI), IsValid);
     }
 
+    /**
+     * returns whether a valid index exists in the neighborhood
+     */
     public boolean ContainsValidI(int[] hood, int centerX, int centerY, Coords2DBool IsValid) {
         int iStart = hood.length / 3;
         for (int i = iStart; i < hood.length; i += 2) {
@@ -224,7 +284,7 @@ public abstract class GridBase2D{
                     continue;
                 }
             }
-            if(IsValid.Eval(x,y)){
+            if (IsValid.Eval(x, y)) {
                 return true;
             }
         }
@@ -232,35 +292,68 @@ public abstract class GridBase2D{
     }
 
 
+    /**
+     * returns the index of the center of the square in otherGrid that the coordinate maps to.
+     */
     public int ConvXsq(int x, GridBase2D other) {
-        return (int)(((x+0.5) * other.xDim) / xDim);
+        return (int) (((x + 0.5) * other.xDim) / xDim);
     }
 
+    /**
+     * returns the index of the center of the square in otherGrid that the coordinate maps to.
+     */
     public int ConvYsq(int y, GridBase2D other) {
-        return (int)(((y+0.5) * other.yDim) / yDim);
+        return (int) (((y + 0.5) * other.yDim) / yDim);
     }
 
+    /**
+     * returns the index of the center of the square in otherGrid that the coordinate maps to.
+     */
     public int ConvI(int i, GridBase2D other) {
         int x = ItoX(i);
         int y = ItoY(i);
         return other.I(ConvXsq(x, other), ConvYsq(y, other));
     }
 
+    /**
+     * returns the position that x rescales to in the other grid
+     */
     public double ConvXpt(double x, GridBase2D other) {
         return x * other.xDim / xDim;
     }
 
+    /**
+     * returns the position that y rescales to in the other grid
+     */
     public double ConvYpt(double y, GridBase2D other) {
         return y * other.yDim / yDim;
     }
-    public void IncTick(){
+
+    /**
+     * increments the internal grid tick counter by 1, used with the Age() and BirthTick() functions to get age
+     * information about the agents on an AgentGrid. can otherwise be used as a counter with the other grid types.
+     */
+    public void IncTick() {
         tick++;
     }
-    public int GetTick(){
+
+    /**
+     * gets the current grid timestep.
+     */
+    public int GetTick() {
         return tick;
     }
-    public void ResetTick(){tick=0;}
 
+    /**
+     * sets the tick to 0.
+     */
+    public void ResetTick() {
+        tick = 0;
+    }
+
+    /**
+     * returns the set of indicies of squares that the line between (x1,y1) and (x2,y2) touches.
+     */
     public int AlongLineIs(double x1, double y1, double x2, double y2, int[] writeHere) {
         double dx = Math.abs(x2 - x1);
         double dy = Math.abs(y2 - y1);
@@ -314,29 +407,49 @@ public abstract class GridBase2D{
         return Count;
     }
 
-    public double DispX(double x1,double x2){
-        if(wrapX){
-            return Util.DispWrap(x1,x2,xDim);
-        }
-        else{
-            return x2-x1;
-        }
-    }
-    public double DispY(double y1,double y2){
-        if(wrapY){
-            return Util.DispWrap(y1,y2,yDim);
-        }
-        else{
-            return y2-y1;
+    /**
+     * gets the displacement from the first coorinate to the second. using wraparound if allowed over the given axis to
+     * find the shortest displacement.
+     */
+    public double DispX(double x1, double x2) {
+        if (wrapX) {
+            return Util.DistWrap(x2, x1, xDim);
+        } else {
+            return x2 - x1;
         }
     }
-    public double Dist(double x1,double y1,double x2,double y2){
-        return Math.sqrt(DistSquared(x1,y1,x2,y2));
+
+    /**
+     * gets the displacement from the first coorinate to the second. using wraparound if allowed over the given axis to
+     * find the shortest displacement.
+     */
+    public double DispY(double y1, double y2) {
+        if (wrapY) {
+            return Util.DistWrap(y2, y1, yDim);
+        } else {
+            return y2 - y1;
+        }
     }
-    public double DistSquared(double x1,double y1,double x2,double y2){
-        double xDisp=DispX(x1,x2);
-        double yDisp=DispY(y1,y2);
-        return xDisp*xDisp+yDisp*yDisp;
+
+    /**
+     * gets the distance between two positions with or without grid wrap around (if wraparound is enabled, the shortest
+     * distance taking this into account will be returned)
+     */
+    public double Dist(double x1, double y1, double x2, double y2) {
+        double dx = DispX(x1, y1);
+        double dy = DispY(x2, y2);
+        return Norm(dx, dy);
+    }
+
+    /**
+     * gets the distance squared between two positions with or without grid wrap around (if wraparound is enabled, the
+     * shortest distance taking this into account will be returned) more efficient than the Dist function above as it
+     * skips a square-root calculation.
+     */
+    public double DistSquared(double x1, double y1, double x2, double y2) {
+        double xDisp = DispX(x1, x2);
+        double yDisp = DispY(y1, y2);
+        return NormSquared(xDisp, yDisp);
 
     }
 

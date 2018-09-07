@@ -1,17 +1,14 @@
 package Framework;
 
-import Framework.Extensions.PDEGrid2DCoarse;
 import Framework.GridsAndAgents.Agent2DBase;
 import Framework.GridsAndAgents.Agent3DBase;
-import Framework.GridsAndAgents.PDEGrid2D;
 import Framework.Interfaces.*;
-import Framework.Tools.SerializableModel;
-import Framework.Tools.SweepRun;
+import Framework.Interfaces.SerializableModel;
+import Framework.Tools.Internal.SweepRun;
 
 import java.awt.*;
 import java.io.*;
 import java.lang.reflect.Array;
-import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -135,7 +132,8 @@ public final class Util {
         a = Bound(a, 0, 255);
         return color & 0x00ffffff | (a << 24);
     }
-    final public static int RED = RGB(1,0,0), GREEN= RGB(0,1,0), BLUE=RGB(0,0,1), BLACK=RGB(0,0,0), WHITE=RGB(1,1,1), YELLOW=RGB(1,1,0), CYAN=RGB(0,1,1), MAGENTA=RGB(1,0,1);
+
+    final public static int RED = RGB(1, 0, 0), GREEN = RGB(0, 1, 0), BLUE = RGB(0, 0, 1), BLACK = RGB(0, 0, 0), WHITE = RGB(1, 1, 1), YELLOW = RGB(1, 1, 0), CYAN = RGB(0, 1, 1), MAGENTA = RGB(1, 0, 1);
 
     //OTHER COLOR GENERATORS
     final private static int CC0 = RGB256(56, 116, 177), CC1 = RGB256(198, 56, 44), CC2 = RGB256(79, 159, 57), CC3 = RGB256(189, 190, 58), CC4 = RGB256(142, 102, 186), CC5 = RGB256(240, 134, 39), CC6 = RGB256(83, 187, 206), CC7 = RGB256(214, 123, 191), CC8 = RGB256(133, 88, 76), CC9 = RGB256(178, 197, 230), CC10 = RGB256(243, 156, 151), CC11 = RGB256(166, 222, 144), CC12 = RGB256(220, 220, 147), CC13 = RGB256(194, 174, 211), CC14 = RGB256(246, 191, 126), CC15 = RGB256(169, 216, 228), CC16 = RGB256(238, 184, 209), CC17 = RGB256(190, 157, 146), CC18 = RGB256(199, 199, 199), CC19 = RGB256(127, 127, 127);
@@ -281,31 +279,35 @@ public final class Util {
         return RGB(c2, c3, c1);
     }
 
-    static int InterpComp(double val,int minComp,int maxComp){
-        return (int)((maxComp-minComp)*val)+minComp;
+    static int InterpComp(double val, int minComp, int maxComp) {
+        return (int) ((maxComp - minComp) * val) + minComp;
     }
-    public static int ColorMap(double val,int minColor,int maxColor){
-        return ColorMap(val,0,1,minColor,maxColor);
+
+    public static int ColorMap(double val, int minColor, int maxColor) {
+        return ColorMap(val, 0, 1, minColor, maxColor);
     }
-    public static int ColorMap(double val, double min,double max, int minColor,int maxColor){
-        if(val<=min){
+
+    public static int ColorMap(double val, double min, double max, int minColor, int maxColor) {
+        if (val <= min) {
             return minColor;
         }
-        if(val>=max){
+        if (val >= max) {
             return maxColor;
         }
-        val=(val-min)/(max-min);
-        return RGB256(InterpComp(val,GetRed256(minColor),GetRed256(maxColor)),InterpComp(val,GetGreen256(minColor),GetGreen256(maxColor)),InterpComp(val,GetBlue256(minColor),GetBlue256(maxColor)));
+        val = (val - min) / (max - min);
+        return RGB256(InterpComp(val, GetRed256(minColor), GetRed256(maxColor)), InterpComp(val, GetGreen256(minColor), GetGreen256(maxColor)), InterpComp(val, GetBlue256(minColor), GetBlue256(maxColor)));
     }
-    public static int ColorMap2D(double valx,double valy,int bottomLeft,int bottomRight,int topLeft,int topRight){
+
+    public static int ColorMap2D(double valx, double valy, int bottomLeft, int bottomRight, int topLeft, int topRight) {
         return RGB(
-                Interpolate2D(valx, valy, GetRed(bottomLeft),GetRed(bottomRight),GetRed(topLeft),GetRed(topRight)),
-                Interpolate2D(valx, valy, GetGreen(bottomLeft),GetGreen(bottomRight),GetGreen(topLeft),GetGreen(topRight)),
-                Interpolate2D(valx, valy, GetBlue(bottomLeft),GetBlue(bottomRight),GetBlue(topLeft),GetBlue(topRight))
+                Interpolate2D(valx, valy, GetRed(bottomLeft), GetRed(bottomRight), GetRed(topLeft), GetRed(topRight)),
+                Interpolate2D(valx, valy, GetGreen(bottomLeft), GetGreen(bottomRight), GetGreen(topLeft), GetGreen(topRight)),
+                Interpolate2D(valx, valy, GetBlue(bottomLeft), GetBlue(bottomRight), GetBlue(topLeft), GetBlue(topRight))
         );
     }
-    public static String ColorString(int color){
-        return "r: "+GetRed256(color)+", g: "+GetGreen256(color)+", b: "+GetBlue256(color)+", a: "+GetAlpha256(color);
+
+    public static String ColorString(int color) {
+        return "r: " + GetRed256(color) + ", g: " + GetGreen256(color) + ", b: " + GetBlue256(color) + ", a: " + GetAlpha256(color);
     }
 
 
@@ -313,8 +315,9 @@ public final class Util {
     public static int HSBColor(double hue, double saturation, double brightness) {
         return Color.HSBtoRGB((float) hue, (float) saturation, (float) brightness);
     }
-    public static void ColorToHSB(int color,float[]ret) {
-        Color.RGBtoHSB(GetRed256(color),GetGreen256(color),GetBlue256(color),ret);
+
+    public static void ColorToHSB(int color, float[] ret) {
+        Color.RGBtoHSB(GetRed256(color), GetGreen256(color), GetBlue256(color), ret);
     }
 
     public static int YCbCrColor(double y, double cb, double cr) {
@@ -332,34 +335,38 @@ public final class Util {
         return YCbCrColor(ycbcrY, x, y);
     }
 
-    public static double ArrayMax(double[]arr){
-        double max=Double.MIN_VALUE;
+    public static double ArrayMax(double[] arr) {
+        double max = Double.MIN_VALUE;
         for (double val : arr) {
-            max=max<val?val:max;
+            max = max < val ? val : max;
         }
         return max;
     }
-    public static int ArrayMax(int[]arr){
-        int max=Integer.MIN_VALUE;
+
+    public static int ArrayMax(int[] arr) {
+        int max = Integer.MIN_VALUE;
         for (int val : arr) {
-            max=max<val?val:max;
+            max = max < val ? val : max;
         }
         return max;
     }
-    public static double ArrayMin(double[]arr){
-        double min=Double.MIN_VALUE;
+
+    public static double ArrayMin(double[] arr) {
+        double min = Double.MIN_VALUE;
         for (double val : arr) {
-            min=min>val?min:val;
+            min = min < val ? min : val;
         }
         return min;
     }
-    public static int ArrayMin(int[]arr){
-        int max=Integer.MIN_VALUE;
+
+    public static int ArrayMin(int[] arr) {
+        int min = Integer.MIN_VALUE;
         for (int val : arr) {
-            max=max<val?max:val;
+            min = min < val ? min : val;
         }
-        return max;
+        return min;
     }
+
     public static double ArraySum(double[] arr) {
         double sum = 0;
         for (double val : arr) {
@@ -375,6 +382,7 @@ public final class Util {
         }
         return sum;
     }
+
     public static long ArraySum(long[] arr) {
         long sum = 0;
         for (long val : arr) {
@@ -407,16 +415,18 @@ public final class Util {
         sb.append(arr[end - 1]);
         return sb.toString();
     }
-    public static double Interpolate(double val,double min,double max){
-        val=Util.Bound(val,0,1);
-        return (max-min)*val+min;
+
+    public static double Interpolate(double val, double min, double max) {
+        val = Util.Bound(val, 0, 1);
+        return (max - min) * val + min;
     }
-    public static double Interpolate2D(double x, double y, double bottomLeft, double bottomRight, double topLeft, double topRight){
-        x=Util.Bound(x,0,1);
-        y=Util.Bound(y,0,1);
-        double bottom =(bottomRight-bottomLeft)*x+bottomLeft;
-        double top =(topRight-topLeft)*x+topLeft;
-        return (top-bottom)*y+bottom;
+
+    public static double Interpolate2D(double x, double y, double bottomLeft, double bottomRight, double topLeft, double topRight) {
+        x = Util.Bound(x, 0, 1);
+        y = Util.Bound(y, 0, 1);
+        double bottom = (bottomRight - bottomLeft) * x + bottomLeft;
+        double top = (topRight - topLeft) * x + topLeft;
+        return (top - bottom) * y + bottom;
     }
 
     public static int GetBit(int v, int i) {
@@ -627,10 +637,10 @@ public final class Util {
      */
     public static int[] VonNeumannHood(boolean includeOrigin) {
         if (includeOrigin) {
-            return new int[]{0,0,0,0,0,
+            return new int[]{0, 0, 0, 0, 0,
                     0, 0, 1, 0, -1, 0, 0, 1, 0, -1};
         } else {
-            return new int[]{0,0,0,0,
+            return new int[]{0, 0, 0, 0,
                     1, 0, -1, 0, 0, 1, 0, -1};
         }
     }
@@ -643,10 +653,10 @@ public final class Util {
      */
     public static int[] MooreHood(boolean includeOrigin) {
         if (includeOrigin) {
-            return new int[]{0,0,0,0,0,0,0,0,0,
+            return new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0,
                     0, 0, 1, 1, 1, 0, 1, -1, 0, -1, -1, -1, -1, 0, -1, 1, 0, 1};
         } else {
-            return new int[]{0,0,0,0,0,0,0,0,
+            return new int[]{0, 0, 0, 0, 0, 0, 0, 0,
                     1, 1, 1, 0, 1, -1, 0, -1, -1, -1, -1, 0, -1, 1, 0, 1};
         }
     }
@@ -659,10 +669,10 @@ public final class Util {
      */
     public static int[] HexHoodEvenY(boolean includeOrigin) {
         if (includeOrigin) {
-            return new int[]{0,0,0,0,0,0,0,
+            return new int[]{0, 0, 0, 0, 0, 0, 0,
                     0, 0, 1, 1, 1, 0, 1, -1, 0, -1, -1, 0, 0, 1};
         } else {
-            return new int[]{0,0,0,0,0,0,
+            return new int[]{0, 0, 0, 0, 0, 0,
                     1, 1, 1, 0, 1, -1, 0, -1, -1, 0, 0, 1};
         }
     }
@@ -675,42 +685,44 @@ public final class Util {
      */
     public static int[] HexHoodOddY(boolean includeOrigin) {
         if (includeOrigin) {
-            return new int[]{0,0,0,0,0,0,0,
+            return new int[]{0, 0, 0, 0, 0, 0, 0,
                     0, 0, 1, 0, 0, -1, -1, -1, -1, 0, -1, 1, 0, 1};
         } else {
-            return new int[]{0,0,0,0,0,0,
+            return new int[]{0, 0, 0, 0, 0, 0,
                     1, 0, 0, -1, -1, -1, -1, 0, -1, 1, 0, 1};
         }
     }
 
     /**
-     * Returns the coordinates defining the Triangular neighborhood for even xDim, even yDim or oddx, odd yDim. centered on (0,0)
+     * Returns the coordinates defining the Triangular neighborhood for even xDim, even yDim or oddx, odd yDim. centered
+     * on (0,0)
      *
      * @param includeOrigin defines whether to include the origin (0,0)
      * @return coordinates returned as an array of the form [xDim,yDim,xDim,yDim,...]
      */
     public static int[] TriangleHoodSameParity(boolean includeOrigin) {
         if (includeOrigin) {
-            return new int[]{0,0,0,0,
+            return new int[]{0, 0, 0, 0,
                     0, 0, -1, 0, 1, 0, 0, 1};
         } else {
-            return new int[]{0,0,0,
+            return new int[]{0, 0, 0,
                     -1, 0, 1, 0, 0, 1};
         }
     }
 
     /**
-     * Returns the coordinates defining the Triangular neighborhood for even xDim, odd yDim or oddx, even yDim. centered on (0,0)
+     * Returns the coordinates defining the Triangular neighborhood for even xDim, odd yDim or oddx, even yDim. centered
+     * on (0,0)
      *
      * @param includeOrigin defines whether to include the origin (0,0)
      * @return coordinates returned as an array of the form [xDim,yDim,xDim,yDim,...]
      */
     public static int[] TriangleHoodDifParity(boolean includeOrigin) {
         if (includeOrigin) {
-            return new int[]{0,0,0,0,
+            return new int[]{0, 0, 0, 0,
                     0, 0, -1, 0, 1, 0, 0, -1};
         } else {
-            return new int[]{0,0,0,
+            return new int[]{0, 0, 0,
                     -1, 0, 1, 0, 0, -1};
         }
     }
@@ -724,17 +736,17 @@ public final class Util {
      */
     public static int[] VonNeumannHood3D(boolean includeOrigin) {
         if (includeOrigin) {
-            return new int[]{0,0,0,0,0,0,0,
+            return new int[]{0, 0, 0, 0, 0, 0, 0,
                     0, 0, 0, 1, 0, 0, -1, 0, 0, 0, 1, 0, 0, -1, 0, 0, 0, 1, 0, 0, -1};
         } else {
-            return new int[]{0,0,0,0,0,0,
+            return new int[]{0, 0, 0, 0, 0, 0,
                     1, 0, 0, -1, 0, 0, 0, 1, 0, 0, -1, 0, 0, 0, 1, 0, 0, -1};
         }
     }
 
     public int[] MooreHood3D(boolean includeOrigin) {
         if (includeOrigin) {
-            return new int[]{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+            return new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                     0, 0, 0,
                     0, 0, 1,
                     0, 0, -1,
@@ -764,7 +776,7 @@ public final class Util {
                     1, -1, -1,
             };
         } else {
-            return new int[]{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+            return new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                     0, 0, 1,
                     0, 0, -1,
                     1, 0, 0,
@@ -845,7 +857,7 @@ public final class Util {
         int Count = 0;
         for (; n > 0; --n) {
             writeHere[Count * 2] = (int) Math.floor(x);
-            writeHere[Count * 2+1] = (int) Math.floor(y);
+            writeHere[Count * 2 + 1] = (int) Math.floor(y);
             Count++;
 
             if (error > 0) {
@@ -859,7 +871,7 @@ public final class Util {
         return writeHere;
     }
 
-//    /**
+    //    /**
 //     * Returns an array of all squares touching a line between the positions provided
 //     *
 //     * @param x1 the xDim coordinate of the starting position
@@ -909,7 +921,7 @@ public final class Util {
         int Count = 0;
         for (; n > 0; --n) {
             returnCoords[Count * 2] = (int) Math.floor(x);
-            returnCoords[Count * 2+1] = (int) Math.floor(y);
+            returnCoords[Count * 2 + 1] = (int) Math.floor(y);
             Count++;
 
             if (error > 0) {
@@ -922,7 +934,8 @@ public final class Util {
         }
         return Count;
     }
-   public static void AlongLineAction(double x1, double y1, double x2, double y2, Coords2DAction Action) {
+
+    public static void AlongLineAction(double x1, double y1, double x2, double y2, Coords2DAction Action) {
         double dx = Math.abs(x2 - x1);
         double dy = Math.abs(y2 - y1);
 
@@ -961,7 +974,7 @@ public final class Util {
 
         int Count = 0;
         for (; n > 0; --n) {
-            Action.Action((int) Math.floor(x),(int) Math.floor(y));
+            Action.Action((int) Math.floor(x), (int) Math.floor(y));
             Count++;
 
             if (error > 0) {
@@ -975,7 +988,8 @@ public final class Util {
     }
 
     /**
-     * Returns the coordinates of all squares whose centers lie within a circle of the provided radius, centered on (0,0)
+     * Returns the coordinates of all squares whose centers lie within a circle of the provided radius, centered on
+     * (0,0)
      *
      * @param includeOrigin defines whether to include the origin (0,0)
      * @param radius        the radius of the circle
@@ -1005,7 +1019,7 @@ public final class Util {
             }
         }
         int[] ret = new int[ct * 3];
-        System.arraycopy(retLong, 0, ret, ct, ct*2);
+        System.arraycopy(retLong, 0, ret, ct, ct * 2);
         return ret;
     }
 
@@ -1056,7 +1070,8 @@ public final class Util {
 //    }
 
     /**
-     * Returns the coordinates of all squares whose centers lie within a rectangle of the provided radius, centered on (0,0)
+     * Returns the coordinates of all squares whose centers lie within a rectangle of the provided radius, centered on
+     * (0,0)
      *
      * @param includeOrigin defines whether to include the origin (0,0)
      * @param radX          the radius of the rectangle in the xDim direction
@@ -1067,7 +1082,7 @@ public final class Util {
         //returns a square with a center location at 0,0
         int[] dataIn;
         int iCoord;
-        int nCoords=(radX * 2 + 1) * (radY * 2 + 1);
+        int nCoords = (radX * 2 + 1) * (radY * 2 + 1);
         if (includeOrigin) {
             dataIn = new int[nCoords * 3];
             iCoord = 1;
@@ -1087,28 +1102,31 @@ public final class Util {
         }
         return dataIn;
     }
-    static public int[]GenHood1D(int[]coords){
-        int isStart=coords.length;
-        int[]ret=new int[coords.length+isStart];
-        System.arraycopy(coords,0,ret,isStart,coords.length);
+
+    static public int[] GenHood1D(int[] coords) {
+        int isStart = coords.length;
+        int[] ret = new int[coords.length + isStart];
+        System.arraycopy(coords, 0, ret, isStart, coords.length);
         return ret;
     }
-    static public int[]GenHood2D(int[]coords){
-        if(coords.length%2!=0){
+
+    static public int[] GenHood2D(int[] coords) {
+        if (coords.length % 2 != 0) {
             throw new IllegalArgumentException("2D coords list must be divisible by 2");
         }
-        int isStart=coords.length/2;
-        int[]ret=new int[coords.length+isStart];
-        System.arraycopy(coords,0,ret,isStart,coords.length);
+        int isStart = coords.length / 2;
+        int[] ret = new int[coords.length + isStart];
+        System.arraycopy(coords, 0, ret, isStart, coords.length);
         return ret;
     }
-    static public int[]GenHood3D(int[]coords){
-        if(coords.length%3!=0){
+
+    static public int[] GenHood3D(int[] coords) {
+        if (coords.length % 3 != 0) {
             throw new IllegalArgumentException("3D coords list must be divisible by 3");
         }
-        int isStart=coords.length/3;
-        int[]ret=new int[coords.length+isStart];
-        System.arraycopy(coords,0,ret,isStart,coords.length);
+        int isStart = coords.length / 3;
+        int[] ret = new int[coords.length + isStart];
+        System.arraycopy(coords, 0, ret, isStart, coords.length);
         return ret;
     }
 
@@ -1138,6 +1156,7 @@ public final class Util {
 
     /**
      * Factorial of a positive integer
+     *
      * @param toFact 0 or a natural number
      * @return Factorial of toFact. Factorial(0) is 1
      */
@@ -1153,10 +1172,10 @@ public final class Util {
     }
 
     /**
-     * Samples a Poisson distribution, giving the probability of toSamp many
-     * events assuming a Poisson distribution
+     * Samples a Poisson distribution, giving the probability of toSamp many events assuming a Poisson distribution
+     *
      * @param sampleSize How many times the event happens
-     * @param avg The average number of times the event happens
+     * @param avg        The average number of times the event happens
      * @return the probability of toSamp many events
      */
     public static double PoissonProb(int sampleSize, double avg) {
@@ -1236,17 +1255,21 @@ public final class Util {
     public static double Dist(double x1, double y1, double x2, double y2) {
         return Math.sqrt(DistSquared(x1, y1, x2, y2));
     }
-    public static double DistSqaured(Agent2DBase a1,Agent2DBase a2){
+
+    public static double DistSqaured(Agent2DBase a1, Agent2DBase a2) {
         return DistSquared(a1.Xpt(), a1.Ypt(), a2.Xpt(), a2.Ypt());
     }
-    public static double Dist(Agent2DBase a1,Agent2DBase a2){
+
+    public static double Dist(Agent2DBase a1, Agent2DBase a2) {
         return Dist(a1.Xpt(), a1.Ypt(), a2.Xpt(), a2.Ypt());
     }
-    public static double DistSquared(Agent3DBase a1, Agent3DBase a2){
-        return DistSquared(a1.Xpt(), a1.Ypt(),a1.Zpt(), a2.Xpt(), a2.Ypt(),a2.Zpt());
+
+    public static double DistSquared(Agent3DBase a1, Agent3DBase a2) {
+        return DistSquared(a1.Xpt(), a1.Ypt(), a1.Zpt(), a2.Xpt(), a2.Ypt(), a2.Zpt());
     }
-    public static double Dist(Agent3DBase a1, Agent3DBase a2){
-        return Dist(a1.Xpt(), a1.Ypt(),a1.Zpt(), a2.Xpt(), a2.Ypt(),a2.Zpt());
+
+    public static double Dist(Agent3DBase a1, Agent3DBase a2) {
+        return Dist(a1.Xpt(), a1.Ypt(), a1.Zpt(), a2.Xpt(), a2.Ypt(), a2.Zpt());
     }
 
     public static double Dist(double x1, double y1, double x2, double y2, double xDim, double yDim, boolean wrapX, boolean wrapY) {
@@ -1278,12 +1301,12 @@ public final class Util {
     public static double DistSquared(double x1, double y1, double x2, double y2, double xDim, double yDim, boolean wrapX, boolean wrapY) {
         double xDist, yDist;
         if (wrapX) {
-            xDist = DispWrap(x1, x2, xDim);
+            xDist = DistWrap(x2, x1, xDim);
         } else {
             xDist = x2 - x1;
         }
         if (wrapY) {
-            yDist = DispWrap(y1, y2, yDim);
+            yDist = DistWrap(y2, y1, yDim);
         } else {
             yDist = y2 - y1;
         }
@@ -1305,17 +1328,17 @@ public final class Util {
     public static double DistSquared(double x1, double y1, double z1, double x2, double y2, double z2, int xDim, int yDim, int zDim, boolean wrapX, boolean wrapY, boolean wrapZ) {
         double xDist, yDist, zDist;
         if (wrapX) {
-            xDist = DispWrap(x1, x2, xDim);
+            xDist = DistWrap(x2, x1, xDim);
         } else {
             xDist = x2 - x1;
         }
         if (wrapY) {
-            yDist = DispWrap(y1, y2, yDim);
+            yDist = DistWrap(y2, y1, yDim);
         } else {
             yDist = y2 - y1;
         }
         if (wrapZ) {
-            zDist = DispWrap(z1, z2, zDim);
+            zDist = DistWrap(z2, z1, zDim);
         } else {
             zDist = z2 - z1;
         }
@@ -1358,10 +1381,11 @@ public final class Util {
         }
         return Math.sqrt(tot);
     }
-    public static void Normalize(double[]vals){
-        double norm=Norm(vals);
+
+    public static void Normalize(double[] vals) {
+        double norm = Norm(vals);
         for (int i = 0; i < vals.length; i++) {
-            vals[i]=vals[i]/norm;
+            vals[i] = vals[i] / norm;
         }
     }
 
@@ -1376,7 +1400,8 @@ public final class Util {
     public static double NormSquared(double v1, double v2, double v3, double v4) {
         return (v1 * v1) + (v2 * v2) + (v3 * v3) + (v4 * v4);
     }
-    public static double NormSquared(double [] vals) {
+
+    public static double NormSquared(double[] vals) {
         double tot = 0;
         for (double val : vals) {
             tot += val * val;
@@ -1435,15 +1460,15 @@ public final class Util {
 //        }
 //    }
 //
-    public static double DispWrap(double p1, double p2, double dim) {
-        if (Math.abs(p2 - p1) > dim / 2) {
-            if (p1 > p2) {
-                p2 = p2 + dim;
+    public static double DistWrap(double p1, double p2, double dim) {
+        if (Math.abs(p1 - p1) > dim / 2) {
+            if (p1 > p1) {
+                p1 = p1 + dim;
             } else {
-                p2 = p2 - dim;
+                p1 = p1 - dim;
             }
         }
-        return p2 - p1;
+        return p1 - p1;
     }
 
 //    public static <T extends AgentPhys2,Q extends AgentPhys2,G extends AgentGrid2D<Q>>double CollisionSum2D(T agent,G searchMe, final ArrayList<Q> putAgentsHere,RadToForceMap ForceFun,double searchRad,boolean wrapX,boolean wrapY){
@@ -1469,6 +1494,7 @@ public final class Util {
     public static double Bound(double val, double min, double max) {
         return val < min ? min : (val > max ? max : val);
     }
+
     public static long Bound(long val, long min, long max) {
         return val < min ? min : (val > max ? max : val);
     }
@@ -1488,16 +1514,18 @@ public final class Util {
     }
 
     public static double ScaleMinToMax(double val, double min, double max) {
-        return val*(max-min)+min;
+        return val * (max - min) + min;
     }
+
     /**
      * returns where the value is from min to max as a number from 0 to 1
      */
     public static double Scale0to1(double val, double min, double max) {
         return (val - min) / (max - min);
     }
+
     public static double Rescale(double val, double oldMin, double oldMax, double newMin, double newMax) {
-        return ScaleMinToMax(Scale0to1(val,oldMin,oldMax),newMin,newMax);
+        return ScaleMinToMax(Scale0to1(val, oldMin, oldMax), newMin, newMax);
     }
 
     /**
@@ -1529,7 +1557,8 @@ public final class Util {
     }
 
     /**
-     * adjusts probability that an event will occur in 1 unit of time to the probability that the event will occur in timeFraction duration
+     * adjusts probability that an event will occur in 1 unit of time to the probability that the event will occur in
+     * timeFraction duration
      *
      * @param prob     probability that an event occurs in 1 unit of time
      * @param duration duration in units of time over which event may occur
@@ -1552,51 +1581,12 @@ public final class Util {
     }
 
 
-    /**
-     * runs a fully connected neural network layer
-     *
-     * @param neurons      array of all neurons in the network
-     * @param weights      array of weights in the fully connected layer
-     * @param iFromStart   index of the start of the input to the fully connected layer
-     * @param iFromEnd     index of the end of the input to the fully connected layer
-     * @param iToStart     index of the start of the output of the fully connected layer
-     * @param iToEnd       index of the end of the output of the fully connected layer
-     * @param iWeightStart index of the start of the weights for this layer out of the weights array
-     */
-    public static void NNfullyConnectedLayer(double[] neurons, double[] weights, int iFromStart, int iFromEnd, int iToStart, int iToEnd, int iWeightStart) {
-        int iWeight = iWeightStart;
-        for (int iFrom = iFromStart; iFrom < iFromEnd; iFrom++) {
-            for (int iTo = iToStart; iTo < iToEnd; iTo++) {
-                neurons[iTo] += neurons[iFrom] * weights[iWeight];
-                iWeight++;
-            }
-        }
-    }
-    public static void NNfullyConnectedLayer(double[] neurons, double[] weights, int iFromStart, int iFromEnd, int iToStart, int iToEnd, int iWeightStart, DoubleToDouble ActivationFunction) {
-        int iWeight = iWeightStart;
-        for (int iFrom = iFromStart; iFrom < iFromEnd; iFrom++) {
-            for (int iTo = iToStart; iTo < iToEnd; iTo++) {
-                neurons[iTo] += neurons[iFrom] * weights[iWeight];
-                iWeight++;
-            }
-        }
-        for (int iTo = iToStart; iTo < iToEnd; iTo++) {
-            neurons[iTo]=ActivationFunction.DoubleToDouble(neurons[iTo]);
-        }
-    }
-
-    /**
-     * set all neurons between iStart and iEnd with the given value
-     */
-    public static void NNset(double[] neurons, int iStart, int iEnd, double val) {
-        Arrays.fill(neurons, iStart, iEnd, val);
-    }
-
     public static double Sigmoid(double val, double stretch, double inflectionValue, double minCap, double maxCap) {
         return minCap + ((maxCap - minCap)) / (1.0 + Math.exp(((-val) + inflectionValue) / stretch));
     }
+
     public static double Sigmoid(double val, double stretch) {
-        return 1 / (1.0 + Math.exp(-val/stretch));
+        return 1 / (1.0 + Math.exp(-val / stretch));
     }
 
 
@@ -1624,14 +1614,15 @@ public final class Util {
         Runtime rt = Runtime.getRuntime();
         return "Used Memory: " + (rt.totalMemory() - rt.freeMemory()) / mb + " mb, Free Momory: " + rt.freeMemory() / mb + " mb, Total Memory:" + rt.totalMemory() / mb + " mb, GetMax  Memory: " + rt.maxMemory() / mb + " mb";
     }
+
     //writes into the passed array [used memory,free memory,total memory,max memory] all in mb.
     public static void MemoryUsageInfo(long[] ret) {
         int mb = 1024 * 1024;
         Runtime rt = Runtime.getRuntime();
-        ret[0]=rt.totalMemory()-rt.freeMemory()/mb;
-        ret[1]=rt.freeMemory()/mb;
-        ret[2]=rt.totalMemory()/mb;
-        ret[3]=rt.maxMemory()/mb;
+        ret[0] = rt.totalMemory() - rt.freeMemory() / mb;
+        ret[1] = rt.freeMemory() / mb;
+        ret[2] = rt.totalMemory() / mb;
+        ret[3] = rt.maxMemory() / mb;
     }
 
     /**
@@ -1688,109 +1679,21 @@ public final class Util {
         return Val >= 0 && Val < Dim;
     }
 
-    public static double GradientX2D(double[] vals, int xDim, int yDim, int centerX, int centerY, boolean boundaryCond, double boundaryValue, boolean wrapX) {
-        double xP1, xM1;
-        if (InDim(centerX + 1, xDim)) {
-            xP1 = vals[(centerX + 1) * yDim + centerY];
-        } else if (boundaryCond) {
-            xP1 = boundaryValue;
-        } else if (wrapX) {
-            xP1 = vals[(0) * yDim + centerY];
-        } else {
-            xP1 = vals[centerX * yDim + centerY];
-        }
-        if (InDim(centerX - 1, xDim)) {
-            xM1 = vals[(centerX - 1) * yDim + centerY];
-        } else if (boundaryCond) {
-            xM1 = boundaryValue;
-        } else if (wrapX) {
-            xM1 = vals[(xDim - 1) * yDim + centerY];
-        } else {
-            xM1 = vals[centerX * yDim + centerY];
-        }
-        return xP1 - xM1;
-    }
-
-    public static double GradientY2D(double[] vals, int xDim, int yDim, int centerX, int centerY, boolean boundaryCond, double boundaryValue, boolean wrapY) {
-        double yP1, yM1;
-        if (InDim(centerY + 1, yDim)) {
-            yP1 = vals[centerX * yDim + (centerY + 1)];
-        } else if (boundaryCond) {
-            yP1 = boundaryValue;
-        } else if (wrapY) {
-            yP1 = vals[centerX * yDim + (0)];
-        } else {
-            yP1 = vals[centerX * yDim + centerY];
-        }
-        if (InDim(centerY - 1, yDim)) {
-            yM1 = vals[centerX * yDim + (centerY - 1)];
-        } else if (boundaryCond) {
-            yM1 = boundaryValue;
-        } else if (wrapY) {
-            yM1 = vals[centerX * yDim + (yDim - 1)];
-        } else {
-            yM1 = vals[centerX * yDim + centerY];
-        }
-        return yP1 - yM1;
-    }
-
-    public static int SubsetMappedHood(int[]hood,int lenToCheck,IndexBool eval){
-        int validCt=0;
+    public static int SubsetMappedHood(int[] hood, int lenToCheck, IndexBool eval) {
+        int validCt = 0;
         for (int i = 0; i < lenToCheck; i++) {
-            if(eval.Eval(hood[i])){
-                hood[validCt]=hood[i];
+            if (eval.Eval(hood[i])) {
+                hood[validCt] = hood[i];
                 validCt++;
             }
         }
         return validCt;
     }
 
-    //REFLECTION
-    public static boolean IsMethodOverridden(Class derived,Class base,String methodName){
-            Method[] meths=derived.getDeclaredMethods();
-            Method[] baseMeths=base.getDeclaredMethods();
-        for (Method meth : meths) {
-            if(meth.getName().equals(methodName)) {
-                return true;
-            }
-        }
-        boolean found=false;
-        for (Method meth : baseMeths) {
-            if(meth.getName().equals(methodName)) {
-                found=true;
-                break;
-            }
-        }
-        if(!found) {
-            throw new IllegalArgumentException("name "+methodName+" not found in base class "+base.getName()+"!");
-        }
-        return false;
-    }
-
-    public static<T,O extends T> boolean IsMethodOverridden(Class<O> derived,String methodName){
-        Method[] meths=derived.getDeclaredMethods();
-        for (Method meth : meths) {
-            if(meth.getName().equals(methodName)) {
-                return true;
-            }
-        }
-        return false;
-    }
-    public static double[] MatVecMul(final double[] mat,final double[] vec,double[]out){
-        final int nCols=vec.length;
-        final int nRows=mat.length/nCols;
-        for (int y = 0; y < nRows; y++) {
-            out[y]=mat[y*nCols]*vec[0];
-            for (int x = 1; x < nCols; x++) {
-                out[y]+=mat[y*nCols+x]*vec[x];
-            }
-        }
-        return out;
-    }
 
     //MULTITHREADING
-    public static void MultiThread(int nRuns,ParallelFunction RunFun){
-        MultiThread(nRuns,Runtime.getRuntime().availableProcessors(),RunFun);
+    public static void MultiThread(int nRuns, ParallelFunction RunFun) {
+        MultiThread(nRuns, Runtime.getRuntime().availableProcessors(), RunFun);
     }
 
     public static void MultiThread(int nRuns, int nThreads, ParallelFunction RunFun) {
@@ -1808,11 +1711,11 @@ public final class Util {
 
 
     //SAVING AND LOADING
-    public static byte[] SaveState(SerializableModel model){
-        ByteArrayOutputStream bos=new ByteArrayOutputStream();
+    public static byte[] SaveState(SerializableModel model) {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
         ObjectOutput out;
-        try{
-            out= new ObjectOutputStream(bos);
+        try {
+            out = new ObjectOutputStream(bos);
             out.writeObject(model);
             out.flush();
             return bos.toByteArray();
@@ -1820,17 +1723,17 @@ public final class Util {
             System.out.println(e.getMessage());
             e.printStackTrace();
         } finally {
-            try{
+            try {
                 bos.close();
-            }
-            catch (IOException e){
+            } catch (IOException e) {
                 System.out.println(e.getMessage());
                 e.printStackTrace();
             }
         }
         return null;
     }
-    public static void SaveState(SerializableModel model,String stateFileName) {
+
+    public static void SaveState(SerializableModel model, String stateFileName) {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         ObjectOutput out;
         try {
@@ -1851,8 +1754,8 @@ public final class Util {
         }
     }
 
-    static byte[] StateFromFile(String stateBytesFile){
-        Path path= Paths.get(stateBytesFile);
+    static byte[] StateFromFile(String stateBytesFile) {
+        Path path = Paths.get(stateBytesFile);
         try {
             return Files.readAllBytes(path);
         } catch (IOException e) {
@@ -1862,95 +1765,36 @@ public final class Util {
         return null;
     }
 
-    public static <T extends SerializableModel> T LoadState(String stateBytesFile){
+    public static <T extends SerializableModel> T LoadState(String stateBytesFile) {
         return LoadState(StateFromFile(stateBytesFile));
     }
-    public static <T extends SerializableModel> T LoadState(byte[] state){
-        ByteArrayInputStream bis=new ByteArrayInputStream(state);
-        ObjectInput in=null;
-        SerializableModel ret=null;
-        try{
-            in=new ObjectInputStream(bis);
-            ret= (SerializableModel) in.readObject();
+
+    public static <T extends SerializableModel> T LoadState(byte[] state) {
+        ByteArrayInputStream bis = new ByteArrayInputStream(state);
+        ObjectInput in = null;
+        SerializableModel ret = null;
+        try {
+            in = new ObjectInputStream(bis);
+            ret = (SerializableModel) in.readObject();
             ret.SetupConstructors();
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
             System.out.println(e.getMessage());
             e.printStackTrace();
-        } finally{
-            try{
-                if(in!=null){
+        } finally {
+            try {
+                if (in != null) {
                     in.close();
                 }
-            }
-            catch (IOException e){
+            } catch (IOException e) {
                 System.out.println(e.getMessage());
                 e.printStackTrace();
             }
         }
-        return (T)ret;
+        return (T) ret;
     }
-
-
-    //used to interpolate values over a PDEGrid2DCoarse, when normal lattice positions are 1/3 the length of PDEGridCoarse lattice positions
-    //at some point it would be good to make a generic version of this function somehow
-    private final static double interpInSide =2.0/3.0, interpOutSide =1.0/3.0, interpInCorner =4.0/9.0, interpOutCorner =5.0/18.0;
-    static int InFallback(int val,int fallback,int dim){
-        return(Util.InDim(val, dim))?val:fallback;
-    }
-    public static double GetInterp3x3(int xCell,int yCell,PDEGrid2DCoarse diff){
-        PDEGrid2D g=diff.grid;
-        final int xDiff=xCell/3;
-        final int yDiff=yCell/3;
-        final int xMod=xCell%3;
-        final int yMod=yCell%3;
-        switch (xMod) {
-            case 0:
-                switch (yMod) {
-                    case 0://left bottom
-                        return g.Get(xDiff, yDiff) * interpInCorner +
-                                g.Get(InFallback(xDiff - 1, xDiff, g.xDim), yDiff) * interpOutCorner +
-                                g.Get(xDiff, InFallback(yDiff - 1, yDiff, g.yDim)) * interpOutCorner;
-                    case 1://left middle
-                        return g.Get(xDiff, yDiff) * interpInSide + g.Get(InFallback(xDiff - 1, xDiff, g.xDim), yDiff) * interpOutSide;
-                    case 2://left top
-                        return g.Get(xDiff, yDiff) * interpInCorner +
-                                g.Get(InFallback(xDiff - 1, xDiff, g.xDim), yDiff) * interpOutCorner +
-                                g.Get(xDiff, InFallback(yDiff + 1, yDiff, g.yDim)) * interpOutCorner;
-                    default: throw new IllegalStateException("mod calculation did not work!");
-                }
-            case 1:
-                switch (yMod){
-                    case 0://middle bottom
-                        return g.Get(xDiff, yDiff) * interpInSide + g.Get(xDiff, InFallback(yDiff-1,yDiff,g.yDim)) * interpOutSide;
-                    case 1://middle
-                        return g.Get(xDiff,yDiff);
-                    case 2://middle top
-                        return g.Get(xDiff, yDiff) * interpInSide + g.Get(xDiff, InFallback(yDiff+1,yDiff,g.yDim)) * interpOutSide;
-                    default: throw new IllegalStateException("mod calculation did not work!");
-                }
-            case 2:
-                switch (yMod) {
-                    case 0://right bottom
-                        return g.Get(xDiff, yDiff) * interpInCorner +
-                                g.Get(InFallback(xDiff + 1, xDiff, g.xDim), yDiff) * interpOutCorner +
-                                g.Get(xDiff, InFallback(yDiff - 1, yDiff, g.yDim)) * interpOutCorner;
-                    case 1://right middle
-                        return g.Get(xDiff, yDiff) * interpInSide + g.Get(InFallback(xDiff + 1, xDiff, g.xDim), yDiff) * interpOutSide;
-                    case 2://right top
-                        return g.Get(xDiff, yDiff) * interpInCorner +
-                                g.Get(InFallback(xDiff + 1, xDiff, g.xDim), yDiff) * interpOutCorner +
-                                g.Get(xDiff, InFallback(yDiff + 1, yDiff, g.yDim)) * interpOutCorner;
-                    default: throw new IllegalStateException("mod calculation did not work!");
-                }
-
-            default: throw new IllegalStateException("mod calculation did not work!");
-        }
-    }
-
 }
-
 
 
 

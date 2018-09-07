@@ -2,6 +2,7 @@ package Framework.GridsAndAgents;
 
 import Framework.Interfaces.AgentToBool;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import static Framework.Util.InDim;
@@ -14,50 +15,7 @@ import static Framework.Util.ModWrap;
  * Created by rafael on 11/18/16.
  */
 
-public class AgentSQ1Dunstackable<T extends AgentGrid1D> extends Agent1DBase<T>{
-
-    public void SwapPosition(AgentBaseSpatial other){
-        if(this.Isq()==other.Isq()){
-            return;
-        }
-        if(!alive||!other.alive){
-            throw new RuntimeException("attempting to move dead agent");
-        }
-        if(other.G!=G){
-            throw new IllegalStateException("can't swap positions between agents on different grids!");
-        }
-        int iNew=other.Isq();
-        int iNewOther=Isq();
-        other.RemSQ();
-        this.RemSQ();
-        other.Setup(iNewOther);
-        this.Setup(iNew);
-    }
-    void Setup(double i){
-        Setup((int)i);
-    }
-    void Setup(double xSq,double ySq){
-        throw new IllegalStateException("shouldn't be adding 1D agent to 2D typeGrid");
-    }
-    void Setup(double xSq,double ySq,double zSq){
-        throw new IllegalStateException("shouldn't be adding 1D agent to 3D typeGrid");
-    }
-
-    @Override
-    void Setup(int i) {
-        iSq=i;
-        AddSQ(i);
-    }
-
-    @Override
-    void Setup(int x, int y) {
-        throw new IllegalStateException("shouldn't be adding 1D agent to 2D typeGrid");
-    }
-
-    @Override
-    void Setup(int x, int y, int z) {
-        throw new IllegalStateException("shouldn't be adding 2D agent to 3D typeGrid");
-    }
+public class AgentSQ1Dunstackable<T extends AgentGrid1D> extends Agent1DBase<T> implements Serializable{
 
     /**
      * Moves the agent to the square with the specified index
@@ -71,17 +29,10 @@ public class AgentSQ1Dunstackable<T extends AgentGrid1D> extends Agent1DBase<T>{
         iSq=x;
         AddSQ(x);
     }
-    void AddSQ(int i){
-        if(G.grid[i]!=null){
-            throw new RuntimeException("Adding multiple unstackable agents to the same square!");
-        }
-        G.grid[i]=this;
-    }
-    void RemSQ(){
-        G.grid[iSq]=null;
-    }
 
-
+    /**
+     * Moves the agent to the specified square, will apply wraparound if it is enabled
+     */
     public void MoveSafeSQ(int newX){
         if(!alive){
             throw new RuntimeException("Attempting to move dead agent");
@@ -127,7 +78,7 @@ public class AgentSQ1Dunstackable<T extends AgentGrid1D> extends Agent1DBase<T>{
     }
 
     @Override
-    void GetAllOnSquareEval(ArrayList<AgentBaseSpatial> putHere, AgentToBool evalAgent) {
+    void GetAllOnSquare(ArrayList<AgentBaseSpatial> putHere, AgentToBool evalAgent) {
         if(evalAgent.EvalAgent(this)) {
             putHere.add(this);
         }
@@ -139,7 +90,7 @@ public class AgentSQ1Dunstackable<T extends AgentGrid1D> extends Agent1DBase<T>{
     }
 
     @Override
-    int GetCountOnSquareEval(AgentToBool evalAgent) {
+    int GetCountOnSquare(AgentToBool evalAgent) {
         return evalAgent.EvalAgent(this)?1:0;
     }
     /**
@@ -152,4 +103,43 @@ public class AgentSQ1Dunstackable<T extends AgentGrid1D> extends Agent1DBase<T>{
     public int Isq(){
         return iSq;
     }
+
+    void Setup(double i){
+        Setup((int)i);
+    }
+    void Setup(double xSq,double ySq){
+        throw new IllegalStateException("shouldn't be adding 1D agent to 2D typeGrid");
+    }
+    void Setup(double xSq,double ySq,double zSq){
+        throw new IllegalStateException("shouldn't be adding 1D agent to 3D typeGrid");
+    }
+
+    @Override
+    void Setup(int i) {
+        iSq=i;
+        AddSQ(i);
+    }
+
+    @Override
+    void Setup(int x, int y) {
+        throw new IllegalStateException("shouldn't be adding 1D agent to 2D typeGrid");
+    }
+
+    @Override
+    void Setup(int x, int y, int z) {
+        throw new IllegalStateException("shouldn't be adding 2D agent to 3D typeGrid");
+    }
+
+    void AddSQ(int i){
+        if(G.grid[i]!=null){
+            throw new RuntimeException("Adding multiple unstackable agents to the same square!");
+        }
+        G.grid[i]=this;
+    }
+    void RemSQ(){
+        G.grid[iSq]=null;
+    }
+
+
+
 }

@@ -2,7 +2,7 @@ package Framework.Gui;
 
 import Framework.Interfaces.*;
 import Framework.Interfaces.MenuItem;
-import Framework.Tools.KeyRecorder;
+import Framework.Tools.Internal.KeyRecorder;
 
 import javax.swing.*;
 import java.awt.*;

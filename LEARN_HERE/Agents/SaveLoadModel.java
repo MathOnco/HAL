@@ -1,7 +1,7 @@
 package LEARN_HERE.Agents;
 
 import Framework.Gui.GridWindow;
-import Framework.Tools.SerializableModel;
+import Framework.Interfaces.SerializableModel;
 import static Framework.Util.*;
 
 public class SaveLoadModel extends BirthDeath implements SerializableModel{

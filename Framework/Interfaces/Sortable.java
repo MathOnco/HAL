@@ -23,4 +23,45 @@ public interface Sortable {
      * should return the number of objects to sort in the data structure
      */
     int Length();
+
+    /**
+     * Runs quicksort on an object that implements Sortable
+     *
+     * @param sortMe          the object to be sorted
+     * @param greatestToLeast if true, sorting will be form greatest to least, otherwise will be least to greatest
+     */
+    default<T extends Sortable> void QuickSort(T sortMe, boolean greatestToLeast) {
+        _SortHelper(sortMe, 0, sortMe.Length() - 1, greatestToLeast);
+    }
+
+    default<T extends Sortable> void _SortHelper(T sortMe, int lo, int hi, boolean greatestToLeast) {
+        if (lo < hi) {
+            int p = _Partition(sortMe, lo, hi, greatestToLeast);
+            _SortHelper(sortMe, lo, p - 1, greatestToLeast);
+            _SortHelper(sortMe, p + 1, hi, greatestToLeast);
+        }
+    }
+
+    default<T extends Sortable> int _Partition(T sortMe, int lo, int hi, boolean greatestToLeast) {
+        if (greatestToLeast) {
+            for (int j = lo; j < hi; j++) {
+                if (sortMe.Compare(hi, j) <= 0) {
+                    sortMe.Swap(lo, j);
+                    lo++;
+                }
+            }
+            sortMe.Swap(lo, hi);
+            return lo;
+        } else {
+            for (int j = lo; j < hi; j++) {
+                if (sortMe.Compare(hi, j) >= 0) {
+                    sortMe.Swap(lo, j);
+                    lo++;
+                }
+            }
+            sortMe.Swap(lo, hi);
+            return lo;
+        }
+    }
+
 }

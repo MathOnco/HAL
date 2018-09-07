@@ -18,7 +18,7 @@ public class DiffTest3D {
             //}
             win.TickPause(10);
             grid3D.Diffusion(0.16,1);
-            win.DrawGridDiffXZ(grid3D,(val)-> Util.HeatMapRGB(val, (double) 0, (double) 1));
+            win.DrawPDEGridXZ(grid3D,(val)-> Util.HeatMapRGB(val, (double) 0, (double) 1));
         }
 
     }

@@ -10,6 +10,9 @@ public abstract class AgentBase<T> implements Serializable{
     int iList;
     int birthTick;
     boolean alive;
+    /**
+     * returns the grid that the agent belongs to (this is a permanent agent property, not a function)
+     */
     public final T G;
     AgentListNode myNodes;
 
@@ -24,10 +27,22 @@ public abstract class AgentBase<T> implements Serializable{
         return alive;
     }
 
+    /**
+     * returns the tick on which the agent was born
+     */
+
     public int BirthTick(){
         return birthTick;
     }
 
+    /**
+     * returns the age of the agent, in ticks. Be sure to use IncTick on the AgentGrid appropriately for this function to work.
+     */
+    abstract public int Age();
+
+    /**
+     * removes the agent from the grid
+     */
     abstract public void Dispose();
 
 }

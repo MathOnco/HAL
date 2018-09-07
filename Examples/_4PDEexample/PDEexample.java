@@ -10,7 +10,6 @@ import Framework.Util;
 
 import static Framework.Util.HeatMapRGB;
 import static Framework.Util.RGB;
-import static Framework.Util.SetAlpha;
 
 
 class SrcOrSink extends AgentSQ2Dunstackable<PDEexample>{

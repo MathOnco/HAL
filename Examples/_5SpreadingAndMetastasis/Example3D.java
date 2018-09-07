@@ -66,9 +66,9 @@ public class Example3D extends AgentGrid3D<ExCell3D> {
     int countTumor;
     final static int BACKGROUND_COLOR =RGB256(38,1,5), VESSEL_COLOR =RGB256(255,78,68);
     final static int VESSEL=0,TUMOR=1;
-    double DIFF_RATE=0.7/6;//maximum stable diffusion rate
-    double TUMOR_METABOLISM_RATE =0.96;
-    double NORMAL_METABOLISM_RATE =0.995;
+    double DIFF_RATE=0.5/6;//maximum stable diffusion rate
+    double TUMOR_METABOLISM_RATE =0.98;
+    double NORMAL_METABOLISM_RATE =0.997;
     double VESSEL_CONC=1;
     double DEATH_CONC=0.01;
     double METASTASIS_PROB=0.00001;
@@ -173,7 +173,7 @@ public class Example3D extends AgentGrid3D<ExCell3D> {
         while (!vis.IsClosed()){
             ex.StepAll();
             ex.DrawCells(vis);
-            visResource.DrawGridDiffXZ(ex.oxygen, (val)->HeatMapBRG(Math.pow(val,0.5)));
+            visResource.DrawPDEGridXZ(ex.oxygen, (val)->HeatMapBRG(Math.pow(val,0.5)));
             ex.CleanAgents();//Equivalent to calling CleanAgents, ShuffleAgents, and IncTick grid functions
             ex.ShuffleAgents(ex.rn);//Equivalent to calling CleanAgents, ShuffleAgents, and IncTick grid functions
         }

@@ -1,6 +1,6 @@
 package Framework.GridsAndAgents;
 
-import Framework.Tools.PDEequations;
+import Framework.Tools.Internal.PDEequations;
 import Framework.Util;
 
 import java.io.Serializable;
@@ -76,11 +76,19 @@ public class Grid3Ddouble extends GridBase3D implements Serializable{
     public void SetAll(double val){
         Arrays.fill(field,val);
     }
+
+    /**
+     * adds specified value to all entries of the curr field
+     */
     public void AddAll(double val){
         for (int i = 0; i < length; i++) {
             field[i]+=val;
         }
     }
+
+    /**
+     * multiplies all entries in the field by the value
+     */
     public void MulAll(double val){
         for (int i = 0; i < length; i++) {
             field[i]*=val;
@@ -96,49 +104,55 @@ public class Grid3Ddouble extends GridBase3D implements Serializable{
         }
         return tot/length;
     }
+
+    /**
+     * returns the gradient of the field in the X direction at the coordinates specified
+     */
     public double GradientX(int x,int y,int z){
         double left= PDEequations.DisplacedX3D(x-1,y,z,field,xDim,yDim,zDim,x,false,0,wrapX);
         double right=PDEequations.DisplacedX3D(x+1,y,z,field,xDim,yDim,zDim,x,false,0,wrapX);
         return right-left;
     }
 
+    /**
+     * returns the gradient of the field in the Y direction at the coordinates specified
+     */
     public double GradientY(int x,int y,int z){
         double down=PDEequations.DisplacedY3D(x,y-1,z,field,xDim,yDim,zDim,y,false,0,wrapY);
         double up=PDEequations.DisplacedY3D(x,y+1,z,field,xDim,yDim,zDim,y,false,0,wrapY);
         return up-down;
     }
+    /**
+     * returns the gradient of the field in the Z direction at the coordinates specified
+     */
     public double GradientZ(int x,int y,int z){
         double in=PDEequations.DisplacedZ3D(x,y,z-1,field,xDim,yDim,zDim,z,false,0,wrapY);
         double out=PDEequations.DisplacedZ3D(x,y,z+1,field,xDim,yDim,zDim,z,false,0,wrapY);
         return out-in;
     }
-    public double GradientX(int x,int y,int z,boolean wrapX){
-        double left=PDEequations.DisplacedX3D(x-1,y,z,field,xDim,yDim,zDim,x,false,0,wrapX);
-        double right=PDEequations.DisplacedX3D(x+1,y,z,field,xDim,yDim,zDim,x,false,0,wrapX);
-        return right-left;
-    }
-
-    public double GradientY(int x,int y,int z,boolean wrapY){
-        double down=PDEequations.DisplacedY3D(x,y-1,z,field,xDim,yDim,zDim,y,false,0,wrapY);
-        double up=PDEequations.DisplacedY3D(x,y+1,z,field,xDim,yDim,zDim,y,false,0,wrapY);
-        return up-down;
-    }
-    public double GradientZ(int x,int y,int z,boolean wrapZ){
-        double down=PDEequations.DisplacedZ3D(x,y,z-1,field,xDim,yDim,zDim,z,false,0,wrapZ);
-        double up=PDEequations.DisplacedZ3D(x,y,z+1,field,xDim,yDim,zDim,z,false,0,wrapZ);
-        return up-down;
-    }
+    /**
+     * returns the gradient of the field in the X direction at the coordinates specified, will use the boundary value
+     * provided for gradients that go over the boundary
+     */
     public double GradientX(int x,int y,int z,double boundaryCond){
         double left=PDEequations.DisplacedX3D(x-1,y,z,field,xDim,yDim,zDim,x,true,boundaryCond,wrapX);
         double right=PDEequations.DisplacedX3D(x+1,y,z,field,xDim,yDim,zDim,x,true,boundaryCond,wrapX);
         return right-left;
     }
 
+    /**
+     * returns the gradient of the field in the Y direction at the coordinates specified, will use the boundary value
+     * provided for gradients that go over the boundary
+     */
     public double GradientY(int x,int y,int z,double boundaryCond){
         double down=PDEequations.DisplacedY3D(x,y-1,z,field,xDim,yDim,zDim,y,true,boundaryCond,wrapY);
         double up=PDEequations.DisplacedY3D(x,y+1,z,field,xDim,yDim,zDim,y,true,boundaryCond,wrapY);
         return up-down;
     }
+    /**
+     * returns the gradient of the field in the Z direction at the coordinates specified, will use the boundary value
+     * provided for gradients that go over the boundary
+     */
     public double GradientZ(int x,int y,int z,double boundaryCond){
         double down=PDEequations.DisplacedZ3D(x,y,z-1,field,xDim,yDim,zDim,z,true,boundaryCond,wrapZ);
         double up=PDEequations.DisplacedZ3D(x,y,z+1,field,xDim,yDim,zDim,z,true,boundaryCond,wrapZ);

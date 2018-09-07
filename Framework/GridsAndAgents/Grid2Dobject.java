@@ -1,11 +1,6 @@
 package Framework.GridsAndAgents;
 
-import Framework.Interfaces.DoubleToDouble;
-import Framework.Tools.PDEequations;
-import Framework.Util;
-
 import java.io.Serializable;
-import java.text.DecimalFormat;
 import java.util.Arrays;
 
 /**
@@ -44,12 +39,15 @@ public class Grid2Dobject<T> extends GridBase2D implements Serializable{
     public void Set(int x, int y, T val){ field[x*yDim+y]=val; }
 
     /**
-     * sets all squares in current the field to the specified value
+     * sets all squares in the field to the specified value
      */
     public void SetAll(T val){
         Arrays.fill(field,val);
     }
 
+    /**
+     * copies the array of values into the field
+     */
     public void SetAll(T[]vals){
         System.arraycopy(vals,0, field,0,length);
     }
