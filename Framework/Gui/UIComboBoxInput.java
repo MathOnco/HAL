@@ -39,23 +39,6 @@ public class UIComboBoxInput extends JComboBox implements Framework.Interfaces.M
     public UIComboBoxInput(String label, int initVal, String[] options){
         this(label,initVal,options,1,2);
     }
-
-    /**
-     * ignore
-     */
-    @Override
-    public int TypeID() {
-        return 1;
-    }
-
-    /**
-     * ignore
-     */
-    @Override
-    public void Set(String val) {
-        this.setSelectedIndex(Integer.parseInt(val));
-    }
-
     /**
      * sets the foreground and background of the UIComboBoxInput
      * @param foregroundColor color of the text if null the UIWindow color will be used
@@ -142,6 +125,23 @@ public class UIComboBoxInput extends JComboBox implements Framework.Interfaces.M
     public void SetActive(boolean isActive) {
 
     }
+
+    /**
+     * ignore
+     */
+    @Override
+    public int TypeID() {
+        return 1;
+    }
+
+    /**
+     * ignore
+     */
+    @Override
+    public void Set(String val) {
+        this.setSelectedIndex(Integer.parseInt(val));
+    }
+
 
     /**
      * ignore

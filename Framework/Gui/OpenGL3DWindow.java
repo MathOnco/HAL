@@ -1,5 +1,6 @@
 package Framework.Gui;
 
+import Framework.Interfaces.ColorIntGenerator;
 import Framework.Util;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
@@ -90,17 +91,28 @@ public class OpenGL3DWindow {
 
         return delta;
     }
+
+    /**
+     * call this once per step of your model, and the function will ensure that your model runs at the rate provided in millis. the function will take the amount time between calls into account to ensure a consistent tick rate.
+     */
     public void TickPause(int millis){
         if(active) {
             tt.TickPause(millis);
         }
     }
+    /**
+     * usually called before any other draw commands, sets the screen to a color.
+     */
     public void Clear(int color){
         if(active) {
             glClearColor((float)GetRed(color),(float)GetGreen(color),(float)GetBlue(color), 1);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         }
     }
+
+    /**
+     * usually called before any other draw commands, sets the screen to a color. and draws a box around the grid domain
+     */
     public void ClearBox(int clearColor,int lineColor){
         glClearColor((float)GetRed(clearColor),(float)GetGreen(clearColor),(float)GetBlue(clearColor), 1);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -118,6 +130,9 @@ public class OpenGL3DWindow {
         Line(0,0,zDim,0,yDim,zDim,lineColor);
     }
 
+    /**
+     * renders all draw commands to the window
+     */
     public void Update(){
         if(active) {
             camera.acceptInputRotate(1);
@@ -127,25 +142,36 @@ public class OpenGL3DWindow {
             Display.update();
         }
     }
+
+    /**
+     * returns true if the close button has been clicked in the Gui
+     */
     public boolean IsClosed(){
         if(active) {
             return Display.isCloseRequested();
         }
         return true;
     }
+
+    /**
+     * closes the gui
+     */
     public void Close(){
         if(active) {
             Display.destroy();
         }
     }
+
+    /**
+     * returns whether the Gui is active (whether it exists)
+     */
     public boolean IsActive(){
         return active;
     }
-    public void FanShape(double centerX,double centerY,double centerZ,double scale,float[]points,double r,double g,double b) {
-        if(active) {
-            FanShape((float)centerX, (float)centerY, (float)centerZ, (float)scale, points,RGB((float)r, (float)g, (float)b));
-        }
-    }
+
+    /**
+     * draws a circle with a white dot and background black border to mark the outline of a cell
+     */
     public void CelSphere(double x,double y,double z,double rad,int color){
         if(active) {
             float xf = (float) x, yf = (float) y, zf = (float) z, radf = (float) rad, rf = (float) GetRed(color), gf = (float) GetGreen(color), bf = (float) GetBlue(color);
@@ -157,10 +183,23 @@ public class OpenGL3DWindow {
             FanShape(xf, yf, zf, radf * 0.2f, circlPtsDefault,RGB((float) 1, (float) 1, (float) 1), 1.4f, 1.4f, 0.1f);
         }
     }
+    /**
+     * draws a circle centered around x,y, subsequent circles will be drawn over top
+     */
     public void Circle(double x,double y,double z,double rad,int color){
-        FanShape((float)x,(float)y,(float)z,rad,circlPtsDefault,GetRed(color),GetGreen(color),GetBlue(color));
+        FanShape((float)x,(float)y,(float)z,(float)rad,circlPtsDefault,color);
     }
 
+    /**
+     * draws a circle centered around x,y, subsequent circles will be drawn over top, the ColorGen function is used to generate the color of the circle and will not be called if the Gui is not active
+     */
+    public void Circle(double x, double y, double z, double rad, ColorIntGenerator ColorGen){
+        FanShape((float)x,(float)y,(float)z,(float)rad,circlPtsDefault,ColorGen.GenColorInt());
+    }
+
+    /**
+     * draws a fan shape around the center x and y, using the array of points to define the edges of the fan. used as part of the circle function
+     */
     public void FanShape(float centerX,float centerY,float centerZ,float scale,float[]points,int color) {
         if(active) {
             glPushMatrix();
@@ -185,6 +224,9 @@ public class OpenGL3DWindow {
         }
     }
 
+    /**
+     * draws a fan shape around the center x and y, using the array of points to define the edges of the fan. used as part of the circle function
+     */
     public void FanShape(float centerX,float centerY,float centerZ,float scale,float[]points,int color,float xdisp,float ydisp,float zdisp) {
         if(active) {
             float r=(float)GetRed(color);
@@ -212,6 +254,9 @@ public class OpenGL3DWindow {
             glPopMatrix();
         }
     }
+    /**
+     * draws a line between (x1,y1,z1) and (x2,y2,z2)
+     */
     public void Line(double x1, double y1,double z1, double x2, double y2,double z2, int color){
         if(active){
             glColor4f((float)GetRed(color),(float) GetGreen(color),(float) GetBlue(color),(float)GetAlpha(color));
@@ -221,6 +266,10 @@ public class OpenGL3DWindow {
             glEnd();
         }
     }
+
+    /**
+     * draws a series of lines between all x,y,z triplets
+     */
     public void LineStrip(double[]xs,double[]ys,double[]zs,int color){
         if(active){
             glColor4f((float)GetRed(color),(float) GetGreen(color),(float) GetBlue(color),(float)GetAlpha(color));
@@ -231,6 +280,10 @@ public class OpenGL3DWindow {
             glEnd();
         }
     }
+
+    /**
+     * draws a series of lines between all x,y,z triplets, coords should store triplets as x,y,z,x,y,z...
+     */
     public void LineStrip(double[]coords,int color){
         if(active){
             glColor4f((float)GetRed(color),(float) GetGreen(color),(float) GetBlue(color),(float)GetAlpha(color));
@@ -240,6 +293,24 @@ public class OpenGL3DWindow {
             }
             glEnd();
         }
+    }
+    /**
+     * saves the current state image to a PNG, call Update first
+     */
+    public void ToPNG(String path){
+        SaveImg(path,"png");
+    }
+    /**
+     * saves the current state image to a JPG, call Update first
+     */
+    public void ToJPG(String path){
+        SaveImg(path,"jpg");
+    }
+    /**
+     * saves the current state image to a GIF image, call Update first
+     */
+    public void ToGIF(String path){
+        SaveImg(path,"gif");
     }
     void SaveImg(String path,String mode){
         if(active){
@@ -266,15 +337,6 @@ public class OpenGL3DWindow {
             } catch (IOException e) { e.printStackTrace(); }
 
         }
-    }
-    public void ToPNG(String path){
-        SaveImg(path,"png");
-    }
-    public void ToJPG(String path){
-        SaveImg(path,"jpg");
-    }
-    public void ToGIF(String path){
-        SaveImg(path,"gif");
     }
 }
 

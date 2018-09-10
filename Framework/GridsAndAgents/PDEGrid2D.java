@@ -1,9 +1,5 @@
 package Framework.GridsAndAgents;
-import Framework.Interfaces.Coords2DDouble;
-import Framework.Interfaces.Coords2DSetArray;
-import Framework.Interfaces.GridDiff2MultiThreadFunction;
 import Framework.Tools.Internal.PDEequations;
-import Framework.Util;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -21,7 +17,8 @@ public class PDEGrid2D extends GridBase2D implements Serializable {
     protected double[] field;
     //double[] intermediateScratch;
     protected double[] scratch;
-    protected double[] adiScratch;
+    protected double[] scratchField1;
+    protected double[] scratchField2;
     protected double[] maxDifscratch;
     boolean adiOrder = true;
     boolean adiX = true;
@@ -41,28 +38,33 @@ public class PDEGrid2D extends GridBase2D implements Serializable {
     /**
      * runs diffusion on the current field using the ADI (alternating direction implicit) method. without a
      * boundaryValue argument, a zero flux boundary is imposed. wraparound will not work with ADI. ADI is numerically
-     * stable at any diffusion rate. An update is automatically made after the ADI computation, so ADI diffusion should
-     * be done after all other changes to the PDEGrid are applied.
+     * stable at any diffusion rate.
      */
-    public void DiffusionADIupdate(double diffCoef) {
+    public void DiffusionADI(double diffCoef) {
         EnsureScratch();
-        EnsureADIscratch();
-        DiffusionADI2(true, field, adiScratch, scratch, xDim, yDim, diffCoef / 2, false, 0);
-        DiffusionADI2(false, adiScratch, field, scratch, xDim, yDim, diffCoef / 2, false, 0);
-        Update();
+        EnsureScratchF1();
+        EnsureScratchF2();
+        DiffusionADI2(true, field, scratchField1, scratch, xDim, yDim, diffCoef / 2, false, 0);
+        DiffusionADI2(false, scratchField1, scratchField2, scratch, xDim, yDim, diffCoef / 2, false, 0);
+        for (int i = 0; i < length; i++) {
+            nextField[i]+=scratchField2[i]-field[i];
+        }
     }
 
     /**
      * runs diffusion on the current field using the ADI (alternating direction implicit) method. ADI is numerically
      * stable at any diffusion rate. Adding a boundary value to the function call will cause boundary conditions to be
-     * imposed. An update is automatically made after the ADI computation, so ADI diffusion should be done after all
-     * other changes to the PDEGrid are applied.
+     * imposed.
      */
-    public void DiffusionADIupdate(double diffCoef, double boundaryValue) {
+    public void DiffusionADI(double diffCoef, double boundaryValue) {
         EnsureScratch();
-        DiffusionADI2(true, field, adiScratch, scratch, xDim, yDim, diffCoef / 2, true, boundaryValue);
-        DiffusionADI2(false, adiScratch, field, scratch, xDim, yDim, diffCoef / 2, true, boundaryValue);
-        Update();
+        EnsureScratchF1();
+        EnsureScratchF2();
+        DiffusionADI2(true, field, scratchField1, scratch, xDim, yDim, diffCoef / 2, true, boundaryValue);
+        DiffusionADI2(false, scratchField1, scratchField2, scratch, xDim, yDim, diffCoef / 2, true, boundaryValue);
+        for (int i = 0; i < length; i++) {
+            nextField[i]+=scratchField2[i]-field[i];
+        }
     }
 
     /**
@@ -146,14 +148,13 @@ public class PDEGrid2D extends GridBase2D implements Serializable {
 
 
     /**
-     * adds the next field into the current field, also increments the tick.
+     * adds the next field into the current field
      */
     public void Update() {
         for (int i = 0; i < nextField.length; i++) {
             field[i] += nextField[i];
         }
         Arrays.fill(nextField, 0);
-        IncTick();
     }
 
     /**
@@ -382,9 +383,14 @@ public class PDEGrid2D extends GridBase2D implements Serializable {
         }
     }
 
-    protected void EnsureADIscratch() {
-        if (adiScratch == null) {
-            adiScratch = new double[field.length];
+    protected void EnsureScratchF1() {
+        if (scratchField1 == null) {
+            scratchField1 = new double[field.length];
+        }
+    }
+    protected void EnsureScratchF2() {
+        if (scratchField2 == null) {
+            scratchField2 = new double[field.length];
         }
     }
 }

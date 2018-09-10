@@ -24,12 +24,6 @@ public class UIBoolInput extends JToggleButton implements Framework.Interfaces.M
     }
 
     /**
-     * ignore
-     */
-    @Override
-    public int TypeID() { return 0; }
-
-    /**
      * sets the boolean value, true, false, t or f are all valid inputs
      */
     @Override
@@ -54,7 +48,7 @@ public class UIBoolInput extends JToggleButton implements Framework.Interfaces.M
     public String Get() { return isSelected()?"true":"false"; }
 
     /**
-     * returns teh label associated with the boolean
+     * returns the label associated with the boolean
      */
     @Override
     public String GetLabel() {
@@ -138,5 +132,10 @@ public class UIBoolInput extends JToggleButton implements Framework.Interfaces.M
         sizesHere.add(compX);
         sizesHere.add(compY);
     }
+    /**
+     * ignore
+     */
+    @Override
+    public int TypeID() { return 0; }
 
 }

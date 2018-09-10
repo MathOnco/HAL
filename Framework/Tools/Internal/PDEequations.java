@@ -413,6 +413,170 @@ public class PDEequations {
             }
         }
     }
+    public static void TDMAx(final double[] in, final double[] out,final double[]orig,final double[] scratch,final int xDim, final int yDim, final int iRow, final double diffRate) {
+        final double ac=-diffRate;
+        final double b=2*(diffRate)+1;
+        final double db=-2*(diffRate)+1;
+        final double dac=diffRate;
+
+        final int len =  xDim;
+        final int max = yDim;
+
+        //Doing the 0 entries
+        scratch[0] = ac/(b+ac);
+        double above = iRow == max - 1 ? in[(0)*yDim+ (iRow)]: in[(0)*yDim+(iRow + 1)];
+        double below = iRow == 0 ? in[(0 *yDim)+(iRow)] : in[(0 *yDim)+(iRow - 1)];
+        double middle=in[(0*yDim)+iRow];
+        double di=db*middle + above*dac + below*dac;
+        scratch[len] = (di) / (b+ac);
+
+        //Doing the forward passes
+        for (int i = 1; i < len-1; i++) {
+            scratch[i] = ac / (b - ac*scratch[i - 1]);
+        }
+        for (int i = 1; i < len; i++) {
+            above = iRow == max - 1 ? in[(i)*yDim +(iRow)] : in[(i)*yDim+ (iRow + 1)];
+            below = iRow == 0 ? in[(i)*yDim+(iRow)] : in[(i)*yDim+(iRow - 1)];
+            middle=in[(i)*yDim+(iRow)];
+            di=(db*middle + above*dac + below*dac);
+            if(i<len-1){scratch[len + i] = (di - ac*scratch[len + i - 1]) / (b - ac*scratch[i - 1]);}
+            else{scratch[len + i] = (di - ac*scratch[len + i - 1]) / ((b+ac) - ac*scratch[i - 1]);}
+        }
+
+        //backward pass
+        out[(len - 1)*yDim+(iRow)] = scratch[len * 2 - 1];
+        for (int i = len - 2; i >= 0; i--) {
+            out[(i)*yDim+(iRow)] = scratch[len + i] - scratch[i] * out[(i + 1)*yDim+(iRow)];
+        }
+    }
+    public static void TDMAy(final double[] in, final double[] out,final double[]orig,final double[] scratch,final int xDim, final int yDim, final int iRow, final double diffRate) {
+        final double ac=-diffRate;
+        final double b=2*(diffRate)+1;
+        final double db=-2*(diffRate)+1;
+        final double dac=diffRate;
+
+
+        final int len = yDim;
+        final int max = xDim;
+
+        //Doing the 0 entries
+        scratch[0] = ac/(b+ac);
+        double above = iRow == max - 1 ? in[(iRow)*yDim+(0)] : in[(iRow + 1)*yDim+(0)];
+        double below = iRow == 0 ? in[(iRow)*yDim+(0)] : in[(iRow - 1)* yDim+(0)];
+        double middle=in[(iRow)*yDim+(0)];
+        double di=db*middle + above*dac + below*dac;
+        scratch[len] = (di) / (b+ac);
+
+        //Doing the forward passes
+        for (int i = 1; i < len-1; i++) {
+            scratch[i] = ac / (b - ac*scratch[i - 1]);
+        }
+        for (int i = 1; i < len; i++) {
+            above = iRow == max - 1 ? in[(iRow)*yDim+(i)] : in[(iRow + 1)*yDim+(i)];
+            below = iRow == 0 ? in[(iRow)*yDim+(i)] : in[(iRow - 1)*yDim+(i)];
+            middle=in[(iRow)*yDim+(i)];
+            di=(db*middle + above*dac + below*dac);
+            if(i<len-1){scratch[len + i] = (di - ac*scratch[len + i - 1]) / (b - ac*scratch[i - 1]);}
+            else{scratch[len + i] = (di - ac*scratch[len + i - 1]) / ((b+ac) - ac*scratch[i - 1]);}
+        }
+
+        //backward pass
+        out[(iRow)*yDim+(len - 1)] = scratch[len * 2 - 1];
+        for (int i = len - 2; i >= 0; i--) {
+            out[(iRow)*yDim+(i)] = scratch[len + i] - scratch[i] * out[(iRow)*yDim+(i + 1)];
+        }
+    }
+
+
+    public static void TDMAx(final double[] in, final double[] out,final double[]orig,final double[] scratch,final int xDim, final int yDim, final int iRow, final double diffRate,double boundaryCond) {
+        final double ac=-diffRate;
+        final double b=2*(diffRate)+1;
+        final double db=-2*(diffRate)+1;
+        final double dac=diffRate;
+
+        final int len = xDim+2;
+        final int max = yDim;
+
+        //Doing the 0 entries (which is this time simply the boundary
+        scratch[0] = ac/(b+ac);
+        double di=boundaryCond;
+        scratch[len] = (di) / (b+ac);
+
+        //Doing the forward passes (special case at the last, which is once again the boundary)
+        for (int i = 1; i < len-1; i++) {
+            scratch[i] = ac / (b - ac*scratch[i - 1]);
+        }
+        for (int i = 1; i < len; i++) {
+            if(i==len-1){
+                di=boundaryCond;
+            } else {
+                double above = iRow == max - 1 ? boundaryCond : in[(i-1) * yDim + (iRow + 1)];
+                double below = iRow == 0 ? boundaryCond : in[(i-1) * yDim + (iRow - 1)];
+                double middle = in[(i-1) * yDim + (iRow)];
+                di = (db * middle + above * dac + below * dac);
+            }
+            if (i < len - 1) {
+                scratch[len + i] = (di - ac * scratch[len + i - 1]) / (b - ac * scratch[i - 1]);
+            } else {
+                scratch[len + i] = (di - ac * scratch[len + i - 1]) / ((b+ac) - ac * scratch[i - 1]);
+            }
+        }
+
+        //backward pass
+        double temp = scratch[len * 2 - 1];
+        for (int i = len - 2; i >= 1; i--) {
+            if(i==len-2){
+                out[(i-1)*yDim+(iRow)] = scratch[len + i] - scratch[i] * temp;
+            }else {
+                out[(i-1) * yDim + (iRow)] = scratch[len + i] - scratch[i] * out[(i) * yDim + (iRow)];
+            }
+        }
+    }
+    public static void TDMAy(final double[] in, final double[] out,final double[]orig,final double[] scratch,final int xDim, final int yDim, final int iRow, final double diffRate,double boundaryCond) {
+        final double ac=-diffRate;
+        final double b=2*(diffRate)+1;
+        final double db=-2*(diffRate)+1;
+        final double dac=diffRate;
+
+
+        final int len = yDim + 2;
+        final int max = xDim;
+
+        //Doing the 0 entries
+        scratch[0] = ac / (b+ac);
+        double di = boundaryCond;
+        scratch[len] = (di) / (b+ac);
+
+        //Doing the forward passes
+        for (int i = 1; i < len - 1; i++) {
+            scratch[i] = ac / (b - ac * scratch[i - 1]);
+        }
+        for (int i = 1; i < len; i++) {
+            if (i == len - 1) {
+                di = boundaryCond;
+            } else {
+                double above = iRow == max - 1 ? boundaryCond : in[(iRow + 1) * yDim + (i-1)];
+                double below = iRow == 0 ? boundaryCond : in[(iRow - 1) * yDim + (i-1)];
+                double middle = in[(iRow) * yDim + (i-1)];
+                di = (db * middle + above * dac + below * dac);
+            }
+            if (i < len - 1) {
+                scratch[len + i] = (di - ac * scratch[len + i - 1]) / (b - ac * scratch[i - 1]);
+            } else {
+                scratch[len + i] = (di - ac * scratch[len + i - 1]) / ((b+ac) - ac * scratch[i - 1]);
+            }
+        }
+
+        //backward pass
+        double temp=scratch[len*2-1];
+        for (int i = len - 2; i >= 1; i--) {
+            if(i==len-2) {
+                out[(iRow) * yDim + (i-1)] = scratch[len + i] - scratch[i] * temp;
+            }else {
+                out[(iRow) * yDim + (i-1)] = scratch[len + i] - scratch[i] * out[(iRow) * yDim + (i)];
+            }
+        }
+    }
 
 
     public static void ConservativeTransportStep2(final double[] inGrid,final double[] midGrid, final double[] outGrid, final int xDim, final int yDim,final double[] xVels,final double[] yVels, final boolean boundaryCond, final double boundaryValue){

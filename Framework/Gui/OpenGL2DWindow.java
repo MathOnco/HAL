@@ -56,22 +56,38 @@ public class OpenGL2DWindow {
     public OpenGL2DWindow(String title, int xPix, int yPix, int xDim, int yDim) {
         this(title,xPix,yPix,xDim,yDim,true);
     }
+
+    /**
+     * call this once per step of your model, and the function will ensure that your model runs at the rate provided in millis. the function will take the amount time between calls into account to ensure a consistent tick rate.
+     */
     public void TickPause(int millis){
         if(active) {
             tt.TickPause(millis);
         }
     }
+
+    /**
+     * usually called before any other draw commands, sets the screen to a color.
+     */
     public void Clear(int clearColor){
         if (active) {
             glClearColor((float)GetRed(clearColor),(float)GetGreen(clearColor),(float)GetBlue(clearColor),(float)GetAlpha(clearColor));
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         }
     }
+
+    /**
+     * renders all draw commands to the window
+     */
     public void Update(){
         if(active) {
             Display.update();
         }
     }
+
+    /**
+     * returns true if the close button has been clicked in the Gui
+     */
     public boolean IsClosed(){
         if(active) {
             return Display.isCloseRequested();
@@ -80,28 +96,50 @@ public class OpenGL2DWindow {
             return true;
         }
     }
+
+    /**
+     * closes the gui
+     */
     public void Close(){
         if(active) {
             Display.destroy();
         }
     }
+
+    /**
+     * returns whether the Gui is active (whether it exists)
+     */
     public boolean IsActive(){
         return active;
     }
+
+    /**
+     * draws a circle centered around x,y, subsequent circles will be drawn over top
+     */
     public void Circle(double x,double y,double rad,int color){
         FanShape((float) x,(float) y,(float) rad, circlPtsDefault,color);
     }
+    /**
+     * draws a circle centered around x,y, subsequent circles will be drawn over top, the ColorGen function is used to generate the color of the circle and will not be called if the Gui is not active
+     */
     public void Circle(double x,double y,double rad,ColorIntGenerator ColorGen){
         if(active){
             FanShape((float) x,(float) y,(float) rad, circlPtsDefault,ColorGen.GenColorInt());
         }
     }
 
+    /**
+     * draws a fan shape around the center x and y, using the array of points to define the edges of the fan. used as part of the circle function
+     */
     public void FanShape(float centerX, float centerY, float scale, float[]points, ColorIntGenerator ColorGen) {
         if (active) {
             FanShape(centerX, centerY,scale,points,ColorGen.GenColorInt());
         }
     }
+
+    /**
+     * draws a fan shape around the center x and y, using the array of points to define the edges of the fan. used as part of the circle function
+     */
     public void FanShape(float centerX,float centerY,float scale,float[]points,int color) {
         if (active) {
             glColor4f((float)GetRed(color),(float) GetGreen(color),(float) GetBlue(color),(float)GetAlpha(color));
@@ -113,6 +151,10 @@ public class OpenGL2DWindow {
             glEnd();
         }
     }
+
+    /**
+     * draws a line between (x1,y1) and (x2,y2)
+     */
     public void Line(double x1, double y1, double x2, double y2, int color){
         if(active){
             glColor4f((float)GetRed(color),(float) GetGreen(color),(float) GetBlue(color),(float)GetAlpha(color));
@@ -122,6 +164,9 @@ public class OpenGL2DWindow {
             glEnd();
         }
     }
+    /**
+     * draws a series of lines between all x,y pairs
+     */
     public void LineStrip(double[]xs,double[]ys,int color){
         if(active){
             glColor4f((float)GetRed(color),(float) GetGreen(color),(float) GetBlue(color),(float)GetAlpha(color));
@@ -132,6 +177,10 @@ public class OpenGL2DWindow {
             glEnd();
         }
     }
+
+    /**
+     * draws a series of lines between all x,y pairs, coords should store pairs as x,y,x,y...
+     */
     public void LineStrip(double[]coords,int color){
         if(active){
             glColor4f((float)GetRed(color),(float) GetGreen(color),(float) GetBlue(color),(float)GetAlpha(color));
@@ -142,6 +191,28 @@ public class OpenGL2DWindow {
             glEnd();
         }
     }
+
+    /**
+     * saves the current state image to a PNG, call Update first
+     */
+    public void ToPNG(String path){
+        SaveImg(path,"png");
+    }
+
+    /**
+     * saves the current state image to a JPG, call Update first
+     */
+    public void ToJPG(String path){
+        SaveImg(path,"jpg");
+    }
+
+    /**
+     * saves the current state image to a GIF image, call Update first
+     */
+    public void ToGIF(String path){
+        SaveImg(path,"gif");
+    }
+
     void SaveImg(String path,String mode){
         if(active){
             File out=new File(path);
@@ -167,14 +238,5 @@ public class OpenGL2DWindow {
             } catch (IOException e) { e.printStackTrace(); }
 
         }
-    }
-    public void ToPNG(String path){
-        SaveImg(path,"png");
-    }
-    public void ToJPG(String path){
-        SaveImg(path,"jpg");
-    }
-    public void ToGIF(String path){
-        SaveImg(path,"gif");
     }
 }

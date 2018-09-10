@@ -71,10 +71,11 @@ public class ExampleModel extends AgentGrid2D<ExampleCell> {
  //       drug.Update();
         //check if drug should enter through the boundaries
         if (tick > DRUG_START && (tick - DRUG_START) % DRUG_PERIOD < DRUG_DURATION) {
-            drug.DiffusionADIupdate(DRUG_DIFF_RATE, DRUG_BOUNDARY_VAL);
+            drug.DiffusionADI(DRUG_DIFF_RATE, DRUG_BOUNDARY_VAL);
         } else {
-            drug.DiffusionADIupdate(DRUG_DIFF_RATE);
+            drug.DiffusionADI(DRUG_DIFF_RATE);
         }
+        drug.Update();
     }
 
     public void DrawModel(GridWindow vis, int iModel) {
