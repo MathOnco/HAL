@@ -6,6 +6,10 @@ import Framework.Interfaces.DrawWell;
 import Framework.Interfaces.StepWell;
 import Framework.Util;
 
+/**
+ * MultiWellExperiments allow the user to visualize many models in a single GridWindow, and can be easily multithreaded for faster execution
+ * @param <T> the type of model class that will run as a single "well"
+ */
 public class MultiWellExperiment <T> {
     public final int visXdim;
     public final int visYdim;
@@ -45,21 +49,9 @@ public class MultiWellExperiment <T> {
         win.Clear(borderColor);
     }
 
-    void SetWellStarts() {
-        nProcs = Runtime.getRuntime().availableProcessors();
-        int perWell = wells.length / nProcs;
-        int extras = wells.length - perWell * nProcs;
-        wellStarts = new int[nProcs];
-        for (int i = 1; i < wellStarts.length; i++) {
-            if (extras > 0) {
-                wellStarts[i] = wellStarts[i - 1] + perWell + 1;
-                extras--;
-            } else {
-                wellStarts[i] = wellStarts[i - 1] + perWell;
-            }
-        }
-    }
-
+    /**
+     * loads a new set of models into the MultiWellExperiment
+     */
     public void LoadWells(T[] models) {
         wells = models;
         if (models.length > wellsX * wellsY) {
@@ -68,17 +60,9 @@ public class MultiWellExperiment <T> {
         SetWellStarts();
     }
 
-    void StepWell(int iWell) {
-        Stepper.Step(wells[iWell], iWell);
-    }
-
-    void DrawWell(int i) {
-        int xStart = (i / wellsY) * (visXdim + 1);
-        int yStart = (i % wellsY) * (visYdim + 1);
-        win.SetRect(xStart, yStart, visXdim, visYdim, (x, y) -> Drawer.GetPixColor(wells[i], x, y));
-
-    }
-
+    /**
+     * runs a single multithreaded step
+     */
     public void StepMultiThread() {
         Util.MultiThread(nProcs, nProcs, (iThread) -> {
             int start = wellStarts[iThread];
@@ -135,4 +119,32 @@ public class MultiWellExperiment <T> {
         gif.Close();
         win.Close();
     }
+
+    void SetWellStarts() {
+        nProcs = Runtime.getRuntime().availableProcessors();
+        int perWell = wells.length / nProcs;
+        int extras = wells.length - perWell * nProcs;
+        wellStarts = new int[nProcs];
+        for (int i = 1; i < wellStarts.length; i++) {
+            if (extras > 0) {
+                wellStarts[i] = wellStarts[i - 1] + perWell + 1;
+                extras--;
+            } else {
+                wellStarts[i] = wellStarts[i - 1] + perWell;
+            }
+        }
+    }
+
+    void StepWell(int iWell) {
+        Stepper.Step(wells[iWell], iWell);
+    }
+
+    void DrawWell(int i) {
+        int xStart = (i / wellsY) * (visXdim + 1);
+        int yStart = (i % wellsY) * (visYdim + 1);
+        win.SetRect(xStart, yStart, visXdim, visYdim, (x, y) -> Drawer.GetPixColor(wells[i], x, y));
+
+    }
+
+
 }

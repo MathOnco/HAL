@@ -3,6 +3,7 @@ package Framework.Gui;
 import Framework.Interfaces.*;
 import Framework.Interfaces.MenuItem;
 import Framework.Tools.Internal.KeyRecorder;
+import Framework.Tools.Internal.ParamSet;
 
 import javax.swing.*;
 import java.awt.*;
@@ -40,7 +41,7 @@ public class UIWindow {
      * @param title the title that will appear at the top of the window
      * @param killOnClose whether the program should terminate on closing the window
      * @param closeAction function that will run when the window is closed
-     * @param active
+     * @param active if set to false, the UIWindow will not actually render and its methods will be skipped (default true)
      */
     public UIWindow(String title, boolean killOnClose, GuiCloseAction closeAction, boolean active){
         this.active=active;
@@ -110,20 +111,29 @@ public class UIWindow {
         }
         params = new ParamSet();
     }
-    public UIWindow(String title, boolean killOnClose, GuiCloseAction closeAction){
-        this(title,killOnClose,closeAction,true);
-    }
-    public UIWindow(String title, boolean killOnClose, boolean active) {
-        this(title,killOnClose,null,active);
-    }
-    public UIWindow(String title, boolean killOnClose) {
-        this(title,killOnClose,null,true);
-    }
+    /**
+     * the below constructors are variants of the above constructor with default values for some of the arguments
+     */
     public UIWindow() {
         this("",true,null,true);
     }
-    public UIWindow(boolean killOnClose,boolean active) {
-        this("",killOnClose,null,active);
+    public UIWindow(boolean active) {
+        this("",true,null,active);
+    }
+    public UIWindow(boolean killOnClose, GuiCloseAction closeAction){
+        this("",killOnClose,closeAction,true);
+    }
+    public UIWindow(boolean killOnClose,GuiCloseAction closeAction,boolean active) {
+        this("",killOnClose,closeAction,active);
+    }
+    public UIWindow(String title) {
+        this(title,true,null,true);
+    }
+    public UIWindow(String title,boolean active) {
+        this(title,true,null,active);
+    }
+    public UIWindow(String title,boolean killOnClose, GuiCloseAction closeAction){
+        this(title,killOnClose,closeAction,true);
     }
     public void TickPause(int millis){
         if(active) {
@@ -157,7 +167,7 @@ public class UIWindow {
                 subComps.clear();
                 subCompCoords.clear();
                 subCompSizes.clear();
-                gc.GetComps(subComps, subCompCoords, subCompSizes);
+                gc._GetComps(subComps, subCompCoords, subCompSizes);
                 for (Component sc : subComps) {
                     sc.setEnabled(!onOff);
                 }
@@ -230,7 +240,7 @@ public class UIWindow {
                 subComps.clear();
                 subCompCoords.clear();
                 subCompSizes.clear();
-                comp.GetComps(subComps, subCompCoords, subCompSizes);
+                comp._GetComps(subComps, subCompCoords, subCompSizes);
                 for (int j = 0; j < subComps.size(); j++) {
                     Component subComp = subComps.get(j);
                     int subX = subCompCoords.get(j * 2);

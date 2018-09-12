@@ -3,13 +3,14 @@ package Framework.Gui;
 /**
  * class used to impose a frame rate on the running of a model
  * call TickPause every timestep to impose a framerate
+ * usually used within a window of some kind, but can also be used by itself
  * Created by rafael on 2/16/17.
  */
 public class TickTimer {
     private long lastSleepTime;
 
     /**
-     * waits until the time since the last TickPause is equal to millis
+     * pauses execution so that the amount of time between calls to TickPause is equal to millis
      * @param millis wait duration
      */
     public void TickPause(long millis){

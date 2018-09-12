@@ -115,7 +115,7 @@ public class AgentPT1D<T extends AgentGrid1D> extends Agent1DBase<T> implements 
      * gets the displacement from this agent to another
      */
     public <T extends AgentPT1D> double Xdisp(T other) {
-        return G.wrapX ? DistWrap(Xpt(), other.Xpt(), G.xDim) : Xpt() - other.Xpt();
+        return G.wrapX ? DispWrap(Xpt(), other.Xpt(), G.xDim) : Xpt() - other.Xpt();
     }
 
 

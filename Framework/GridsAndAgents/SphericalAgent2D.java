@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import static Framework.Util.*;
 
 /**
- * Created by bravorr on 6/26/17.
+ * Spherical cow model of 2D cells
  */
 public class SphericalAgent2D<A extends SphericalAgent2D,G extends AgentGrid2D<A>> extends AgentPT2D<G> implements Serializable {
     // the radius property is used during SumForces to determine collisions

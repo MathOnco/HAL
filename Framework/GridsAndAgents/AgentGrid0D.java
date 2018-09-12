@@ -6,8 +6,8 @@ import java.io.Serializable;
 import java.util.*;
 
 /**
- * Extend the Grid2unstackable class if you want a 2D lattice with at most one agent per typeGrid square
- * @param <T> the AgentSQ2Dunstackable extending agent class that will inhabit the typeGrid
+ * AgentGrid0Ds can only hold Agent0Ds
+ * @param <T> the type of agent that the grid will hold
  */
 public class AgentGrid0D<T extends Agent0D> implements Iterable<T>,Serializable {
     InternalGridAgentList<T> agents;

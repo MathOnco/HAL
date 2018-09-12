@@ -162,6 +162,9 @@ public class PDEGrid2D extends GridBase2D implements Serializable {
      * version of the function assumes wrap-around, so there can be no net flux of concentrations.
      */
     public void Advection(double xVel, double yVel) {
+        if(Math.abs(xVel)>1){
+            throw new IllegalArgumentException("Advection rate above maximum stable value of 1.0");
+        }
         for (int x = 0; x < xDim; x++) {
             for (int y = 0; y < yDim; y++) {
                 Advection1stOrder(x, y, field, nextField, xDim, yDim, xVel, yVel, false, 0.0);
@@ -267,7 +270,7 @@ public class PDEGrid2D extends GridBase2D implements Serializable {
     /**
      * returns the maximum difference as stored on the next field, call right before calling Update()
      */
-    public double MaxDifNext() {
+    public double MaxDelta() {
         double maxDif = 0;
         for (int i = 0; i < field.length; i++) {
             maxDif = Math.max(maxDif, Math.abs((nextField[i])));
@@ -276,66 +279,15 @@ public class PDEGrid2D extends GridBase2D implements Serializable {
     }
 
     /**
-     * like MaxDifNext only the differences are scaled relative to the value in the current field. the denomOffset is
+     * like MaxDelta only the differences are scaled relative to the value in the current field. the denomOffset is
      * used to prevent a division by zero
      */
-    public double MaxDifNextScaled(double denomOffset) {
+    public double MaxDeltaScaled(double denomOffset) {
         double maxDif = 0;
         for (int i = 0; i < field.length; i++) {
             maxDif = Math.max(maxDif, Math.abs(nextField[i] / (Math.abs(field[i]) + denomOffset)));
         }
         return maxDif;
-    }
-
-
-    /**
-     * like MaxDifNext only the differences are computed by comparing the current field to the compareTo argument
-     */
-    public double MaxDifOther(double[] compareTo) {
-        double maxDif = 0;
-        for (int i = 0; i < field.length; i++) {
-            maxDif = Math.max(maxDif, Math.abs(field[i] - compareTo[i]));
-        }
-        return maxDif;
-    }
-
-    /**
-     * like MaxDifNext only the differences are computed by comparing the current field with the field state as it was
-     * the last time MaxDifRecord was called
-     */
-    public double MaxDifRecord() {
-        if (maxDifscratch == null) {
-            maxDifscratch = new double[length];
-        }
-        double ret = MaxDifOther(maxDifscratch);
-        System.arraycopy(field, 0, maxDifscratch, 0, length);
-        return ret;
-    }
-
-    /**
-     * like MaxDifOther only the differences are scaled relative to the value in the current field. the denomOffset is
-     * used to prevent a division by zero
-     */
-    public double MaxDifOtherScaled(double[] compareTo, double denomOffset) {
-        double maxDif = 0;
-        for (int i = 0; i < field.length; i++) {
-            maxDif = Math.max(maxDif, Math.abs(field[i] - compareTo[i]) / (compareTo[i] + denomOffset));
-        }
-        return maxDif;
-    }
-
-
-    /**
-     * like MaxDifRecord only the differences are scaled relative to the value in the current field. the denomOffset is
-     * used to prevent a division by zero
-     */
-    public double MaxDifRecordScaled(double denomOffset) {
-        if (maxDifscratch == null) {
-            maxDifscratch = new double[length];
-        }
-        double ret = MaxDifOtherScaled(maxDifscratch, denomOffset);
-        System.arraycopy(field, 0, maxDifscratch, 0, length);
-        return ret;
     }
 
 

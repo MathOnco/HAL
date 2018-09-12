@@ -3,7 +3,7 @@ package Framework.GridsAndAgents;
 import java.io.Serializable;
 
 /**
- * Created by rafael on 2/17/17.
+ * AgentBase functions are shared amongst all agent types
  */
 public abstract class AgentBase<T> implements Serializable{
     int stateID;

@@ -44,14 +44,6 @@ public class UIFileChooserInput extends JButton implements Framework.Interfaces.
     }
 
     /**
-     * ignore
-     */
-    @Override
-    public int TypeID() {
-        return 3;
-    }
-
-    /**
      * sets the foreground and background of the UIFileChooserInput
      * @param foregroundColor color of the text if null the UIWindow color will be used
      * @param backgroundColor color of the background, if null the UIWindow color will be used
@@ -167,7 +159,7 @@ public class UIFileChooserInput extends JButton implements Framework.Interfaces.
      * ignore
      */
     @Override
-    public void GetComps(ArrayList<Component> putHere, ArrayList<Integer> coordsHere, ArrayList<Integer> compSizesHere) {
+    public void _GetComps(ArrayList<Component> putHere, ArrayList<Integer> coordsHere, ArrayList<Integer> compSizesHere) {
         int labelEnd=compY/2;
         putHere.add(this.label);
         coordsHere.add(0);
@@ -180,4 +172,13 @@ public class UIFileChooserInput extends JButton implements Framework.Interfaces.
         compSizesHere.add(compX);
         compSizesHere.add(compY-labelEnd);
     }
+
+    /**
+     * ignore
+     */
+    @Override
+    public int TypeID() {
+        return 3;
+    }
+
 }

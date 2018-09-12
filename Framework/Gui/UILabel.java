@@ -113,7 +113,7 @@ public class UILabel implements GuiComp {
     /**
      * called by the UIWindow class to place the label
      */
-    public void GetComps(ArrayList<Component> putHere,ArrayList<Integer> putCoordsHere,ArrayList<Integer>compSizesHere){
+    public void _GetComps(ArrayList<Component> putHere, ArrayList<Integer> putCoordsHere, ArrayList<Integer>compSizesHere){
         putHere.add(label);
         putCoordsHere.add(0);
         putCoordsHere.add(0);

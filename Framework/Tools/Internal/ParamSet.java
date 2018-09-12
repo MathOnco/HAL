@@ -1,5 +1,6 @@
-package Framework.Gui;
+package Framework.Tools.Internal;
 
+import Framework.Gui.UIWindow;
 import Framework.Interfaces.MenuItem;
 import Framework.Interfaces.ParamSetChangeAction;
 
@@ -23,8 +24,8 @@ public class ParamSet {
     final int typeID = 1;//integer
     boolean column;
     final ArrayList<MenuItem> items;
-    HashMap<String,Integer>labels;
-    ArrayList<String>vals;
+    public HashMap<String,Integer>labels;
+    public ArrayList<String>vals;
     ParamSetChangeAction ChangeAction;
 
     public ParamSet() {
@@ -130,7 +131,7 @@ public class ParamSet {
     /**
      * adds a new gui menu item to the set
      */
-    MenuItem AddGuiMenuItem(MenuItem addMe) {
+    public MenuItem AddGuiMenuItem(MenuItem addMe) {
         String name = addMe.GetLabel();
         labels.put(addMe.GetLabel(),items.size());
         items.add(addMe);

@@ -75,7 +75,7 @@ public class PDEexample extends AgentGrid2D<SrcOrSink> {
 
     public static void main(String[] args) {
         int x=400,y=400,scale=2;
-        GridWindow visCells=new GridWindow(x,y,scale,true,false);
+        GridWindow visCells=new GridWindow(x,y,scale,true,null,false);
         GridWindow visDiff=new GridWindow(x,y,scale);
         //visCells.AddAlphaGrid(visDiff);//facilitates alpha blending
         PDEexample ex=new PDEexample(x,y);

@@ -3,10 +3,7 @@ package Framework.GridsAndAgents;
 import java.io.Serializable;
 
 /**
- * extend the AgentSQ2D class if you want agents that exist on a 2D discrete lattice
- * with the possibility of stacking multiple agents on the same typeGrid square
- * @param <T> the extended AgentGrid2D class that the agents will live in
- * Created by rafael on 11/18/16.
+ * An agent type without any spatial representation
  */
 abstract public class Agent0D<T extends AgentGrid0D> extends AgentBase<T> implements Serializable {
 

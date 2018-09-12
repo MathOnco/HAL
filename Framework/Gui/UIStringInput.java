@@ -157,7 +157,7 @@ public class UIStringInput extends JTextField implements Framework.Interfaces.Me
      * ignore
      */
     @Override
-    public void GetComps(ArrayList<Component> putHere, ArrayList<Integer> coordsHere, ArrayList<Integer> compSizesHere) {
+    public void _GetComps(ArrayList<Component> putHere, ArrayList<Integer> coordsHere, ArrayList<Integer> compSizesHere) {
         int labelEnd=compY/2;
         putHere.add(this.label);
         coordsHere.add(0);

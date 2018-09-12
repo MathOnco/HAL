@@ -17,48 +17,54 @@ public class UIComboBoxInput extends JComboBox implements Framework.Interfaces.M
     private final String initVal;
 
     /**
-     * @param label the label of the comboBox
+     * @param label   the label of the comboBox
      * @param initVal the starting setting of the combo box
-     * @param options the array of options. the setting of the combo box corresponds to the index of the option in the array
-     * @param compX the width on the gui GridBagLayout
-     * @param compY the height on the gui GridBagLayout
+     * @param options the array of options. the setting of the combo box corresponds to the index of the option in the
+     *                array
+     * @param compX   the width on the gui GridBagLayout
+     * @param compY   the height on the gui GridBagLayout
      */
-    public UIComboBoxInput(String label, int initVal, String[] options, int compX, int compY){
+    public UIComboBoxInput(String label, int initVal, String[] options, int compX, int compY) {
         super(options);
-        this.initVal=Integer.toString(initVal);
-        this.labelText=label;
-        this.label=new JLabel(labelText);
-        this.compX=compX;
-        this.compY=compY;
+        this.initVal = Integer.toString(initVal);
+        this.labelText = label;
+        this.label = new JLabel(labelText);
+        this.compX = compX;
+        this.compY = compY;
     }
+
     /**
-     * @param label the label of the comboBox
+     * @param label   the label of the comboBox
      * @param initVal the starting setting of the combo box
-     * @param options the array of options. the setting of the combo box corresponds to the index of the option in the array
+     * @param options the array of options. the setting of the combo box corresponds to the index of the option in the
+     *                array
      */
-    public UIComboBoxInput(String label, int initVal, String[] options){
-        this(label,initVal,options,1,2);
+    public UIComboBoxInput(String label, int initVal, String[] options) {
+        this(label, initVal, options, 1, 2);
     }
+
     /**
      * sets the foreground and background of the UIComboBoxInput
+     *
      * @param foregroundColor color of the text if null the UIWindow color will be used
      * @param backgroundColor color of the background, if null the UIWindow color will be used
      */
-    public UIComboBoxInput SetColor(Color foregroundColor, Color backgroundColor){
-        if(backgroundColor!=null){
+    public UIComboBoxInput SetColor(Color foregroundColor, Color backgroundColor) {
+        if (backgroundColor != null) {
             setOpaque(true);
             setBackground(backgroundColor);
             label.setOpaque(true);
             label.setBackground(backgroundColor);
         }
-        if(foregroundColor !=null) {
+        if (foregroundColor != null) {
             setForeground(foregroundColor);
             label.setForeground(foregroundColor);
         }
         return this;
     }
-    public UIComboBoxInput SetColor(int foregroundColor, int backgroundColor){
-        SetColor(new Color(foregroundColor),new Color(backgroundColor));
+
+    public UIComboBoxInput SetColor(int foregroundColor, int backgroundColor) {
+        SetColor(new Color(foregroundColor), new Color(backgroundColor));
         return this;
     }
 
@@ -82,17 +88,22 @@ public class UIComboBoxInput extends JComboBox implements Framework.Interfaces.M
      * ignore
      */
     @Override
-    public int NEntries() { return label!=null?2:1; }
+    public int NEntries() {
+        return label != null ? 2 : 1;
+    }
 
     /**
      * ignore
      */
     @Override
     public <T extends Component> T GetEntry(int iEntry) {
-        switch(iEntry){
-            case 0: return (T)label;
-            case 1: return (T)this;
-            default: throw new IllegalArgumentException(iEntry+" does not match to an item!");
+        switch (iEntry) {
+            case 0:
+                return (T) label;
+            case 1:
+                return (T) this;
+            default:
+                throw new IllegalArgumentException(iEntry + " does not match to an item!");
         }
     }
 
@@ -105,14 +116,15 @@ public class UIComboBoxInput extends JComboBox implements Framework.Interfaces.M
      * ignore
      */
     @Override
-    public int compX(){
+    public int compX() {
         return compX;
     }
+
     /**
      * ignore
      */
     @Override
-    public int compY(){
+    public int compY() {
         return compY;
     }
 
@@ -147,8 +159,8 @@ public class UIComboBoxInput extends JComboBox implements Framework.Interfaces.M
      * ignore
      */
     @Override
-    public void GetComps(ArrayList<Component> putHere, ArrayList<Integer> coordsHere, ArrayList<Integer> compSizesHere){
-        int labelEnd=compY/2;
+    public void _GetComps(ArrayList<Component> putHere, ArrayList<Integer> coordsHere, ArrayList<Integer> compSizesHere) {
+        int labelEnd = compY / 2;
         putHere.add(this.label);
         coordsHere.add(0);
         coordsHere.add(0);
@@ -158,6 +170,6 @@ public class UIComboBoxInput extends JComboBox implements Framework.Interfaces.M
         coordsHere.add(0);
         coordsHere.add(labelEnd);
         compSizesHere.add(compX);
-        compSizesHere.add(compY-labelEnd);
+        compSizesHere.add(compY - labelEnd);
     }
 }

@@ -8,7 +8,8 @@ import java.io.Serializable;
 import java.util.*;
 
 /**
- * Created by rafael on 2/17/17.
+ * AgentLists can hold any type of agent
+ * @param <T> the type of agent that the AgentList will hold
  */
 
 public class AgentList<T> implements Iterable<T>,Serializable{
@@ -19,6 +20,9 @@ public class AgentList<T> implements Iterable<T>,Serializable{
     int pop;
     int stateID;
 
+    /**
+     * creates an empty AgentList
+     */
     public AgentList(){
         this.nodes =new ArrayList<>();
         this.deads=new ArrayList<>();

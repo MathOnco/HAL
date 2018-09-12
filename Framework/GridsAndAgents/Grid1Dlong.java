@@ -7,16 +7,22 @@ import java.io.Serializable;
 import java.util.Arrays;
 
 /**
- * Created by Rafael on 10/24/2017.
+ * a 1D Grid of longs
  */
 public class Grid1Dlong extends GridBase1D implements Serializable {
     long[] field;
 
+    /**
+     * creates a new Grid1Dlong of length xDim without wraparound
+     */
     public Grid1Dlong(int xDim) {
         super(xDim, false);
         field = new long[this.xDim];
     }
 
+    /**
+     * creates a new Grid1Dlong of length xDim with optional wraparound
+     */
     public Grid1Dlong(int xDim, boolean wrapX) {
         super(xDim, wrapX);
         field = new long[this.xDim];

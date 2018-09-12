@@ -6,19 +6,13 @@ import Framework.Util;
 import java.io.Serializable;
 
 /**
- * Created by bravorr on 5/17/17.
+ * holds functions that all 1D Grids share
  */
 public abstract class GridBase1D implements Serializable {
     public final int xDim;
     public final int length;
     public boolean wrapX;
     int tick;
-
-    public GridBase1D(int xDim, boolean wrapX) {
-        this.xDim = xDim;
-        this.wrapX = wrapX;
-        this.length = xDim;
-    }
 
     /**
      * gets the index of the square at the specified coordinates with wrap around
@@ -52,7 +46,7 @@ public abstract class GridBase1D implements Serializable {
      */
     public double DispX(double x1, double x2) {
         if (wrapX) {
-            return Util.DistWrap(x2, x1, xDim);
+            return Util.DispWrap(x2, x1, xDim);
         } else {
             return x2 - x1;
         }
@@ -253,6 +247,12 @@ public abstract class GridBase1D implements Serializable {
 //        }
 //        return retCt;
 //    }
+
+    public GridBase1D(int xDim, boolean wrapX) {
+        this.xDim = xDim;
+        this.wrapX = wrapX;
+        this.length = xDim;
+    }
 
 }
 

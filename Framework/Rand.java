@@ -11,13 +11,16 @@ import static Framework.Util.DistSquared;
 import static Framework.Util.Norm;
 
 /**
- * Created by Rafael on 11/16/2017.
+ * contains functions for random value generation and distribution sampling.
  */
 public class Rand implements Serializable {
     public final RNG rn;
     public final Gaussian gn;
     public final Binomial bn;
 
+    /**
+     * creates a Rand object using the RNG argument as its internal generator
+     */
     public Rand(RNG rng) {
         this.rn = rng;
         this.gn = new Gaussian();
@@ -36,6 +39,9 @@ public class Rand implements Serializable {
         this.bn = new Binomial();
     }
 
+    /**
+     * returns a random integer from 0 up to (not including) bound
+     */
     public int Int(int bound) {
         if (bound == 1) {
             return 0;
@@ -43,30 +49,51 @@ public class Rand implements Serializable {
         return rn.Int(bound);
     }
 
+    /**
+     * returns a random double from 0 up to bound
+     */
     public double Double(double bound) {
         return rn.Double(bound);
     }
 
+    /**
+     * returns a random double from 0 to 1
+     */
     public double Double() {
         return rn.Double();
     }
 
+    /**
+     * returns a random long from 0 up to (not including) bound
+     */
     public long Long(long bound) {
         return rn.Long(bound);
     }
 
+    /**
+     * returns a random boolean value (true or false)
+     */
     public boolean Bool() {
         return rn.Bool();
     }
 
+    /**
+     * returns a random number from the binomial distribution
+     */
     public long Binomial(long n, double p) {
         return bn.SampleLong(n, p, this);
     }
 
+    /**
+     * returns a random number from the binomial distribution (number of heads from n weighted coin flips with probability p of heads)
+     */
     public int Binomial(int n, double p) {
         return bn.SampleInt(n, p, this);
     }
 
+    /**
+     * returns a random number from the binomial distribution (number of heads from n weighted coin flips with probability p of heads)
+     */
     public double Gaussian(double mean, double stdDev) {
         return gn.Sample(mean, stdDev, this);
     }

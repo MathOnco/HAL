@@ -36,16 +36,20 @@ public class AgentSQ3Dunstackable<T extends AgentGrid3D> extends Agent3DBase<T> 
         AddSQ(iNewPos);
     }
 
-    void AddSQ(int i) {
-        if (G.grid[i] != null) {
-            throw new RuntimeException("Adding multiple unstackable agents to the same square!");
+    /**
+     * Moves the agent to the specified coordinates
+     */
+    @Override
+    public void MoveSQ(int i) {
+        if (!alive) {
+            throw new RuntimeException("Attempting to move dead agent!");
         }
-        G.grid[i] = this;
-    }
-
-
-    void RemSQ() {
-        G.grid[iSq] = null;
+        RemSQ();
+        xSq = G.ItoX(i);
+        ySq = G.ItoY(i);
+        zSq = G.ItoZ(i);
+        iSq = i;
+        AddSQ(i);
     }
 
     /**
@@ -121,19 +125,6 @@ public class AgentSQ3Dunstackable<T extends AgentGrid3D> extends Agent3DBase<T> 
     @Override
     int GetCountOnSquare(AgentToBool evalAgent) {
         return evalAgent.EvalAgent(this) ? 1 : 0;
-    }
-
-    @Override
-    public void MoveSQ(int i) {
-        if (!alive) {
-            throw new RuntimeException("Attempting to move dead agent!");
-        }
-        RemSQ();
-        xSq = G.ItoX(i);
-        ySq = G.ItoY(i);
-        zSq = G.ItoZ(i);
-        iSq = i;
-        AddSQ(i);
     }
 
     /**
@@ -215,5 +206,18 @@ public class AgentSQ3Dunstackable<T extends AgentGrid3D> extends Agent3DBase<T> 
     void Setup(int x, int y) {
         throw new IllegalStateException("shouldn't be adding 3D agent to 2D typeGrid");
     }
+
+    void AddSQ(int i) {
+        if (G.grid[i] != null) {
+            throw new RuntimeException("Adding multiple unstackable agents to the same square!");
+        }
+        G.grid[i] = this;
+    }
+
+
+    void RemSQ() {
+        G.grid[iSq] = null;
+    }
+
 
 }

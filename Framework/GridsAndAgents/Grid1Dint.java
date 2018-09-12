@@ -7,16 +7,22 @@ import java.io.Serializable;
 import java.util.Arrays;
 
 /**
- * Created by Rafael on 10/24/2017.
+ * a 1D Grid of ints
  */
 public class Grid1Dint extends GridBase1D implements Serializable {
     int[] field;
 
+    /**
+     * creates a new Grid1Dint of length xDim without wraparound
+     */
     public Grid1Dint(int xDim) {
         super(xDim, false);
         field = new int[this.xDim];
     }
 
+    /**
+     * creates a new Grid1Dint of length xDim with optional wraparound
+     */
     public Grid1Dint(int xDim, boolean wrapX) {
         super(xDim, wrapX);
         field = new int[this.xDim];

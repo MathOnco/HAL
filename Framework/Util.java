@@ -1,7 +1,5 @@
 package Framework;
 
-import Framework.GridsAndAgents.Agent2DBase;
-import Framework.GridsAndAgents.Agent3DBase;
 import Framework.Interfaces.*;
 import Framework.Interfaces.SerializableModel;
 import Framework.Tools.Internal.SweepRun;
@@ -18,16 +16,16 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- *
  * A collection of helpful static utility functions
  * recommended import: import static Util.*
- * Created by rafael on 10/11/16.
  */
 public final class Util {
 
     public static double DOUBLE_EPSILON = 2.22E-16;
 
-    //COLOR MAKERS
+    /**
+     * returns a color integer based on the RGB components passed in. color values should be scaled from 0 to 1
+     */
     public static int RGB(double r, double g, double b) {
         int ri = Bound((int) (r * 256), 0, 255);
         int gi = Bound((int) (g * 256), 0, 255);
@@ -35,6 +33,10 @@ public final class Util {
         return (0xff000000) | (ri << 16) | (gi << 8) | (bi);
     }
 
+    /**
+     * returns a color integer based on the RGBA components passed in. color values should be scaled from 0 to 1. the
+     * alpha value is used with the AddAlphaGrid UIGrid function to blend colors together from multiple grids
+     */
     public static int RGBA(double r, double g, double b, double a) {
         int ri = Bound((int) (r * 256), 0, 255);
         int gi = Bound((int) (g * 256), 0, 255);
@@ -43,6 +45,9 @@ public final class Util {
         return (ai << 24) | (ri << 16) | (gi << 8) | (bi);
     }
 
+    /**
+     * returns a color integer based on the RGB components passed in. color values should be scaled from 0 to 255.
+     */
     public static int RGB256(int r, int g, int b) {
         r = Bound(r, 0, 255);
         g = Bound(g, 0, 255);
@@ -50,6 +55,10 @@ public final class Util {
         return (0xff000000) | (r << 16) | (g << 8) | (b);
     }
 
+    /**
+     * returns a color integer based on the RGB components passed in. color values should be scaled from 0 to 255. the
+     * alpha value is used with the AddAlphaGrid UIGrid function to blend colors together from multiple grids
+     */
     public static int RGBA256(int r, int g, int b, int a) {
         r = Bound(r, 0, 255);
         g = Bound(g, 0, 255);
@@ -58,86 +67,136 @@ public final class Util {
         return (a << 24) | (r << 16) | (g << 8) | (b);
     }
 
-    //COMPONENT GETTERS
+    /**
+     * returns the Red component value of the color as an integer from 0 to 255
+     */
     public static int GetRed256(int color) {
         return (color & 0x00ff0000) >> 16;
     }
 
+    /**
+     * returns the Green component value of the color as an integer from 0 to 255
+     */
     public static int GetGreen256(int color) {
         return (color & 0x0000ff00) >> 8;
     }
 
+    /**
+     * returns the Blue component value of the color as an integer from 0 to 255
+     */
     public static int GetBlue256(int color) {
         return color & 0x000000ff;
     }
 
+    /**
+     * returns the Alpha component value of the color as an integer from 0 to 255
+     */
     public static int GetAlpha256(int color) {
         return color >>> 24;
     }
 
+    /**
+     * returns the Red component value of the color as an integer from 0 to 1
+     */
     public static double GetRed(int color) {
         return ((color & 0x00ff0000) >> 16) / 255.0;
     }
 
+    /**
+     * returns the Green component value of the color as an integer from 0 to 1
+     */
     public static double GetGreen(int color) {
         return ((color & 0x0000ff00) >> 8) / 255.0;
     }
 
+    /**
+     * returns the Blue component value of the color as an integer from 0 to 1
+     */
     public static double GetBlue(int color) {
         return (color & 0x000000ff) / 255.0;
     }
 
+    /**
+     * returns the Alpha component value of the color as an integer from 0 to 1
+     */
     public static double GetAlpha(int color) {
         return (color >>> 24) / 255.0;
     }
 
-    //COMPONENT SETTERS
+    /**
+     * returns a new color integer based on the input color but with the red component changed to the r argument
+     */
     public static int SetRed(int color, double r) {
         int ri = Bound((int) (r * 256), 0, 255);
         return color & 0xff00ffff | (ri << 16);
     }
 
+    /**
+     * returns a new color integer based on the input color but with the green component changed to the r argument
+     */
     public static int SetGreen(int color, double g) {
         int gi = Bound((int) (g * 256), 0, 255);
         return color & 0xffff00ff | (gi << 8);
     }
 
+    /**
+     * returns a new color integer based on the input color but with the blue component changed to the r argument
+     */
     public static int SetBlue(int color, double b) {
         int bi = Bound((int) (b * 256), 0, 255);
         return color & 0xffffff00 | (bi);
     }
 
+    /**
+     * returns a new color integer based on the input color but with the alpha component changed to the r argument
+     */
     public static int SetAlpha(int color, double a) {
         a = Math.max(a, 0);
         int ai = Bound((int) (a * 256), 0, 255);
         return color & 0x00ffffff | (ai << 24);
     }
 
+    /**
+     * returns a new color integer based on the input color but with the red component changed to the r argument
+     */
     public static int SetRed256(int color, int r) {
         r = Bound(r, 0, 255);
         return color & 0xff00ffff | (r << 16);
     }
 
+    /**
+     * returns a new color integer based on the input color but with the green component changed to the r argument
+     */
     public static int SetGreen256(int color, int g) {
         g = Bound(g, 0, 255);
         return color & 0xffff00ff | (g << 8);
     }
 
+    /**
+     * returns a new color integer based on the input color but with the blue component changed to the r argument
+     */
     public static int SetBlue256(int color, int b) {
         b = Bound(b, 0, 255);
         return color & 0xffffff00 | (b);
     }
 
+    /**
+     * returns a new color integer based on the input color but with the alpha component changed to the r argument
+     */
     public static int SetAlpha256(int color, int a) {
         a = Bound(a, 0, 255);
         return color & 0x00ffffff | (a << 24);
     }
 
+    //a set of default colors
     final public static int RED = RGB(1, 0, 0), GREEN = RGB(0, 1, 0), BLUE = RGB(0, 0, 1), BLACK = RGB(0, 0, 0), WHITE = RGB(1, 1, 1), YELLOW = RGB(1, 1, 0), CYAN = RGB(0, 1, 1), MAGENTA = RGB(1, 0, 1);
 
-    //OTHER COLOR GENERATORS
+    //a set of categorical colors based on d3 category20
     final private static int CC0 = RGB256(56, 116, 177), CC1 = RGB256(198, 56, 44), CC2 = RGB256(79, 159, 57), CC3 = RGB256(189, 190, 58), CC4 = RGB256(142, 102, 186), CC5 = RGB256(240, 134, 39), CC6 = RGB256(83, 187, 206), CC7 = RGB256(214, 123, 191), CC8 = RGB256(133, 88, 76), CC9 = RGB256(178, 197, 230), CC10 = RGB256(243, 156, 151), CC11 = RGB256(166, 222, 144), CC12 = RGB256(220, 220, 147), CC13 = RGB256(194, 174, 211), CC14 = RGB256(246, 191, 126), CC15 = RGB256(169, 216, 228), CC16 = RGB256(238, 184, 209), CC17 = RGB256(190, 157, 146), CC18 = RGB256(199, 199, 199), CC19 = RGB256(127, 127, 127);
 
+    /**
+     * returns a color from the d3 category20 color set based on the index argument
+     */
     public static int CategorialColor(int index) {
         if (index < 0 || index > 20) {
             throw new IllegalArgumentException("index outside color category range [0-19] index: " + index);
@@ -188,7 +247,9 @@ public final class Util {
         }
     }
 
-    //add backend for inactivation?
+    /**
+     * returns a color int by mapping values from 0 to 1 with a heatmap with colors black, red, orange, yellow, white
+     */
     public static int HeatMapRGB(double val) {
         double c1 = val * 4;
         double c2 = (val - 0.25) * 2;
@@ -196,6 +257,9 @@ public final class Util {
         return RGB(c1, c2, c3);
     }
 
+    /**
+     * returns a color int by mapping values from 0 to 1 with a heatmap with colors black, red, pink, magenta, white
+     */
     public static int HeatMapRBG(double val) {
         double c1 = val * 4;
         double c2 = (val - 0.25) * 2;
@@ -203,6 +267,9 @@ public final class Util {
         return RGB(c1, c3, c2);
     }
 
+    /**
+     * returns a color int by mapping values from 0 to 1 with a heatmap with colors black, green, lime, yellow, white
+     */
     public static int HeatMapGRB(double val) {
         double c1 = val * 4;
         double c2 = (val - 0.25) * 2;
@@ -210,6 +277,10 @@ public final class Util {
         return RGB(c2, c1, c3);
     }
 
+    /**
+     * returns a color int by mapping values from 0 to 1 with a heatmap with colors black, green, greenblue, cyan,
+     * white
+     */
     public static int HeatMapGBR(double val) {
         double c1 = val * 4;
         double c2 = (val - 0.25) * 2;
@@ -217,6 +288,9 @@ public final class Util {
         return RGB(c3, c1, c2);
     }
 
+    /**
+     * returns a color int by mapping values from 0 to 1 with a heatmap with colors black, blue, purple, pink, white
+     */
     public static int HeatMapBRG(double val) {
         double c1 = val * 4;
         double c2 = (val - 0.25) * 2;
@@ -224,6 +298,10 @@ public final class Util {
         return RGB(c2, c3, c1);
     }
 
+    /**
+     * returns a color int by mapping values from 0 to 1 with a heatmap with colors black, blue, light blue, cyan,
+     * white
+     */
     public static int HeatMapBGR(double val) {
         double c1 = val * 4;
         double c2 = (val - 0.25) * 2;
@@ -231,6 +309,10 @@ public final class Util {
         return RGB(c3, c2, c1);
     }
 
+    /**
+     * returns a color int by mapping values from min to max with a heatmap with colors black, red, orange, yellow,
+     * white
+     */
     public static int HeatMapRGB(double val, double min, double max) {
         val = Scale0to1(val, min, max);
         double c1 = val * 4;
@@ -239,6 +321,10 @@ public final class Util {
         return RGB(c1, c2, c3);
     }
 
+    /**
+     * returns a color int by mapping values from min to max with a heatmap with colors black, red, pink, magenta,
+     * white
+     */
     public static int HeatMapRBG(double val, double min, double max) {
         val = Scale0to1(val, min, max);
         double c1 = val * 4;
@@ -247,6 +333,10 @@ public final class Util {
         return RGB(c1, c3, c2);
     }
 
+    /**
+     * returns a color int by mapping values from min to max with a heatmap with colors black, green, lime, yellow,
+     * white
+     */
     public static int HeatMapGRB(double val, double min, double max) {
         val = Scale0to1(val, min, max);
         double c1 = val * 4;
@@ -255,6 +345,10 @@ public final class Util {
         return RGB(c2, c1, c3);
     }
 
+    /**
+     * returns a color int by mapping values from min to max with a heatmap with colors black, green, greenblue, cyan,
+     * white
+     */
     public static int HeatMapGBR(double val, double min, double max) {
         val = Scale0to1(val, min, max);
         double c1 = val * 4;
@@ -263,6 +357,10 @@ public final class Util {
         return RGB(c3, c1, c2);
     }
 
+    /**
+     * returns a color int by mapping values from min to max with a heatmap with colors black, blue, purple, pink,
+     * white
+     */
     public static int HeatMapBRG(double val, double min, double max) {
         val = Scale0to1(val, min, max);
         double c1 = val * 4;
@@ -271,6 +369,10 @@ public final class Util {
         return RGB(c2, c3, c1);
     }
 
+    /**
+     * returns a color int by mapping values from min to max with a heatmap with colors black, blue, light blue, cyan,
+     * white
+     */
     public static int HeatMapBGR(double val, double min, double max) {
         val = Scale0to1(val, min, max);
         double c1 = val * 4;
@@ -279,14 +381,16 @@ public final class Util {
         return RGB(c2, c3, c1);
     }
 
-    static int InterpComp(double val, int minComp, int maxComp) {
-        return (int) ((maxComp - minComp) * val) + minComp;
-    }
-
+    /**
+     * interpoloates value from 0 to 1 to between any pair of colors
+     */
     public static int ColorMap(double val, int minColor, int maxColor) {
         return ColorMap(val, 0, 1, minColor, maxColor);
     }
 
+    /**
+     * interpoloates value from min to max to between any pair of colors
+     */
     public static int ColorMap(double val, double min, double max, int minColor, int maxColor) {
         if (val <= min) {
             return minColor;
@@ -298,6 +402,9 @@ public final class Util {
         return RGB256(InterpComp(val, GetRed256(minColor), GetRed256(maxColor)), InterpComp(val, GetGreen256(minColor), GetGreen256(maxColor)), InterpComp(val, GetBlue256(minColor), GetBlue256(maxColor)));
     }
 
+    /**
+     * interpoloates coordinate pairs from 0 to 1 to between a box with any 4 corner colors
+     */
     public static int ColorMap2D(double valx, double valy, int bottomLeft, int bottomRight, int topLeft, int topRight) {
         return RGB(
                 Interpolate2D(valx, valy, GetRed(bottomLeft), GetRed(bottomRight), GetRed(topLeft), GetRed(topRight)),
@@ -306,20 +413,33 @@ public final class Util {
         );
     }
 
+    /**
+     * returns the RGBA components of the color as a string
+     */
     public static String ColorString(int color) {
         return "r: " + GetRed256(color) + ", g: " + GetGreen256(color) + ", b: " + GetBlue256(color) + ", a: " + GetAlpha256(color);
     }
 
 
     //TODO check alpha value of return
+
+    /**
+     * generates a color int based on the HSB color space
+     */
     public static int HSBColor(double hue, double saturation, double brightness) {
         return Color.HSBtoRGB((float) hue, (float) saturation, (float) brightness);
     }
 
+    /**
+     * puts the HSB components [hue, saturation, brightness] of the RGB color into the ret array
+     */
     public static void ColorToHSB(int color, float[] ret) {
         Color.RGBtoHSB(GetRed256(color), GetGreen256(color), GetBlue256(color), ret);
     }
 
+    /**
+     * generates an RGB color from the YCbCr color space
+     */
     public static int YCbCrColor(double y, double cb, double cr) {
         double yd = (double) (Bound(y * 256, 0, 255));
         double cbd = (double) (Bound(cb * 256, 0, 255));
@@ -330,11 +450,17 @@ public final class Util {
         return RGB256(r, g, b);
     }
 
+    /**
+     * generates an RGB color from the CbCr plane with x,y coordinates assumed to be from 0 to 1
+     */
     public static int CbCrPlaneColor(double x, double y) {
         double ycbcrY = 0.5;
         return YCbCrColor(ycbcrY, x, y);
     }
 
+    /**
+     * gets the max value from an array
+     */
     public static double ArrayMax(double[] arr) {
         double max = Double.MIN_VALUE;
         for (double val : arr) {
@@ -343,6 +469,9 @@ public final class Util {
         return max;
     }
 
+    /**
+     * gets the max value from an array
+     */
     public static int ArrayMax(int[] arr) {
         int max = Integer.MIN_VALUE;
         for (int val : arr) {
@@ -351,6 +480,9 @@ public final class Util {
         return max;
     }
 
+    /**
+     * gets the min value from an array
+     */
     public static double ArrayMin(double[] arr) {
         double min = Double.MIN_VALUE;
         for (double val : arr) {
@@ -359,6 +491,9 @@ public final class Util {
         return min;
     }
 
+    /**
+     * gets the min value from an array
+     */
     public static int ArrayMin(int[] arr) {
         int min = Integer.MIN_VALUE;
         for (int val : arr) {
@@ -367,6 +502,9 @@ public final class Util {
         return min;
     }
 
+    /**
+     * sums the array
+     */
     public static double ArraySum(double[] arr) {
         double sum = 0;
         for (double val : arr) {
@@ -375,6 +513,9 @@ public final class Util {
         return sum;
     }
 
+    /**
+     * sums the array
+     */
     public static int ArraySum(int[] arr) {
         int sum = 0;
         for (int val : arr) {
@@ -383,6 +524,9 @@ public final class Util {
         return sum;
     }
 
+    /**
+     * sums the array
+     */
     public static long ArraySum(long[] arr) {
         long sum = 0;
         for (long val : arr) {
@@ -392,11 +536,18 @@ public final class Util {
     }
 
     /**
-     * prints an array to a string
-     *
-     * @param arr   array to be printed
-     * @param delim the delimiter used to separate entries
-     * @param <T>   the type of the buf entries in the array
+     * returns the mean value of the provided array
+     */
+    static public double ArrayMean(double[] a) {
+        double tot = 0;
+        for (int i = 0; i < a.length; i++) {
+            tot += a[i];
+        }
+        return tot / a.length;
+    }
+
+    /**
+     * prints an array to a string, using the .toString function, and separating entries with the delim argument
      */
     public static <T> String ArrToString(T[] arr, String delim) {
         StringBuilder sb = new StringBuilder();
@@ -407,6 +558,10 @@ public final class Util {
         return sb.toString();
     }
 
+    /**
+     * prints an array between start and end indices to a string, using the .toString function, and separating entries
+     * with the delim argument
+     */
     public static <T> String ArrToString(T[] arr, String delim, int start, int end) {
         StringBuilder sb = new StringBuilder();
         for (int i = start; i < end - 1; i++) {
@@ -416,11 +571,17 @@ public final class Util {
         return sb.toString();
     }
 
+    /**
+     * interpolates value from 0 to 1 to be between min and max
+     */
     public static double Interpolate(double val, double min, double max) {
         val = Util.Bound(val, 0, 1);
         return (max - min) * val + min;
     }
 
+    /**
+     * interpolates value from 0 to 1 to be between min and max
+     */
     public static double Interpolate2D(double x, double y, double bottomLeft, double bottomRight, double topLeft, double topRight) {
         x = Util.Bound(x, 0, 1);
         y = Util.Bound(y, 0, 1);
@@ -429,31 +590,50 @@ public final class Util {
         return (top - bottom) * y + bottom;
     }
 
-    public static int GetBit(int v, int i) {
-        return v >> i % 1;
+    /**
+     * gets the value from a single bit of an int32
+     */
+    public static boolean GetBit(int v, int i) {
+        return v >> i % 1 != 0;
     }
 
-    public static long GetBit(long v, int i) {
-        return v >> i % 1;
+    /**
+     * gets the value from a single bit of an long64
+     */
+    public static boolean GetBit(long v, int i) {
+        return v >> i % 1 != 0;
     }
 
+    /**
+     * returns a version of the int v with the bit at index i flipped
+     */
     public static int FlipBit(int v, int i) {
         return v ^ (1 << i);
     }
 
+    /**
+     * returns a version of the long v with the bit at index i flipped
+     */
     public static long FlipBit(long v, int i) {
         return v ^ (1 << i);
     }
 
+    /**
+     * returns a version of the int v with the bit at position i set to val
+     */
     public static int SetBit(int v, int i, boolean val) {
         return val ? v | (1 << i) : v & ~(1 << i);
     }
 
     /**
-     * prints an array
-     *
-     * @param arr   array to be printed
-     * @param delim the delimiter used to separate entries
+     * returns a version of the long v with the bit at position i set to val
+     */
+    public static long SetBit(long v, int i, boolean val) {
+        return val ? v | (1 << i) : v & ~(1 << i);
+    }
+
+    /**
+     * prints an array using delim to separate the entries
      */
     public static String ArrToString(double[] arr, String delim) {
         if (arr.length == 0) {
@@ -467,6 +647,9 @@ public final class Util {
         return sb.toString();
     }
 
+    /**
+     * prints an array using delim to separate the entries, beginning at index start and ending at index end
+     */
     public static String ArrToString(double[] arr, String delim, int start, int end) {
         if (arr.length == 0) {
             return "";
@@ -479,6 +662,9 @@ public final class Util {
         return sb.toString();
     }
 
+    /**
+     * prints an array using delim to separate the entries
+     */
     public static String ArrToString(float[] arr, String delim) {
         if (arr.length == 0) {
             return "";
@@ -491,6 +677,9 @@ public final class Util {
         return sb.toString();
     }
 
+    /**
+     * prints an array using delim to separate the entries, beginning at index start and ending at index end
+     */
     public static String ArrToString(float[] arr, String delim, int start, int end) {
         if (arr.length == 0) {
             return "";
@@ -504,10 +693,7 @@ public final class Util {
     }
 
     /**
-     * prints an array
-     *
-     * @param arr   array to be printed
-     * @param delim the delimiter used to separate entries
+     * prints an array using delim to separate the entries
      */
     public static String ArrToString(int[] arr, String delim) {
         if (arr.length == 0) {
@@ -521,6 +707,9 @@ public final class Util {
         return sb.toString();
     }
 
+    /**
+     * prints an array using delim to separate the entries, beginning at index start and ending at index end
+     */
     public static String ArrToString(int[] arr, String delim, int start, int end) {
         if (arr.length == 0) {
             return "";
@@ -533,6 +722,9 @@ public final class Util {
         return sb.toString();
     }
 
+    /**
+     * prints an array using delim to separate the entries
+     */
     public static String ArrToString(long[] arr, String delim) {
         if (arr.length == 0) {
             return "";
@@ -545,6 +737,9 @@ public final class Util {
         return sb.toString();
     }
 
+    /**
+     * prints an array using delim to separate the entries, beginning at index start and ending at index end
+     */
     public static String ArrToString(long[] arr, String delim, int start, int end) {
         if (arr.length == 0) {
             return "";
@@ -557,6 +752,9 @@ public final class Util {
         return sb.toString();
     }
 
+    /**
+     * prints an array using delim to separate the entries, beginning at index start and ending at index end
+     */
     public static String ArrToString(String[] arr, String delim, int start, int end) {
         if (arr.length == 0) {
             return "";
@@ -569,6 +767,9 @@ public final class Util {
         return sb.toString();
     }
 
+    /**
+     * prints an array using delim to separate the entries
+     */
     public static String ArrToString(String[] arr, String delim) {
         if (arr.length == 0) {
             return "";
@@ -583,8 +784,6 @@ public final class Util {
 
     /**
      * Returns a new array that is the first array with the second concatenated to the end of it
-     *
-     * @param <T> the type of the input and output arrays
      */
     public static <T> T[] Concat(T[] first, T[] second) {
         int firstLen = first.length;
@@ -597,8 +796,6 @@ public final class Util {
 
     /**
      * Returns a new array that is the first array with the appendMe object appended to the end of it
-     *
-     * @param <T> the type of the inputs and output array
      */
     public static <T> T[] Append(T[] arr, T appendMe) {
         int firstLen = arr.length;
@@ -608,24 +805,15 @@ public final class Util {
         return ret;
     }
 
+    /**
+     * returns an array of indices starting with 0 and ending with nEntries-1
+     */
     public static int[] GenIndicesArray(int nEntries) {
         int indices[] = new int[nEntries];
         for (int i = 0; i < nEntries; i++) {
             indices[i] = i;
         }
         return indices;
-    }
-
-
-    /**
-     * returns the mean value of the provided array
-     */
-    static public double Mean(double[] a) {
-        double tot = 0;
-        for (int i = 0; i < a.length; i++) {
-            tot += a[i];
-        }
-        return tot / a.length;
     }
 
 
@@ -808,13 +996,7 @@ public final class Util {
     }
 
     /**
-     * Returns an array of all squares touching a line between the positions provided
-     *
-     * @param x1 the xDim coordinate of the starting position
-     * @param y1 the yDim coordinate of the starting position
-     * @param x2 the xDim coordinate of the ending position
-     * @param y2 the yDim coordinate of the ending position
-     * @return coordinates return as an array of the form [xDim,yDim,xDim,yDim,...]
+     * Returns a coordinates array of all squares along the line between (x1,y1) and (x2,y2)
      */
     public static int[] AlongLineCoords(double x1, double y1, double x2, double y2) {
         double dx = Math.abs(x2 - x1);
@@ -871,15 +1053,9 @@ public final class Util {
         return writeHere;
     }
 
-    //    /**
-//     * Returns an array of all squares touching a line between the positions provided
-//     *
-//     * @param x1 the xDim coordinate of the starting position
-//     * @param y1 the yDim coordinate of the starting position
-//     * @param x2 the xDim coordinate of the ending position
-//     * @param y2 the yDim coordinate of the ending position
-//     * @return coordinates return as an array of the form [xDim,yDim,xDim,yDim,...]
-//     */
+    /**
+     * puts into Coords all squares along the line between (x1,y1) and (x2,y2)
+     */
     public static int AlongLineCoords(double x1, double y1, double x2, double y2, int[] returnCoords) {
 
         double dx = Math.abs(x2 - x1);
@@ -935,6 +1111,10 @@ public final class Util {
         return Count;
     }
 
+    /**
+     * executes the provided action function using as argument the coordinates of all squares along the line between
+     * (x1,y1) and (x2,y2)
+     */
     public static void AlongLineAction(double x1, double y1, double x2, double y2, Coords2DAction Action) {
         double dx = Math.abs(x2 - x1);
         double dy = Math.abs(y2 - y1);
@@ -988,12 +1168,7 @@ public final class Util {
     }
 
     /**
-     * Returns the coordinates of all squares whose centers lie within a circle of the provided radius, centered on
-     * (0,0)
-     *
-     * @param includeOrigin defines whether to include the origin (0,0)
-     * @param radius        the radius of the circle
-     * @return coordinates returned as an array of the form [xDim,yDim,xDim,yDim,...]
+     * generates a neighborhood with the set of all coordinates in the circle with center 0,0 and the given radius.
      */
     static public int[] CircleHood(boolean includeOrigin, double radius) {
         double distSq = radius * radius;
@@ -1023,51 +1198,6 @@ public final class Util {
         return ret;
     }
 
-//    static public int[] RingHood(double innerRadius,double outerRadius) {
-//        if(innerRadius<=outerRadius){
-//            throw new IllegalArgumentException("inner radius must be less than outer radius");
-//        }
-//        double distSqInner = innerRadius * innerRadius;
-//        double distSqOuter = outerRadius * outerRadius;
-//        int min = (int) Math.floor(-outerRadius);
-//        int max = (int) Math.ceil(outerRadius);
-//        int[] retLong = new int[((max + 1 - min) * (max + 1 - min)) * 2];
-//        int ct = 0;
-//        for (int x = min; x <= max; x++) {
-//            for (int y = min; y <= max; y++) {
-//                double distSq= Util.DistSquared(0, 0, x, y);
-//                if (distSq >= distSqInner&&distSq<=distSqOuter) {
-//                    retLong[ct * 2] = x;
-//                    retLong[ct * 2 + 1] = y;
-//                    ct++;
-//                }
-//            }
-//        }
-//        int[] ret = new int[ct * 2];
-//        System.arraycopy(retLong, 0, ret, 0, ret.length);
-//        return ret;
-//    }
-//    static public int RingHood(double innerRadius,double outerRadius, int[] returnCoords) {
-//        if(innerRadius<=outerRadius){
-//            throw new IllegalArgumentException("inner radius must be less than outer radius");
-//        }
-//        double distSqInner = innerRadius * innerRadius;
-//        double distSqOuter = outerRadius * outerRadius;
-//        int min = (int) Math.floor(-outerRadius);
-//        int max = (int) Math.ceil(outerRadius);
-//        int ct = 0;
-//        for (int x = min; x <= max; x++) {
-//            for (int y = min; y <= max; y++) {
-//                double distSq= Util.DistSquared(0, 0, x, y);
-//                if (distSq >= distSqInner&&distSq<=distSqOuter) {
-//                    returnCoords[ct * 2] = x;
-//                    returnCoords[ct * 2 + 1] = y;
-//                    ct++;
-//                }
-//            }
-//        }
-//        return ct;
-//    }
 
     /**
      * Returns the coordinates of all squares whose centers lie within a rectangle of the provided radius, centered on
@@ -1103,6 +1233,9 @@ public final class Util {
         return dataIn;
     }
 
+    /**
+     * generates a 1D neighborhood from a set of coordinates, with space for the results of mapping
+     */
     static public int[] GenHood1D(int[] coords) {
         int isStart = coords.length;
         int[] ret = new int[coords.length + isStart];
@@ -1110,6 +1243,9 @@ public final class Util {
         return ret;
     }
 
+    /**
+     * generates a 2D neighborhood from a set of coordinates, with space for the results of mapping
+     */
     static public int[] GenHood2D(int[] coords) {
         if (coords.length % 2 != 0) {
             throw new IllegalArgumentException("2D coords list must be divisible by 2");
@@ -1120,6 +1256,9 @@ public final class Util {
         return ret;
     }
 
+    /**
+     * generates a 3D neighborhood from a set of coordinates, with space for the results of mapping
+     */
     static public int[] GenHood3D(int[] coords) {
         if (coords.length % 3 != 0) {
             throw new IllegalArgumentException("3D coords list must be divisible by 3");
@@ -1130,32 +1269,8 @@ public final class Util {
         return ret;
     }
 
-    static public int RectangleHood(boolean includeOrigin, int radX, int radY, int[] returnCoords) {
-        //returns a square with a center location at 0,0
-        int nCoord;
-        if (includeOrigin) {
-            returnCoords[0] = 0;
-            returnCoords[1] = 0;
-            nCoord = 1;
-        } else {
-            returnCoords = new int[(radX * 2 + 1) * (radY * 2 + 1) * 2 - 1];
-            nCoord = 0;
-        }
-        for (int x = -radX; x <= radX; x++) {
-            for (int y = -radY; y <= radY; y++) {
-                if (x == 0 && y == 0) {
-                    continue;
-                }
-                returnCoords[nCoord * 2] = x;
-                returnCoords[nCoord * 2 + 1] = y;
-                nCoord++;
-            }
-        }
-        return nCoord;
-    }
-
     /**
-     * Factorial of a positive integer
+     * Factorial of a positive integer todo: make more efficient
      *
      * @param toFact 0 or a natural number
      * @return Factorial of toFact. Factorial(0) is 1
@@ -1172,7 +1287,7 @@ public final class Util {
     }
 
     /**
-     * Samples a Poisson distribution, giving the probability of toSamp many events assuming a Poisson distribution
+     * Samples a Poisson distribution
      *
      * @param sampleSize How many times the event happens
      * @param avg        The average number of times the event happens
@@ -1199,8 +1314,6 @@ public final class Util {
 
     /**
      * sets the values in the array such that they sum to 1
-     *
-     * @param vals an array of values
      */
     public static double SumTo1(double[] vals) {
         double tot = 0;
@@ -1213,6 +1326,9 @@ public final class Util {
         return tot;
     }
 
+    /**
+     * sets the values in the array such that they sum to 1, using only the numbers between start and end
+     */
     public static double SumTo1(double[] vals, int start, int end) {
         double tot = 0;
         for (int i = start; i < end; i++) {
@@ -1224,6 +1340,9 @@ public final class Util {
         return tot;
     }
 
+    /**
+     * creates directories to ensure that the path argument exists
+     */
     public static boolean MakeDirs(String path) {
         File dir = new File(path);
         return dir.mkdirs();
@@ -1252,61 +1371,56 @@ public final class Util {
         return 0;
     }
 
+    /**
+     * gets the euclidean distance between (x1,y1) and (x2,y2)
+     */
     public static double Dist(double x1, double y1, double x2, double y2) {
         return Math.sqrt(DistSquared(x1, y1, x2, y2));
     }
 
-    public static double DistSqaured(Agent2DBase a1, Agent2DBase a2) {
-        return DistSquared(a1.Xpt(), a1.Ypt(), a2.Xpt(), a2.Ypt());
-    }
-
-    public static double Dist(Agent2DBase a1, Agent2DBase a2) {
-        return Dist(a1.Xpt(), a1.Ypt(), a2.Xpt(), a2.Ypt());
-    }
-
-    public static double DistSquared(Agent3DBase a1, Agent3DBase a2) {
-        return DistSquared(a1.Xpt(), a1.Ypt(), a1.Zpt(), a2.Xpt(), a2.Ypt(), a2.Zpt());
-    }
-
-    public static double Dist(Agent3DBase a1, Agent3DBase a2) {
-        return Dist(a1.Xpt(), a1.Ypt(), a1.Zpt(), a2.Xpt(), a2.Ypt(), a2.Zpt());
-    }
-
+    /**
+     * gets the euclidean distance between (x1,y1) and (x2,y2), assuming boundaries 0,xDim and 0,yDim, and wraparound as
+     * given in the arguments
+     */
     public static double Dist(double x1, double y1, double x2, double y2, double xDim, double yDim, boolean wrapX, boolean wrapY) {
         return Math.sqrt(DistSquared(x1, y1, x2, y2, xDim, yDim, wrapX, wrapY));
     }
 
+    /**
+     * gets the euclidean distance between (x1,y1,z1) and (x2,y2,z2)
+     */
     public static double Dist(double x1, double y1, double z1, double x2, double y2, double z2) {
         return Math.sqrt(DistSquared(x1, y1, z1, x2, y2, z2));
     }
 
+    /**
+     * gets the euclidean distance between (x1,y1,z1) and (x2,y2,z2), assuming boundaries (0,xDim),(0,yDim), and (0,zDim) and wraparound as
+     * given in the arguments
+     */
     public static double Dist(double x1, double y1, double z1, double x2, double y2, double z2, int xDim, int yDim, int zDim, boolean wrapX, boolean wrapY, boolean wrapZ) {
         return Math.sqrt(DistSquared(x1, y1, z1, x2, y2, z2, xDim, yDim, zDim, wrapX, wrapY, wrapZ));
     }
 
     /**
-     * returns the distance squared between the two position provided in 2D
-     *
-     * @param x1 the xDim coordinate of the first position
-     * @param y1 the yDim coordinate of the first position
-     * @param x2 the xDim coordinate of the second position
-     * @param y2 the yDim coordinate of the second position
-     * @return the distance squared between the first and second position
+     * similar to dist above, but returns the distance squared
      */
     public static double DistSquared(double x1, double y1, double x2, double y2) {
         double xDist = x2 - x1, yDist = y2 - y1;
         return xDist * xDist + yDist * yDist;
     }
 
+    /**
+     * similar to dist above, but returns the distance squared
+     */
     public static double DistSquared(double x1, double y1, double x2, double y2, double xDim, double yDim, boolean wrapX, boolean wrapY) {
         double xDist, yDist;
         if (wrapX) {
-            xDist = DistWrap(x2, x1, xDim);
+            xDist = DispWrap(x2, x1, xDim);
         } else {
             xDist = x2 - x1;
         }
         if (wrapY) {
-            yDist = DistWrap(y2, y1, yDim);
+            yDist = DispWrap(y2, y1, yDim);
         } else {
             yDist = y2 - y1;
         }
@@ -1314,31 +1428,30 @@ public final class Util {
     }
 
     /**
-     * @param x1 the xDim coordinate of the first position
-     * @param y1 the yDim coordinate of the first position
-     * @param x2 the xDim coordinate of the second position
-     * @param y2 the yDim coordinate of the second position
-     * @return the distance squared between the first and second position
+     * similar to dist above, but returns the distance squared
      */
     public static double DistSquared(double x1, double y1, double z1, double x2, double y2, double z2) {
         double xDist = x2 - x1, yDist = y2 - y1, zDist = z2 - z1;
         return xDist * xDist + yDist * yDist + zDist * zDist;
     }
 
+    /**
+     * similar to dist above, but returns the distance squared
+     */
     public static double DistSquared(double x1, double y1, double z1, double x2, double y2, double z2, int xDim, int yDim, int zDim, boolean wrapX, boolean wrapY, boolean wrapZ) {
         double xDist, yDist, zDist;
         if (wrapX) {
-            xDist = DistWrap(x2, x1, xDim);
+            xDist = DispWrap(x2, x1, xDim);
         } else {
             xDist = x2 - x1;
         }
         if (wrapY) {
-            yDist = DistWrap(y2, y1, yDim);
+            yDist = DispWrap(y2, y1, yDim);
         } else {
             yDist = y2 - y1;
         }
         if (wrapZ) {
-            zDist = DistWrap(z2, z1, zDim);
+            zDist = DispWrap(z2, z1, zDim);
         } else {
             zDist = z2 - z1;
         }
@@ -1361,19 +1474,30 @@ public final class Util {
         return sum;
     }
 
-
+    /**
+     * returns the norm or "length" of the vector (v1,v2)
+     */
     public static double Norm(double v1, double v2) {
         return Math.sqrt((v1 * v1) + (v2 * v2));
     }
 
+    /**
+     * returns the norm or "length" of the vector (v1,v2,v3)
+     */
     public static double Norm(double v1, double v2, double v3) {
         return Math.sqrt((v1 * v1) + (v2 * v2) + (v3 * v3));
     }
 
+    /**
+     * returns the norm or "length" of the vector (v1,v2,v3,v4)
+     */
     public static double Norm(double v1, double v2, double v3, double v4) {
         return Math.sqrt((v1 * v1) + (v2 * v2) + (v3 * v3) + (v4 * v4));
     }
 
+    /**
+     * returns the norm or "length" of the vector array
+     */
     public static double Norm(double[] vals) {
         double tot = 0;
         for (double val : vals) {
@@ -1382,6 +1506,9 @@ public final class Util {
         return Math.sqrt(tot);
     }
 
+    /**
+     * normalizes the vector array in place so that its norm is 1
+     */
     public static void Normalize(double[] vals) {
         double norm = Norm(vals);
         for (int i = 0; i < vals.length; i++) {
@@ -1389,18 +1516,30 @@ public final class Util {
         }
     }
 
+    /**
+     * returns the norm or "length" of the vector (v1,v2) squared
+     */
     public static double NormSquared(double v1, double v2) {
         return (v1 * v1) + (v2 * v2);
     }
 
+    /**
+     * returns the norm or "length" of the vector (v1,v2,v3) squared
+     */
     public static double NormSquared(double v1, double v2, double v3) {
         return (v1 * v1) + (v2 * v2) + (v3 * v3);
     }
 
+    /**
+     * returns the norm or "length" of the vector (v1,v2,v3,v4) squared
+     */
     public static double NormSquared(double v1, double v2, double v3, double v4) {
         return (v1 * v1) + (v2 * v2) + (v3 * v3) + (v4 * v4);
     }
 
+    /**
+     * returns the norm or "length" of the vector array squared
+     */
     public static double NormSquared(double[] vals) {
         double tot = 0;
         for (double val : vals) {
@@ -1410,7 +1549,8 @@ public final class Util {
     }
 
     /**
-     * x1,y1 and x2,y2 are from the first line, x3,y3 and x4,y4 are from the second line
+     * gets the point at which the line from (x1,y1) to (x2,y2) intersects with the line from (x3,y3) and (x4,y4) and
+     * puts the coordinates in retCoords. returns whether the lines intersect
      */
     public static boolean InfiniteLinesIntersection2D(double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4, double[] retCoords) {
         double denom = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
@@ -1438,55 +1578,25 @@ public final class Util {
         return ret;
     }
 
-    //    public static <T extends AgentPT2D,G extends AgentGrid2D<T>> void GetAgentsRadApprox(G searchMe, final ArrayList<T> putHere, final double x, final double y, final double rad, boolean wrapX, boolean wrapY){
-//        putHere.clear();
-//        int nAgents;
-//        for (int xSq = (int)Math.floor(x-rad); xSq <(int)Math.ceil(x+rad) ; xSq++) {
-//            for (int ySq = (int)Math.floor(y-rad); ySq <(int)Math.ceil(y+rad) ; ySq++) {
-//                int retX=xSq; int retY=ySq;
-//                boolean inX=Util.InDim(searchMe.xDim,retX);
-//                boolean inY=Util.InDim(searchMe.yDim,retY);
-//                if((!wrapX&&!inX)||(!wrapY&&!inY)){
-//                    continue;
-//                }
-//                if(wrapX&&!inX){
-//                    retX=Util.ModWrap(retX,searchMe.xDim);
-//                }
-//                if(wrapY&&!inY){
-//                    retY=Util.ModWrap(retY,searchMe.yDim);
-//                }
-//                searchMe.GetAgents(putHere,searchMe.I(retX,retY));
-//            }
-//        }
-//    }
-//
-    public static double DistWrap(double p1, double p2, double dim) {
-        if (Math.abs(p1 - p1) > dim / 2) {
-            if (p1 > p1) {
-                p1 = p1 + dim;
+    /**
+     * computes the minimum distance between p1 and p2, using wraparound if it is shorter
+     *
+     * @param p1
+     * @param p2
+     * @param dim
+     * @return
+     */
+    public static double DispWrap(double p1, double p2, double dim) {
+        if (Math.abs(p1 - p2) > dim / 2) {
+            if (p1 > p2) {
+                p2 = p2 + dim;
             } else {
-                p1 = p1 - dim;
+                p1 = p1 + dim;
             }
         }
-        return p1 - p1;
+        return p1 - p2;
     }
 
-//    public static <T extends AgentPhys2,Q extends AgentPhys2,G extends AgentGrid2D<Q>>double CollisionSum2D(T agent,G searchMe, final ArrayList<Q> putAgentsHere,RadToForceMap ForceFun,double searchRad,boolean wrapX,boolean wrapY){
-//        double ret=0;
-//        putAgentsHere.clear();
-//        GetAgentsRadApprox(searchMe,putAgentsHere,agent.Xpt(),agent.Ypt(),searchRad,wrapX,wrapY);
-//        for (Q a : putAgentsHere) {
-//            if(a!=agent){
-//                double xComp=wrapX?DispWrap(agent.Xpt(), a.Xpt(), searchMe.xDim):a.Xpt()-agent.Xpt();
-//                double yComp=wrapY?DispWrap(agent.Ypt(),a.Ypt(),searchMe.yDim):a.Ypt()-agent.Ypt();
-//                double dist=Math.sqrt(xComp*xComp+yComp*yComp)-(agent.radius+a.radius);
-//                double force=ForceFun.DistToForce(dist);
-//                agent.AddForce(xComp,yComp,force);
-//                ret+=force;
-//            }
-//        }
-//        return ret;
-//    }
 
     /**
      * returns the original value bounded by min and max inclusive
@@ -1495,6 +1605,9 @@ public final class Util {
         return val < min ? min : (val > max ? max : val);
     }
 
+    /**
+     * returns the original value bounded by min and max inclusive
+     */
     public static long Bound(long val, long min, long max) {
         return val < min ? min : (val > max ? max : val);
     }
@@ -1513,6 +1626,9 @@ public final class Util {
         return (float) (val < min ? min : (val > max ? max : val));
     }
 
+    /**
+     * interpolates value from 0 to 1 to be between min and max
+     */
     public static double ScaleMinToMax(double val, double min, double max) {
         return val * (max - min) + min;
     }
@@ -1524,6 +1640,9 @@ public final class Util {
         return (val - min) / (max - min);
     }
 
+    /**
+     * rescales the value from being between oldMin and oldMax to being between newMin and newMax
+     */
     public static double Rescale(double val, double oldMin, double oldMax, double newMin, double newMax) {
         return ScaleMinToMax(Scale0to1(val, oldMin, oldMax), newMin, newMax);
     }
@@ -1569,22 +1688,26 @@ public final class Util {
 
     }
 
-    //LIST FUNCTIONS
-    public static double LogDist(double min, double max, Rand rn) {
-        if (min <= 0 || max <= 0) {
-            System.err.println("Error, LogDist contains range value < 0!");
-        }
-        double logMin = Math.log(min);
-        double logMax = Math.log(max);
-        double inVal = rn.Double() * (logMax - logMin) + logMin;
-        return Math.exp(inVal);
+
+    /**
+     * transforms val with a sigmoid curve with the given properties
+     *
+     * @param val         the input value
+     * @param stretch     linearly scales the sigmoid curve in the x dimension, the default is 1
+     * @param inflectionX the point at which the slope changes sign
+     * @param minCap      the minimum return value of the sigmoid function
+     * @param maxCap      the maximum return value of the sigmoid function
+     */
+    public static double Sigmoid(double val, double stretch, double inflectionX, double minCap, double maxCap) {
+        return minCap + ((maxCap - minCap)) / (1.0 + Math.exp(((-val) + inflectionX) / stretch));
     }
 
-
-    public static double Sigmoid(double val, double stretch, double inflectionValue, double minCap, double maxCap) {
-        return minCap + ((maxCap - minCap)) / (1.0 + Math.exp(((-val) + inflectionValue) / stretch));
-    }
-
+    /**
+     * transforms val with a sigmoid curve with a minCap of 0, a maxCap of 1, and an inflectionX value of 0
+     *
+     * @param val     the input value
+     * @param stretch linearly scales the sigmoid curve in the x dimension, the default is 1
+     */
     public static double Sigmoid(double val, double stretch) {
         return 1 / (1.0 + Math.exp(-val / stretch));
     }
@@ -1635,6 +1758,160 @@ public final class Util {
         SortHelper(sortMe, 0, sortMe.Length() - 1, greatestToLeast);
     }
 
+
+    /**
+     * returns whether the input value is between 0 and the dimension value
+     */
+    public static boolean InDim(int Val, int Dim) {
+        return Val >= 0 && Val < Dim;
+    }
+
+    /**
+     * returns whether the input value is between 0 and the dimension value
+     */
+    public static boolean InDim(double Val, double Dim) {
+        return Val >= 0 && Val < Dim;
+    }
+
+    /**
+     * subsets a set of indices such that all indices evaluate to true under the EvalFun
+     *
+     * @param hood       a neighborhood or set of indices
+     * @param lenToCheck the number of indices to subset
+     * @param EvalFun    function should return true for all indices to keep
+     */
+    public static int SubsetIndices(int[] hood, int lenToCheck, IndexBool EvalFun) {
+        int validCt = 0;
+        for (int i = 0; i < lenToCheck; i++) {
+            if (EvalFun.Eval(hood[i])) {
+                hood[validCt] = hood[i];
+                validCt++;
+            }
+        }
+        return validCt;
+    }
+
+
+    /**
+     * Creates a thread pool and
+     * launches a total of nRun threads, with nThreads running simultaneously at a time. the RunFun that is passed in
+     * must be a void function that takes an integer argument. when the function is called, this integer will be the
+     * index of that particular run in the lineup. This can be used to assign the result of many runs to a single array,
+     * for example, if the array is written to once by each RunFun at its run index. If you want to run many simulations
+     * simultaneously, this function is for you.
+     */
+    public static void MultiThread(int nRuns, int nThreads, ParallelFunction RunFun) {
+        ArrayList<SweepRun> runners = new ArrayList<>(nRuns);
+        for (int i = 0; i < nRuns; i++) {
+            runners.add(new SweepRun(RunFun, i));
+        }
+        ExecutorService exec = Executors.newFixedThreadPool(nThreads);
+        for (SweepRun run : runners) {
+            exec.execute(run);
+        }
+        exec.shutdown();
+        while (!exec.isTerminated()) ;
+    }
+
+    /**
+     * does the same thing as MultiThread above, but generates a number of threads equal to the number of available processors
+     * @param nRuns
+     * @param RunFun
+     */
+    public static void MultiThread(int nRuns, ParallelFunction RunFun) {
+        MultiThread(nRuns, Runtime.getRuntime().availableProcessors(), RunFun);
+    }
+
+
+    /**
+     * Saves a model state to a byte array and returns it. The model must implement the SerializableModel interface
+     */
+    public static byte[] SaveState(SerializableModel model) {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ObjectOutput out;
+        try {
+            out = new ObjectOutputStream(bos);
+            out.writeObject(model);
+            out.flush();
+            return bos.toByteArray();
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        } finally {
+            try {
+                bos.close();
+            } catch (IOException e) {
+                System.out.println(e.getMessage());
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Saves a model state to a file with the name specified. creates a new file or overwrites one if the file already exists. The model must implement the SerializableModel interface
+     */
+    public static void SaveState(SerializableModel model, String stateFileName) {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ObjectOutput out;
+        try {
+            out = new ObjectOutputStream(bos);
+            out.writeObject(model);
+            out.flush();
+            bos.writeTo(new DataOutputStream(new BufferedOutputStream(new FileOutputStream(stateFileName, false))));
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        } finally {
+            try {
+                bos.close();
+            } catch (IOException e) {
+                System.out.println(e.getMessage());
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     *  Loads a model from a file created with SaveState. The model must implement the SerializableModel interface
+     */
+    public static <T extends SerializableModel> T LoadState(String stateBytesFile) {
+        return LoadState(StateFromFile(stateBytesFile));
+    }
+
+    /**
+     * Loads a model form a byte array created with SaveState. The model must implement the SerializableModel interface
+     */
+    public static <T extends SerializableModel> T LoadState(byte[] state) {
+        ByteArrayInputStream bis = new ByteArrayInputStream(state);
+        ObjectInput in = null;
+        SerializableModel ret = null;
+        try {
+            in = new ObjectInputStream(bis);
+            ret = (SerializableModel) in.readObject();
+            ret.SetupConstructors();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        } finally {
+            try {
+                if (in != null) {
+                    in.close();
+                }
+            } catch (IOException e) {
+                System.out.println(e.getMessage());
+                e.printStackTrace();
+            }
+        }
+        return (T) ret;
+    }
+
+    static int InterpComp(double val, int minComp, int maxComp) {
+        return (int) ((maxComp - minComp) * val) + minComp;
+    }
+
     static <T extends Sortable> void SortHelper(T sortMe, int lo, int hi, boolean greatestToLeast) {
         if (lo < hi) {
             int p = Partition(sortMe, lo, hi, greatestToLeast);
@@ -1664,96 +1941,6 @@ public final class Util {
             return lo;
         }
     }
-
-    /**
-     * returns whether the input value is between 0 and the dimension value
-     */
-    public static boolean InDim(int Val, int Dim) {
-        return Val >= 0 && Val < Dim;
-    }
-
-    /**
-     * returns whether the input value is between 0 and the dimension value
-     */
-    public static boolean InDim(double Val, double Dim) {
-        return Val >= 0 && Val < Dim;
-    }
-
-    public static int SubsetMappedHood(int[] hood, int lenToCheck, IndexBool eval) {
-        int validCt = 0;
-        for (int i = 0; i < lenToCheck; i++) {
-            if (eval.Eval(hood[i])) {
-                hood[validCt] = hood[i];
-                validCt++;
-            }
-        }
-        return validCt;
-    }
-
-
-    //MULTITHREADING
-    public static void MultiThread(int nRuns, ParallelFunction RunFun) {
-        MultiThread(nRuns, Runtime.getRuntime().availableProcessors(), RunFun);
-    }
-
-    public static void MultiThread(int nRuns, int nThreads, ParallelFunction RunFun) {
-        ArrayList<SweepRun> runners = new ArrayList<>(nRuns);
-        for (int i = 0; i < nRuns; i++) {
-            runners.add(new SweepRun(RunFun, i));
-        }
-        ExecutorService exec = Executors.newFixedThreadPool(nThreads);
-        for (SweepRun run : runners) {
-            exec.execute(run);
-        }
-        exec.shutdown();
-        while (!exec.isTerminated()) ;
-    }
-
-
-    //SAVING AND LOADING
-    public static byte[] SaveState(SerializableModel model) {
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        ObjectOutput out;
-        try {
-            out = new ObjectOutputStream(bos);
-            out.writeObject(model);
-            out.flush();
-            return bos.toByteArray();
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        } finally {
-            try {
-                bos.close();
-            } catch (IOException e) {
-                System.out.println(e.getMessage());
-                e.printStackTrace();
-            }
-        }
-        return null;
-    }
-
-    public static void SaveState(SerializableModel model, String stateFileName) {
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        ObjectOutput out;
-        try {
-            out = new ObjectOutputStream(bos);
-            out.writeObject(model);
-            out.flush();
-            bos.writeTo(new DataOutputStream(new BufferedOutputStream(new FileOutputStream(stateFileName, false))));
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        } finally {
-            try {
-                bos.close();
-            } catch (IOException e) {
-                System.out.println(e.getMessage());
-                e.printStackTrace();
-            }
-        }
-    }
-
     static byte[] StateFromFile(String stateBytesFile) {
         Path path = Paths.get(stateBytesFile);
         try {
@@ -1765,40 +1952,88 @@ public final class Util {
         return null;
     }
 
-    public static <T extends SerializableModel> T LoadState(String stateBytesFile) {
-        return LoadState(StateFromFile(stateBytesFile));
-    }
 
-    public static <T extends SerializableModel> T LoadState(byte[] state) {
-        ByteArrayInputStream bis = new ByteArrayInputStream(state);
-        ObjectInput in = null;
-        SerializableModel ret = null;
-        try {
-            in = new ObjectInputStream(bis);
-            ret = (SerializableModel) in.readObject();
-            ret.SetupConstructors();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        } finally {
-            try {
-                if (in != null) {
-                    in.close();
-                }
-            } catch (IOException e) {
-                System.out.println(e.getMessage());
-                e.printStackTrace();
-            }
-        }
-        return (T) ret;
-    }
+//    static public int[] RingHood(double innerRadius,double outerRadius) {
+//        if(innerRadius<=outerRadius){
+//            throw new IllegalArgumentException("inner radius must be less than outer radius");
+//        }
+//        double distSqInner = innerRadius * innerRadius;
+//        double distSqOuter = outerRadius * outerRadius;
+//        int min = (int) Math.floor(-outerRadius);
+//        int max = (int) Math.ceil(outerRadius);
+//        int[] retLong = new int[((max + 1 - min) * (max + 1 - min)) * 2];
+//        int ct = 0;
+//        for (int x = min; x <= max; x++) {
+//            for (int y = min; y <= max; y++) {
+//                double distSq= Util.DistSquared(0, 0, x, y);
+//                if (distSq >= distSqInner&&distSq<=distSqOuter) {
+//                    retLong[ct * 2] = x;
+//                    retLong[ct * 2 + 1] = y;
+//                    ct++;
+//                }
+//            }
+//        }
+//        int[] ret = new int[ct * 2];
+//        System.arraycopy(retLong, 0, ret, 0, ret.length);
+//        return ret;
+//    }
+//    static public int RingHood(double innerRadius,double outerRadius, int[] returnCoords) {
+//        if(innerRadius<=outerRadius){
+//            throw new IllegalArgumentException("inner radius must be less than outer radius");
+//        }
+//        double distSqInner = innerRadius * innerRadius;
+//        double distSqOuter = outerRadius * outerRadius;
+//        int min = (int) Math.floor(-outerRadius);
+//        int max = (int) Math.ceil(outerRadius);
+//        int ct = 0;
+//        for (int x = min; x <= max; x++) {
+//            for (int y = min; y <= max; y++) {
+//                double distSq= Util.DistSquared(0, 0, x, y);
+//                if (distSq >= distSqInner&&distSq<=distSqOuter) {
+//                    returnCoords[ct * 2] = x;
+//                    returnCoords[ct * 2 + 1] = y;
+//                    ct++;
+//                }
+//            }
+//        }
+//        return ct;
+//    }
+    //    public static <T extends AgentPT2D,G extends AgentGrid2D<T>> void GetAgentsRadApprox(G searchMe, final ArrayList<T> putHere, final double x, final double y, final double rad, boolean wrapX, boolean wrapY){
+//        putHere.clear();
+//        int nAgents;
+//        for (int xSq = (int)Math.floor(x-rad); xSq <(int)Math.ceil(x+rad) ; xSq++) {
+//            for (int ySq = (int)Math.floor(y-rad); ySq <(int)Math.ceil(y+rad) ; ySq++) {
+//                int retX=xSq; int retY=ySq;
+//                boolean inX=Util.InDim(searchMe.xDim,retX);
+//                boolean inY=Util.InDim(searchMe.yDim,retY);
+//                if((!wrapX&&!inX)||(!wrapY&&!inY)){
+//                    continue;
+//                }
+//                if(wrapX&&!inX){
+//                    retX=Util.ModWrap(retX,searchMe.xDim);
+//                }
+//                if(wrapY&&!inY){
+//                    retY=Util.ModWrap(retY,searchMe.yDim);
+//                }
+//                searchMe.GetAgents(putHere,searchMe.I(retX,retY));
+//            }
+//        }
+//    }
+//
+//    public static <T extends AgentPhys2,Q extends AgentPhys2,G extends AgentGrid2D<Q>>double CollisionSum2D(T agent,G searchMe, final ArrayList<Q> putAgentsHere,RadToForceMap ForceFun,double searchRad,boolean wrapX,boolean wrapY){
+//        double ret=0;
+//        putAgentsHere.clear();
+//        GetAgentsRadApprox(searchMe,putAgentsHere,agent.Xpt(),agent.Ypt(),searchRad,wrapX,wrapY);
+//        for (Q a : putAgentsHere) {
+//            if(a!=agent){
+//                double xComp=wrapX?DispWrap(agent.Xpt(), a.Xpt(), searchMe.xDim):a.Xpt()-agent.Xpt();
+//                double yComp=wrapY?DispWrap(agent.Ypt(),a.Ypt(),searchMe.yDim):a.Ypt()-agent.Ypt();
+//                double dist=Math.sqrt(xComp*xComp+yComp*yComp)-(agent.radius+a.radius);
+//                double force=ForceFun.DistToForce(dist);
+//                agent.AddForce(xComp,yComp,force);
+//                ret+=force;
+//            }
+//        }
+//        return ret;
+//    }
 }
-
-
-
-
-
-
-

@@ -7,16 +7,22 @@ import java.io.Serializable;
 import java.util.Arrays;
 
 /**
- * Created by Rafael on 10/24/2017.
+ * a 1D Grid of doubles
  */
 public class Grid1Ddouble extends GridBase1D implements Serializable {
     double[] field;
 
+    /**
+     * creates a new Grid1Ddouble of length xDim without wraparound
+     */
     public Grid1Ddouble(int xDim) {
         super(xDim, false);
         field = new double[this.xDim];
     }
 
+    /**
+     * creates a new Grid1Ddouble of length xDim with optional wraparound
+     */
     public Grid1Ddouble(int xDim, boolean wrapX) {
         super(xDim, wrapX);
         field = new double[this.xDim];

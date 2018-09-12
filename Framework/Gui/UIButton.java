@@ -122,7 +122,7 @@ public class UIButton extends JButton implements GuiComp {
      * ignore
      */
     @Override
-    public void GetComps(ArrayList<Component> putHere, ArrayList<Integer> coordsHere, ArrayList<Integer> compSizesHere) {
+    public void _GetComps(ArrayList<Component> putHere, ArrayList<Integer> coordsHere, ArrayList<Integer> compSizesHere) {
         putHere.add(this);
         coordsHere.add(0);
         coordsHere.add(0);

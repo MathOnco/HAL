@@ -7,16 +7,22 @@ import java.text.DecimalFormat;
 import java.util.Arrays;
 
 /**
- * Created by Rafael on 10/24/2017.
+ * a 2D Grid of ints
  */
 public class Grid2Dint extends GridBase2D implements Serializable {
     int[] field;
 
+    /**
+     * creates a new Grid2Dint of dimensions xDim by yDim without wraparound
+     */
     public Grid2Dint(int xDim, int yDim) {
         super(xDim, yDim, false, false);
         field = new int[this.xDim * this.yDim];
     }
 
+    /**
+     * creates a new Grid2Dint of dimensions xDim by yDim with optional wraparound
+     */
     public Grid2Dint(int xDim, int yDim, boolean wrapX, boolean wrapY) {
         super(xDim, yDim, wrapX, wrapY);
         field = new int[this.xDim * this.yDim];

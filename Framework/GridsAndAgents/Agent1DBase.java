@@ -4,9 +4,12 @@ import Framework.Interfaces.Coords1DBool;
 
 import java.io.Serializable;
 
-import static Framework.Util.DistWrap;
+import static Framework.Util.DispWrap;
 import static Framework.Util.Norm;
 
+/**
+ * Agent1DBase functions are shared amongst all 1D agent types
+ */
 public abstract class Agent1DBase<T extends AgentGrid1D> extends AgentBaseSpatial<T> implements Serializable {
     /**
      * returns the X index of the square that the agent is currently on.
@@ -84,7 +87,7 @@ public abstract class Agent1DBase<T extends AgentGrid1D> extends AgentBaseSpatia
      * gets the X displacement from this agent to a given x position
      */
     public double DispX(double x) {
-        return G.wrapX ? DistWrap(Xpt(), x, G.xDim) : Xpt() - x;
+        return G.wrapX ? DispWrap(Xpt(), x, G.xDim) : Xpt() - x;
     }
 
     /**

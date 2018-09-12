@@ -19,39 +19,6 @@ public class AgentSQ2Dunstackable<T extends AgentGrid2D> extends Agent2DBase<T> 
     int xSq;
     int ySq;
 
-    void Setup(double i) {
-        Setup((int) i);
-    }
-
-    void Setup(double xSq, double ySq) {
-        Setup((int) xSq, (int) ySq);
-    }
-
-    void Setup(double xSq, double ySq, double zSq) {
-        throw new IllegalStateException("shouldn't be adding 2D agent to 3D typeGrid");
-    }
-
-    @Override
-    void Setup(int i) {
-        xSq = G.ItoX(i);
-        ySq = G.ItoY(i);
-        iSq = i;
-        AddSQ(i);
-    }
-
-    @Override
-    void Setup(int x, int y) {
-        this.xSq = x;
-        this.ySq = y;
-        iSq = G.I(xSq, ySq);
-        AddSQ(iSq);
-    }
-
-    @Override
-    void Setup(int x, int y, int z) {
-        throw new IllegalStateException("shouldn't be adding 2D agent to 3D typeGrid");
-    }
-
     /**
      * Moves the agent to the square with the specified index
      */
@@ -195,4 +162,38 @@ public class AgentSQ2Dunstackable<T extends AgentGrid2D> extends Agent2DBase<T> 
     public int Isq() {
         return iSq;
     }
+
+    void Setup(double i) {
+        Setup((int) i);
+    }
+
+    void Setup(double xSq, double ySq) {
+        Setup((int) xSq, (int) ySq);
+    }
+
+    void Setup(double xSq, double ySq, double zSq) {
+        throw new IllegalStateException("shouldn't be adding 2D agent to 3D typeGrid");
+    }
+
+    @Override
+    void Setup(int i) {
+        xSq = G.ItoX(i);
+        ySq = G.ItoY(i);
+        iSq = i;
+        AddSQ(i);
+    }
+
+    @Override
+    void Setup(int x, int y) {
+        this.xSq = x;
+        this.ySq = y;
+        iSq = G.I(xSq, ySq);
+        AddSQ(iSq);
+    }
+
+    @Override
+    void Setup(int x, int y, int z) {
+        throw new IllegalStateException("shouldn't be adding 2D agent to 3D typeGrid");
+    }
+
 }

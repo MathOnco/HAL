@@ -4,17 +4,23 @@ import java.io.Serializable;
 import java.util.Arrays;
 
 /**
- * Created by Rafael on 10/24/2017.
+ * a 3D Grid of objects
  */
 public class Grid3Dobject<T> extends GridBase3D implements Serializable {
     T[] field;
 
+    /**
+     * creates a new Grid3Dobject of dimensions xDim by yDim by zDim without wraparound
+     */
     public Grid3Dobject(int xDim, int yDim, int zDim, boolean wrapX, boolean wrapY, boolean wrapZ) {
         super(xDim, yDim, zDim, wrapX, wrapY, wrapZ);
         field = (T[]) (new Object[length]);
         //middleField = new T[numElements];
     }
 
+    /**
+     * creates a new Grid3Dojbect of dimensions xDim by yDim by zDim with optional wraparound
+     */
     public Grid3Dobject(int xDim, int yDim, int zDim) {
         this(xDim, yDim, zDim, false, false, false);
     }

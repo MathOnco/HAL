@@ -21,56 +21,6 @@ public class AgentSQ3D<T extends AgentGrid3D> extends Agent3DBase<T> implements 
     AgentSQ3D nextSq;
     AgentSQ3D prevSq;
 
-    void Setup(int xSq, int ySq, int zSq) {
-        this.xSq = xSq;
-        this.ySq = ySq;
-        this.zSq = zSq;
-        this.iSq = G.I(xSq, ySq, zSq);
-        AddSQ(iSq);
-    }
-
-    void Setup(double xPos, double yPos, double zPos) {
-        Setup((int) xPos, (int) yPos, (int) zPos);
-    }
-
-    @Override
-    void Setup(int i) {
-        this.iSq = i;
-        this.xSq = G.ItoX(i);
-        this.ySq = G.ItoY(i);
-        this.zSq = G.ItoZ(i);
-        AddSQ(iSq);
-    }
-
-    @Override
-    void Setup(int x, int y) {
-        throw new IllegalStateException("shouldn't be adding 3D agent to 2D typeGrid");
-    }
-
-    void AddSQ(int i) {
-        if (G.grid[i] != null) {
-            ((AgentSQ3D) G.grid[i]).prevSq = this;
-            this.nextSq = (AgentSQ3D) G.grid[i];
-        }
-        G.grid[i] = this;
-        G.counts[i]++;
-    }
-
-    void RemSQ() {
-        if (G.grid[iSq] == this) {
-            G.grid[iSq] = this.nextSq;
-        }
-        if (nextSq != null) {
-            nextSq.prevSq = prevSq;
-        }
-        if (prevSq != null) {
-            prevSq.nextSq = nextSq;
-        }
-        prevSq = null;
-        nextSq = null;
-        G.counts[iSq]--;
-    }
-
     /**
      * Moves the agent to the specified coordinates
      */
@@ -245,4 +195,55 @@ public class AgentSQ3D<T extends AgentGrid3D> extends Agent3DBase<T> implements 
         throw new IllegalStateException("shouldn't be adding 3D agent to 2D typeGrid");
     }
     //addCoords
+
+    void Setup(int xSq, int ySq, int zSq) {
+        this.xSq = xSq;
+        this.ySq = ySq;
+        this.zSq = zSq;
+        this.iSq = G.I(xSq, ySq, zSq);
+        AddSQ(iSq);
+    }
+
+    void Setup(double xPos, double yPos, double zPos) {
+        Setup((int) xPos, (int) yPos, (int) zPos);
+    }
+
+    @Override
+    void Setup(int i) {
+        this.iSq = i;
+        this.xSq = G.ItoX(i);
+        this.ySq = G.ItoY(i);
+        this.zSq = G.ItoZ(i);
+        AddSQ(iSq);
+    }
+
+    @Override
+    void Setup(int x, int y) {
+        throw new IllegalStateException("shouldn't be adding 3D agent to 2D typeGrid");
+    }
+
+    void AddSQ(int i) {
+        if (G.grid[i] != null) {
+            ((AgentSQ3D) G.grid[i]).prevSq = this;
+            this.nextSq = (AgentSQ3D) G.grid[i];
+        }
+        G.grid[i] = this;
+        G.counts[i]++;
+    }
+
+    void RemSQ() {
+        if (G.grid[iSq] == this) {
+            G.grid[iSq] = this.nextSq;
+        }
+        if (nextSq != null) {
+            nextSq.prevSq = prevSq;
+        }
+        if (prevSq != null) {
+            prevSq.nextSq = nextSq;
+        }
+        prevSq = null;
+        nextSq = null;
+        G.counts[iSq]--;
+    }
+
 }

@@ -6,17 +6,23 @@ import java.io.Serializable;
 import java.util.Arrays;
 
 /**
- * Created by Rafael on 10/24/2017.
+ * a 3D Grid of ints
  */
 public class Grid3Dint extends GridBase3D implements Serializable {
     int[] field;
 
+    /**
+     * creates a new Grid3Dint of dimensions xDim by yDim by zDim without wraparound
+     */
     public Grid3Dint(int xDim, int yDim, int zDim, boolean wrapX, boolean wrapY, boolean wrapZ) {
         super(xDim, yDim, zDim, wrapX, wrapY, wrapZ);
         field = new int[length];
         //middleField = new int[numElements];
     }
 
+    /**
+     * creates a new Grid3Dint of dimensions xDim by yDim by zDim with optional wraparound
+     */
     public Grid3Dint(int xDim, int yDim, int zDim) {
         super(xDim, yDim, zDim, false, false, false);
 

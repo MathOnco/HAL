@@ -15,42 +15,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-class PaintPanel extends JPanel {
-
-    final static int BLACK= Util.RGB(0,0,0);
-    final BufferedImage buff;
-    final int xDim;
-    final int yDim;
-    public final int scaleX;
-    public final int scaleY;
-    Graphics2D g;
-    final ArrayList<UIGrid> alphaGrids;
-    PaintPanel(BufferedImage buff,int xDim,int yDim,int scaleX,int scaleY){
-        this.buff = buff;
-        this.xDim = xDim;
-        this.yDim = yDim;
-        this.scaleX = scaleX;
-        this.scaleY = scaleY;
-        this.alphaGrids=new ArrayList<>();
-        this.setVisible(true);
-        this.setPreferredSize(new Dimension((int)Math.ceil(xDim*scaleX),(int)Math.ceil(yDim*scaleY)));
-        this.setMaximumSize(new Dimension((int)Math.ceil(xDim*scaleX),(int)Math.ceil(yDim*scaleY)));
-        this.setMinimumSize(new Dimension((int)Math.ceil(xDim*scaleX),(int)Math.ceil(yDim*scaleY)));
-    }
-    @Override
-    public void paintComponent(Graphics g){
-        ((Graphics2D)g).drawImage(buff.getScaledInstance(scaleX *xDim,-scaleY *yDim,Image.SCALE_FAST),null,null);
-        for (int i = 0; i < alphaGrids.size(); i++) {
-            UIGrid alphaGrid=alphaGrids.get(i);
-         ((Graphics2D)g).drawImage(alphaGrid.buff.getScaledInstance(alphaGrid.scale *alphaGrid.xDim,-alphaGrid.scale *alphaGrid.yDim,Image.SCALE_FAST),null,null);
-        }
-        repaint();
-    }
-
-}
 
 /**
- * a gui item that is used to efficiently visualize in 2 dimensions
+ * a gui item that is used to efficiently visualize a grid in 2 dimensions
  * uses an array of pixels whose color values are individually set
  */
 public class UIGrid extends GridBase2D implements GuiComp {
@@ -65,16 +32,6 @@ public class UIGrid extends GridBase2D implements GuiComp {
     final int[] data;
     TickTimer tickTimer = new TickTimer();
 
-    /**
-     * call this once per step of your model, and the function will ensure that your model runs at the rate provided in
-     * milliseconds. the function will take the amount time between calls into account to ensure a consistent tick
-     * rate.
-     */
-    public void TickPause(int millis) {
-        if (active) {
-            tickTimer.TickPause(millis);
-        }
-    }
 
     /**
      * @param gridW       width of the UIGrid in pixels
@@ -121,6 +78,16 @@ public class UIGrid extends GridBase2D implements GuiComp {
         this(gridW, gridH, scaleFactor, 1, 1, true);
     }
 
+    /**
+     * call this once per step of your model, and the function will ensure that your model runs at the rate provided in
+     * milliseconds. the function will take the amount time between calls into account to ensure a consistent tick
+     * rate.
+     */
+    public void TickPause(int millis) {
+        if (active) {
+            tickTimer.TickPause(millis);
+        }
+    }
     /**
      * sets an individual pixel on the GridWindow. in the visualization the pixel will take up scaleFactor*scaleFactor
      * screen pixels.
@@ -207,8 +174,7 @@ public class UIGrid extends GridBase2D implements GuiComp {
 
     /**
      * plots a line segment, connecting all pixels between the points defined by (x1,y1) and (x2,y2) with the provided
-     * color. If you are using this function on a per-timestep basis, I recommend setting individual pixels with SetPix,
-     * as it is more performant.
+     * color.
      */
     public void PlotSegment(double x1, double y1, double x2, double y2, int color) {
         Util.AlongLineAction(x1, y1, x2, y2, (int x, int y) -> {
@@ -216,6 +182,10 @@ public class UIGrid extends GridBase2D implements GuiComp {
         });
     }
 
+    /**
+     * plots a line segment, connecting all pixels between the points defined by (x1,y1) and (x2,y2) with the provided
+     * color. the coordinates will be multiplied by the scale parameter
+     */
     public void PlotSegment(double x1, double y1, double x2, double y2, int color, double scale) {
         if (scale <= 0) {
             throw new IllegalArgumentException("scale must be >0! scale: " + scale);
@@ -225,6 +195,10 @@ public class UIGrid extends GridBase2D implements GuiComp {
         });
     }
 
+    /**
+     * plots a line segment, connecting all pixels between the points defined by (x1,y1) and (x2,y2) with the provided
+     * color. the coordinates will be multiplied by the scale parameters
+     */
     public void PlotSegment(double x1, double y1, double x2, double y2, int color, double scaleX, double scaleY) {
         if (scaleX < 0 || scaleY < 0) {
             throw new IllegalArgumentException("scaleX and scaleY must be >=0! scaleX: " + scaleX + " scaleY: " + scaleY);
@@ -234,18 +208,26 @@ public class UIGrid extends GridBase2D implements GuiComp {
         });
     }
 
+    /**
+     * plots a line, connecting all pixels between the points defined by the list of x,y,x,y... pairs with the provided
+     * color
+     */
     public void PlotLine(double[] xys, int color) {
         PlotLine(xys, color, 0, xys.length);
     }
 
+    /**
+     * plots a line, connecting all pixels between the points defined by the list of x,y,x,y... pairs with the provided
+     * color. the coordinates will be multiplied by the scale parameter
+     */
     public void PlotLine(double[] xys, int color, double scale) {
         PlotLine(xys, color, 0, xys.length, scale, scale);
     }
 
-    public void PlotLine(double[] xys, int color, int startPoint, int endPoint, double scale) {
-        PlotLine(xys, color, startPoint, endPoint, scale, scale);
-    }
-
+    /**
+     * plots a line, connecting all pixels between the points defined by the list of x,y,x,y... beginning with pair
+     * startPoint and ending with pair endPoint pairs with the provided color.
+     */
     public void PlotLine(double[] xys, int color, int startPoint, int endPoint) {
         if (xys.length < 4) {
             throw new IllegalArgumentException("xys array too short, must define at least 2 points! length: " + xys.length);
@@ -263,6 +245,20 @@ public class UIGrid extends GridBase2D implements GuiComp {
         }
     }
 
+    /**
+     * plots a line, connecting all pixels between the points defined by the list of x,y,x,y... beginning with pair
+     * startPoint and ending with pair endPoint pairs with the provided color. the coordinates will be multiplied by the
+     * scale parameter
+     */
+    public void PlotLine(double[] xys, int color, int startPoint, int endPoint, double scale) {
+        PlotLine(xys, color, startPoint, endPoint, scale, scale);
+    }
+
+    /**
+     * plots a line, connecting all pixels between the points defined by the list of x,y,x,y... beginning with pair
+     * startPoint and ending with pair endPoint pairs with the provided color. the coordinates will be multiplied by the
+     * scale parameters
+     */
     public void PlotLine(double[] xys, int color, int startPoint, int endPoint, double scaleX, double scaleY) {
         if (scaleX < 0 || scaleY < 0) {
             throw new IllegalArgumentException("scaleX and scaleY must be >=0! scaleX: " + scaleX + " scaleY: " + scaleY);
@@ -283,18 +279,34 @@ public class UIGrid extends GridBase2D implements GuiComp {
         }
     }
 
+    /**
+     * plots a line, connecting all pixels between the points defined by the x,y pairs from the xs and ys array with the
+     * provided color
+     */
     public void PlotLine(double[] xs, double[] ys, int color) {
         PlotLine(xs, ys, color, 0, xs.length);
     }
 
+    /**
+     * plots a line, connecting all pixels between the points defined by the x,y pairs from the xs and ys array with the
+     * provided color.
+     */
     public void PlotLine(double[] xs, double[] ys, int color, double scale) {
         PlotLine(xs, ys, color, 0, xs.length, scale, scale);
     }
 
+    /**
+     * plots a line, connecting all pixels between the points defined by the x,y pairs with the provided color. the coordinates will be multiplied by the
+     * scale parameter beginning with pair startPoint and ending with pair endPoint
+     */
     public void PlotLine(double[] xs, double[] ys, int color, int startPoint, int endPoint, double scale) {
         PlotLine(xs, ys, color, startPoint, endPoint, scale, scale);
     }
 
+    /**
+     * plots a line, connecting all pixels between the points defined by the x,y pairs with the provided color.
+     * beginning with pair startPoint and ending with pair endPoint
+     */
     public void PlotLine(double[] xs, double[] ys, int color, int startPoint, int endPoint) {
         if (xs.length != ys.length) {
             throw new IllegalArgumentException("xs and ys must have the same length! xs.length: " + xs.length + " ys.length: " + ys.length);
@@ -312,6 +324,10 @@ public class UIGrid extends GridBase2D implements GuiComp {
         }
     }
 
+    /**
+     * plots a line, connecting all pixels between the points defined by the x,y pairs with the provided color. the coordinates will be multiplied by the
+     * scale parametesr beginning with pair startPoint and ending with pair endPoint
+     */
     public void PlotLine(double[] xs, double[] ys, int color, int startPoint, int endPoint, double scaleX, double scaleY) {
         if (scaleX < 0 || scaleY < 0) {
             throw new IllegalArgumentException("scaleX and scaleY must be >=0! scaleX: " + scaleX + " scaleY: " + scaleY);
@@ -348,58 +364,63 @@ public class UIGrid extends GridBase2D implements GuiComp {
         return compY;
     }
 
+    /**
+     * returns whether the UIGrid is active (whether it exists)
+     */
     @Override
     public boolean IsActive() {
         return active;
     }
 
+    /**
+     * can be used to inactivate the component, preventing drawing and other overhead
+     */
     @Override
     public void SetActive(boolean isActive) {
         this.active = isActive;
     }
 
     /**
-     * called by the UIWindow class to place the vis window
+     * gets the X coordinate of the mouse event in terms of the UIGrid coordinate space, useful with AddMouseListeners
      */
-    @Override
-    public void GetComps(ArrayList<Component> putHere, ArrayList<Integer> coordsHere, ArrayList<Integer> compSizesHere) {
-        putHere.add(panel);
-        coordsHere.add(0);
-        coordsHere.add(0);
-        compSizesHere.add(compX);
-        compSizesHere.add(compY);
-    }
-
     public double ClickXpt(MouseEvent e) {
         return e.getX() * 1.0 / scale;
     }
 
-    ;
 
+    /**
+     * gets the X square of the mouse event in terms of the UIGrid coordinate space, useful with AddMouseListeners
+     */
     public int ClickXsq(MouseEvent e) {
         return e.getX() / scale;
     }
 
-    ;
-
+    /**
+     * gets the Y coordinate of the mouse event in terms of the UIGrid coordinate space, useful with AddMouseListeners
+     */
     public double ClickYpt(MouseEvent e) {
         return (yDim - 1) - e.getY() * 1.0 / scale;
     }
 
-    ;
-
+    /**
+     * gets the Y square of the mouse event in terms of the UIGrid coordinate space, useful with AddMouseListeners
+     */
     public int ClickYsq(MouseEvent e) {
         return (yDim - 1) - e.getY() / scale;
     }
 
-    ;
-
+    /**
+     * adds a mouse listener function to the UIGrid that will be called whenever the user interacts with the UIGrid
+     */
     public void AddMouseListeners(MouseAdapter mouseListener) {
         if (mouseListener != null) {
             this.panel.addMouseListener(mouseListener);
         }
     }
 
+    /**
+     * sets every pixel in the UIGrid using the DrawPix function
+     */
     public void SetAll(Coords2DColor DrawPix) {
         for (int x = 0; x < xDim; x++) {
             for (int y = 0; y < yDim; y++) {
@@ -408,6 +429,9 @@ public class UIGrid extends GridBase2D implements GuiComp {
         }
     }
 
+    /**
+     * sets every pixel in the UIGrid by reading values from the PDEGrid2D
+     */
     public void DrawPDEGrid(PDEGrid2D drawMe, DoubleToInt ColorFn) {
         if (active) {
             for (int x = 0; x < drawMe.xDim; x++) {
@@ -418,6 +442,9 @@ public class UIGrid extends GridBase2D implements GuiComp {
         }
     }
 
+    /**
+     * sets every pixel in the UIGrid by reading values from the PDEGrid3D, values are summed over the Z dimension
+     */
     public void DrawPDEGridXY(PDEGrid3D drawMe, DoubleToInt ColorFn) {
         if (active) {
             for (int x = 0; x < drawMe.xDim; x++) {
@@ -432,6 +459,9 @@ public class UIGrid extends GridBase2D implements GuiComp {
         }
     }
 
+    /**
+     * sets every pixel in the UIGrid by reading values from the PDEGrid3D, values are summed over the X dimension
+     */
     public void DrawPDEGridYZ(PDEGrid3D drawMe, DoubleToInt ColorFn) {
         if (active) {
             for (int y = 0; y < drawMe.yDim; y++) {
@@ -446,6 +476,9 @@ public class UIGrid extends GridBase2D implements GuiComp {
         }
     }
 
+    /**
+     * sets every pixel in the UIGrid by reading values from the PDEGrid3D, values are summed over the Y dimension
+     */
     public void DrawPDEGridXZ(PDEGrid3D drawMe, DoubleToInt ColorFn) {
         if (active) {
             for (int x = 0; x < drawMe.xDim; x++) {
@@ -460,7 +493,10 @@ public class UIGrid extends GridBase2D implements GuiComp {
         }
     }
 
-    public <Q extends AgentBaseSpatial, T extends AgentGrid2D<Q>> void DrawAgents(T drawMe, AgentToColorInt<Q> ColorFn, int backgroundColor) {
+    /**
+     * sets every pixel in the UIGrid by iterating over the AgentGrid2D and drawing the first agent found at each position. the background color will be used when no agent exists
+     */
+    public <Q extends AgentBaseSpatial, T extends AgentGrid2D<Q>> void DrawAgents(T drawMe, AgentToColorInt<Q> ColorFn, Coords2DInt backgroundColor) {
         if (active) {
             for (int x = 0; x < drawMe.xDim; x++) {
                 for (int y = 0; y < drawMe.yDim; y++) {
@@ -468,33 +504,16 @@ public class UIGrid extends GridBase2D implements GuiComp {
                     if (a != null) {
                         SetPix(x, y, ColorFn.AgentToColor(a));
                     } else {
-                        SetPix(x, y, backgroundColor);
+                        SetPix(x, y, backgroundColor.GenInt(x,y));
                     }
                 }
             }
         }
     }
 
-    //    public <Q extends AgentBaseSpatial,T extends AgentGrid2D<Q>>void DrawAgentDensity(T drawMe, int maxDensity,String colorOrder){
-//        if(active) {
-//            for (int x = 0; x < drawMe.xDim; x++) {
-//                for (int y = 0; y < drawMe.yDim; y++) {
-//                    //SetColorHeatBound(x,y,drawMe.PopAt(x,y)*1.0/maxDensity,colorOrder);
-//                }
-//            }
-//        }
-//        throw new IllegalStateException("this function should be deleted");
-//    }
-//    public <Q extends AgentBaseSpatial,T extends AgentGrid2D<Q>>void DrawAgentDensity(T drawMe, int maxDensity){
-//        if(active) {
-//            for (int x = 0; x < drawMe.xDim; x++) {
-//                for (int y = 0; y < drawMe.yDim; y++) {
-//                    //SetColorHeatBound(x,y,drawMe.PopAt(x,y)*1.0/maxDensity);
-//                }
-//            }
-//        }
-//        throw new IllegalStateException("this function should be deleted");
-//    }
+    /**
+     * sets every pixel in the UIGrid by iterating over the AgentGrid2D and drawing the first agent found at each position. positions with no agent will be skipped
+     */
     public <Q extends AgentBaseSpatial, T extends AgentGrid2D<Q>> void DrawAgents(T drawMe, AgentToColorInt<Q> ColorFn) {
         if (active) {
             for (int x = 0; x < drawMe.xDim; x++) {
@@ -508,13 +527,16 @@ public class UIGrid extends GridBase2D implements GuiComp {
         }
     }
 
-    public <Q extends AgentBaseSpatial, T extends AgentGrid3D<Q>> void DrawClosestAgentsXY(T drawMe, AgentToColorInt<Q> ColorFn, int backgroundColor) {
+    /**
+     * sets every pixel in the UIGrid by drawing the closest agent (agent with lowest Z value) at each X,Y pair, the background color will be used when no agent is found
+     */
+    public <Q extends AgentBaseSpatial, T extends AgentGrid3D<Q>> void DrawClosestAgentsXY(T drawMe, AgentToColorInt<Q> ColorFn, Coords2DInt backgroundColor) {
         if (active) {
             for (int x = 0; x < drawMe.xDim; x++) {
                 for (int y = 0; y < drawMe.yDim; y++) {
                     for (int z = 0; z <= drawMe.zDim; z++) {
                         if (z == drawMe.zDim) {
-                            SetPix(x, y, backgroundColor);
+                            SetPix(x, y, backgroundColor.GenInt(x,y));
                         } else {
                             Q a = drawMe.GetAgent(x, y, z);
                             if (a != null) {
@@ -528,13 +550,16 @@ public class UIGrid extends GridBase2D implements GuiComp {
         }
     }
 
-    public <Q extends AgentBaseSpatial, T extends AgentGrid3D<Q>> void DrawClosestAgentsXZ(T drawMe, AgentToColorInt<Q> ColorFn, int backgroundColor) {
+    /**
+     * sets every pixel in the UIGrid by drawing the closest agent (agent with lowest Y value) at each X,Z pair, the background color will be used when no agent is found
+     */
+    public <Q extends AgentBaseSpatial, T extends AgentGrid3D<Q>> void DrawClosestAgentsXZ(T drawMe, AgentToColorInt<Q> ColorFn, Coords2DInt backgroundColor) {
         if (active) {
             for (int x = 0; x < drawMe.xDim; x++) {
                 for (int z = 0; z < drawMe.zDim; z++) {
                     for (int y = 0; y <= drawMe.yDim; y++) {
                         if (y == drawMe.yDim) {
-                            SetPix(x, z, backgroundColor);
+                            SetPix(x, z, backgroundColor.GenInt(x,z));
                         } else {
                             Q a = drawMe.GetAgent(x, y, z);
                             if (a != null) {
@@ -548,13 +573,16 @@ public class UIGrid extends GridBase2D implements GuiComp {
         }
     }
 
-    public <Q extends AgentBaseSpatial, T extends AgentGrid3D<Q>> void DrawClosestAgentsYZ(T drawMe, AgentToColorInt<Q> ColorFn, int backgroundColor) {
+    /**
+     * sets every pixel in the UIGrid by drawing the closest agent (agent with lowest X value) at each Y,Z pair, the background color will be used when no agent is found
+     */
+    public <Q extends AgentBaseSpatial, T extends AgentGrid3D<Q>> void DrawClosestAgentsYZ(T drawMe, AgentToColorInt<Q> ColorFn, Coords2DInt backgroundColor) {
         if (active) {
             for (int y = 0; y < drawMe.yDim; y++) {
                 for (int z = 0; z < drawMe.zDim; z++) {
                     for (int x = 0; x <= drawMe.xDim; x++) {
                         if (x == drawMe.yDim) {
-                            SetPix(y, z, backgroundColor);
+                            SetPix(y, z, backgroundColor.GenInt(y,z));
                         } else {
                             Q a = drawMe.GetAgent(x, y, z);
                             if (a != null) {
@@ -568,13 +596,16 @@ public class UIGrid extends GridBase2D implements GuiComp {
         }
     }
 
-    public <Q extends AgentBaseSpatial, T extends AgentGrid3D<Q>> void DrawFurthestAgentsXY(T drawMe, AgentToColorInt<Q> ColorFn, int backgroundColor) {
+    /**
+     * sets every pixel in the UIGrid by drawing the furthest agent (agent with highest Z value) at each X,Y pair, the background color will be used when no agent is found
+     */
+    public <Q extends AgentBaseSpatial, T extends AgentGrid3D<Q>> void DrawFurthestAgentsXY(T drawMe, AgentToColorInt<Q> ColorFn, Coords2DInt backgroundColor) {
         if (active) {
             for (int x = 0; x < drawMe.xDim; x++) {
                 for (int y = 0; y < drawMe.yDim; y++) {
                     for (int z = drawMe.zDim - 1; z >= -1; z++) {
                         if (z == -1) {
-                            SetPix(x, y, backgroundColor);
+                            SetPix(x, y, backgroundColor.GenInt(x,y));
                         } else {
                             Q a = drawMe.GetAgent(x, y, z);
                             if (a != null) {
@@ -588,13 +619,16 @@ public class UIGrid extends GridBase2D implements GuiComp {
         }
     }
 
-    public <Q extends AgentBaseSpatial, T extends AgentGrid3D<Q>> void DrawFurthestAgentsXZ(T drawMe, AgentToColorInt<Q> ColorFn, int backgroundColor) {
+    /**
+     * sets every pixel in the UIGrid by drawing the furthest agent (agent with highest Y value) at each X,Z pair, the background color will be used when no agent is found
+     */
+    public <Q extends AgentBaseSpatial, T extends AgentGrid3D<Q>> void DrawFurthestAgentsXZ(T drawMe, AgentToColorInt<Q> ColorFn, Coords2DInt backgroundColor) {
         if (active) {
             for (int x = 0; x < drawMe.xDim; x++) {
                 for (int z = 0; z < drawMe.zDim; z++) {
                     for (int y = drawMe.yDim - 1; y >= -1; y++) {
                         if (y == -1) {
-                            SetPix(x, z, backgroundColor);
+                            SetPix(x, z, backgroundColor.GenInt(x,z));
                         } else {
                             Q a = drawMe.GetAgent(x, y, z);
                             if (a != null) {
@@ -608,15 +642,22 @@ public class UIGrid extends GridBase2D implements GuiComp {
         }
     }
 
-    public <Q extends AgentBaseSpatial, T extends AgentGrid3D<Q>> void DrawFurthestAgentsYZ(T drawMe, AgentToColorInt<Q> ColorFn, int backgroundColor) {
+    /**
+     * sets every pixel in the UIGrid by drawing the furthest agent (agent with highest X value) at each Y,Z pair, the background color will be used when no agent is found
+     */
+    public <Q extends AgentBaseSpatial, T extends AgentGrid3D<Q>> void DrawFurthestAgentsYZ(T drawMe, AgentToColorInt<Q> ColorFn, Coords2DInt backgroundColor) {
         if (active) {
             for (int y = 0; y < drawMe.yDim; y++) {
                 for (int z = 0; z < drawMe.zDim; z++) {
                     for (int x = drawMe.xDim - 1; x >= 0; x++) {
-                        Q a = drawMe.GetAgent(x, y, z);
-                        if (a != null) {
-                            SetPix(y, z, ColorFn.AgentToColor(a));
-                            break;
+                        if (x == -1) {
+                            SetPix(y, z, backgroundColor.GenInt(y,z));
+                        }else {
+                            Q a = drawMe.GetAgent(x, y, z);
+                            if (a != null) {
+                                SetPix(y, z, ColorFn.AgentToColor(a));
+                                break;
+                            }
                         }
                     }
                 }
@@ -624,6 +665,9 @@ public class UIGrid extends GridBase2D implements GuiComp {
         }
     }
 
+    /**
+     * sets every pixel in the UIGrid by drawing the closest agent (agent with lowest Z value) at each X,Y pair, positions with no agent will be skipped
+     */
     public <Q extends AgentBaseSpatial, T extends AgentGrid3D<Q>> void DrawClosestAgentsXY(T drawMe, AgentToColorInt<Q> ColorFn) {
         if (active) {
             for (int x = 0; x < drawMe.xDim; x++) {
@@ -640,6 +684,9 @@ public class UIGrid extends GridBase2D implements GuiComp {
         }
     }
 
+    /**
+     * sets every pixel in the UIGrid by drawing the closest agent (agent with lowest Y value) at each X,Z pair, positions with no agent will be skipped
+     */
     public <Q extends AgentBaseSpatial, T extends AgentGrid3D<Q>> void DrawClosestAgentsXZ(T drawMe, AgentToColorInt<Q> ColorFn) {
         if (active) {
             for (int x = 0; x < drawMe.xDim; x++) {
@@ -656,6 +703,9 @@ public class UIGrid extends GridBase2D implements GuiComp {
         }
     }
 
+    /**
+     * sets every pixel in the UIGrid by drawing the closest agent (agent with lowest X value) at each Y,Z pair, positions with no agent will be skipped
+     */
     public <Q extends AgentBaseSpatial, T extends AgentGrid3D<Q>> void DrawClosestAgentsYZ(T drawMe, AgentToColorInt<Q> ColorFn) {
         if (active) {
             for (int y = 0; y < drawMe.yDim; y++) {
@@ -672,6 +722,9 @@ public class UIGrid extends GridBase2D implements GuiComp {
         }
     }
 
+    /**
+     * sets every pixel in the UIGrid by drawing the furthest agent (agent with highest Z value) at each X,Y pair, positions with no agent will be skipped
+     */
     public <Q extends AgentBaseSpatial, T extends AgentGrid3D<Q>> void DrawFurthestAgentsXY(T drawMe, AgentToColorInt<Q> ColorFn) {
         if (active) {
             for (int x = 0; x < drawMe.xDim; x++) {
@@ -688,6 +741,9 @@ public class UIGrid extends GridBase2D implements GuiComp {
         }
     }
 
+    /**
+     * sets every pixel in the UIGrid by drawing the furthest agent (agent with highest Y value) at each X,Z pair, positions with no agent will be skipped
+     */
     public <Q extends AgentBaseSpatial, T extends AgentGrid3D<Q>> void DrawFurthestAgentsXZ(T drawMe, AgentToColorInt<Q> ColorFn) {
         if (active) {
             for (int x = 0; x < drawMe.xDim; x++) {
@@ -704,6 +760,9 @@ public class UIGrid extends GridBase2D implements GuiComp {
         }
     }
 
+    /**
+     * sets every pixel in the UIGrid by drawing the furthest agent (agent with highest X value) at each Y,Z pair, positions with no agent will be skipped
+     */
     public <Q extends AgentBaseSpatial, T extends AgentGrid3D<Q>> void DrawFurthestAgentsYZ(T drawMe, AgentToColorInt<Q> ColorFn) {
         if (active) {
             for (int y = 0; y < drawMe.yDim; y++) {
@@ -729,7 +788,7 @@ public class UIGrid extends GridBase2D implements GuiComp {
     }
 
     /**
-     * called by the UIWindow to draw the vis
+     * saves the current state image to a PNG
      */
     public void ToPNG(String path) {
         if (active) {
@@ -743,6 +802,9 @@ public class UIGrid extends GridBase2D implements GuiComp {
         }
     }
 
+    /**
+     * saves the current state image to a JPG
+     */
     public void ToJPG(String path) {
         if (active) {
             SetupScaledBuff();
@@ -755,6 +817,9 @@ public class UIGrid extends GridBase2D implements GuiComp {
         }
     }
 
+    /**
+     * saves the current state image to a GIF
+     */
     public void ToGIF(String path) {
         if (active) {
             SetupScaledBuff();
@@ -767,6 +832,9 @@ public class UIGrid extends GridBase2D implements GuiComp {
         }
     }
 
+    /**
+     * draws a string to the UIGrid on a single line. will crash if the UIGrid is too short
+     */
     public void SetString(String s, int xLeft, int yTop, int color, int bkColor) {
         //on top line and first char in line, don't draw bk, else draw bk to left & above
         if (s.length() > 0) {
@@ -778,12 +846,9 @@ public class UIGrid extends GridBase2D implements GuiComp {
         }
     }
 
-    private void DrawVertCharBar(int x, int y, int color) {
-        for (int dy = y - 4; dy <= y; dy++) {
-            SetPix(x, dy, color);
-        }
-    }
-
+    /**
+     * draws a single character to the UIGrid
+     */
     public void SetChar(char c, int xLeft, int yTop, int color, int bkColor) {
         if (c > alphabet.length + 30) {
             c = 0;
@@ -801,6 +866,23 @@ public class UIGrid extends GridBase2D implements GuiComp {
 
     }
 
+
+    /**
+     * called by the UIWindow class to place the vis window
+     */
+    @Override
+    public void _GetComps(ArrayList<Component> putHere, ArrayList<Integer> coordsHere, ArrayList<Integer> compSizesHere) {
+        putHere.add(panel);
+        coordsHere.add(0);
+        coordsHere.add(0);
+        compSizesHere.add(compX);
+        compSizesHere.add(compY);
+    }
+    private void DrawVertCharBar(int x, int y, int color) {
+        for (int dy = y - 4; dy <= y; dy++) {
+            SetPix(x, dy, color);
+        }
+    }
 
     private static final short[] alphabet = new short[]{
             32319//box
@@ -903,4 +985,36 @@ public class UIGrid extends GridBase2D implements GuiComp {
             , 32767//full
 
     };
+}
+class PaintPanel extends JPanel {
+
+    final BufferedImage buff;
+    final int xDim;
+    final int yDim;
+    public final int scaleX;
+    public final int scaleY;
+    Graphics2D g;
+    final ArrayList<UIGrid> alphaGrids;
+    PaintPanel(BufferedImage buff,int xDim,int yDim,int scaleX,int scaleY){
+        this.buff = buff;
+        this.xDim = xDim;
+        this.yDim = yDim;
+        this.scaleX = scaleX;
+        this.scaleY = scaleY;
+        this.alphaGrids=new ArrayList<>();
+        this.setVisible(true);
+        this.setPreferredSize(new Dimension((int)Math.ceil(xDim*scaleX),(int)Math.ceil(yDim*scaleY)));
+        this.setMaximumSize(new Dimension((int)Math.ceil(xDim*scaleX),(int)Math.ceil(yDim*scaleY)));
+        this.setMinimumSize(new Dimension((int)Math.ceil(xDim*scaleX),(int)Math.ceil(yDim*scaleY)));
+    }
+    @Override
+    public void paintComponent(Graphics g){
+        ((Graphics2D)g).drawImage(buff.getScaledInstance(scaleX *xDim,-scaleY *yDim,Image.SCALE_FAST),null,null);
+        for (int i = 0; i < alphaGrids.size(); i++) {
+            UIGrid alphaGrid=alphaGrids.get(i);
+            ((Graphics2D)g).drawImage(alphaGrid.buff.getScaledInstance(alphaGrid.scale *alphaGrid.xDim,-alphaGrid.scale *alphaGrid.yDim,Image.SCALE_FAST),null,null);
+        }
+        repaint();
+    }
+
 }

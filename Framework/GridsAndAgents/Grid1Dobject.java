@@ -4,18 +4,24 @@ import java.io.Serializable;
 import java.util.Arrays;
 
 /**
- * Created by Rafael on 10/24/2017.
+ * a 1D Grid of objects
  */
 public class Grid1Dobject<T> extends GridBase1D implements Serializable {
     T[] field;
 
+    /**
+     * creates a new Grid1Dobject of length xDim wtihout wraparound
+     */
+    public Grid1Dobject(int xDim) {
+        this(xDim, false);
+    }
+
+    /**
+     * creates a new Grid1Ddouble of length xDim with optional wraparound
+     */
     public Grid1Dobject(int xDim, boolean wrapX) {
         super(xDim, wrapX);
         field = (T[]) (new Object[this.xDim]);
-    }
-
-    public Grid1Dobject(int xDim) {
-        this(xDim, false);
     }
 
     /**

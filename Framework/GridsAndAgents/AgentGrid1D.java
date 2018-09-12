@@ -11,6 +11,10 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * AgentGrid1Ds can hold any type of 1D agent
+ * @param <T> the type of agent that the AgentGrid1D will hold
+ */
 public class AgentGrid1D<T extends AgentBaseSpatial> extends GridBase1D implements Iterable<T>,Serializable {
     InternalGridAgentList<T> agents;
     T[] grid;
@@ -18,6 +22,29 @@ public class AgentGrid1D<T extends AgentBaseSpatial> extends GridBase1D implemen
     ArrayList<AgentsIterator1D> usedIterIs = new ArrayList<>();
     final int[] counts;
     final double moveSafeXdim;
+
+    /**
+     * pass to the constructor the dimensions of the grid and the agent class type, written T.type where T is the name
+     * of the occupying agent class. the wrap booleans specify whether to domain should use wraparound or stop at the
+     * boundary
+     */
+    public AgentGrid1D(int x, Class<T> agentClass, boolean wrapX) {
+        super(x, wrapX);
+        //creates a new typeGrid with given dimensions
+        agents = new InternalGridAgentList<T>(agentClass, this);
+        grid = (T[]) new AgentBaseSpatial[length];
+        counts = new int[length];
+        moveSafeXdim = Math.nextAfter(xDim, 0);
+    }
+
+    /**
+     * pass to the constructor the dimensions of the grid and the agent class type, written T.type where T is the name
+     * of the occupying agent class.
+     */
+    public AgentGrid1D(int x, Class<T> agentClass) {
+        this(x, agentClass, false);
+    }
+
 
     /**
      * meant to be used specifically in conjunction with the LoadState Utils function. LoadState won't by default setup
@@ -48,28 +75,6 @@ public class AgentGrid1D<T extends AgentBaseSpatial> extends GridBase1D implemen
             return null;
         }
         return grid[x];
-    }
-
-    /**
-     * pass to the constructor the dimensions of the grid and the agent class type, written T.type where T is the name
-     * of the occupying agent class. the wrap booleans specify whether to domain should use wraparound or stop at the
-     * boundary
-     */
-    public AgentGrid1D(int x, Class<T> agentClass, boolean wrapX) {
-        super(x, wrapX);
-        //creates a new typeGrid with given dimensions
-        agents = new InternalGridAgentList<T>(agentClass, this);
-        grid = (T[]) new AgentBaseSpatial[length];
-        counts = new int[length];
-        moveSafeXdim = Math.nextAfter(xDim, 0);
-    }
-
-    /**
-     * pass to the constructor the dimensions of the grid and the agent class type, written T.type where T is the name
-     * of the occupying agent class.
-     */
-    public AgentGrid1D(int x, Class<T> agentClass) {
-        this(x, agentClass, false);
     }
 
 

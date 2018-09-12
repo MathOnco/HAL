@@ -4,13 +4,21 @@ import java.io.Serializable;
 import java.util.Arrays;
 
 /**
- * Created by Rafael on 10/24/2017.
+ * a 2D Grid of objects
  */
 public class Grid2Dobject<T> extends GridBase2D implements Serializable{
     T[] field;
+
+    /**
+     * creates a new Grid2Dobject of dimensions xDim by yDim without wraparound
+     */
     public Grid2Dobject(int xDim, int yDim){
         this(xDim,yDim,false,false);
     }
+
+    /**
+     * creates a new Grid2Dobject of dimensions xDim by yDim with optional wraparound
+     */
     public Grid2Dobject(int xDim, int yDim, boolean wrapX, boolean wrapY){
         super(xDim,yDim,wrapX,wrapY);
         field =(T[])new Object[this.xDim * this.yDim];

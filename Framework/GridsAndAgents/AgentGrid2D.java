@@ -10,6 +10,10 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * AgentGrid2Ds can hold any type of 2D Agent
+ * @param <T> the type of agent that the AgentGrid2D will hold
+ */
 public class AgentGrid2D<T extends AgentBaseSpatial> extends GridBase2D implements Iterable<T>,Serializable {
     InternalGridAgentList<T> agents;
     T[] grid;
@@ -19,6 +23,30 @@ public class AgentGrid2D<T extends AgentBaseSpatial> extends GridBase2D implemen
     final double moveSafeXdim;
     final double moveSafeYdim;
 
+
+    /**
+     * pass to the constructor the dimensions of the grid and the agent class type, written T.type where T is the name
+     * of the occupying agent class. the wrap booleans specify whether to domain should use wraparound or stop at the
+     * boundary
+     */
+    public AgentGrid2D(int x, int y, Class<T> agentClass, boolean wrapX, boolean wrapY) {
+        super(x, y, wrapX, wrapY);
+        //creates a new typeGrid with given dimensions
+        agents = new InternalGridAgentList<T>(agentClass, this);
+        grid = (T[]) new AgentBaseSpatial[length];
+        counts = new int[length];
+        moveSafeXdim = Math.nextAfter(xDim, 0);
+        moveSafeYdim = Math.nextAfter(yDim, 0);
+    }
+
+    /**
+     * pass to the constructor the dimensions of the grid and the agent class type, written T.type where T is the name
+     * of the occupying agent class.
+     */
+    public AgentGrid2D(int x, int y, Class<T> agentClass) {
+        this(x, y, agentClass, false, false);
+
+    }
 
     /**
      * meant to be used specifically in conjunction with the LoadState Utils function. LoadState won't by default setup
@@ -64,30 +92,6 @@ public class AgentGrid2D<T extends AgentBaseSpatial> extends GridBase2D implemen
             return null;
         }
         return grid[I(x, y)];
-    }
-
-    /**
-     * pass to the constructor the dimensions of the grid and the agent class type, written T.type where T is the name
-     * of the occupying agent class. the wrap booleans specify whether to domain should use wraparound or stop at the
-     * boundary
-     */
-    public AgentGrid2D(int x, int y, Class<T> agentClass, boolean wrapX, boolean wrapY) {
-        super(x, y, wrapX, wrapY);
-        //creates a new typeGrid with given dimensions
-        agents = new InternalGridAgentList<T>(agentClass, this);
-        grid = (T[]) new AgentBaseSpatial[length];
-        counts = new int[length];
-        moveSafeXdim = Math.nextAfter(xDim, 0);
-        moveSafeYdim = Math.nextAfter(yDim, 0);
-    }
-
-    /**
-     * pass to the constructor the dimensions of the grid and the agent class type, written T.type where T is the name
-     * of the occupying agent class.
-     */
-    public AgentGrid2D(int x, int y, Class<T> agentClass) {
-        this(x, y, agentClass, false, false);
-
     }
 
     /**

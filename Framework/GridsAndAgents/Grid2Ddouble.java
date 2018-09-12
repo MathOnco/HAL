@@ -9,16 +9,22 @@ import java.text.DecimalFormat;
 import java.util.Arrays;
 
 /**
- * Created by Rafael on 10/24/2017.
+ * a 2D Grid of doubles
  */
 public class Grid2Ddouble extends GridBase2D implements Serializable {
     double[] field;
 
+    /**
+     * creates a new Grid2Ddouble of length xDim without wraparound
+     */
     public Grid2Ddouble(int xDim, int yDim) {
         super(xDim, yDim, false, false);
         field = new double[this.xDim * this.yDim];
     }
 
+    /**
+     * creates a new Grid2Ddouble of length xDim with optional wraparound
+     */
     public Grid2Ddouble(int xDim, int yDim, boolean wrapX, boolean wrapY) {
         super(xDim, yDim, wrapX, wrapY);
         field = new double[this.xDim * this.yDim];

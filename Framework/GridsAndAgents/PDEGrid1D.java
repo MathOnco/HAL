@@ -7,9 +7,7 @@ import static Framework.Tools.Internal.PDEequations.*;
 
 
 /**
- * PDEGrid2D class facilitates 2D diffusion with two arrays of doubles called fields
- * the intended usage is that during a diffusion tick, the current values will be read, and the prev values will be written to
- * after updates, Update is called to set the prev field as the current field.
+ * a 1D
  */
 public class PDEGrid1D extends GridBase1D implements Serializable {
     protected double[] nextField;
@@ -80,6 +78,9 @@ public class PDEGrid1D extends GridBase1D implements Serializable {
      * version of the function assumes wrap-around, so there can be no net flux of concentrations.
      */
     public void Advection(double xVel) {
+        if(Math.abs(xVel)>1){
+            throw new IllegalArgumentException("Advection rate above maximum stable value of 1.0");
+        }
         for (int x = 0; x < xDim; x++) {
             Advection1stOrder1D(x, field, nextField, xDim, xVel, false, 0.0);
         }
@@ -90,6 +91,9 @@ public class PDEGrid1D extends GridBase1D implements Serializable {
      * upwind direction, and the concentration will disappear in the downwind direction.
      */
     public void Advection(double xVel, double boundaryValue) {
+        if(Math.abs(xVel)>1){
+            throw new IllegalArgumentException("Advection rate above maximum stable value of 1.0");
+        }
         for (int x = 0; x < xDim; x++) {
             Advection1stOrder1D(x, field, nextField, xDim, xVel, true, boundaryValue);
         }
@@ -99,12 +103,12 @@ public class PDEGrid1D extends GridBase1D implements Serializable {
      * runs diffusion on the current field, adding the deltas to the next field. This form of the function assumes
      * either a reflective or wrapping boundary (depending on how the PDEGrid was specified). the diffCoef variable is
      * the nondimensionalized diffusion conefficient. If the dimensionalized diffusion coefficient is x then diffCoef
-     * can be found by computing (x*SpaceStep)/TimeStep^2 Note that if the diffCoef exceeds 0.25, this diffusion method
+     * can be found by computing (x*SpaceStep)/TimeStep^2 Note that if the diffCoef exceeds 0.5, this diffusion method
      * will become numerically unstable.
      */
     public void Diffusion(double diffCoef) {
-        if (diffCoef > 0.25) {
-            throw new IllegalArgumentException("Diffusion rate above stable maximum value of 0.25 value: " + diffCoef);
+        if (diffCoef > 0.5) {
+            throw new IllegalArgumentException("Diffusion rate above stable maximum value of 0.5 value: " + diffCoef);
         }
         for (int x = 0; x < xDim; x++) {
             Diffusion1(x, field, nextField, xDim, diffCoef, false, 0.0, wrapX);
@@ -116,8 +120,8 @@ public class PDEGrid1D extends GridBase1D implements Serializable {
      * assuming zero flux, the boundary condition is set to either the boundaryValue, or wrap around
      */
     public void Diffusion(double diffCoef, double boundaryValue) {
-        if (diffCoef > 0.25) {
-            throw new IllegalArgumentException("Diffusion rate above stable maximum value of 0.25 value: " + diffCoef);
+        if (diffCoef > 0.5) {
+            throw new IllegalArgumentException("Diffusion rate above stable maximum value of 0.5 value: " + diffCoef);
         }
         for (int x = 0; x < xDim; x++) {
             Diffusion1(x, field, nextField, xDim, diffCoef, true, boundaryValue, wrapX);
@@ -176,7 +180,7 @@ public class PDEGrid1D extends GridBase1D implements Serializable {
     /**
      * returns the maximum difference as stored on the next field, call right before calling Update()
      */
-    public double MaxDifNext() {
+    public double MaxDelta() {
         double maxDif = 0;
         for (int i = 0; i < field.length; i++) {
             maxDif = Math.max(maxDif, Math.abs((nextField[i])));
@@ -185,10 +189,10 @@ public class PDEGrid1D extends GridBase1D implements Serializable {
     }
 
     /**
-     * like MaxDifNext only the differences are scaled relative to the value in the current field. the denomOffset is
+     * like MaxDelta only the differences are scaled relative to the value in the current field. the denomOffset is
      * used to prevent a division by zero
      */
-    public double MaxDifNextScaled(double denomOffset) {
+    public double MaxDeltaScaled(double denomOffset) {
         double maxDif = 0;
         for (int i = 0; i < field.length; i++) {
             maxDif = Math.max(maxDif, Math.abs(nextField[i] / (Math.abs(field[i]) + denomOffset)));
@@ -196,56 +200,6 @@ public class PDEGrid1D extends GridBase1D implements Serializable {
         return maxDif;
     }
 
-
-    /**
-     * like MaxDifNext only the differences are computed by comparing the current field to the compareTo argument
-     */
-    public double MaxDifOther(double[] compareTo) {
-        double maxDif = 0;
-        for (int i = 0; i < field.length; i++) {
-            maxDif = Math.max(maxDif, Math.abs(field[i] - compareTo[i]));
-        }
-        return maxDif;
-    }
-
-    /**
-     * like MaxDifNext only the differences are computed by comparing the current field with the field state as it was
-     * the last time MaxDifRecord was called
-     */
-    public double MaxDifRecord() {
-        if (maxDifscratch == null) {
-            maxDifscratch = new double[length];
-        }
-        double ret = MaxDifOther(maxDifscratch);
-        System.arraycopy(field, 0, maxDifscratch, 0, length);
-        return ret;
-    }
-
-    /**
-     * like MaxDifOther only the differences are scaled relative to the value in the current field. the denomOffset is
-     * used to prevent a division by zero
-     */
-    public double MaxDifOtherScaled(double[] compareTo, double denomOffset) {
-        double maxDif = 0;
-        for (int i = 0; i < field.length; i++) {
-            maxDif = Math.max(maxDif, Math.abs(field[i] - compareTo[i]) / (compareTo[i] + denomOffset));
-        }
-        return maxDif;
-    }
-
-
-    /**
-     * like MaxDifRecord only the differences are scaled relative to the value in the current field. the denomOffset is
-     * used to prevent a division by zero
-     */
-    public double MaxDifRecordScaled(double denomOffset) {
-        if (maxDifscratch == null) {
-            maxDifscratch = new double[length];
-        }
-        double ret = MaxDifOtherScaled(maxDifscratch, denomOffset);
-        System.arraycopy(field, 0, maxDifscratch, 0, length);
-        return ret;
-    }
 
     void EnsureScratch() {
         if (scratch == null) {

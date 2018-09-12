@@ -8,7 +8,7 @@ import java.io.Serializable;
 import static Framework.Util.NormSquared;
 
 /**
- * Created by bravorr on 5/17/17.
+ * holds functions that all 3D Grids share
  */
 public abstract class GridBase3D implements Serializable {
     public final int xDim;
@@ -19,16 +19,6 @@ public abstract class GridBase3D implements Serializable {
     public boolean wrapY;
     public boolean wrapZ;
     int tick;
-
-    GridBase3D(int x, int y, int z, boolean wrapX, boolean wrapY, boolean wrapZ) {
-        xDim = x;
-        yDim = y;
-        zDim = z;
-        length = x * y * z;
-        this.wrapX = wrapX;
-        this.wrapY = wrapY;
-        this.wrapZ = wrapZ;
-    }
 
     /**
      * gets the index of the square at the specified coordinates with wrap around
@@ -434,7 +424,7 @@ public abstract class GridBase3D implements Serializable {
      */
     public double DispX(double x1, double x2) {
         if (wrapX) {
-            return Util.DistWrap(x2, x1, xDim);
+            return Util.DispWrap(x2, x1, xDim);
         } else {
             return x2 - x1;
         }
@@ -446,7 +436,7 @@ public abstract class GridBase3D implements Serializable {
      */
     public double DispY(double y1, double y2) {
         if (wrapY) {
-            return Util.DistWrap(y2, y1, yDim);
+            return Util.DispWrap(y2, y1, yDim);
         } else {
             return y2 - y1;
         }
@@ -458,7 +448,7 @@ public abstract class GridBase3D implements Serializable {
      */
     public double DispZ(double z1, double z2) {
         if (wrapY) {
-            return Util.DistWrap(z2, z1, zDim);
+            return Util.DispWrap(z2, z1, zDim);
         } else {
             return z2 - z1;
         }
@@ -484,5 +474,16 @@ public abstract class GridBase3D implements Serializable {
         return NormSquared(xDisp, yDisp, zDisp);
 
     }
+
+    public GridBase3D(int x, int y, int z, boolean wrapX, boolean wrapY, boolean wrapZ) {
+        xDim = x;
+        yDim = y;
+        zDim = z;
+        length = x * y * z;
+        this.wrapX = wrapX;
+        this.wrapY = wrapY;
+        this.wrapZ = wrapZ;
+    }
+
 }
 

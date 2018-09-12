@@ -125,7 +125,7 @@ public class UIBoolInput extends JToggleButton implements Framework.Interfaces.M
      * ignore
      */
     @Override
-    public void GetComps(ArrayList<Component> putHere,ArrayList<Integer> coordsHere,ArrayList<Integer> sizesHere){
+    public void _GetComps(ArrayList<Component> putHere, ArrayList<Integer> coordsHere, ArrayList<Integer> sizesHere){
         putHere.add(this);
         coordsHere.add(0);
         coordsHere.add(0);

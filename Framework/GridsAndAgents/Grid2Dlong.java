@@ -7,16 +7,22 @@ import java.text.DecimalFormat;
 import java.util.Arrays;
 
 /**
- * Created by Rafael on 10/24/2017.
+ * a 2D Grid of longs
  */
 public class Grid2Dlong extends GridBase2D implements Serializable {
     long[] field;
 
+    /**
+     * creates a new Grid2Dlong of dimensions xDim by yDim without wraparound
+     */
     public Grid2Dlong(int xDim, int yDim) {
         super(xDim, yDim, false, false);
         field = new long[this.xDim * this.yDim];
     }
 
+    /**
+     * creates a new Grid2Dlong of dimensions xDim by yDim with optional wraparound
+     */
     public Grid2Dlong(int xDim, int yDim, boolean wrapX, boolean wrapY) {
         super(xDim, yDim, wrapX, wrapY);
         field = new long[this.xDim * this.yDim];
@@ -29,6 +35,9 @@ public class Grid2Dlong extends GridBase2D implements Serializable {
         return field[i];
     }
 
+    /**
+     * returns the complete field as an array
+     */
     public long[] GetField() {
         return this.field;
     }

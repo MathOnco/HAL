@@ -11,5 +11,5 @@ public interface GuiComp {
     int compY();
     boolean IsActive();
     void SetActive(boolean isActive);
-    void GetComps(ArrayList<Component> putHere,ArrayList<Integer> coordsHere,ArrayList<Integer> compSizesHere);
+    void _GetComps(ArrayList<Component> putHere, ArrayList<Integer> coordsHere, ArrayList<Integer> compSizesHere);
 }

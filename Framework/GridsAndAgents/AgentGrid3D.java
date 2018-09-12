@@ -11,8 +11,8 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Extend the Grid2unstackable class if you want a 3D lattice with one or more agents per typeGrid voxel
- * @param <T> the AgentSQ3D or AgentPT3D extending agent class that will inhabit the typeGrid
+ * AgentGrid3Ds can hold any type of 3D Agent
+ * @param <T> the type of agent that the AgentGrid3D will hold
  */
 public class AgentGrid3D<T extends AgentBaseSpatial> extends GridBase3D implements Iterable<T>,Serializable {
     InternalGridAgentList<T> agents;
@@ -24,16 +24,6 @@ public class AgentGrid3D<T extends AgentBaseSpatial> extends GridBase3D implemen
     final double moveSafeXdim;
     final double moveSafeYdim;
     final double moveSafeZdim;
-
-
-    /**
-     * meant to be used specifically in conjunction with the LoadState Utils function. LoadState won't by default setup
-     * the grid constructor, so this function must be called as well for the loaded grid to be able to create more
-     * agents. pass in the same class argument as is normally used by the grid constructor
-     */
-    public void _PassAgentConstructor(Class<T> agentClass) {
-        agents.SetupConstructor(agentClass);
-    }
 
     /**
      * pass to the constructor the dimensions of the grid and the agent class type, written T.type where T is the name
@@ -57,6 +47,16 @@ public class AgentGrid3D<T extends AgentBaseSpatial> extends GridBase3D implemen
     public AgentGrid3D(int x, int y, int z, Class<T> agentClass) {
         this(x, y, z, agentClass, false, false, false);
     }
+
+    /**
+     * meant to be used specifically in conjunction with the LoadState Utils function. LoadState won't by default setup
+     * the grid constructor, so this function must be called as well for the loaded grid to be able to create more
+     * agents. pass in the same class argument as is normally used by the grid constructor
+     */
+    public void _PassAgentConstructor(Class<T> agentClass) {
+        agents.SetupConstructor(agentClass);
+    }
+
 
     /**
      * returns an uninitialized agent at the specified coordinates

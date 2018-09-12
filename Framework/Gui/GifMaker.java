@@ -21,6 +21,9 @@ import java.util.Iterator;
 
 import static java.awt.image.BufferedImage.TYPE_INT_RGB;
 
+/**
+ * the GifMaker is used to create gif files by compiling UIGrid states
+ */
 public class GifMaker {
     protected ImageWriter gifWriter;
     protected ImageWriteParam imageWriteParam;

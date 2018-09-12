@@ -9,7 +9,7 @@ import static Framework.Util.Norm;
 import static Framework.Util.NormSquared;
 
 /**
- * Created by bravorr on 5/17/17.
+ * holds functions that all 2D Grids share
  */
 public abstract class GridBase2D implements Serializable {
     public final int xDim;
@@ -18,14 +18,6 @@ public abstract class GridBase2D implements Serializable {
     public boolean wrapX;
     public boolean wrapY;
     int tick;
-
-    public GridBase2D(int xDim, int yDim, boolean wrapX, boolean wrapY) {
-        this.xDim = xDim;
-        this.yDim = yDim;
-        this.wrapX = wrapX;
-        this.wrapY = wrapY;
-        this.length = xDim * yDim;
-    }
 
     /**
      * gets the index of the square at the specified coordinates
@@ -413,7 +405,7 @@ public abstract class GridBase2D implements Serializable {
      */
     public double DispX(double x1, double x2) {
         if (wrapX) {
-            return Util.DistWrap(x2, x1, xDim);
+            return Util.DispWrap(x2, x1, xDim);
         } else {
             return x2 - x1;
         }
@@ -425,7 +417,7 @@ public abstract class GridBase2D implements Serializable {
      */
     public double DispY(double y1, double y2) {
         if (wrapY) {
-            return Util.DistWrap(y2, y1, yDim);
+            return Util.DispWrap(y2, y1, yDim);
         } else {
             return y2 - y1;
         }
@@ -451,6 +443,14 @@ public abstract class GridBase2D implements Serializable {
         double yDisp = DispY(y1, y2);
         return NormSquared(xDisp, yDisp);
 
+    }
+
+    public GridBase2D(int xDim, int yDim, boolean wrapX, boolean wrapY) {
+        this.xDim = xDim;
+        this.yDim = yDim;
+        this.wrapX = wrapX;
+        this.wrapY = wrapY;
+        this.length = xDim * yDim;
     }
 
 }

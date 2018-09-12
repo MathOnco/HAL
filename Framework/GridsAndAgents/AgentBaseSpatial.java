@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
- * Created by rafael on 8/10/17.
+ * AgentBaseSpatial functions are shared amongst all spatial agent types
  */
 public abstract class AgentBaseSpatial<T> extends AgentBase<T> implements Serializable {
     int iSq;
