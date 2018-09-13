@@ -162,8 +162,8 @@ public class PDEGrid2D extends GridBase2D implements Serializable {
      * version of the function assumes wrap-around, so there can be no net flux of concentrations.
      */
     public void Advection(double xVel, double yVel) {
-        if(Math.abs(xVel)>1){
-            throw new IllegalArgumentException("Advection rate above maximum stable value of 1.0");
+        if(Math.abs(xVel)+Math.abs(yVel)>1){
+            throw new IllegalArgumentException("Advection rate component sum above stable maximum value of 1.0");
         }
         for (int x = 0; x < xDim; x++) {
             for (int y = 0; y < yDim; y++) {
@@ -177,6 +177,9 @@ public class PDEGrid2D extends GridBase2D implements Serializable {
      * upwind direction, and the concentration will disappear in the downwind direction.
      */
     public void Advection(double xVel, double yVel, double boundaryValue) {
+        if(Math.abs(xVel)+Math.abs(yVel)>1){
+            throw new IllegalArgumentException("Advection rate component sum above stable maximum value of 1.0");
+        }
         for (int x = 0; x < xDim; x++) {
             for (int y = 0; y < yDim; y++) {
                 Advection1stOrder(x, y, field, nextField, xDim, yDim, xVel, yVel, true, boundaryValue);

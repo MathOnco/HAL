@@ -177,6 +177,9 @@ public class PDEGrid3D extends GridBase3D implements Serializable {
      * signature of the function assumes wrap-around, so there can be no net flux of concentrations.
      */
     public void Advection(double xVel, double yVel, double zVel) {
+        if(Math.abs(xVel)+Math.abs(yVel)+Math.abs(zVel)>1){
+            throw new IllegalArgumentException("Advection rate component sum above stable maximum value of 1.0");
+        }
         for (int x = 0; x < xDim; x++) {
             for (int y = 0; y < yDim; y++) {
                 for (int z = 0; z < zDim; z++) {
@@ -192,6 +195,9 @@ public class PDEGrid3D extends GridBase3D implements Serializable {
      * upwind direction, and the concentration will disappear in the downwind direction.
      */
     public void Advection(double xVel, double yVel, double zVel, double boundaryVal) {
+        if(Math.abs(xVel)+Math.abs(yVel)+Math.abs(zVel)>1){
+            throw new IllegalArgumentException("Advection rate component sum above stable maximum value of 1.0");
+        }
         for (int x = 0; x < xDim; x++) {
             for (int y = 0; y < yDim; y++) {
                 for (int z = 0; z < zDim; z++) {
