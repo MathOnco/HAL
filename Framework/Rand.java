@@ -326,9 +326,4 @@ public class Rand implements Serializable {
             arr[i] = swap;
         }
     }
-
-    public int UniformDist(int min, int max) {
-        return rn.Int(max - min) + min;
-    }
-
 }

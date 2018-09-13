@@ -21,7 +21,7 @@ import java.util.concurrent.Executors;
  */
 public final class Util {
 
-    public static double DOUBLE_EPSILON = 2.22E-16;
+    public static final double DOUBLE_EPSILON = 2.22E-16;
 
     /**
      * returns a color integer based on the RGB components passed in. color values should be scaled from 0 to 1
