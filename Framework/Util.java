@@ -1650,14 +1650,14 @@ public final class Util {
     /**
      * returns value with wraparound between 0 and max
      */
-    public static int ModWrap(int val, int max) {
+    public static int Wrap(int val, int max) {
         return val < 0 ? max + val % max : val % max;
     }
 
     /**
      * returns value with wraparound between 0 and max
      */
-    public static double ModWrap(double val, double max) {
+    public static double Wrap(double val, double max) {
         return val < 0 ? max + val % max : val % max;
     }
 
@@ -2010,10 +2010,10 @@ public final class Util {
 //                    continue;
 //                }
 //                if(wrapX&&!inX){
-//                    retX=Util.ModWrap(retX,searchMe.xDim);
+//                    retX=Util.Wrap(retX,searchMe.xDim);
 //                }
 //                if(wrapY&&!inY){
-//                    retY=Util.ModWrap(retY,searchMe.yDim);
+//                    retY=Util.Wrap(retY,searchMe.yDim);
 //                }
 //                searchMe.GetAgents(putHere,searchMe.I(retX,retY));
 //            }

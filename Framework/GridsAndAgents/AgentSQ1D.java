@@ -2,12 +2,13 @@ package Framework.GridsAndAgents;
 
 
 import Framework.Interfaces.AgentToBool;
+import Framework.Util;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 
 import static Framework.Util.InDim;
-import static Framework.Util.ModWrap;
+import static Framework.Util.Wrap;
 
 /**
  * extend the AgentSQ2D class if you want agents that exist on a 2D discrete lattice with the possibility of stacking
@@ -44,7 +45,7 @@ public class AgentSQ1D<T extends AgentGrid1D> extends Agent1DBase<T> implements 
             return;
         }
         if (G.wrapX) {
-            newX = ModWrap(newX, G.xDim);
+            newX = Util.Wrap(newX, G.xDim);
         } else if (!InDim(newX, G.xDim)) {
             newX = Xsq();
         }

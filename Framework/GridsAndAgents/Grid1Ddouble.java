@@ -52,7 +52,7 @@ public class Grid1Ddouble extends GridBase1D implements Serializable {
     /**
      * multiplies the current field value at the specified index
      */
-    public void Mul(int x, double val) {
+    public void Scale(int x, double val) {
         field[x] *= val;
     }
 
@@ -91,7 +91,7 @@ public class Grid1Ddouble extends GridBase1D implements Serializable {
     /**
      * adds specified value to all entries of the curr field
      */
-    public void MulAll(double val) {
+    public void ScaleAll(double val) {
         for (int i = 0; i < length; i++) {
             field[i] *= val;
         }
@@ -144,9 +144,9 @@ public class Grid1Ddouble extends GridBase1D implements Serializable {
      * returns the gradient of the field in the X direction at the coordinates specified
      */
     public double GradientX(int x) {
-        double left = PDEequations.Displaced1D(x - 1, field, xDim, x, false, 0, wrapX);
-        double right = PDEequations.Displaced1D(x + 1, field, xDim, x, false, 0, wrapX);
-        return right - left;
+        double left = PDEequations.Displaced1D(field,x-1, xDim, wrapX,(X)->Get(X+1));
+        double right = PDEequations.Displaced1D(field,x + 1, xDim,wrapX,(X)->Get(X-1));
+        return right-left;
     }
 
     /**
@@ -154,8 +154,8 @@ public class Grid1Ddouble extends GridBase1D implements Serializable {
      * provided for gradients that go over the boundary
      */
     public double GradientX(int x, double boundaryCond) {
-        double left = PDEequations.Displaced1D(x - 1, field, xDim, x, true, boundaryCond, wrapX);
-        double right = PDEequations.Displaced1D(x + 1, field, xDim, x, true, boundaryCond, wrapX);
-        return right - left;
+        double left = PDEequations.Displaced1D(field,x-1, xDim, wrapX,(X)->boundaryCond);
+        double right = PDEequations.Displaced1D(field,x + 1, xDim,wrapX,(X)->boundaryCond);
+        return right-left;
     }
 }

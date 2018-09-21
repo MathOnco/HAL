@@ -35,7 +35,7 @@ public abstract class GridBase2D implements Serializable {
         if (In(x, y)) {
             return I(x, y);
         }
-        return I(Util.ModWrap(x, xDim), Util.ModWrap(y, yDim));
+        return I(Util.Wrap(x, xDim), Util.Wrap(y, yDim));
     }
 
     /**
@@ -85,10 +85,10 @@ public abstract class GridBase2D implements Serializable {
                 int xFinal = x;
                 int yFinal = y;
                 if (wrapX) {
-                    xFinal = Util.ModWrap(x, xDim);
+                    xFinal = Util.Wrap(x, xDim);
                 }
                 if (wrapY) {
-                    yFinal = Util.ModWrap(y, yDim);
+                    yFinal = Util.Wrap(y, yDim);
                 }
                 Action.Action(xFinal, yFinal);
             }
@@ -123,14 +123,14 @@ public abstract class GridBase2D implements Serializable {
             int y = hood[i + 1] + centerY;
             if (!Util.InDim(x, xDim)) {
                 if (wrapX) {
-                    x = Util.ModWrap(x, xDim);
+                    x = Util.Wrap(x, xDim);
                 } else {
                     continue;
                 }
             }
             if (!Util.InDim(y, yDim)) {
                 if (wrapY) {
-                    y = Util.ModWrap(y, yDim);
+                    y = Util.Wrap(y, yDim);
                 } else {
                     continue;
                 }
@@ -167,14 +167,14 @@ public abstract class GridBase2D implements Serializable {
             int y = hood[i + 1] + centerY;
             if (!Util.InDim(x, xDim)) {
                 if (wrapX) {
-                    x = Util.ModWrap(x, xDim);
+                    x = Util.Wrap(x, xDim);
                 } else {
                     continue;
                 }
             }
             if (!Util.InDim(y, yDim)) {
                 if (wrapY) {
-                    y = Util.ModWrap(y, yDim);
+                    y = Util.Wrap(y, yDim);
                 } else {
                     continue;
                 }
@@ -213,14 +213,14 @@ public abstract class GridBase2D implements Serializable {
             int y = hood[i + 1] + centerY;
             if (!Util.InDim(x, xDim)) {
                 if (wrapX) {
-                    x = Util.ModWrap(x, xDim);
+                    x = Util.Wrap(x, xDim);
                 } else {
                     continue;
                 }
             }
             if (!Util.InDim(y, yDim)) {
                 if (wrapY) {
-                    y = Util.ModWrap(y, yDim);
+                    y = Util.Wrap(y, yDim);
                 } else {
                     continue;
                 }
@@ -264,14 +264,14 @@ public abstract class GridBase2D implements Serializable {
             int y = hood[i + 1] + centerY;
             if (!Util.InDim(x, xDim)) {
                 if (wrapX) {
-                    x = Util.ModWrap(x, xDim);
+                    x = Util.Wrap(x, xDim);
                 } else {
                     continue;
                 }
             }
             if (!Util.InDim(y, yDim)) {
                 if (wrapY) {
-                    y = Util.ModWrap(y, yDim);
+                    y = Util.Wrap(y, yDim);
                 } else {
                     continue;
                 }

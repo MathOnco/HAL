@@ -91,17 +91,17 @@ public class AgentPT3D<T extends AgentGrid3D> extends Agent3DBase<T> implements 
             return;
         }
         if (G.wrapX) {
-            newX = ModWrap(newX, G.xDim);
+            newX = Wrap(newX, G.xDim);
         } else if (!InDim(newX, G.xDim)) {
             newX = Xsq();
         }
         if (G.wrapY) {
-            newY = ModWrap(newY, G.yDim);
+            newY = Wrap(newY, G.yDim);
         } else if (!InDim(newY, G.yDim)) {
             newY = Ysq();
         }
         if (G.wrapZ) {
-            newZ = ModWrap(newZ, G.zDim);
+            newZ = Wrap(newZ, G.zDim);
         } else if (!InDim(newZ, G.zDim)) {
             newZ = Zsq();
         }
@@ -121,17 +121,17 @@ public class AgentPT3D<T extends AgentGrid3D> extends Agent3DBase<T> implements 
             return;
         }
         if (G.wrapX) {
-            newX = ModWrap(newX, G.moveSafeXdim);
+            newX = Wrap(newX, G.moveSafeXdim);
         } else if (!InDim(newX, G.xDim)) {
             newX = Xpt();
         }
         if (G.wrapY) {
-            newY = ModWrap(newY, G.moveSafeYdim);
+            newY = Wrap(newY, G.moveSafeYdim);
         } else if (!InDim(newY, G.yDim)) {
             newY = Ypt();
         }
         if (G.wrapZ) {
-            newZ = ModWrap(newZ, G.moveSafeZdim);
+            newZ = Wrap(newZ, G.moveSafeZdim);
         } else if (!InDim(newZ, G.zDim)) {
             newZ = Zpt();
         }

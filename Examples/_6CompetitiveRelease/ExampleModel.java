@@ -13,7 +13,7 @@ public class ExampleModel extends AgentGrid2D<ExampleCell> {
     //model constants
     public final static int RESISTANT = RGB(0, 1, 0), SENSITIVE = RGB(0, 0, 1);
     public double DIV_PROB_SEN = 0.025, DIV_PROB_RES = 0.01, DEATH_PROB = 0.001, DRUG_START = 400, DRUG_PERIOD = 200,
-            DRUG_DURATION = 40, DRUG_DIFF_RATE = 2, DRUG_UPTAKE = 0.91, DRUG_DEATH = 0.2, DRUG_BOUNDARY_VAL = 1.0;
+            DRUG_DURATION = 40, DRUG_DIFF_RATE = 2, DRUG_UPTAKE = -0.09, DRUG_DEATH = 0.2, DRUG_BOUNDARY_VAL = 1.0;
     //internal model objects
     public PDEGrid2D drug;
     public Rand rn;

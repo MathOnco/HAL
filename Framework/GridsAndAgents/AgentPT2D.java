@@ -83,12 +83,12 @@ public class AgentPT2D<T extends AgentGrid2D> extends Agent2DBase<T> implements 
             return;
         }
         if (G.wrapX) {
-            newX = ModWrap(newX, G.xDim);
+            newX = Wrap(newX, G.xDim);
         } else if (!InDim(newX, G.xDim)) {
             newX = Xsq();
         }
         if (G.wrapY) {
-            newY = ModWrap(newY, G.yDim);
+            newY = Wrap(newY, G.yDim);
         } else if (!InDim(newY, G.yDim))
             newY = Ysq();
         MoveSQ(newX, newY);
@@ -107,12 +107,12 @@ public class AgentPT2D<T extends AgentGrid2D> extends Agent2DBase<T> implements 
             return;
         }
         if (G.wrapX) {
-            newX = ModWrap(newX, G.moveSafeXdim);
+            newX = Wrap(newX, G.moveSafeXdim);
         } else if (!InDim(newX, G.xDim)) {
             newX = Xpt();
         }
         if (G.wrapY) {
-            newY = ModWrap(newY, G.moveSafeYdim);
+            newY = Wrap(newY, G.moveSafeYdim);
         } else if (!InDim(newY, G.yDim))
             newY = Ypt();
         MovePT(newX, newY);

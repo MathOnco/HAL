@@ -26,7 +26,8 @@ class ExCell3D extends AgentSQ3D<Example3D>{
             case VESSEL:
                 G.oxygen.Set(Isq(), G.VESSEL_CONC); break; //vessel source
             case TUMOR:
-                G.oxygen.Mul(Isq(), G.TUMOR_METABOLISM_RATE); break; //instead of simple multiplication, Util.MichaelisMenten may be more appropriate
+                G.oxygen.Mul(Isq(), G.TUMOR_METABOLISM_RATE);
+                break; //instead of simple multiplication, Util.MichaelisMenten may be more appropriate
         }
     }
     boolean Death(){
@@ -67,8 +68,8 @@ public class Example3D extends AgentGrid3D<ExCell3D> {
     final static int BACKGROUND_COLOR =RGB256(38,1,5), VESSEL_COLOR =RGB256(255,78,68);
     final static int VESSEL=0,TUMOR=1;
     double DIFF_RATE=0.5/6;//maximum stable diffusion rate
-    double TUMOR_METABOLISM_RATE =0.98;
-    double NORMAL_METABOLISM_RATE =0.997;
+    double TUMOR_METABOLISM_RATE =-0.02;
+    double NORMAL_METABOLISM_RATE =-0.003;
     double VESSEL_CONC=1;
     double DEATH_CONC=0.01;
     double METASTASIS_PROB=0.00001;

@@ -1,4 +1,5 @@
 package Framework.GridsAndAgents;
+import Framework.Interfaces.Coords3DDouble;
 import Framework.Util;
 //import AgentFramework.Util;
 
@@ -11,11 +12,11 @@ import static Framework.Tools.Internal.PDEequations.*;
 /**
  * PDEGrid3D class facilitates 3D diffusion with two arrays of doubles called fields
  * the intended usage is that during a diffusion tick, the current values will be read, and the next values will be written to
- * after updates, Update is called to set the next field as the current field.
+ * after updates, Update is called to set the delta field as the current field.
  */
 public class PDEGrid3D extends GridBase3D implements Serializable {
     public double[] field;
-    public double[] nextField;
+    public double[] deltas;
     public double[] scratch;
     public double[] maxDifscratch;
 
@@ -24,7 +25,7 @@ public class PDEGrid3D extends GridBase3D implements Serializable {
         int numElements = this.xDim * this.yDim * this.zDim;
 
         field = new double[numElements];
-        nextField = new double[numElements];
+        deltas = new double[numElements];
         scratch = null;
     }
 
@@ -33,7 +34,7 @@ public class PDEGrid3D extends GridBase3D implements Serializable {
 
         int numElements = this.xDim * this.yDim * this.zDim;
         field = new double[numElements];
-        nextField = new double[numElements];
+        deltas = new double[numElements];
         scratch = null;
     }
 
@@ -45,63 +46,63 @@ public class PDEGrid3D extends GridBase3D implements Serializable {
     }
 
     /**
-     * gets the next field value at the specified index
+     * gets the delta field value at the specified index
      */
     public double Get(int i) {
         return field[i];
     }
 
     /**
-     * gets to the current field value at the specified coordinates
+     * sets to the current field value at the specified coordinates
      */
     public void Set(int x, int y, int z, double val) {
-        nextField[x * yDim * zDim + y * zDim + z] = val - field[x * yDim * zDim + y * zDim + z];
+        deltas[x * yDim * zDim + y * zDim + z] = val - field[x * yDim * zDim + y * zDim + z];
     }
 
     /**
      * sets the current field value at the specified index
      */
     public void Set(int i, double val) {
-        nextField[i] = val - field[i];
+        deltas[i] = val - field[i];
     }
 
 
     /**
-     * adds to the next field value at the specified index
+     * adds to the delta field value at the specified index
      */
     public void Add(int x, int y, int z, double val) {
-        nextField[x * yDim * zDim + y * zDim + z] += val;
+        deltas[x * yDim * zDim + y * zDim + z] += val;
     }
 
     /**
-     * adds to the next field value at the specified index
+     * adds to the delta field value at the specified index
      */
     public void Add(int i, double val) {
-        nextField[i] += val;
+        deltas[i] += val;
     }
 
     /**
-     * multiplies a value in the “current field” and adds the change to the “next field”
+     * multiplies a value in the “current field” and adds the change to the “delta field”
      */
     public void Mul(int i, double val) {
-        nextField[i] += field[i] * (val - 1);
+        deltas[i] += field[i] * val;
     }
 
     /**
-     * multiplies a value in the “current field” and adds the change to the “next field”
+     * multiplies a value in the “current field” and adds the change to the “delta field”
      */
     public void Mul(int x, int y, int z, double val) {
-        nextField[x * yDim * zDim + y * zDim + z] += field[x * yDim * zDim + y * zDim + z] * (val - 1);
+        deltas[x * yDim * zDim + y * zDim + z] += field[x * yDim * zDim + y * zDim + z] * val;
     }
 
     /**
-     * adds the next field into the current field, also increments the tick.
+     * adds the delta field into the current field, also increments the tick.
      */
     public void Update() {
-        for (int i = 0; i < nextField.length; i++) {
-            field[i] += nextField[i];
+        for (int i = 0; i < deltas.length; i++) {
+            field[i] += deltas[i];
         }
-        Arrays.fill(nextField, 0);
+        Arrays.fill(deltas, 0);
         IncTick();
     }
 
@@ -110,21 +111,21 @@ public class PDEGrid3D extends GridBase3D implements Serializable {
      */
     void SwapFields() {
         double[] temp = field;
-        field = nextField;
-        nextField = temp;
+        field = deltas;
+        deltas = temp;
     }
 
     /**
-     * Bounds all values in the next field between min and max
+     * Bounds all values in the delta field between min and max
      */
     public void BoundAllSwap(double min, double max) {
         for (int i = 0; i < length; i++) {
-            nextField[i] = Util.Bound(nextField[i], min, max);
+            deltas[i] = Util.Bound(deltas[i], min, max);
         }
     }
 
     /**
-     * /** runs diffusion on the current field, adding the deltas to the next field. This form of the function assumes
+     * /** runs diffusion on the current field, adding the deltas to the delta field. This form of the function assumes
      * either a reflective or wrapping boundary (depending on how the PDEGrid was specified). the diffCoef variable is
      * the nondimensionalized diffusion conefficient. If the dimensionalized diffusion coefficient is x then diffCoef
      * can be found by computing (x*SpaceStep)/TimeStep^2 Note that if the diffCoef exceeds 0.25, this diffusion method
@@ -134,7 +135,7 @@ public class PDEGrid3D extends GridBase3D implements Serializable {
         if (diffCoef > 1.0 / 6) {
             throw new IllegalArgumentException("3D Diffusion is unstable if rate is above 0.1666666! rate: " + diffCoef);
         }
-        Diffusion3(field, nextField, xDim, yDim, zDim, diffCoef, false, 0.0, wrapX, wrapY, wrapZ);
+        Diffusion3(field, deltas,diffCoef, xDim, yDim, zDim, wrapX, wrapY, wrapZ,null);
     }
 
     /**
@@ -145,16 +146,28 @@ public class PDEGrid3D extends GridBase3D implements Serializable {
         if (diffCoef > 1.0 / 6) {
             throw new IllegalArgumentException("3D Diffusion is unstable if rate is above 0.1666666! rate: " + diffCoef);
         }
-        Diffusion3(field, nextField, xDim, yDim, zDim, diffCoef, true, boundaryValue, wrapX, wrapY, wrapZ);
+        Diffusion3(field, deltas,diffCoef, xDim, yDim, zDim, wrapX, wrapY, wrapZ,(x,y,z)->boundaryValue);
     }
 
     /**
-     * returns the maximum difference as stored on the next field, call right before calling Update()
+     * has the same effect as the above diffusion function with a boundary condition function, which will be evaluated
+     * with the out of bounds coordinates as arguments whenever a boundary value is needed, and should return the
+     * boundary value
+     */
+    public void Diffusion(double diffCoef, Coords3DDouble BoundaryConditionFn) {
+        if (diffCoef > 1.0 / 6) {
+            throw new IllegalArgumentException("3D Diffusion is unstable if rate is above 0.1666666! rate: " + diffCoef);
+        }
+        Diffusion3(field, deltas,diffCoef, xDim, yDim, zDim, wrapX, wrapY, wrapZ,BoundaryConditionFn);
+    }
+
+    /**
+     * returns the maximum difference as stored on the delta field, call right before calling Update()
      */
     public double MaxDelta() {
         double maxDif = 0;
         for (int i = 0; i < field.length; i++) {
-            maxDif = Math.max(maxDif, Math.abs((nextField[i])));
+            maxDif = Math.max(maxDif, Math.abs((deltas[i])));
         }
         return maxDif;
     }
@@ -166,7 +179,7 @@ public class PDEGrid3D extends GridBase3D implements Serializable {
     public double MaxDeltaScaled(double denomOffset) {
         double maxDif = 0;
         for (int i = 0; i < field.length; i++) {
-            maxDif = Math.max(maxDif, Math.abs(nextField[i] / (Math.abs(field[i]) + denomOffset)));
+            maxDif = Math.max(maxDif, Math.abs(deltas[i] / (Math.abs(field[i]) + denomOffset)));
         }
         return maxDif;
     }
@@ -180,13 +193,7 @@ public class PDEGrid3D extends GridBase3D implements Serializable {
         if(Math.abs(xVel)+Math.abs(yVel)+Math.abs(zVel)>1){
             throw new IllegalArgumentException("Advection rate component sum above stable maximum value of 1.0");
         }
-        for (int x = 0; x < xDim; x++) {
-            for (int y = 0; y < yDim; y++) {
-                for (int z = 0; z < zDim; z++) {
-                    Advection3D1stOrder(x, y, z, field, nextField, xDim, yDim, zDim, xVel, yVel, zVel, false, 0);
-                }
-            }
-        }
+                    Advection3(field, deltas,xVel,yVel,zVel, xDim, yDim, zDim,wrapX,wrapY,wrapZ,null);
     }
 
 
@@ -198,15 +205,19 @@ public class PDEGrid3D extends GridBase3D implements Serializable {
         if(Math.abs(xVel)+Math.abs(yVel)+Math.abs(zVel)>1){
             throw new IllegalArgumentException("Advection rate component sum above stable maximum value of 1.0");
         }
-        for (int x = 0; x < xDim; x++) {
-            for (int y = 0; y < yDim; y++) {
-                for (int z = 0; z < zDim; z++) {
-                    Advection3D1stOrder(x, y, z, field, nextField, xDim, yDim, zDim, xVel, yVel, zVel, true, boundaryVal);
-                }
-            }
-        }
+        Advection3(field, deltas,xVel,yVel,zVel, xDim, yDim, zDim,wrapX,wrapY,wrapZ,(x,y,z)->boundaryVal);
     }
 
+    /**
+     * runs advection as described above with a boundary condition function, which will be evaluated with the out of
+     * bounds coordinates as arguments whenever a boundary value is needed, and should return the boundary value
+     */
+    public void Advection(double xVel, double yVel, double zVel, Coords3DDouble BoundaryConditionFn) {
+        if(Math.abs(xVel)+Math.abs(yVel)+Math.abs(zVel)>1){
+            throw new IllegalArgumentException("Advection rate component sum above stable maximum value of 1.0");
+        }
+        Advection3(field, deltas,xVel,yVel,zVel, xDim, yDim, zDim,wrapX,wrapY,wrapZ,BoundaryConditionFn);
+    }
     /**
      * returns the maximum difference between the field passed in and the current field. call right after Update()
      */
@@ -221,7 +232,7 @@ public class PDEGrid3D extends GridBase3D implements Serializable {
 
 
     /**
-     * sets all squares in the next field using the vals array
+     * sets all squares in the delta field using the vals array
      */
     public void SetAll(double val) {
         for (int i = 0; i < length; i++) {
@@ -231,7 +242,7 @@ public class PDEGrid3D extends GridBase3D implements Serializable {
 
 
     /**
-     * adds specified value to all entries of the next field
+     * adds specified value to all entries of the delta field
      */
     public void AddAll(double val) {
         for (int i = 0; i < length; i++) {
@@ -240,7 +251,7 @@ public class PDEGrid3D extends GridBase3D implements Serializable {
     }
 
     /**
-     * multiplies all values in the “current field” and puts the results into the “next field”
+     * multiplies all values in the “current field” and puts the results into the “delta field”
      */
     public void MulAll(double val) {
         for (int i = 0; i < length; i++) {
