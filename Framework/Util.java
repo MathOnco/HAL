@@ -484,7 +484,7 @@ public final class Util {
      * gets the min value from an array
      */
     public static double ArrayMin(double[] arr) {
-        double min = Double.MIN_VALUE;
+        double min = Double.MAX_VALUE;
         for (double val : arr) {
             min = min < val ? min : val;
         }
@@ -495,7 +495,7 @@ public final class Util {
      * gets the min value from an array
      */
     public static int ArrayMin(int[] arr) {
-        int min = Integer.MIN_VALUE;
+        int min = Integer.MAX_VALUE;
         for (int val : arr) {
             min = min < val ? min : val;
         }
@@ -932,7 +932,7 @@ public final class Util {
         }
     }
 
-    public int[] MooreHood3D(boolean includeOrigin) {
+    public static int[] MooreHood3D(boolean includeOrigin) {
         if (includeOrigin) {
             return new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                     0, 0, 0,
@@ -1214,19 +1214,19 @@ public final class Util {
         int iCoord;
         int nCoords = (radX * 2 + 1) * (radY * 2 + 1);
         if (includeOrigin) {
-            dataIn = new int[nCoords * 3];
             iCoord = 1;
         } else {
-            dataIn = new int[nCoords * 3 - 3];
+            nCoords--;
             iCoord = 0;
         }
+        dataIn = new int[nCoords * 3];
         for (int x = -radX; x <= radX; x++) {
             for (int y = -radY; y <= radY; y++) {
                 if (x == 0 && y == 0) {
                     continue;
                 }
-                dataIn[iCoord * 2] = x;
-                dataIn[iCoord * 2 + 1] = y;
+                dataIn[iCoord * 2+nCoords] = x;
+                dataIn[iCoord * 2 + 1+nCoords] = y;
                 iCoord++;
             }
         }

@@ -1,6 +1,7 @@
 package Framework.GridsAndAgents;
 
 import Framework.Interfaces.Coords1DDouble;
+import Framework.Interfaces.Coords2DDouble;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -105,6 +106,31 @@ public class PDEGrid1D extends GridBase1D implements Serializable {
     }
 
     /**
+     * runs discontinuous advection
+     */
+    public void Advection(double[]xVels){
+        Advection1(field,deltas,xVels,xDim,wrapX,null,null);
+    }
+    /**
+     * runs discontinuous advection
+     */
+    public void Advection(Grid2Ddouble xVels){
+        Advection1(field,deltas,xVels.field,xDim,wrapX,null,null);
+    }
+    /**
+     * runs discontinuous advection
+     */
+    public void Advection(double[]xVels,Coords1DDouble BoundaryConditionFn,Coords1DDouble BoundaryXvel){
+        Advection1(field,deltas,xVels,xDim,wrapX,BoundaryConditionFn,BoundaryXvel);
+    }
+    /**
+     * runs discontinuous advection
+     */
+    public void Advection(Grid2Ddouble xVels,Coords1DDouble BoundaryConditionFn,Coords1DDouble BoundaryXvel){
+        Advection1(field,deltas,xVels.field,xDim,wrapX,BoundaryConditionFn,BoundaryXvel);
+    }
+
+    /**
      * runs diffusion on the current field, adding the deltas to the delta field. This form of the function assumes
      * either a reflective or wrapping boundary (depending on how the PDEGrid was specified). the diffCoef variable is
      * the nondimensionalized diffusion conefficient. If the dimensionalized diffusion coefficient is x then diffCoef
@@ -140,6 +166,35 @@ public class PDEGrid1D extends GridBase1D implements Serializable {
         }
         Diffusion1(field, deltas, diffCoef, xDim, wrapX, BoundaryConditionFn);
     }
+
+    /**
+     * runs diffusion with discontinuous diffusion rates
+     */
+    public void Diffusion(double[] diffRates){
+        Diffusion1(field,deltas,diffRates,xDim,wrapX,null,null);
+    }
+
+    /**
+     * runs diffusion with discontinuous diffusion rates
+     */
+    public void Diffusion(Grid1Ddouble diffRates){
+        Diffusion1(field,deltas,diffRates.field,xDim,wrapX,null,null);
+    }
+
+    /**
+     * runs diffusion with discontinuous diffusion rates
+     */
+    public void Diffusion(double[] diffRates, Coords1DDouble BoundaryConditionFn, Coords1DDouble BoundaryDiffusionRateFn){
+        Diffusion1(field,deltas,diffRates,xDim,wrapX,BoundaryConditionFn,BoundaryDiffusionRateFn);
+    }
+
+    /**
+     * runs diffusion with discontinuous diffusion rates
+     */
+    public void Diffusion(Grid1Ddouble diffRates, Coords1DDouble BoundaryConditionFn, Coords1DDouble BoundaryDiffusionRateFn){
+        Diffusion1(field,deltas,diffRates.field,xDim,wrapX,BoundaryConditionFn,BoundaryDiffusionRateFn);
+    }
+
 
 
     /**
@@ -213,6 +268,16 @@ public class PDEGrid1D extends GridBase1D implements Serializable {
         return maxDif;
     }
 
+    /**
+     * ensures that all values will be non-negative on the next timestep, call before Update
+     */
+    public void SetNonNegative(){
+        for (int i = 0; i < length; i++) {
+            if(field[i]+deltas[i]<0){
+                Set(i,0);
+            }
+        }
+    }
 
     void EnsureScratch() {
         if (scratch == null) {

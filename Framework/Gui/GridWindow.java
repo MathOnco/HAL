@@ -17,12 +17,12 @@ public class GridWindow extends UIGrid {
      * @param yDim the height in UIGrid squares
      * @param scaleFactor the conversion factor between a pixel width/height and the length/height of a UIGrid square (default 1)
      * @param killOnClose whether the program should exit when the window is closed (default true)
-     * @param closeAction function that runs when the window is closed (default null)
+     * @param CloseAction function that runs when the window is closed (default null)
      * @param active if set to false, the GridWindow will not actually render and its methods will be skipped (default true)
      */
-    public GridWindow(String title, int xDim, int yDim, int scaleFactor, boolean killOnClose, GuiCloseAction closeAction, boolean active) {
+    public GridWindow(String title, int xDim, int yDim, int scaleFactor, boolean killOnClose, GuiCloseAction CloseAction, boolean active) {
         super(xDim,yDim,scaleFactor,active);
-        win=new UIWindow(title, killOnClose,closeAction, active);
+        win=new UIWindow(title, killOnClose,CloseAction, active);
         RunGui();
     }
 
@@ -41,11 +41,11 @@ public class GridWindow extends UIGrid {
     public GridWindow(int xDim, int yDim, int scaleFactor,boolean active) {
         this("",xDim,yDim,scaleFactor,true,null,active);
     }
-    public GridWindow(int xDim, int yDim, int scaleFactor, boolean killOnClose, GuiCloseAction closeAction) {
-        this("",xDim,yDim,scaleFactor,killOnClose,closeAction,true);
+    public GridWindow(int xDim, int yDim, int scaleFactor, boolean killOnClose, GuiCloseAction CloseAction) {
+        this("",xDim,yDim,scaleFactor,killOnClose,CloseAction,true);
     }
-    public GridWindow(int xDim, int yDim, int scaleFactor, boolean killOnClose,GuiCloseAction closeAction, boolean active) {
-        this("",xDim,yDim,scaleFactor,killOnClose,closeAction,active);
+    public GridWindow(int xDim, int yDim, int scaleFactor, boolean killOnClose,GuiCloseAction CloseAction, boolean active) {
+        this("",xDim,yDim,scaleFactor,killOnClose,CloseAction,active);
     }
     public GridWindow(String title,int xDim, int yDim) {
         this(title,xDim,yDim,1,true,null,true);
@@ -59,8 +59,8 @@ public class GridWindow extends UIGrid {
     public GridWindow(String title, int xDim, int yDim, int scaleFactor,boolean active) {
         this(title,xDim,yDim,scaleFactor,true,null,active);
     }
-    public GridWindow(String title, int xDim, int yDim, int scaleFactor, boolean killOnClose, GuiCloseAction closeAction) {
-        this(title,xDim,yDim,scaleFactor,killOnClose,closeAction,true);
+    public GridWindow(String title, int xDim, int yDim, int scaleFactor, boolean killOnClose, GuiCloseAction CloseAction) {
+        this(title,xDim,yDim,scaleFactor,killOnClose,CloseAction,true);
     }
 
     /**

@@ -209,7 +209,7 @@ public class AgentGrid2D<T extends AgentBaseSpatial> extends GridBase2D implemen
      * appends to the provided arraylist all agents on the square at the specified coordinates
      */
     public void GetAgents(ArrayList<T> putHere, int x, int y) {
-        T agent = grid[x];
+        T agent = GetAgent(x,y);
         if (agent != null) {
             agent.GetAllOnSquare(putHere);
         }
@@ -230,7 +230,7 @@ public class AgentGrid2D<T extends AgentBaseSpatial> extends GridBase2D implemen
      * for which EvalAgent returns true
      */
     public void GetAgents(ArrayList<T> putHere, int x, int y, AgentToBool<T> EvalAgent) {
-        T agent = grid[I(x, y)];
+        T agent = GetAgent(x,y);
         if (agent != null) {
             agent.GetAllOnSquare(putHere, EvalAgent);
         }
@@ -241,7 +241,7 @@ public class AgentGrid2D<T extends AgentBaseSpatial> extends GridBase2D implemen
      * for which EvalAgent returns true
      */
     public void GetAgents(ArrayList<T> putHere, int i, AgentToBool<T> EvalAgent) {
-        T agent = grid[i];
+        T agent = GetAgent(i);
         if (agent != null) {
             agent.GetAllOnSquare(putHere, EvalAgent);
         }

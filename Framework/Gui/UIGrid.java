@@ -71,7 +71,7 @@ public class UIGrid extends GridBase2D implements GuiComp {
      * @param scaleFactor the width and height in screen pixels of each UIGrid pixel
      */
     public UIGrid(int gridW, int gridH, int scaleFactor, boolean active) {
-        this(gridW, gridH, scaleFactor, 1, 1, true);
+        this(gridW, gridH, scaleFactor, 1, 1, active);
     }
 
     public UIGrid(int gridW, int gridH, int scaleFactor) {

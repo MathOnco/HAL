@@ -162,6 +162,33 @@ public class PDEGrid3D extends GridBase3D implements Serializable {
     }
 
     /**
+     * runs diffusion with discontinuous diffusion rates
+     */
+    public void Diffusion(double[] diffRates){
+        Diffusion3(field,deltas,diffRates,xDim,yDim,zDim,wrapX,wrapY,wrapZ,null,null);
+    }
+
+    /**
+     * runs diffusion with discontinuous diffusion rates
+     */
+    public void Diffusion(Grid2Ddouble diffRates){
+        Diffusion3(field,deltas,diffRates.field,xDim,yDim,zDim,wrapX,wrapY,wrapZ,null,null);
+    }
+
+    /**
+     * runs diffusion with discontinuous diffusion rates
+     */
+    public void Diffusion(double[] diffRates, Coords3DDouble BoundaryConditionFn, Coords3DDouble BoundaryDiffusionRateFn){
+        Diffusion3(field,deltas,diffRates,xDim,yDim,zDim,wrapX,wrapY,wrapZ,BoundaryConditionFn,BoundaryDiffusionRateFn);
+    }
+
+    /**
+     * runs diffusion with discontinuous diffusion rates
+     */
+    public void Diffusion(Grid2Ddouble diffRates, Coords3DDouble BoundaryConditionFn, Coords3DDouble BoundaryDiffusionRateFn){
+        Diffusion3(field,deltas,diffRates.field,xDim,yDim,zDim,wrapX,wrapY,wrapZ,BoundaryConditionFn,BoundaryDiffusionRateFn);
+    }
+    /**
      * returns the maximum difference as stored on the delta field, call right before calling Update()
      */
     public double MaxDelta() {
@@ -218,6 +245,31 @@ public class PDEGrid3D extends GridBase3D implements Serializable {
         }
         Advection3(field, deltas,xVel,yVel,zVel, xDim, yDim, zDim,wrapX,wrapY,wrapZ,BoundaryConditionFn);
     }
+
+    /**
+     * runs discontinuous advection
+     */
+    public void Advection(double[]xVels,double[]yVels,double[]zVels){
+        Advection3(field,deltas,xVels,yVels,zVels,xDim,yDim,zDim,wrapX,wrapY,wrapZ,null,null,null,null);
+    }
+    /**
+     * runs discontinuous advection
+     */
+    public void Advection(Grid2Ddouble xVels,Grid2Ddouble yVels,Grid2Ddouble zVels){
+        Advection3(field,deltas,xVels.field,yVels.field,zVels.field,xDim,yDim,zDim,wrapX,wrapY,wrapZ,null,null,null,null);
+    }
+    /**
+     * runs discontinuous advection
+     */
+    public void Advection(double[]xVels,double[]yVels,double[]zVels,Coords3DDouble BoundaryConditionFn, Coords3DDouble BoundaryXvels,Coords3DDouble BondaryYvels,Coords3DDouble BoundaryZvels){
+        Advection3(field,deltas,xVels,yVels,zVels,xDim,yDim,zDim,wrapX,wrapY,wrapZ,BoundaryConditionFn,BoundaryXvels,BondaryYvels,BoundaryZvels);
+    }
+    /**
+     * runs discontinuous advection
+     */
+    public void Advection(Grid2Ddouble xVels,Grid2Ddouble yVels,Grid2Ddouble zVels,Coords3DDouble BoundaryConditionFn, Coords3DDouble BoundaryXvels,Coords3DDouble BondaryYvels,Coords3DDouble BoundaryZvels){
+        Advection3(field,deltas,xVels.field,yVels.field,zVels.field,xDim,yDim,zDim,wrapX,wrapY,wrapZ,BoundaryConditionFn,BoundaryXvels,BondaryYvels,BoundaryZvels);
+    }
     /**
      * returns the maximum difference between the field passed in and the current field. call right after Update()
      */
@@ -237,6 +289,17 @@ public class PDEGrid3D extends GridBase3D implements Serializable {
     public void SetAll(double val) {
         for (int i = 0; i < length; i++) {
             Set(i, val);
+        }
+    }
+
+    /**
+     * ensures that all values will be non-negative on the next timestep, call before Update
+     */
+    public void SetNonNegative(){
+        for (int i = 0; i < length; i++) {
+            if(field[i]+deltas[i]<0){
+                Set(i,0);
+            }
         }
     }
 
