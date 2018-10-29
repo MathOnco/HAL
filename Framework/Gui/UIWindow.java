@@ -40,10 +40,10 @@ public class UIWindow {
     /**
      * @param title the title that will appear at the top of the window
      * @param killOnClose whether the program should terminate on closing the window
-     * @param closeAction function that will run when the window is closed
+     * @param CloseAction function that will run when the window is closed
      * @param active if set to false, the UIWindow will not actually render and its methods will be skipped (default true)
      */
-    public UIWindow(String title, boolean killOnClose, GuiCloseAction closeAction, boolean active){
+    public UIWindow(String title, boolean killOnClose, GuiCloseAction CloseAction, boolean active){
         this.active=active;
         this.killOnClose=killOnClose;
         if(active) {
@@ -55,13 +55,13 @@ public class UIWindow {
             this.subCompSizes = new ArrayList<>();
             this.frame.setResizable(false);//fixes window size
             this.frame.setLocationRelativeTo(null);//puts window in middle of screen
-            this.closeAction = closeAction;
+            this.closeAction = CloseAction;
             if (killOnClose) {
                 this.frame.addWindowListener(new WindowAdapter() {
                     @Override
                     public void windowClosing(WindowEvent e) {
-                        if (closeAction != null) {
-                            closeAction.Action(e);
+                        if (CloseAction != null) {
+                            CloseAction.Action(e);
                         }
                         frame.setVisible(false);
                         frame.dispose();
@@ -74,8 +74,8 @@ public class UIWindow {
                     public void windowClosing(WindowEvent e) {
                         if (alive) {
                             alive = false;
-                            if (closeAction != null) {
-                                closeAction.Action(e);
+                            if (CloseAction != null) {
+                                CloseAction.Action(e);
                             }
                             frame.setVisible(false);
                             frame.dispose();
@@ -120,11 +120,11 @@ public class UIWindow {
     public UIWindow(boolean active) {
         this("",true,null,active);
     }
-    public UIWindow(boolean killOnClose, GuiCloseAction closeAction){
-        this("",killOnClose,closeAction,true);
+    public UIWindow(boolean killOnClose, GuiCloseAction CloseAction){
+        this("",killOnClose,CloseAction,true);
     }
-    public UIWindow(boolean killOnClose,GuiCloseAction closeAction,boolean active) {
-        this("",killOnClose,closeAction,active);
+    public UIWindow(boolean killOnClose,GuiCloseAction CloseAction,boolean active) {
+        this("",killOnClose,CloseAction,active);
     }
     public UIWindow(String title) {
         this(title,true,null,true);
@@ -132,8 +132,8 @@ public class UIWindow {
     public UIWindow(String title,boolean active) {
         this(title,true,null,active);
     }
-    public UIWindow(String title,boolean killOnClose, GuiCloseAction closeAction){
-        this(title,killOnClose,closeAction,true);
+    public UIWindow(String title,boolean killOnClose, GuiCloseAction CloseAction){
+        this(title,killOnClose,CloseAction,true);
     }
     public void TickPause(int millis){
         if(active) {

@@ -1,12 +1,13 @@
 package Framework.GridsAndAgents;
 
 import Framework.Interfaces.AgentToBool;
+import Framework.Util;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 
 import static Framework.Util.InDim;
-import static Framework.Util.ModWrap;
+import static Framework.Util.Wrap;
 
 /**
  * extend the AgentSQ3D class if you want agents that exist on a 3D discrete lattice
@@ -140,17 +141,17 @@ public class AgentSQ3Dunstackable<T extends AgentGrid3D> extends Agent3DBase<T> 
             return;
         }
         if (G.wrapX) {
-            newX = ModWrap(newX, G.xDim);
+            newX = Util.Wrap(newX, G.xDim);
         } else if (!InDim(newX, G.xDim)) {
             newX = Xsq();
         }
         if (G.wrapY) {
-            newY = ModWrap(newY, G.yDim);
+            newY = Util.Wrap(newY, G.yDim);
         } else if (!InDim(newY, G.yDim)) {
             newY = Ysq();
         }
         if (G.wrapZ) {
-            newZ = ModWrap(newZ, G.zDim);
+            newZ = Util.Wrap(newZ, G.zDim);
         } else if (!InDim(newZ, G.zDim)) {
             newZ = Zsq();
         }

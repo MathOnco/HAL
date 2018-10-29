@@ -10,14 +10,15 @@ public class DiffTest3D {
         GridWindow win =new GridWindow("testing",100,100,5);
         while(true){
             //pick a random position to test
-            grid3D.Set(345,1);
             //for (int x = 0; x < grid3D.xDim; x++) {
             //    for (int y = 0; y < grid3D.yDim; y++) {
             //        grid3D.SetPix(x,y,0,1);
             //    }
             //}
             win.TickPause(10);
-            grid3D.Diffusion(0.16,1);
+            grid3D.Advection(0.1,0.1,0.1);
+            grid3D.Set(345,1);
+            grid3D.Update();
             win.DrawPDEGridXZ(grid3D,(val)-> Util.HeatMapRGB(val, (double) 0, (double) 1));
         }
 

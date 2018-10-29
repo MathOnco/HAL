@@ -11,7 +11,7 @@ import Framework.Util;
 import java.util.Arrays;
 
 //cells grow and mutate
-class CellEx extends AgentSQ2Dunstackable<DivisionDeadthMutation>{
+class CellEx extends AgentSQ2Dunstackable<DivisionDeathMutation>{
     int nMutations;
 
     void Mutate(){
@@ -26,13 +26,6 @@ class CellEx extends AgentSQ2Dunstackable<DivisionDeadthMutation>{
     }
 
     void Divide(){
-        //ApplyHood(1,G().hood,G().rn,(i)->G().GetAgent(i)==null,(i,ct)->{
-        //    CellEx daughter=G().NewAgentSQ(i);
-        //    daughter.nMutations=nMutations;
-        //    daughter.Draw();
-        //    Mutate();
-        //    daughter.Mutate();
-        //});
         int nOpts=MapEmptyHood(G.hood);//finds von neumann neighborhood indices around cell.
         if(nOpts>0){
             int iDaughter= G.hood[G.rn.Int(nOpts)];
@@ -45,7 +38,7 @@ class CellEx extends AgentSQ2Dunstackable<DivisionDeadthMutation>{
     }
 }
 
-public class DivisionDeadthMutation extends AgentGrid2D<CellEx> {
+public class DivisionDeathMutation extends AgentGrid2D<CellEx> {
     final static int BLACK= Util.RGB(0,0,0);
     double DIV_PROB =0.2;
     double MUT_PROB =0.01;
@@ -57,11 +50,11 @@ public class DivisionDeadthMutation extends AgentGrid2D<CellEx> {
     Rand rn=new Rand(1);
     UIGrid vis;
     FileIO outputFile=null;
-    public DivisionDeadthMutation(int x, int y, UIGrid vis) {
+    public DivisionDeathMutation(int x, int y, UIGrid vis) {
         super(x, y, CellEx.class);
         this.vis=vis;
     }
-    public DivisionDeadthMutation(int x, int y, UIGrid vis, String outputFileName) {
+    public DivisionDeathMutation(int x, int y, UIGrid vis, String outputFileName) {
         super(x, y, CellEx.class);
         this.vis=vis;
         outputFile=new FileIO(outputFileName,"w");
@@ -104,7 +97,7 @@ public class DivisionDeadthMutation extends AgentGrid2D<CellEx> {
     public static void main(String[]args){
         int x=500,y=500,scaleFactor=2;
         GridWindow vis=new GridWindow(x,y,scaleFactor);//used for visualization
-        DivisionDeadthMutation grid=new DivisionDeadthMutation(x,y,vis);
+        DivisionDeathMutation grid=new DivisionDeathMutation(x,y,vis);
         grid.InitTumor(5);
         for (int tick = 0; tick < 1000; tick++) {
             vis.TickPause(0);//set to nonzero value to cap tick rate.

@@ -75,14 +75,14 @@ public class Grid2Ddouble extends GridBase2D implements Serializable {
     /**
      * multiplies the current field value at the specified coordinates
      */
-    public void Mul(int x, int y, double val) {
+    public void Scale(int x, int y, double val) {
         field[x * yDim + y] *= val;
     }
 
     /**
      * multiplies the current field value at the specified index
      */
-    public void Mul(int i, double val) {
+    public void Scale(int i, double val) {
         field[i] *= val;
     }
 
@@ -123,7 +123,7 @@ public class Grid2Ddouble extends GridBase2D implements Serializable {
      */
     public void MulAll(double val) {
         for (int i = 0; i < length; i++) {
-            field[i] *= val;
+            Scale(i,val);
         }
     }
 
@@ -171,8 +171,8 @@ public class Grid2Ddouble extends GridBase2D implements Serializable {
      * returns the gradient of the field in the X direction at the coordinates specified
      */
     public double GradientX(int x, int y) {
-        double left = PDEequations.DisplacedX2D(x - 1, y, field, xDim, yDim, x, false, 0, wrapX);
-        double right = PDEequations.DisplacedX2D(x + 1, y, field, xDim, yDim, x, false, 0, wrapX);
+        double left = PDEequations.DisplacedX2D(field,x-1,y, xDim, yDim, wrapX,(X,Y)->Get(X+1,Y));
+        double right = PDEequations.DisplacedX2D(field,x + 1, y, xDim, yDim,wrapX,(X,Y)->Get(X-1,Y));
         return right - left;
     }
 
@@ -180,9 +180,9 @@ public class Grid2Ddouble extends GridBase2D implements Serializable {
      * returns the gradient of the field in the Y direction at the coordinates specified
      */
     public double GradientY(int x, int y) {
-        double down = PDEequations.DisplacedY2D(x, y - 1, field, xDim, yDim, y, false, 0, wrapY);
-        double up = PDEequations.DisplacedY2D(x, y + 1, field, xDim, yDim, y, false, 0, wrapY);
-        return up - down;
+        double left = PDEequations.DisplacedX2D(field,x-1,y, xDim, yDim, wrapX,(X,Y)->Get(X+1,Y));
+        double right = PDEequations.DisplacedX2D(field,x + 1, y, xDim, yDim,wrapX,(X,Y)->Get(X-1,Y));
+        return right - left;
     }
 
     /**
@@ -190,8 +190,8 @@ public class Grid2Ddouble extends GridBase2D implements Serializable {
      * provided for gradients that go over the boundary
      */
     public double GradientX(int x, int y, double boundaryCond) {
-        double left = PDEequations.DisplacedX2D(x - 1, y, field, xDim, yDim, x, true, boundaryCond, wrapX);
-        double right = PDEequations.DisplacedX2D(x + 1, y, field, xDim, yDim, x, true, boundaryCond, wrapX);
+        double left = PDEequations.DisplacedX2D(field,x-1,y, xDim, yDim, wrapX,(X,Y)->boundaryCond);
+        double right = PDEequations.DisplacedX2D(field,x + 1, y, xDim, yDim,wrapX,(X,Y)->boundaryCond);
         return right - left;
     }
 
@@ -200,8 +200,8 @@ public class Grid2Ddouble extends GridBase2D implements Serializable {
      * provided for gradients that go over the boundary
      */
     public double GradientY(int x, int y, double boundaryCond) {
-        double down = PDEequations.DisplacedY2D(x, y - 1, field, xDim, yDim, y, true, boundaryCond, wrapY);
-        double up = PDEequations.DisplacedY2D(x, y + 1, field, xDim, yDim, y, true, boundaryCond, wrapY);
+        double down = PDEequations.DisplacedY2D(field,x,y-1, xDim, yDim, wrapX,(X,Y)->boundaryCond);
+        double up = PDEequations.DisplacedY2D(field,x, y+1, xDim, yDim,wrapX,(X,Y)->boundaryCond);
         return up - down;
     }
 }

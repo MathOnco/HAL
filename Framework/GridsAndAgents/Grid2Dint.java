@@ -73,14 +73,14 @@ public class Grid2Dint extends GridBase2D implements Serializable {
     /**
      * multiplies the current field value at the specified coordinates
      */
-    public void Mul(int x, int y, double val) {
+    public void Scale(int x, int y, double val) {
         field[x * yDim + y] *= val;
     }
 
     /**
      * multiplies the current field value at the specified index
      */
-    public void Mul(int i, double val) {
+    public void Scale(int i, double val) {
         field[i] *= val;
     }
 
@@ -121,7 +121,7 @@ public class Grid2Dint extends GridBase2D implements Serializable {
      */
     public void MulAll(double val) {
         for (int i = 0; i < length; i++) {
-            field[i] *= val;
+            Scale(i,val);
         }
     }
 

@@ -70,7 +70,7 @@ public class AgentGrid1D<T extends AgentBaseSpatial> extends GridBase1D implemen
      */
     public T GetAgentSafe(int x) {
         if (wrapX) {
-            x = Util.ModWrap(x, xDim);
+            x = Util.Wrap(x, xDim);
         } else if (!Util.InDim(x, xDim)) {
             return null;
         }
@@ -105,7 +105,7 @@ public class AgentGrid1D<T extends AgentBaseSpatial> extends GridBase1D implemen
             return NewAgentPT(newX);
         }
         if (wrapX) {
-            newX = Util.ModWrap(newX, xDim);
+            newX = Util.Wrap(newX, xDim);
         } else if (!Util.InDim(newX, xDim)) {
             return null;
         }
@@ -121,7 +121,7 @@ public class AgentGrid1D<T extends AgentBaseSpatial> extends GridBase1D implemen
             return NewAgentPT(newX);
         }
         if (wrapX) {
-            newX = Util.ModWrap(newX, xDim);
+            newX = Util.Wrap(newX, xDim);
         } else if (!Util.InDim(newX, xDim)) {
             newX = fallbackX;
         }
@@ -192,7 +192,7 @@ public class AgentGrid1D<T extends AgentBaseSpatial> extends GridBase1D implemen
      */
     public void GetAgentsSafe(ArrayList<T> putHere, int x) {
         if (wrapX) {
-            x = Util.ModWrap(x, xDim);
+            x = Util.Wrap(x, xDim);
         } else if (!Util.InDim(x, xDim)) {
             return;
         }
@@ -208,7 +208,7 @@ public class AgentGrid1D<T extends AgentBaseSpatial> extends GridBase1D implemen
      */
     public void GetAgentsSafe(ArrayList<T> putHere, int x, AgentToBool<T> EvalAgent) {
         if (wrapX) {
-            x = Util.ModWrap(x, xDim);
+            x = Util.Wrap(x, xDim);
         } else if (!Util.InDim(x, xDim)) {
             return;
         }
@@ -247,7 +247,7 @@ public class AgentGrid1D<T extends AgentBaseSpatial> extends GridBase1D implemen
                 continue;
             }
             if (wrapX && !inX) {
-                retX = Util.ModWrap(retX, xDim);
+                retX = Util.Wrap(retX, xDim);
             }
             GetAgents(retAgentList, retX);
         }
@@ -267,7 +267,7 @@ public class AgentGrid1D<T extends AgentBaseSpatial> extends GridBase1D implemen
                 continue;
             }
             if (wrapX && !inX) {
-                retX = Util.ModWrap(retX, xDim);
+                retX = Util.Wrap(retX, xDim);
             }
             GetAgents(retAgentList, retX, EvalAgent);
         }
@@ -285,7 +285,7 @@ public class AgentGrid1D<T extends AgentBaseSpatial> extends GridBase1D implemen
                 continue;
             }
             if (wrapX && !inX) {
-                retX = Util.ModWrap(retX, xDim);
+                retX = Util.Wrap(retX, xDim);
             }
             GetAgents(retAgentList, retX, (agent) -> {
                 Agent1DBase a = (Agent1DBase) agent;
@@ -306,7 +306,7 @@ public class AgentGrid1D<T extends AgentBaseSpatial> extends GridBase1D implemen
                 continue;
             }
             if (wrapX && !inX) {
-                retX = Util.ModWrap(retX, xDim);
+                retX = Util.Wrap(retX, xDim);
             }
             GetAgents(retAgentList, retX, (agent) -> {
                 Agent1DBase a = (Agent1DBase) agent;
@@ -328,7 +328,7 @@ public class AgentGrid1D<T extends AgentBaseSpatial> extends GridBase1D implemen
             }
             xWrap = xi;
             if (wrapX && !inX) {
-                xWrap = Util.ModWrap(xi, xDim);
+                xWrap = Util.Wrap(xi, xDim);
             }
             GetAgents(retAgentList, xWrap);
         }
@@ -348,7 +348,7 @@ public class AgentGrid1D<T extends AgentBaseSpatial> extends GridBase1D implemen
             }
             xWrap = xi;
             if (wrapX && !inX) {
-                xWrap = Util.ModWrap(xi, xDim);
+                xWrap = Util.Wrap(xi, xDim);
             }
             GetAgents(retAgentList, xWrap, EvalAgent);
         }
@@ -363,7 +363,7 @@ public class AgentGrid1D<T extends AgentBaseSpatial> extends GridBase1D implemen
             int x = hood[i] + centerX;
             if (!Util.InDim(x, xDim)) {
                 if (wrapX) {
-                    x = Util.ModWrap(x, xDim);
+                    x = Util.Wrap(x, xDim);
                 } else {
                     continue;
                 }
@@ -382,7 +382,7 @@ public class AgentGrid1D<T extends AgentBaseSpatial> extends GridBase1D implemen
             int x = hood[i] + centerX;
             if (!Util.InDim(x, xDim)) {
                 if (wrapX) {
-                    x = Util.ModWrap(x, xDim);
+                    x = Util.Wrap(x, xDim);
                 } else {
                     continue;
                 }

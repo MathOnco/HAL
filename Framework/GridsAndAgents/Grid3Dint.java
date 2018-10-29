@@ -76,14 +76,14 @@ public class Grid3Dint extends GridBase3D implements Serializable {
     /**
      * multiplies the current field value at the specified coordinates
      */
-    public void Mul(int x, int y, int z, double val) {
+    public void Scale(int x, int y, int z, double val) {
         field[x * yDim * zDim + y * zDim + z] *= val;
     }
 
     /**
      * multiplies the current field value at the specified index
      */
-    public void Mul(int i, double val) {
+    public void Scale(int i, double val) {
         field[i] *= val;
     }
 
@@ -122,7 +122,7 @@ public class Grid3Dint extends GridBase3D implements Serializable {
     /**
      * multiplies all entries in the field by the value
      */
-    public void MulAll(double val) {
+    public void ScaleAll(double val) {
         for (int i = 0; i < length; i++) {
             field[i] *= val;
         }

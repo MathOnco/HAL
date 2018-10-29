@@ -484,7 +484,7 @@ public final class Util {
      * gets the min value from an array
      */
     public static double ArrayMin(double[] arr) {
-        double min = Double.MIN_VALUE;
+        double min = Double.MAX_VALUE;
         for (double val : arr) {
             min = min < val ? min : val;
         }
@@ -495,7 +495,7 @@ public final class Util {
      * gets the min value from an array
      */
     public static int ArrayMin(int[] arr) {
-        int min = Integer.MIN_VALUE;
+        int min = Integer.MAX_VALUE;
         for (int val : arr) {
             min = min < val ? min : val;
         }
@@ -932,7 +932,7 @@ public final class Util {
         }
     }
 
-    public int[] MooreHood3D(boolean includeOrigin) {
+    public static int[] MooreHood3D(boolean includeOrigin) {
         if (includeOrigin) {
             return new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                     0, 0, 0,
@@ -1214,19 +1214,19 @@ public final class Util {
         int iCoord;
         int nCoords = (radX * 2 + 1) * (radY * 2 + 1);
         if (includeOrigin) {
-            dataIn = new int[nCoords * 3];
             iCoord = 1;
         } else {
-            dataIn = new int[nCoords * 3 - 3];
+            nCoords--;
             iCoord = 0;
         }
+        dataIn = new int[nCoords * 3];
         for (int x = -radX; x <= radX; x++) {
             for (int y = -radY; y <= radY; y++) {
                 if (x == 0 && y == 0) {
                     continue;
                 }
-                dataIn[iCoord * 2] = x;
-                dataIn[iCoord * 2 + 1] = y;
+                dataIn[iCoord * 2+nCoords] = x;
+                dataIn[iCoord * 2 + 1+nCoords] = y;
                 iCoord++;
             }
         }
@@ -1650,14 +1650,14 @@ public final class Util {
     /**
      * returns value with wraparound between 0 and max
      */
-    public static int ModWrap(int val, int max) {
+    public static int Wrap(int val, int max) {
         return val < 0 ? max + val % max : val % max;
     }
 
     /**
      * returns value with wraparound between 0 and max
      */
-    public static double ModWrap(double val, double max) {
+    public static double Wrap(double val, double max) {
         return val < 0 ? max + val % max : val % max;
     }
 
@@ -2010,10 +2010,10 @@ public final class Util {
 //                    continue;
 //                }
 //                if(wrapX&&!inX){
-//                    retX=Util.ModWrap(retX,searchMe.xDim);
+//                    retX=Util.Wrap(retX,searchMe.xDim);
 //                }
 //                if(wrapY&&!inY){
-//                    retY=Util.ModWrap(retY,searchMe.yDim);
+//                    retY=Util.Wrap(retY,searchMe.yDim);
 //                }
 //                searchMe.GetAgents(putHere,searchMe.I(retX,retY));
 //            }

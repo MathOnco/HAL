@@ -1,5 +1,7 @@
 package Framework.GridsAndAgents;
+import Framework.Interfaces.Coords2DDouble;
 import Framework.Tools.Internal.PDEequations;
+import Framework.Util;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -13,7 +15,7 @@ import static Framework.Tools.Internal.PDEequations.*;
  * after updates, Update is called to set the prev field as the current field.
  */
 public class PDEGrid2D extends GridBase2D implements Serializable {
-    protected double[] nextField;
+    protected double[] deltas;
     protected double[] field;
     //double[] intermediateScratch;
     protected double[] scratch;
@@ -26,13 +28,13 @@ public class PDEGrid2D extends GridBase2D implements Serializable {
     public PDEGrid2D(int xDim, int yDim) {
         super(xDim, yDim, false, false);
         field = new double[this.xDim * this.yDim];
-        nextField = new double[this.xDim * this.yDim];
+        deltas = new double[this.xDim * this.yDim];
     }
 
     public PDEGrid2D(int xDim, int yDim, boolean wrapX, boolean wrapY) {
         super(xDim, yDim, wrapX, wrapY);
         field = new double[this.xDim * this.yDim];
-        nextField = new double[this.xDim * this.yDim];
+        deltas = new double[this.xDim * this.yDim];
     }
 
     /**
@@ -47,7 +49,7 @@ public class PDEGrid2D extends GridBase2D implements Serializable {
         DiffusionADI2(true, field, scratchField1, scratch, xDim, yDim, diffCoef / 2, false, 0);
         DiffusionADI2(false, scratchField1, scratchField2, scratch, xDim, yDim, diffCoef / 2, false, 0);
         for (int i = 0; i < length; i++) {
-            nextField[i]+=scratchField2[i]-field[i];
+            deltas[i]+=scratchField2[i]-field[i];
         }
     }
 
@@ -63,7 +65,7 @@ public class PDEGrid2D extends GridBase2D implements Serializable {
         DiffusionADI2(true, field, scratchField1, scratch, xDim, yDim, diffCoef / 2, true, boundaryValue);
         DiffusionADI2(false, scratchField1, scratchField2, scratch, xDim, yDim, diffCoef / 2, true, boundaryValue);
         for (int i = 0; i < length; i++) {
-            nextField[i]+=scratchField2[i]-field[i];
+            deltas[i]+=scratchField2[i]-field[i];
         }
     }
 
@@ -85,42 +87,42 @@ public class PDEGrid2D extends GridBase2D implements Serializable {
      * sets the prev field value at the specified coordinates
      */
     public void Set(int x, int y, double val) {
-        nextField[x * yDim + y] = val - field[x * yDim + y];
+        deltas[x * yDim + y] = val - field[x * yDim + y];
     }
 
     /**
      * sets the prev field value at the specified index
      */
     public void Set(int i, double val) {
-        nextField[i] = val - field[i];
+        deltas[i] = val - field[i];
     }
 
     /**
      * sets the prev field value at the specified coordinates
      */
     public void Add(int x, int y, double val) {
-        nextField[x * yDim + y] += val;
+        deltas[x * yDim + y] += val;
     }
 
     /**
      * adds to the prev field value at the specified index
      */
     public void Add(int i, double val) {
-        nextField[i] += val;
+        deltas[i] += val;
     }
 
     /**
-     * multiplies a value in the “current field” and adds the change to the “next field”
-     */
-    public void Mul(int i, double val) {
-        nextField[i] += field[i] * (val - 1);
-    }
-
-    /**
-     * multiplies a value in the “current field” and adds the change to the “next field”
+     * multiplies a value in the “current field” and adds the change to the “delta field”
      */
     public void Mul(int x, int y, double val) {
-        nextField[x * yDim + y] += field[x * yDim + y] * (val - 1);
+        deltas[x * yDim + y] += field[x * yDim + y] * val;
+    }
+
+    /**
+     * multiplies a value in the “current field” and adds the change to the “delta field”
+     */
+    public void Mul(int i,double val){
+        deltas[i] += field[i] * val;
     }
 
 
@@ -148,13 +150,13 @@ public class PDEGrid2D extends GridBase2D implements Serializable {
 
 
     /**
-     * adds the next field into the current field
+     * adds the delta field into the current field
      */
     public void Update() {
-        for (int i = 0; i < nextField.length; i++) {
-            field[i] += nextField[i];
+        for (int i = 0; i < deltas.length; i++) {
+            field[i] += deltas[i];
         }
-        Arrays.fill(nextField, 0);
+        Arrays.fill(deltas, 0);
     }
 
     /**
@@ -162,14 +164,10 @@ public class PDEGrid2D extends GridBase2D implements Serializable {
      * version of the function assumes wrap-around, so there can be no net flux of concentrations.
      */
     public void Advection(double xVel, double yVel) {
-        if(Math.abs(xVel)>1){
-            throw new IllegalArgumentException("Advection rate above maximum stable value of 1.0");
+        if(Math.abs(xVel)+Math.abs(yVel)>1){
+            throw new IllegalArgumentException("Advection rate component sum above stable maximum value of 1.0");
         }
-        for (int x = 0; x < xDim; x++) {
-            for (int y = 0; y < yDim; y++) {
-                Advection1stOrder(x, y, field, nextField, xDim, yDim, xVel, yVel, false, 0.0);
-            }
-        }
+        Advection2(field, deltas,xVel,yVel, xDim, yDim, wrapX,wrapY,null);
     }
 
     /**
@@ -177,16 +175,50 @@ public class PDEGrid2D extends GridBase2D implements Serializable {
      * upwind direction, and the concentration will disappear in the downwind direction.
      */
     public void Advection(double xVel, double yVel, double boundaryValue) {
-        for (int x = 0; x < xDim; x++) {
-            for (int y = 0; y < yDim; y++) {
-                Advection1stOrder(x, y, field, nextField, xDim, yDim, xVel, yVel, true, boundaryValue);
-            }
+        if(Math.abs(xVel)+Math.abs(yVel)>1){
+            throw new IllegalArgumentException("Advection rate component sum above stable maximum value of 1.0");
         }
+        Advection2(field, deltas,xVel,yVel, xDim, yDim, wrapX,wrapY,(x,y)->boundaryValue);
     }
 
+    /**
+     * runs advection as described above with a boundary condition function, which will be evaluated with the out of
+     * bounds coordinates as arguments whenever a boundary value is needed, and should return the boundary value
+     */
+    public void Advection(double xVel, double yVel, Coords2DDouble BoundaryConditionFn) {
+        if(Math.abs(xVel)+Math.abs(yVel)>1){
+            throw new IllegalArgumentException("Advection rate component sum above stable maximum value of 1.0");
+        }
+        Advection2(field, deltas,xVel,yVel, xDim, yDim, wrapX,wrapY,BoundaryConditionFn);
+    }
 
     /**
-     * runs diffusion on the current field, adding the deltas to the next field. This form of the function assumes
+     * runs discontinuous advection
+     */
+    public void Advection(double[]xVels,double[]yVels){
+        Advection2(field,deltas,xVels,yVels,xDim,yDim,wrapX,wrapY,null,null,null);
+    }
+    /**
+     * runs discontinuous advection
+     */
+    public void Advection(Grid2Ddouble xVels,Grid2Ddouble yVels){
+        Advection2(field,deltas,xVels.field,yVels.field,xDim,yDim,wrapX,wrapY,null,null,null);
+    }
+    /**
+     * runs discontinuous advection
+     */
+    public void Advection(double[]xVels,double[]yVels,Coords2DDouble BoundaryyConditionFn, Coords2DDouble BoundaryXvels,Coords2DDouble BoundaryYvels) {
+        Advection2(field, deltas, xVels, yVels, xDim, yDim, wrapX, wrapY, BoundaryyConditionFn, BoundaryXvels, BoundaryYvels);
+    }
+    /**
+     * runs discontinuous advection
+     */
+    public void Advection(Grid2Ddouble xVels,Grid2Ddouble yVels,Coords2DDouble BoundaryyConditionFn, Coords2DDouble BoundaryXvels,Coords2DDouble BoundaryYvels){
+        Advection2(field,deltas,xVels.field,yVels.field,xDim,yDim,wrapX,wrapY,BoundaryyConditionFn, BoundaryXvels, BoundaryYvels);
+    }
+
+    /**
+     * runs diffusion on the current field, adding the deltas to the delta field. This form of the function assumes
      * either a reflective or wrapping boundary (depending on how the PDEGrid was specified). the diffCoef variable is
      * the nondimensionalized diffusion conefficient. If the dimensionalized diffusion coefficient is x then diffCoef
      * can be found by computing (x*SpaceStep)/TimeStep^2 Note that if the diffCoef exceeds 0.25, this diffusion method
@@ -196,11 +228,7 @@ public class PDEGrid2D extends GridBase2D implements Serializable {
         if (diffCoef > 0.25) {
             throw new IllegalArgumentException("Diffusion rate above stable maximum value of 0.25 value: " + diffCoef);
         }
-        for (int x = 0; x < xDim; x++) {
-            for (int y = 0; y < yDim; y++) {
-                Diffusion2(x, y, field, nextField, xDim, yDim, diffCoef, false, 0.0, wrapX, wrapY);
-            }
-        }
+                Diffusion2(field, deltas,diffCoef, xDim, yDim,wrapX,wrapY,null);
     }
 
     /**
@@ -211,15 +239,51 @@ public class PDEGrid2D extends GridBase2D implements Serializable {
         if (diffCoef > 0.25) {
             throw new IllegalArgumentException("Diffusion rate above stable maximum value of 0.25 value: " + diffCoef);
         }
-        for (int x = 0; x < xDim; x++) {
-            for (int y = 0; y < yDim; y++) {
-                Diffusion2(x, y, field, nextField, xDim, yDim, diffCoef, true, boundaryValue, wrapX, wrapY);
-            }
-        }
+        Diffusion2(field, deltas,diffCoef, xDim, yDim,wrapX,wrapY,(x,y)->boundaryValue);
     }
 
     /**
-     * sets all squares in the next field to the specified value
+     * has the same effect as the above diffusion function with a boundary condition function, which will be evaluated
+     * with the out of bounds coordinates as arguments whenever a boundary value is needed, and should return the
+     * boundary value
+     */
+    public void Diffusion(double diffCoef, Coords2DDouble BoundaryConditionFn) {
+        if (diffCoef > 0.25) {
+            throw new IllegalArgumentException("Diffusion rate above stable maximum value of 0.25 value: " + diffCoef);
+        }
+        Diffusion2(field, deltas,diffCoef, xDim, yDim,wrapX,wrapY,BoundaryConditionFn);
+    }
+
+    /**
+     * runs diffusion with discontinuous diffusion rates
+     */
+    public void Diffusion(double[] diffRates){
+        Diffusion2(field,deltas,diffRates,xDim,yDim,wrapX,wrapY,null,null);
+    }
+
+    /**
+     * runs diffusion with discontinuous diffusion rates
+     */
+    public void Diffusion(Grid2Ddouble diffRates){
+        Diffusion2(field,deltas,diffRates.field,xDim,yDim,wrapX,wrapY,null,null);
+    }
+
+    /**
+     * runs diffusion with discontinuous diffusion rates
+     */
+    public void Diffusion(double[] diffRates, Coords2DDouble BoundaryConditionFn, Coords2DDouble BoundaryDiffusionRateFn){
+        Diffusion2(field,deltas,diffRates,xDim,yDim,wrapX,wrapY,BoundaryConditionFn,BoundaryDiffusionRateFn);
+    }
+
+    /**
+     * runs diffusion with discontinuous diffusion rates
+     */
+    public void Diffusion(Grid2Ddouble diffRates, Coords2DDouble BoundaryConditionFn, Coords2DDouble BoundaryDiffusionRateFn){
+        Diffusion2(field,deltas,diffRates.field,xDim,yDim,wrapX,wrapY,BoundaryConditionFn,BoundaryDiffusionRateFn);
+    }
+
+    /**
+     * sets all squares in the delta field to the specified value
      */
     public void SetAll(double val) {
         for (int i = 0; i < length; i++) {
@@ -229,7 +293,7 @@ public class PDEGrid2D extends GridBase2D implements Serializable {
 
 
     /**
-     * multiplies all values in the “current field” and puts the results into the “next field”
+     * multiplies all values in the “current field” and puts the results into the “delta field”
      */
     public void MulAll(double val) {
         for (int i = 0; i < length; i++) {
@@ -238,7 +302,7 @@ public class PDEGrid2D extends GridBase2D implements Serializable {
     }
 
     /**
-     * sets all squares in the next field using the vals array
+     * sets all squares in the delta field using the vals array
      */
     public void SetAll(double[] vals) {
         for (int i = 0; i < length; i++) {
@@ -247,7 +311,7 @@ public class PDEGrid2D extends GridBase2D implements Serializable {
     }
 
     /**
-     * adds specified value to all entries of the next field
+     * adds specified value to all entries of the delta field
      */
     public void AddAll(double val) {
         for (int i = 0; i < length; i++) {
@@ -268,12 +332,12 @@ public class PDEGrid2D extends GridBase2D implements Serializable {
     }
 
     /**
-     * returns the maximum difference as stored on the next field, call right before calling Update()
+     * returns the maximum difference as stored on the delta field, call right before calling Update()
      */
     public double MaxDelta() {
         double maxDif = 0;
         for (int i = 0; i < field.length; i++) {
-            maxDif = Math.max(maxDif, Math.abs((nextField[i])));
+            maxDif = Math.max(maxDif, Math.abs((deltas[i])));
         }
         return maxDif;
     }
@@ -285,7 +349,7 @@ public class PDEGrid2D extends GridBase2D implements Serializable {
     public double MaxDeltaScaled(double denomOffset) {
         double maxDif = 0;
         for (int i = 0; i < field.length; i++) {
-            maxDif = Math.max(maxDif, Math.abs(nextField[i] / (Math.abs(field[i]) + denomOffset)));
+            maxDif = Math.max(maxDif, Math.abs(deltas[i] / (Math.abs(field[i]) + denomOffset)));
         }
         return maxDif;
     }
@@ -295,8 +359,8 @@ public class PDEGrid2D extends GridBase2D implements Serializable {
      * returns the gradient of the diffusible in the X direction at the coordinates specified
      */
     public double GradientX(int x, int y) {
-        double left = PDEequations.DisplacedX2D(x - 1, y, field, xDim, yDim, x, false, 0, wrapX);
-        double right = PDEequations.DisplacedX2D(x + 1, y, field, xDim, yDim, x, false, 0, wrapX);
+        double left = PDEequations.DisplacedX2D(field,x-1,y, xDim, yDim, wrapX,(X,Y)->Get(X+1,Y));
+        double right = PDEequations.DisplacedX2D(field,x + 1, y, xDim, yDim,wrapX,(X,Y)->Get(X-1,Y));
         return right - left;
     }
 
@@ -304,8 +368,8 @@ public class PDEGrid2D extends GridBase2D implements Serializable {
      * returns the gradient of the diffusible in the Y direction at the coordinates specified
      */
     public double GradientY(int x, int y) {
-        double down = PDEequations.DisplacedY2D(x, y - 1, field, xDim, yDim, y, false, 0, wrapY);
-        double up = PDEequations.DisplacedY2D(x, y + 1, field, xDim, yDim, y, false, 0, wrapY);
+        double down = PDEequations.DisplacedY2D(field,x,y-1, xDim, yDim, wrapX,(X,Y)->Get(X,Y+1));
+        double up = PDEequations.DisplacedY2D(field,x, y+1, xDim, yDim,wrapX,(X,Y)->Get(X,Y-1));
         return up - down;
     }
 
@@ -314,8 +378,8 @@ public class PDEGrid2D extends GridBase2D implements Serializable {
      * condition value if computing the gradient next to the boundary
      */
     public double GradientX(int x, int y, double boundaryCond) {
-        double left = PDEequations.DisplacedX2D(x - 1, y, field, xDim, yDim, x, true, boundaryCond, wrapX);
-        double right = PDEequations.DisplacedX2D(x + 1, y, field, xDim, yDim, x, true, boundaryCond, wrapX);
+        double left = PDEequations.DisplacedX2D(field,x-1,y, xDim, yDim, wrapX,(X,Y)->boundaryCond);
+        double right = PDEequations.DisplacedX2D(field,x + 1, y, xDim, yDim,wrapX,(X,Y)->boundaryCond);
         return right - left;
     }
 
@@ -324,9 +388,20 @@ public class PDEGrid2D extends GridBase2D implements Serializable {
      * condition value if computing the gradient next to the boundary
      */
     public double GradientY(int x, int y, double boundaryCond) {
-        double down = PDEequations.DisplacedY2D(x, y - 1, field, xDim, yDim, y, true, boundaryCond, wrapY);
-        double up = PDEequations.DisplacedY2D(x, y + 1, field, xDim, yDim, y, true, boundaryCond, wrapY);
+        double down = PDEequations.DisplacedY2D(field,x,y-1, xDim, yDim, wrapX,(X,Y)->boundaryCond);
+        double up = PDEequations.DisplacedY2D(field,x, y+1, xDim, yDim,wrapX,(X,Y)->boundaryCond);
         return up - down;
+    }
+
+    /**
+     * ensures that all values will be non-negative on the next timestep, call before Update
+     */
+    public void SetNonNegative(){
+        for (int i = 0; i < length; i++) {
+            if(field[i]+deltas[i]<0){
+                Set(i,0);
+            }
+        }
     }
 
     protected void EnsureScratch() {

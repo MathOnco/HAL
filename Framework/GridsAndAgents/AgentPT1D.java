@@ -61,7 +61,7 @@ public class AgentPT1D<T extends AgentGrid1D> extends Agent1DBase<T> implements 
             return;
         }
         if (G.wrapX) {
-            newX = ModWrap(newX, G.xDim);
+            newX = Wrap(newX, G.xDim);
         } else if (!InDim(newX, G.xDim)) {
             newX = Xsq();
         }
@@ -81,7 +81,7 @@ public class AgentPT1D<T extends AgentGrid1D> extends Agent1DBase<T> implements 
             return;
         }
         if (G.wrapX) {
-            newX = ModWrap(newX, G.moveSafeXdim);
+            newX = Wrap(newX, G.moveSafeXdim);
         } else if (!InDim(newX, G.xDim)) {
             newX = Xpt();
         }

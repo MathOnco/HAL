@@ -21,7 +21,7 @@ class ExampleCell extends AgentPT2D<ExampleGrid> {
             Dispose();
             return;
         }
-        G.oxygen.Mul(Isq(),0.98);
+        G.oxygen.Mul(Isq(), 0.98 -1);
         if(G.rng.Double()<divProb&& G.PopAt(Isq())<5){
             G.NewAgentPT(Xpt(),Ypt()).Init();
         }

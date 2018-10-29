@@ -22,7 +22,7 @@ public abstract class GridBase1D implements Serializable {
         if (In(x)) {
             return x;
         }
-        return Util.ModWrap(x, xDim);
+        return Util.Wrap(x, xDim);
     }
 
     /**
@@ -75,7 +75,7 @@ public abstract class GridBase1D implements Serializable {
         for (int x = startX; x < startX + width; x++) {
             int xFinal = x;
             if (wrapX) {
-                xFinal = Util.ModWrap(x, xDim);
+                xFinal = Util.Wrap(x, xDim);
             }
             Action.Action(xFinal);
         }
@@ -91,7 +91,7 @@ public abstract class GridBase1D implements Serializable {
             int x = hood[i] + centerX;
             if (!Util.InDim(x, xDim)) {
                 if (wrapX) {
-                    x = Util.ModWrap(x, xDim);
+                    x = Util.Wrap(x, xDim);
                 } else {
                     continue;
                 }
@@ -125,7 +125,7 @@ public abstract class GridBase1D implements Serializable {
             int x = hood[i] + centerX;
             if (!Util.InDim(x, xDim)) {
                 if (wrapX) {
-                    x = Util.ModWrap(x, xDim);
+                    x = Util.Wrap(x, xDim);
                 } else {
                     continue;
                 }
@@ -153,7 +153,7 @@ public abstract class GridBase1D implements Serializable {
             int x = hood[i] + centerX;
             if (!Util.InDim(x, xDim)) {
                 if (wrapX) {
-                    x = Util.ModWrap(x, xDim);
+                    x = Util.Wrap(x, xDim);
                 } else {
                     continue;
                 }
@@ -173,7 +173,7 @@ public abstract class GridBase1D implements Serializable {
             int x = hood[i] + centerX;
             if (!Util.InDim(x, xDim)) {
                 if (wrapX) {
-                    x = Util.ModWrap(x, xDim);
+                    x = Util.Wrap(x, xDim);
                 } else {
                     continue;
                 }
@@ -236,10 +236,10 @@ public abstract class GridBase1D implements Serializable {
 //                    continue;
 //                }
 //                if(wrapX&&!inX){
-//                    retX=Util.ModWrap(retX,xDim);
+//                    retX=Util.Wrap(retX,xDim);
 //                }
 //                if(wrapY&&!inY){
-//                    retY=Util.ModWrap(retY,yDim);
+//                    retY=Util.Wrap(retY,yDim);
 //                }
 //                ret[retCt]=I(retX,retY);
 //                retCt++;

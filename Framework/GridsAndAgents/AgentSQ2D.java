@@ -2,12 +2,13 @@ package Framework.GridsAndAgents;
 
 
 import Framework.Interfaces.AgentToBool;
+import Framework.Util;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 
 import static Framework.Util.InDim;
-import static Framework.Util.ModWrap;
+import static Framework.Util.Wrap;
 
 /**
  * extend the AgentSQ2D class if you want agents that exist on a 2D discrete lattice
@@ -66,12 +67,12 @@ public class AgentSQ2D<T extends AgentGrid2D> extends Agent2DBase<T> implements 
             return;
         }
         if (G.wrapX) {
-            newX = ModWrap(newX, G.xDim);
+            newX = Util.Wrap(newX, G.xDim);
         } else if (!InDim(newX, G.xDim)) {
             newX = Xsq();
         }
         if (G.wrapY) {
-            newY = ModWrap(newY, G.yDim);
+            newY = Util.Wrap(newY, G.yDim);
         } else if (!InDim(newY, G.yDim))
             newY = Ysq();
         MoveSQ(newX, newY);

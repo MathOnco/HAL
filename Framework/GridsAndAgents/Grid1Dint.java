@@ -52,7 +52,7 @@ public class Grid1Dint extends GridBase1D implements Serializable {
     /**
      * multiplies the current field value at the specified index
      */
-    public void Mul(int x, double val) {
+    public void Scale(int x, double val) {
         field[x] *= val;
     }
 
@@ -91,7 +91,7 @@ public class Grid1Dint extends GridBase1D implements Serializable {
     /**
      * adds specified value to all entries of the curr field
      */
-    public void MulAll(double val) {
+    public void ScaleAll(double val) {
         for (int i = 0; i < length; i++) {
             field[i] *= val;
         }

@@ -28,7 +28,7 @@ public abstract class GridBase3D implements Serializable {
         if (In(x, y, z)) {
             return I(x, y, z);
         }
-        return I(Util.ModWrap(x, xDim), Util.ModWrap(y, yDim), Util.ModWrap(z, zDim));
+        return I(Util.Wrap(x, xDim), Util.Wrap(y, yDim), Util.Wrap(z, zDim));
     }
 
 
@@ -105,21 +105,21 @@ public abstract class GridBase3D implements Serializable {
             int z = hood[i + 2] + centerZ;
             if (!Util.InDim(x, xDim)) {
                 if (wrapX) {
-                    x = Util.ModWrap(x, xDim);
+                    x = Util.Wrap(x, xDim);
                 } else {
                     continue;
                 }
             }
             if (!Util.InDim(y, yDim)) {
                 if (wrapY) {
-                    y = Util.ModWrap(y, yDim);
+                    y = Util.Wrap(y, yDim);
                 } else {
                     continue;
                 }
             }
             if (!Util.InDim(z, zDim)) {
                 if (wrapZ) {
-                    z = Util.ModWrap(z, zDim);
+                    z = Util.Wrap(z, zDim);
                 } else {
                     continue;
                 }
@@ -146,21 +146,21 @@ public abstract class GridBase3D implements Serializable {
             int z = hood[i + 2] + centerZ;
             if (!Util.InDim(x, xDim)) {
                 if (wrapX) {
-                    x = Util.ModWrap(x, xDim);
+                    x = Util.Wrap(x, xDim);
                 } else {
                     continue;
                 }
             }
             if (!Util.InDim(y, yDim)) {
                 if (wrapY) {
-                    y = Util.ModWrap(y, yDim);
+                    y = Util.Wrap(y, yDim);
                 } else {
                     continue;
                 }
             }
             if (!Util.InDim(z, zDim)) {
                 if (wrapZ) {
-                    z = Util.ModWrap(z, zDim);
+                    z = Util.Wrap(z, zDim);
                 } else {
                     continue;
                 }
@@ -307,13 +307,13 @@ public abstract class GridBase3D implements Serializable {
                     int yFinal = y;
                     int zFinal = z;
                     if (wrapX) {
-                        xFinal = Util.ModWrap(x, xDim);
+                        xFinal = Util.Wrap(x, xDim);
                     }
                     if (wrapY) {
-                        yFinal = Util.ModWrap(y, yDim);
+                        yFinal = Util.Wrap(y, yDim);
                     }
                     if (wrapZ) {
-                        zFinal = Util.ModWrap(z, zDim);
+                        zFinal = Util.Wrap(z, zDim);
                     }
                     Action.Action(xFinal, yFinal, zFinal);
                 }
@@ -340,21 +340,21 @@ public abstract class GridBase3D implements Serializable {
             int z = hood[i + 2] + centerZ;
             if (!Util.InDim(x, xDim)) {
                 if (wrapX) {
-                    x = Util.ModWrap(x, xDim);
+                    x = Util.Wrap(x, xDim);
                 } else {
                     continue;
                 }
             }
             if (!Util.InDim(y, yDim)) {
                 if (wrapY) {
-                    y = Util.ModWrap(y, yDim);
+                    y = Util.Wrap(y, yDim);
                 } else {
                     continue;
                 }
             }
             if (!Util.InDim(z, zDim)) {
                 if (wrapZ) {
-                    z = Util.ModWrap(z, zDim);
+                    z = Util.Wrap(z, zDim);
                 } else {
                     continue;
                 }
@@ -392,21 +392,21 @@ public abstract class GridBase3D implements Serializable {
             int z = hood[i + 2] + centerZ;
             if (!Util.InDim(x, xDim)) {
                 if (wrapX) {
-                    x = Util.ModWrap(x, xDim);
+                    x = Util.Wrap(x, xDim);
                 } else {
                     continue;
                 }
             }
             if (!Util.InDim(y, yDim)) {
                 if (wrapY) {
-                    y = Util.ModWrap(y, yDim);
+                    y = Util.Wrap(y, yDim);
                 } else {
                     continue;
                 }
             }
             if (!Util.InDim(z, zDim)) {
                 if (wrapZ) {
-                    z = Util.ModWrap(z, zDim);
+                    z = Util.Wrap(z, zDim);
                 } else {
                     continue;
                 }

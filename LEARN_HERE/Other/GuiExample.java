@@ -18,7 +18,7 @@ public class GuiExample {
         win.AddCol(1,new UIFileChooserInput("file chooser","example.txt"));
         win.AddCol(0,new UIButton("Print",false,(event)->{
             System.out.println(win.GetBool("boolean")+"\n"+win.GetDouble("double")+"\n"+win.GetInt("int")+"\n"+win.GetString("string")+"\n"+win.GetInt("options")+"\n"+win.GetString("file chooser"));
-        }).SetColor(RGB(1,1,1),RGB(0,0,0)));
+        }).SetColor(RGB(1,0,0),RGB(0,0,1)));
         win.RunGui();
     }
 }
