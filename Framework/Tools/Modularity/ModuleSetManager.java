@@ -4,7 +4,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import static Beta.BetaUtils.IsMethodOverridden;
+import static Framework.Util.IsMethodOverridden;
 
 /**
  * the ModuleSetManager class is used to store and use module objects. the type argument is the baseclass module type that the ModuleSetManager will manage

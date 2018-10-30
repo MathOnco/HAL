@@ -7,6 +7,7 @@ import Framework.Tools.Internal.SweepRun;
 import java.awt.*;
 import java.io.*;
 import java.lang.reflect.Array;
+import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -1951,7 +1952,36 @@ public final class Util {
         }
         return null;
     }
+    public static boolean IsMethodOverridden(Class derived,Class base,String methodName){
+        Method[] meths=derived.getDeclaredMethods();
+        Method[] baseMeths=base.getDeclaredMethods();
+        for (Method meth : meths) {
+            if(meth.getName().equals(methodName)) {
+                return true;
+            }
+        }
+        boolean found=false;
+        for (Method meth : baseMeths) {
+            if(meth.getName().equals(methodName)) {
+                found=true;
+                break;
+            }
+        }
+        if(!found) {
+            throw new IllegalArgumentException("name "+methodName+" not found in base class "+base.getName()+"!");
+        }
+        return false;
+    }
 
+    public static<T,O extends T> boolean IsMethodOverridden(Class<O> derived,String methodName){
+        Method[] meths=derived.getDeclaredMethods();
+        for (Method meth : meths) {
+            if(meth.getName().equals(methodName)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 //    static public int[] RingHood(double innerRadius,double outerRadius) {
 //        if(innerRadius<=outerRadius){
