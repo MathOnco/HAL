@@ -1,19 +1,31 @@
 package Framework.Tools.Modularity;
 
-public class VarSetManager <T extends VarSet>{
-    private boolean setup=false;
+/**
+ * the VarSetManager class maintains a count of parameters that are requested for an agent class that implements the
+ * VarSet interface. this class is useful along with the ModuleSetManger to add agent variables that are only
+ * manipulated by one module
+ */
+public class VarSetManager<agentType extends VarSet> {
+    private boolean setup = false;
     int nParams;
-    public int NewVar(){
-        if(setup){
+
+    /**
+     * generates a new variable as part of the var array, returns the index of the variable
+     */
+    public int NewVar() {
+        if (setup) {
             throw new IllegalStateException("can't generate varSets before done adding vars!");
         }
         nParams++;
-        return nParams-1;
+        return nParams - 1;
     }
 
-    public void AddVarSet(T agent){
-        setup=true;
-        if(agent.getVars()==null&&nParams>0){
+    /**
+     * adds a new variable set to the given agent. does nothing if the variable set has already been initialized
+     */
+    public void AddVarSet(agentType agent) {
+        setup = true;
+        if (agent.getVars() == null && nParams > 0) {
             agent.setVars(new double[nParams]);
         }
     }

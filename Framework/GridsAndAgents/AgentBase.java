@@ -6,7 +6,7 @@ import java.io.Serializable;
  * AgentBase functions are shared amongst all agent types
  */
 public abstract class AgentBase<T> implements Serializable{
-    int stateID;
+    long stateID;
     int iList;
     int birthTick;
     boolean alive;

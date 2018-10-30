@@ -1122,7 +1122,7 @@ public final class Util {
         int x = (int) (Math.floor(x1));
         int y = (int) (Math.floor(y1));
 
-        int n = 1;
+        int n = 0;
         int x_inc, y_inc;
         double error;
 
