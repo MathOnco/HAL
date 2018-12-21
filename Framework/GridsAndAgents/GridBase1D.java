@@ -5,6 +5,8 @@ import Framework.Util;
 
 import java.io.Serializable;
 
+import static Framework.Util.InDim;
+
 /**
  * holds functions that all 1D Grids share
  */
@@ -22,7 +24,10 @@ public abstract class GridBase1D implements Serializable {
         if (In(x)) {
             return x;
         }
-        return Util.Wrap(x, xDim);
+        if(wrapX) {
+            return Util.Wrap(x,xDim);
+        }
+        throw new IllegalArgumentException("cannot map to index in bounds!" );
     }
 
     /**
@@ -38,6 +43,20 @@ public abstract class GridBase1D implements Serializable {
     public boolean In(double x) {
         int xInt = (int) Math.floor(x);
         return In(xInt);
+    }
+
+    /**
+     * returns whether the specified coordinates are inside the Grid bounds with wraparound
+     */
+    public boolean InWrap(int x){
+        return wrapX || InDim(x, xDim);
+    }
+
+    /**
+     * returns whether the specified coordinates are inside the Grid bounds with wraparound
+     */
+    public boolean InWrap(double x){
+        return wrapX || InDim(x, xDim);
     }
 
     /**

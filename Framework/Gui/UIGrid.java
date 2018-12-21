@@ -846,6 +846,24 @@ public class UIGrid extends GridBase2D implements GuiComp {
         }
     }
 
+    public void SetPixRect(int color,int xLeft,int xRight,int yBottom,int yTop){
+        for (int x = xLeft; x < xRight; x++) {
+            for (int y = yBottom; y < yTop; y++) {
+                SetPix(x,y,color);
+            }
+        }
+    }
+
+    public void Legend(String[] labels,int[] colors,int labelsColor,int bkColor,int xLeft,int yTop){
+        int y=yTop;
+        for (int i = 0; i < labels.length; i++) {
+            SetPixRect(colors[i],xLeft,xLeft+5,y-5,y);
+            SetString(labels[i],xLeft+5,y,labelsColor,bkColor);
+            y-=6;
+        }
+
+    }
+
     /**
      * draws a single character to the UIGrid
      */

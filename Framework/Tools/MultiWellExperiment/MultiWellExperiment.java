@@ -1,9 +1,7 @@
-package Framework.Tools;
+package Framework.Tools.MultiWellExperiment;
 
 import Framework.Gui.GifMaker;
 import Framework.Gui.GridWindow;
-import Framework.Interfaces.DrawWell;
-import Framework.Interfaces.StepWell;
 import Framework.Util;
 
 /**

@@ -36,6 +36,13 @@ public abstract class AgentBase<T> implements Serializable{
     }
 
     /**
+     * sets the agent's birthtick value, which is used for the Age calculation
+     */
+    public void SetBirthTick(int tick){
+        this.birthTick=tick;
+    }
+
+    /**
      * returns the age of the agent, in ticks. Be sure to use IncTick on the AgentGrid appropriately for this function to work.
      */
     abstract public int Age();

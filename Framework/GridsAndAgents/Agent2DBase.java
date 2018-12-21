@@ -111,14 +111,14 @@ public abstract class Agent2DBase<T extends AgentGrid2D> extends AgentBaseSpatia
      * gets the X displacement from this agent to a given x position
      */
     public double DispX(double x) {
-        return G.wrapX ? DispWrap(Xpt(), x, G.xDim) : Xpt() - x;
+        return G.wrapX ? DispWrap(Xpt(), x, G.xDim) : x-Xpt();
     }
 
     /**
      * gets the Y displacement from this agent to a given y position
      */
     public double DispY(double y) {
-        return G.wrapY ? DispWrap(Ypt(), y, G.yDim) : Ypt() - y;
+        return G.wrapY ? DispWrap(Ypt(), y, G.yDim) : y-Ypt();
     }
 
     /**

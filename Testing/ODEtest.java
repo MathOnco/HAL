@@ -2,7 +2,7 @@ package Testing;
 
 import Framework.Gui.PlotLine;
 import Framework.Gui.PlotWindow;
-import Framework.Tools.ODESolver;
+import Framework.Tools.ODESolver.ODESolver;
 
 import java.util.ArrayList;
 
@@ -17,7 +17,7 @@ public class ODEtest {
         //integral: x^2+1 = x^3/3 + x
     }
     public static void main(String[] args) {
-        ODESolver s=new ODESolver(ODEtest::Equation);
+        ODESolver s=new ODESolver();
         ArrayList<double[]>states=new ArrayList<>();
         ArrayList<Double>ts=new ArrayList<>();
         ts.add(0.0);
@@ -25,7 +25,7 @@ public class ODEtest {
 
         //s.Runge45(state,0,1.4,2E-5,0.1);
         //s.Runge45(state,0,1.4,2E-5,0.2);
-        s.Runge45(states,ts,100,2E-5,0.2,0);
+        s.Runge45(ODEtest::Equation,states,ts,100,2E-5,0.2,0);
         PlotWindow win=new PlotWindow(100,100,5);
         PlotLine pl=new PlotLine(win,RED);
         for (int i = 0; i < states.size(); i++) {

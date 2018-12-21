@@ -5,7 +5,7 @@ package Framework.Tools.Modularity;
  * VarSet interface. this class is useful along with the ModuleSetManger to add agent variables that are only
  * manipulated by one module
  */
-public class VarSetManager<agentType extends VarSet> {
+public class VarSetManager {
     private boolean setup = false;
     int nParams;
 
@@ -23,10 +23,19 @@ public class VarSetManager<agentType extends VarSet> {
     /**
      * adds a new variable set to the given agent. does nothing if the variable set has already been initialized
      */
-    public void AddVarSet(agentType agent) {
+    public <agentType extends VarSet> void AddVarSet(agentType agent) {
         setup = true;
         if (agent.getVars() == null && nParams > 0) {
             agent.setVars(new double[nParams]);
         }
+    }
+
+    public double[] GenVarSet(){
+        setup = true;
+        return new double[nParams];
+    }
+
+    public int NumParams(){
+        return nParams;
     }
 }

@@ -1,4 +1,4 @@
-package Framework.Interfaces;
+package Framework.Tools.MultiWellExperiment;
 
 @FunctionalInterface
 public interface StepWell<T> {

@@ -1,7 +1,7 @@
 package LEARN_HERE.Agents;
 
 
-import Framework.Tools.MultiWellExperiment;
+import Framework.Tools.MultiWellExperiment.MultiWellExperiment;
 
 import static Framework.Util.*;
 

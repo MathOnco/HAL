@@ -10,6 +10,12 @@ import static Framework.Util.*;
 
 /**
  * Created by Rafael on 10/14/2017.
+ *
+ * future reference notes
+ * constant: FD upwind
+ * incompr: density cannot increase or decrease at any position FD upwind
+ * compr continuous
+ * compr discont
  */
 public class PDEequations {
 

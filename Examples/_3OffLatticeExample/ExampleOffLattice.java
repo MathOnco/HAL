@@ -26,7 +26,10 @@ class CellOL extends SphericalAgent2D<CellOL,ExampleOffLattice>{
     }
     public void CalcMove(){
         //sets x and y velocity components of cell
+        //G.neighborList.clear();
+        //G.GetAgentsRad(G.neighborList,G.neighborInfo,Xpt(),Ypt(),G.RADIUS*2);
         forceSum=SumForces(G.RADIUS*2,this::ForceCalc);
+        //forceSum=SumForces(G.neighborList,G.neighborInfo,this::ForceCalc);
     }
     public boolean CanDivide(double div_bias,double inhib_weight){
         return G.rn.Double()<Math.tanh(div_bias-forceSum*inhib_weight);
@@ -55,8 +58,9 @@ public class ExampleOffLattice extends AgentGrid2D<CellOL> {
     double PURP_INHIB_WEIGHT =0.015;
     double PINK_INHIB_WEIGHT =0.05;
     ArrayList<CellOL> neighborList=new ArrayList<>();
+    ArrayList<double[]> neighborInfo=new ArrayList<>();
     double[]divCoordStorage=new double[2];
-    Rand rn=new Rand();
+    Rand rn=new Rand(0);
     Gaussian gn =new Gaussian();
     FileIO out;
 
