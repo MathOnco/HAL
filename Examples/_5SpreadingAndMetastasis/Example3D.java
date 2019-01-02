@@ -170,7 +170,7 @@ public class Example3D extends AgentGrid3D<ExCell3D> {
             ex.DiffStep();
         }
         GridWindow visResource=new GridWindow(x,y,5);
-        OpenGL3DWindow vis=new OpenGL3DWindow("TumorVis", 1000,1000,x,z,y);
+        OpenGL3DWindow vis=new OpenGL3DWindow("TumorVis", 500,500,x,z,y);
         while (!vis.IsClosed()){
             ex.StepAll();
             ex.DrawCells(vis);

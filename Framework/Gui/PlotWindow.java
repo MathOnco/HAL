@@ -49,4 +49,43 @@ public class PlotWindow extends UIPlot {
     public PlotWindow(String title,int xPix, int yPix,int scaleFactor,boolean killOnClose,GuiCloseAction CloseAction) {
         this(title,xPix,yPix,scaleFactor,killOnClose,CloseAction,true);
     }
+    public PlotWindow(String title, int xPix, int yPix, int scale,double xMin,double yMin,double xMax,double yMax, boolean killOnClose, GuiCloseAction CloseAction, boolean active) {
+        super(xPix,yPix, scale,xMin,yMin,xMax,yMax, 1,1, true);
+        win=new UIWindow(title,killOnClose,CloseAction,active);
+        win.AddCol(0,this);
+        win.RunGui();
+    }
+    public PlotWindow(int xPix, int yPix,double xMin,double yMin,double xMax,double yMax) {
+        this("",xPix,yPix,1,xMin,yMin,xMax,yMax,true,null,true);
+    }
+    public PlotWindow(int xPix, int yPix,double xMin,double yMin,double xMax,double yMax,boolean active) {
+        this("",xPix,yPix,1,xMin,yMin,xMax,yMax,true,null,active);
+    }
+    public PlotWindow(int xPix, int yPix,int scaleFactor,double xMin,double yMin,double xMax,double yMax) {
+        this("",xPix,yPix,scaleFactor,xMin,yMin,xMax,yMax,true,null,true);
+    }
+    public PlotWindow(int xPix, int yPix,int scaleFactor,double xMin,double yMin,double xMax,double yMax,boolean active) {
+        this("",xPix,yPix,scaleFactor,xMin,yMin,xMax,yMax,true,null,active);
+    }
+    public PlotWindow(int xPix, int yPix,int scaleFactor,double xMin,double yMin,double xMax,double yMax,boolean killOnClose,GuiCloseAction CloseAction) {
+        this("",xPix,yPix,scaleFactor,xMin,yMin,xMax,yMax,killOnClose,CloseAction,true);
+    }
+    public PlotWindow(int xPix, int yPix,int scaleFactor,double xMin,double yMin,double xMax,double yMax,boolean killOnClose,GuiCloseAction CloseAction,boolean active) {
+        this("",xPix,yPix,scaleFactor,xMin,yMin,xMax,yMax,killOnClose,CloseAction,active);
+    }
+    public PlotWindow(String title,int xPix, int yPix,double xMin,double yMin,double xMax,double yMax) {
+        this(title,xPix,yPix,1,xMin,yMin,xMax,yMax,true,null,true);
+    }
+    public PlotWindow(String title,int xPix, int yPix,double xMin,double yMin,double xMax,double yMax,boolean active) {
+        this(title,xPix,yPix,1,xMin,yMin,xMax,yMax,true,null,active);
+    }
+    public PlotWindow(String title,int xPix, int yPix,int scaleFactor,double xMin,double yMin,double xMax,double yMax) {
+        this(title,xPix,yPix,scaleFactor,xMin,yMin,xMax,yMax,true,null,true);
+    }
+    public PlotWindow(String title,int xPix, int yPix,int scaleFactor,double xMin,double yMin,double xMax,double yMax,boolean active) {
+        this(title,xPix,yPix,scaleFactor,xMin,yMin,xMax,yMax,true,null,active);
+    }
+    public PlotWindow(String title,int xPix, int yPix,int scaleFactor,double xMin,double yMin,double xMax,double yMax,boolean killOnClose,GuiCloseAction CloseAction) {
+        this(title,xPix,yPix,scaleFactor,xMin,yMin,xMax,yMax,killOnClose,CloseAction,true);
+    }
 }

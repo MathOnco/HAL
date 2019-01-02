@@ -338,10 +338,10 @@ public class UIGrid extends GridBase2D implements GuiComp {
         if (xs.length < 2) {
             throw new IllegalArgumentException("arrays too short, must define at least 2 points! length: " + xs.length);
         }
-        if (startPoint < 0 || startPoint > xs.length || endPoint < 0 || endPoint > xs.length || startPoint >= endPoint - 1) {
+        if (startPoint < 0 || startPoint > xs.length || endPoint < 0 || endPoint > xs.length || startPoint > endPoint - 1) {
             throw new IllegalArgumentException("invalid startPoint or endPoint for plotting " + xs.length + " points! startPoint: " + startPoint + " endPoint: " + endPoint);
         }
-        for (int i = startPoint; i < endPoint - 1; i++) {
+        for (int i = startPoint; i < endPoint; i++) {
             Util.AlongLineAction(xs[i] * scaleX, ys[i] * scaleY, xs[i + 1] * scaleX, ys[i + 1] * scaleY, (int x, int y) -> {
                 this.SetPix(x, y, color);
             });
@@ -844,6 +844,24 @@ public class UIGrid extends GridBase2D implements GuiComp {
                 SetChar(s.charAt(i), xLeft + i * 4, yTop - 1, color, bkColor);
             }
         }
+    }
+
+    public void SetPixRect(int color,int xLeft,int xRight,int yBottom,int yTop){
+        for (int x = xLeft; x < xRight; x++) {
+            for (int y = yBottom; y < yTop; y++) {
+                SetPix(x,y,color);
+            }
+        }
+    }
+
+    public void Legend(String[] labels,int[] colors,int labelsColor,int bkColor,int xLeft,int yTop){
+        int y=yTop;
+        for (int i = 0; i < labels.length; i++) {
+            SetPixRect(colors[i],xLeft,xLeft+5,y-5,y);
+            SetString(labels[i],xLeft+5,y,labelsColor,bkColor);
+            y-=6;
+        }
+
     }
 
     /**

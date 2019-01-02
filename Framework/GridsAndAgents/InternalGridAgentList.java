@@ -22,7 +22,7 @@ class InternalGridAgentList<T extends AgentBase> implements Iterable<T>,Serializ
     int iLastAlive;
     int pop;
     final Object myGrid;
-    int stateID;
+    long stateID;
     AgentListIterator outerIter;
 
     InternalGridAgentList(Class<T> type, Object myGrid){
@@ -136,12 +136,12 @@ class InternalGridAgentList<T extends AgentBase> implements Iterable<T>,Serializ
         return ret;
     }
     private class AgentListIterator implements Iterator<T>,Serializable{
-        int stateID;
+        long stateID;
         InternalGridAgentList<T> myList;
         int iAgent;
         T ret;
 
-        AgentListIterator(int stateID, InternalGridAgentList<T> myList){
+        AgentListIterator(long stateID, InternalGridAgentList<T> myList){
             this.stateID = stateID;
             this.myList=myList;
             this.iAgent=0;

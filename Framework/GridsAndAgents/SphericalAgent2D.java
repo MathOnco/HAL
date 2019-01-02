@@ -58,11 +58,31 @@ public class SphericalAgent2D<A extends SphericalAgent2D,G extends AgentGrid2D<A
                 if (dist < interactionRad) {
                     double touchDist = (radius + a.radius) - dist;
                     double force = OverlapFun.CalcForce(touchDist, a);
-                    xVel += (xComp / dist) * force;
-                    yVel += (yComp / dist) * force;
+                    xVel -= (xComp / dist) * force;
+                    yVel -= (yComp / dist) * force;
                     if (force > 0) {
                         sum += Math.abs(force);
                     }
+                }
+            }
+        }
+        return sum;
+    }
+    public <T extends SphericalAgent2D> double SumForces(ArrayList<T> neighbors,ArrayList<double[]> displacementInfo, OverlapForceResponse2D<T> OverlapFun) {
+        double sum=0;
+        for (int i = 0; i < neighbors.size(); i++) {
+            T a = neighbors.get(i);
+            if(a!=this) {
+                double[] info = displacementInfo.get(i);
+                double dist = info[0];
+                double xComp = info[1];
+                double yComp = info[2];
+                double touchDist = (radius + a.radius) - dist;
+                double force = OverlapFun.CalcForce(touchDist, a);
+                xVel += (xComp / dist) * force;
+                yVel += (yComp / dist) * force;
+                if (force > 0) {
+                    sum += Math.abs(force);
                 }
             }
         }

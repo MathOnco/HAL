@@ -272,6 +272,69 @@ public class AgentGrid1D<T extends AgentBaseSpatial> extends GridBase1D implemen
             GetAgents(retAgentList, retX, EvalAgent);
         }
     }
+    /**
+     * gets all agents that are within rad, and adds them to the ArrayList
+     */
+    public void GetAgentsRad(final ArrayList<T> retAgentList,final ArrayList<double[]> displacementInfo, final double x, final double rad) {
+        int nAgents;
+        for (int xSq = (int) Math.floor(x - rad); xSq < (int) Math.ceil(x + rad); xSq++) {
+            int retX = xSq;
+            boolean inX = Util.InDim(retX, xDim);
+            if ((!wrapX && !inX)) {
+                continue;
+            }
+            if (wrapX && !inX) {
+                retX = Util.Wrap(retX, xDim);
+            }
+            GetAgents(retAgentList, retX, (agent) -> {
+                Agent1DBase a = (Agent1DBase) agent;
+                double disp=DispX(x,((Agent1DBase) agent).Xpt());
+                double dist=Math.abs(disp);
+                if(dist<rad) {
+                    for (int i = displacementInfo.size(); i <= retAgentList.size(); i++) {
+                        displacementInfo.add(new double[2]);
+                    }
+                    double[] info = displacementInfo.get(retAgentList.size());
+                    info[0]=dist;
+                    info[1]=disp;
+                    return true;
+                }
+                return false;
+            });
+        }
+    }
+
+    /**
+     * gets all agents that are within rad forwhich EvalAgent returns true, and adds them to the ArrayList
+     */
+    public void GetAgentsRad(final ArrayList<T> retAgentList, final ArrayList<double[]> displacementInfo, final double x, final double rad, AgentToBool<T> EvalAgent) {
+        int nAgents;
+        for (int xSq = (int) Math.floor(x - rad); xSq < (int) Math.ceil(x + rad); xSq++) {
+            int retX = xSq;
+            boolean inX = Util.InDim(retX, xDim);
+            if ((!wrapX && !inX)) {
+                continue;
+            }
+            if (wrapX && !inX) {
+                retX = Util.Wrap(retX, xDim);
+            }
+            GetAgents(retAgentList, retX, (agent) -> {
+                Agent1DBase a = (Agent1DBase) agent;
+                double disp=DispX(x,((Agent1DBase) agent).Xpt());
+                double dist=Math.abs(disp);
+                if(dist<rad&&EvalAgent.EvalAgent(agent)) {
+                    for (int i = displacementInfo.size(); i <= retAgentList.size(); i++) {
+                        displacementInfo.add(new double[2]);
+                    }
+                    double[] info = displacementInfo.get(retAgentList.size());
+                    info[0]=dist;
+                    info[1]=disp;
+                    return true;
+                }
+                return false;
+            });
+        }
+    }
 
     /**
      * gets all agents that are within rad, and adds them to the ArrayList

@@ -18,7 +18,6 @@ import java.util.ArrayList;
  */
 
 
-//TODO: make something like the ParamSet, but for the entire UIWindow, is there any way to do this efficiently?
 public class UIWindow {
     boolean alive;
     KeyRecorder kr;

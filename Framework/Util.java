@@ -7,6 +7,7 @@ import Framework.Tools.Internal.SweepRun;
 import java.awt.*;
 import java.io.*;
 import java.lang.reflect.Array;
+import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -381,6 +382,25 @@ public final class Util {
         return RGB(c2, c3, c1);
     }
 
+    public static int HeatMapJet(double val) {
+        return HeatMapJet(val,0,1);
+    }
+
+
+    public static int HeatMapJet(double val,double min,double max){
+        val=Scale0to1(val,min,max);
+        if(val<=0){
+            return RGB(0,0,0.5);
+        }
+        if(val>=1){
+            return RGB(0.5,0,0);
+        }
+        double c1=1.5-Math.abs(0.75-val)*4;
+        double c2=1.5-Math.abs(0.5-val)*4;
+        double c3=1.5-Math.abs(0.25-val)*4;
+        return RGB(c1,c2,c3);
+    }
+
     /**
      * interpoloates value from 0 to 1 to between any pair of colors
      */
@@ -458,6 +478,45 @@ public final class Util {
         return YCbCrColor(ycbcrY, x, y);
     }
 
+    public static int HsLuvColor(double x,double y){
+        double xScaled =(Bound(y,0,0.99999999))*2;
+        double yScaled=(0.99999999-Bound(x,0,0.99999999))*2;
+        int xInt=(int)xScaled;
+        int yInt=(int)yScaled;
+        xScaled=xScaled-xInt;
+        yScaled=yScaled-yInt;
+        double r=0;
+        double g=0;
+        double b=0;
+        switch (xInt){
+            case 0: switch (yInt){
+                case 0://bottom left
+                    r=Interpolate2D(xScaled,yScaled,89,200,60,158);
+                    g=Interpolate2D(xScaled,yScaled,60,60,199,157);
+                    b=Interpolate2D(xScaled,yScaled,255,255,255,158);
+                    break;
+                case 1://top left
+                    r=Interpolate2D(xScaled,yScaled,60,158,60,255);
+                    g=Interpolate2D(xScaled,yScaled,199,157,255,247);
+                    b=Interpolate2D(xScaled,yScaled,255,158,85,60);
+                    break;
+            }break;
+            case 1: switch (yInt){
+                case 0://bottom right
+                    r=Interpolate2D(xScaled,yScaled,200,255,158,255);
+                    g=Interpolate2D(xScaled,yScaled,60,60,157,60);
+                    b=Interpolate2D(xScaled,yScaled,255,230,158,106);
+                    break;
+                case 1://top right
+                    r=Interpolate2D(xScaled,yScaled,158,255,255,255);
+                    g=Interpolate2D(xScaled,yScaled,157,60,247,132);
+                    b=Interpolate2D(xScaled,yScaled,158,106,60,60);
+                    break;
+            }break;
+        }
+        return RGB256((int)r,(int)g,(int)b);
+    }
+
     /**
      * gets the max value from an array
      */
@@ -509,6 +568,17 @@ public final class Util {
         double sum = 0;
         for (double val : arr) {
             sum += val;
+        }
+        return sum;
+    }
+
+    /**
+     * sums the array
+     */
+    public static double ArraySquaredSum(double[] arr) {
+        double sum = 0;
+        for (double val : arr) {
+            sum += val*val;
         }
         return sum;
     }
@@ -571,6 +641,37 @@ public final class Util {
         return sb.toString();
     }
 
+    public static double[]ArrayListToArrayDouble(ArrayList<Double>in){
+        double[]out=new double[in.size()];
+        for (int i = 0; i < out.length; i++) {
+            out[i]=in.get(i);
+        }
+        return out;
+    }
+
+    public static int[]ArrayListToArrayInt(ArrayList<Integer>in){
+        int[]out=new int[in.size()];
+        for (int i = 0; i < out.length; i++) {
+            out[i]=in.get(i);
+        }
+        return out;
+    }
+
+    public  static <T> T[]ArrayListToArrayObject(ArrayList<T>in){
+        T[]out=(T[])new Object[in.size()];
+        for (int i = 0; i < out.length; i++) {
+            out[i]=in.get(i);
+        }
+        return out;
+    }
+    public  static String[]ArrayListToArrayString(ArrayList<String>in){
+        String[]out=new String[in.size()];
+        for (int i = 0; i < out.length; i++) {
+            out[i]=in.get(i);
+        }
+        return out;
+    }
+
     /**
      * interpolates value from 0 to 1 to be between min and max
      */
@@ -578,6 +679,15 @@ public final class Util {
         val = Util.Bound(val, 0, 1);
         return (max - min) * val + min;
     }
+
+//    /**
+//     * interpolates value from 0 to 1 to be between min and max
+//     */
+//    public static double Interpolate(double position,double leftPoint,double rightPoint, double leftVal, double rightVal) {
+//        position-=leftPoint/(rightPoint-leftPoint);
+//        return (leftVal - rightVal) * position + leftVal;
+//
+//    }
 
     /**
      * interpolates value from 0 to 1 to be between min and max
@@ -1122,7 +1232,7 @@ public final class Util {
         int x = (int) (Math.floor(x1));
         int y = (int) (Math.floor(y1));
 
-        int n = 1;
+        int n = 0;
         int x_inc, y_inc;
         double error;
 
@@ -1594,7 +1704,7 @@ public final class Util {
                 p1 = p1 + dim;
             }
         }
-        return p1 - p2;
+        return p2-p1;
     }
 
 
@@ -1907,6 +2017,50 @@ public final class Util {
         }
         return (T) ret;
     }
+
+    //REFLECTION
+    public static boolean IsMethodOverridden(Class derived,Class base,String methodName){
+        Method[] meths=derived.getDeclaredMethods();
+        Method[] baseMeths=base.getDeclaredMethods();
+        for (Method meth : meths) {
+            if(meth.getName().equals(methodName)) {
+                return true;
+            }
+        }
+        boolean found=false;
+        for (Method meth : baseMeths) {
+            if(meth.getName().equals(methodName)) {
+                found=true;
+                break;
+            }
+        }
+        if(!found) {
+            throw new IllegalArgumentException("name "+methodName+" not found in base class "+base.getName()+"!");
+        }
+        return false;
+    }
+
+    public static<T,O extends T> boolean IsMethodOverridden(Class<O> derived,String methodName){
+        Method[] meths=derived.getDeclaredMethods();
+        for (Method meth : meths) {
+            if(meth.getName().equals(methodName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public static double[] MatVecMul(final double[] mat,final double[] vec,double[]out){
+        final int nCols=vec.length;
+        final int nRows=mat.length/nCols;
+        for (int y = 0; y < nRows; y++) {
+            out[y]=mat[y*nCols]*vec[0];
+            for (int x = 1; x < nCols; x++) {
+                out[y]+=mat[y*nCols+x]*vec[x];
+            }
+        }
+        return out;
+    }
+
 
     static int InterpComp(double val, int minComp, int maxComp) {
         return (int) ((maxComp - minComp) * val) + minComp;

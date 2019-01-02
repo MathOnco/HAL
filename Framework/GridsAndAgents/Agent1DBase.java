@@ -87,7 +87,7 @@ public abstract class Agent1DBase<T extends AgentGrid1D> extends AgentBaseSpatia
      * gets the X displacement from this agent to a given x position
      */
     public double DispX(double x) {
-        return G.wrapX ? DispWrap(Xpt(), x, G.xDim) : Xpt() - x;
+        return G.wrapX ? DispWrap(Xpt(), x, G.xDim) : x-Xpt();
     }
 
     /**

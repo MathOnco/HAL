@@ -2,7 +2,7 @@ package Examples.ODEmodel;
 
 import Framework.Gui.PlotLine;
 import Framework.Gui.PlotWindow;
-import Framework.Tools.ODESolver;
+import Framework.Tools.ODESolver.ODESolver;
 
 import java.util.ArrayList;
 
@@ -31,22 +31,25 @@ public class TumorGrowth {
     }
 
     public static void main(String[] args) {
-        TumorGrowth model=new TumorGrowth(Math.sqrt(2),0.02,0.001,0.001);
-        double[]startPops=new double[]{1000,10};
+        TumorGrowth model=new TumorGrowth(Math.sqrt(2),0.5,0.001,0.001);
+        double[]startPops=new double[]{100,10};
         ArrayList<double[]> states=new ArrayList<>();
         states.add(startPops);
         ArrayList<Double> ts=new ArrayList<>();
         ts.add(0.0);
-        PlotWindow win=new PlotWindow(250,250,2);
+        PlotWindow win=new PlotWindow("Tumor Immune Example",250,250,4,0,0,1,1);
         PlotLine tumorLine=new PlotLine(win,GREEN);
         PlotLine immuneLine=new PlotLine(win,BLUE);
-        ODESolver solver=new ODESolver(model::PopulationDerivatives);
+        ODESolver solver=new ODESolver();
         double dtStart=0.001;
         double errorTol=0.001;
-        solver.Runge45(states,ts,10,dtStart,errorTol,0);
+        solver.Runge45(model::PopulationDerivatives,states,ts,10,dtStart,errorTol,0);
         for (int i = 0; i < states.size(); i++) {
             tumorLine.AddSegment(ts.get(i),states.get(i)[0]);
             immuneLine.AddSegment(ts.get(i),states.get(i)[1]);
+            win.TickPause(100);
         }
+        win.DrawAxesLabels();
+        win.ToPNG("TumorImmuneModel.png");
     }
 }

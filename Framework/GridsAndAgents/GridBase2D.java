@@ -5,6 +5,7 @@ import Framework.Util;
 
 import java.io.Serializable;
 
+import static Framework.Util.InDim;
 import static Framework.Util.Norm;
 import static Framework.Util.NormSquared;
 
@@ -35,7 +36,16 @@ public abstract class GridBase2D implements Serializable {
         if (In(x, y)) {
             return I(x, y);
         }
-        return I(Util.Wrap(x, xDim), Util.Wrap(y, yDim));
+        if(wrapX) {
+            x=Util.Wrap(x,xDim);
+        }
+        if(wrapY) {
+            y=Util.Wrap(y,xDim);
+        }
+        if(In(x,y)) {
+            return I(x, y);
+        }
+        throw new IllegalArgumentException("cannot map to index in bounds!" );
     }
 
     /**
@@ -65,6 +75,16 @@ public abstract class GridBase2D implements Serializable {
      */
     public boolean In(int x, int y) {
         return x >= 0 && x < xDim && y >= 0 && y < yDim;
+    }
+
+    /**
+     * returns whether the specified coordinates are inside the Grid bounds with wraparound
+     */
+    public boolean InWrap(int x,int y) {
+        if (wrapX || InDim(x, xDim) && (wrapY || InDim(y, yDim))) {
+            return true;
+        }
+        return false;
     }
 
     /**

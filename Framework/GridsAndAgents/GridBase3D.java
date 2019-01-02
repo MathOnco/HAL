@@ -5,6 +5,7 @@ import Framework.Util;
 
 import java.io.Serializable;
 
+import static Framework.Util.InDim;
 import static Framework.Util.NormSquared;
 
 /**
@@ -25,10 +26,22 @@ public abstract class GridBase3D implements Serializable {
      */
     public int WrapI(int x, int y, int z) {
         //wraps Coords to proper index
-        if (In(x, y, z)) {
-            return I(x, y, z);
+        if (In(x, y,z)) {
+            return I(x, y,z);
         }
-        return I(Util.Wrap(x, xDim), Util.Wrap(y, yDim), Util.Wrap(z, zDim));
+        if(wrapX) {
+            x=Util.Wrap(x,xDim);
+        }
+        if(wrapY) {
+            y=Util.Wrap(y,xDim);
+        }
+        if(wrapZ) {
+            z=Util.Wrap(z,zDim);
+        }
+        if(In(x,y,z)) {
+            return I(x, y,z);
+        }
+        throw new IllegalArgumentException("cannot map to index in bounds!" );
     }
 
 
@@ -88,7 +101,24 @@ public abstract class GridBase3D implements Serializable {
         int zInt = (int) Math.floor(z);
         return In(xInt, yInt, zInt);
     }
-
+    /**
+     * returns whether the specified coordinates are inside the Grid bounds with wraparound
+     */
+    public boolean InWrap(int x,int y,int z) {
+        if (wrapX || InDim(x, xDim) && (wrapY || InDim(y, yDim))&& (wrapZ || InDim(z, zDim))) {
+            return true;
+        }
+        return false;
+    }
+    /**
+     * returns whether the specified coordinates are inside the Grid bounds with wraparound
+     */
+    public boolean InWrap(double x,double y,double z) {
+        if (wrapX || InDim(x, xDim) && (wrapY || InDim(y, yDim))&& (wrapZ || InDim(z, zDim))) {
+            return true;
+        }
+        return false;
+    }
     /**
      * This function is very similar to the previous definition of MapHood, only it additionally takes as argument an
      * EvaluationFunctoin. this function should take as argument (i,x,y) of a location and return a boolean that decides

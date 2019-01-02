@@ -6,7 +6,7 @@ import java.io.Serializable;
  * AgentBase functions are shared amongst all agent types
  */
 public abstract class AgentBase<T> implements Serializable{
-    int stateID;
+    long stateID;
     int iList;
     int birthTick;
     boolean alive;
@@ -33,6 +33,13 @@ public abstract class AgentBase<T> implements Serializable{
 
     public int BirthTick(){
         return birthTick;
+    }
+
+    /**
+     * sets the agent's birthtick value, which is used for the Age calculation
+     */
+    public void SetBirthTick(int tick){
+        this.birthTick=tick;
     }
 
     /**
