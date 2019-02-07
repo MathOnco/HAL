@@ -36,7 +36,7 @@ public class Painter extends GridWindow {
         return GetRed(this.GetPix(i))!=0;
     }
     public static void main(String[] args) {
-        Painter win=new Painter("painter",5,7,100);
+        Painter win=new Painter("painter",3,5,100);
         win.AddMouseListeners(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -48,12 +48,14 @@ public class Painter extends GridWindow {
                 else{
                     win.SetPix(i,RED);
                 }
+                System.out.println(win.ToShort());
             }
         });
         win.AddKeyResponses(new KeyResponse() {
             @Override
             public void Response(char c, int keyCode) {
-                win.SetChar(c,1,5,GREEN,BLUE);
+                System.out.println(keyCode);
+                win.SetChar(c,0,4,GREEN,BLUE);
             }
         },null);
             //public void RunEvent(KeyEvent e) {

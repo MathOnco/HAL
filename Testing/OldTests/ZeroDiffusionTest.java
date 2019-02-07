@@ -1,4 +1,4 @@
-package Testing;
+package Testing.OldTests;
 
 import Framework.GridsAndAgents.Grid2Ddouble;
 import Framework.GridsAndAgents.PDEGrid2D;

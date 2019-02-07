@@ -1,11 +1,13 @@
 package Framework.Tools.Modularity;
 
+import java.io.Serializable;
+
 /**
  * the VarSetManager class maintains a count of parameters that are requested for an agent class that implements the
  * VarSet interface. this class is useful along with the ModuleSetManger to add agent variables that are only
  * manipulated by one module
  */
-public class VarSetManager {
+public class VarSetManager implements Serializable{
     private boolean setup = false;
     int nParams;
 

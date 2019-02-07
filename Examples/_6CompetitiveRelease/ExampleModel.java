@@ -35,7 +35,7 @@ public class ExampleModel extends AgentGrid2D<ExampleCell> {
         ExampleModel[] models = new ExampleModel[3];
         FileIO popsOut=new FileIO("populations.csv","w");
         for (int i = 0; i < models.length; i++) {
-            models[i]=new ExampleModel(x,y,new Rand(1));
+            models[i]=new ExampleModel(x,y,new Rand(0));
             models[i].InitTumor(tumorRad, resistantProp);
         }
         models[NO_DRUG].DRUG_DURATION =0;
@@ -53,7 +53,7 @@ public class ExampleModel extends AgentGrid2D<ExampleCell> {
             plot.AddPoint(tick,models[CONSTANT_DRUG].Pop(),BLUE);
             plot.AddPoint(tick,models[PULSED_DRUG].Pop(),GREEN);
             if((tick)%100==0) {
-        //        win.ToPNG("ModelsTick" +tick+".png");
+                win.ToPNG("ModelsTick" +tick+".png");
             }
         }
         popsOut.Close();

@@ -505,8 +505,8 @@ public class Binomial implements Serializable {
         if(p<0.5&&n*p<30){
             return rk_binomial_inversion(n,p,rn);
         }
-        if(p>0.5&&n*p<30){
-            return n-rk_binomial_inversion(n,p,rn);
+        if(p>0.5&&n*(1-p)<30){
+            return n-rk_binomial_inversion(n,(1-p),rn);
         }
         else{
             return ColtInt(n,p,rn);
@@ -522,8 +522,8 @@ public class Binomial implements Serializable {
         if(p<0.5&&n*p<30){
             return rk_binomial_inversion(n,p,rn);
         }
-        if(p>0.5&&n*p<30){
-            return n-rk_binomial_inversion(n,p,rn);
+        if(p>0.5&&n*(1-p)<30){
+            return n-rk_binomial_inversion(n,(1-p),rn);
         }
         else{
             return ColtLong(n,p,rn);

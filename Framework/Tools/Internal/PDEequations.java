@@ -130,7 +130,7 @@ public class PDEequations {
         int disp = 0;
         for (int x = 0; x < xDim; x++) {
             for (int y = 0; y < yDim; y++) {
-                for (int z = 0; y < yDim; y++) {
+                for (int z = 0; z < zDim; z++) {
                     int i = x * yDim * zDim + y * zDim + z;
                     double centerVal = field[i];
                     if (xVel > 0) {
@@ -227,7 +227,7 @@ public class PDEequations {
     public static void Advection3(double[]field,double[]deltas,double[]xVels,double[]yVels,double[]zVels,int xDim,int yDim,int zDim,boolean wrapX,boolean wrapY,boolean wrapZ,Coords3DDouble BC,Coords3DDouble XvelBC,Coords3DDouble YvelBC,Coords3DDouble ZvelBC) {
         for (int x = 0; x < xDim; x++) {
             for (int y = 0; y < yDim; y++) {
-                for (int z = 0; z < yDim; z++) {
+                for (int z = 0; z < zDim; z++) {
                     int i = x * yDim * zDim + y * zDim + z;
                     double xFluxp = 0, xFluxm = 0, yFluxp = 0, yFluxm = 0,zFluxp=0,zFluxm=0;
                     double xVelp = xVels[i];

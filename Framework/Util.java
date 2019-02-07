@@ -195,6 +195,16 @@ public final class Util {
     //a set of categorical colors based on d3 category20
     final private static int CC0 = RGB256(56, 116, 177), CC1 = RGB256(198, 56, 44), CC2 = RGB256(79, 159, 57), CC3 = RGB256(189, 190, 58), CC4 = RGB256(142, 102, 186), CC5 = RGB256(240, 134, 39), CC6 = RGB256(83, 187, 206), CC7 = RGB256(214, 123, 191), CC8 = RGB256(133, 88, 76), CC9 = RGB256(178, 197, 230), CC10 = RGB256(243, 156, 151), CC11 = RGB256(166, 222, 144), CC12 = RGB256(220, 220, 147), CC13 = RGB256(194, 174, 211), CC14 = RGB256(246, 191, 126), CC15 = RGB256(169, 216, 228), CC16 = RGB256(238, 184, 209), CC17 = RGB256(190, 157, 146), CC18 = RGB256(199, 199, 199), CC19 = RGB256(127, 127, 127);
 
+
+    //generates a list of categorical colors
+    public static int[]CategoricalColors(int startIndex,int endIndex){
+        int[]ret=new int[endIndex-startIndex];
+        for (int i = startIndex; i < endIndex; i++) {
+            ret[i-startIndex]=CategorialColor(i);
+        }
+        return ret;
+    }
+
     /**
      * returns a color from the d3 category20 color set based on the index argument
      */
@@ -614,6 +624,68 @@ public final class Util {
             tot += a[i];
         }
         return tot / a.length;
+    }
+
+    /**
+     * returns the standard deviation value of the provided array
+     */
+    static public double ArrayStdDev(double[] a){
+        double tot = 0;
+        double mean=ArrayMean(a);
+        for (int i = 0; i < a.length; i++) {
+            double dev=a[i]-mean;
+            tot+=dev*dev;
+        }
+        return Math.sqrt(tot/a.length);
+
+    }
+    /**
+     * returns the mean value of the provided array
+     */
+    static public double ArrayMean(int[] a) {
+        double tot = 0;
+        for (int i = 0; i < a.length; i++) {
+            tot += a[i];
+        }
+        return tot / a.length;
+    }
+
+    /**
+     * returns the standard deviation value of the provided array
+     */
+    static public double ArrayStdDev(int[] a){
+        double tot = 0;
+        double mean=ArrayMean(a);
+        for (int i = 0; i < a.length; i++) {
+            double dev=a[i]-mean;
+            tot+=dev*dev;
+        }
+        return Math.sqrt(tot/a.length);
+
+    }
+    /**
+     * returns the mean value of the provided array
+     */
+    static public double ArrayMean(long[] a) {
+        double tot = 0;
+        for (int i = 0; i < a.length; i++) {
+            tot += a[i];
+        }
+        return tot / a.length;
+    }
+
+    /**
+     * returns the standard deviation value of the provided array
+     */
+    static public double ArrayStdDev(long[] a){
+        double tot = 0;
+        double mean=ArrayMean(a);
+        for (int i = 0; i < a.length; i++) {
+            double dev=a[i]-mean;
+            tot+=dev*dev;
+        }
+        return Math.sqrt(tot/a.length);
+
     }
 
     /**
@@ -2061,6 +2133,14 @@ public final class Util {
         return out;
     }
 
+    public static <T> boolean AssertEqual(T value,T expected){
+        if(value!=expected){
+            System.out.println("assert failed");
+            return true;
+        }
+        return false;
+    }
+
 
     static int InterpComp(double val, int minComp, int maxComp) {
         return (int) ((maxComp - minComp) * val) + minComp;
@@ -2106,6 +2186,9 @@ public final class Util {
         return null;
     }
 
+    static double CircleOverlapArea(double a,double b){
+        return 2*a*a*Math.acos(b/(2*a))-0.5*Math.sqrt(b*b*(2*a-b)*(2*a+b));
+    }
 
 //    static public int[] RingHood(double innerRadius,double outerRadius) {
 //        if(innerRadius<=outerRadius){
