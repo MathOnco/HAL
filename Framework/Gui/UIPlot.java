@@ -70,18 +70,30 @@ public class UIPlot implements GuiComp,Serializable{
         this(xPix,yPix,scaleFactor,xMin,yMin,xMax,yMax,1,1,true);
     }
     public UIPlot(int xPix, int yPix, int scaleFactor, int compX, int compY, boolean active) {
-        this(xPix,yPix,scaleFactor,-1,-1,1,1,compX,compY,active);
+        this(xPix,yPix,scaleFactor,0,0,0,0,compX,compY,active);
     }
     public UIPlot(int xPix, int yPix, int scaleFactor, int compX, int compY) {
-        this(xPix,yPix,scaleFactor,-1,-1,1,1,compX,compY,true);
+        this(xPix,yPix,scaleFactor,0,0,0,0,compX,compY,true);
     }
     public UIPlot(int xPix, int yPix, int scaleFactor,boolean active) {
-        this(xPix,yPix,scaleFactor,-1,-1,1,1,1,1,active);
+        this(xPix,yPix,scaleFactor,0,0,0,0,1,1,active);
     }
     public UIPlot(int xPix, int yPix, int scaleFactor) {
-        this(xPix,yPix,scaleFactor,-1,-1,1,1,1,1,true);
+        this(xPix,yPix,scaleFactor,0,0,0,0,1,1,true);
     }
 
+//    public UIPlot(int xPix, int yPix, int scaleFactor, int compX, int compY, boolean active) {
+//        this(xPix,yPix,scaleFactor,-1,-1,1,1,compX,compY,active);
+//    }
+//    public UIPlot(int xPix, int yPix, int scaleFactor, int compX, int compY) {
+//        this(xPix,yPix,scaleFactor,-1,-1,1,1,compX,compY,true);
+//    }
+//    public UIPlot(int xPix, int yPix, int scaleFactor,boolean active) {
+//        this(xPix,yPix,scaleFactor,-1,-1,1,1,1,1,active);
+//    }
+//    public UIPlot(int xPix, int yPix, int scaleFactor) {
+//        this(xPix,yPix,scaleFactor,-1,-1,1,1,1,1,true);
+//    }
     /**
      * call this once per step of your model, and the function will ensure that your model runs at the rate provided in
      * milliseconds. the function will take the amount time between calls into account to ensure a consistent tick
@@ -182,7 +194,7 @@ public class UIPlot implements GuiComp,Serializable{
         grid.SetString(yStart,xLine,5, axColor, bkColor);
         grid.SetString(xStart,0,yLine+7, axColor, bkColor);
         grid.SetString(yEnd,xLine, grid.yDim, axColor, bkColor);
-        grid.SetString(xEnd, grid.xDim-(yEnd.length()*4),yLine+7, axColor, bkColor);
+        grid.SetString(xEnd, grid.xDim-(xEnd.length()*4),yLine+7, axColor, bkColor);
     }
     void Refresh(int bkColor,int axColor){
         grid.Clear(bkColor);
@@ -232,7 +244,7 @@ public class UIPlot implements GuiComp,Serializable{
         return (int)((x-plotXstart)*plotScaleX);
     }
     int ConvY(double y){
-        return (int)((y-plotXstart)*plotScaleY);
+        return (int)((y-plotYstart)*plotScaleY);
     }
     void SetPoint(PlotPointInternal newPt){
         if(first==null){

@@ -4,6 +4,7 @@ import Framework.Interfaces.OdeSolution;
 import Framework.Rand;
 import Framework.Tools.ODESolver.Derivative;
 import Framework.Tools.ODESolver.ODESolver;
+import Framework.Util;
 
 import static Framework.Util.*;
 
@@ -72,6 +73,7 @@ public class MathTests {
         AssertEqual("Check Std Dev n:"+n+" p:"+p,stdDev,Math.sqrt(n*p*(1-p)),expDevTol);
     }
 
+
     public static void AddTests(UnitTester tester){
         tester.AddTest("Binomial Test",()->{
             for (int popSizes = 0; popSizes < 5; popSizes++) {
@@ -133,6 +135,15 @@ public class MathTests {
                     new double[]{0,0},0.1,100,0.01
             );
         });
+
+        tester.AddTest("Factorial Test",()->{
+            tester.AssertEqual("3 Factorial",6L,Factorial(3));
+            tester.AssertEqual("12 Factorial",479001600L,Factorial(12));
+        });
+        tester.AddTest("Binomial PMF Test",()->{
+            tester.AssertEqual("BinomialPMFTest, 4 choose 0", 1.0/Math.pow(2,4),Util.BinomialDistPMF(4,0.5,0),0.00001);
+            tester.AssertEqual("BinomialPMFTest, 4 choose 2", 6.0/Math.pow(2,4),Util.BinomialDistPMF(4,0.5,2),0.00001);
+        });
     }
 
     public static void main(String[] args) {
@@ -140,4 +151,5 @@ public class MathTests {
         AddTests(tester);
         tester.RunTests(false);
     }
+
 }

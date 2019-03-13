@@ -58,6 +58,18 @@ public class UnitTester {
         }
     }
 
+    public static void AssertEqual(String assertID,int correctValue,int experimentalValue){
+        if(correctValue!=experimentalValue){
+            throw new IllegalStateException("Assertion "+assertID+" failed! experimental value: "+experimentalValue+" does not equal correct value: "+correctValue);
+        }
+    }
+
+
+    public static void AssertEqual(String assertID,long correctValue,long experimentalValue){
+        if(correctValue!=experimentalValue){
+            throw new IllegalStateException("Assertion "+assertID+" failed! experimental value: "+experimentalValue+" does not equal correct value: "+correctValue);
+        }
+    }
     public static void AssertRelativeError(String assertID,double correctValue,double experimentalValue, double errorTol){
         double relError=Math.abs((correctValue-experimentalValue)/correctValue);
         if(relError>errorTol){

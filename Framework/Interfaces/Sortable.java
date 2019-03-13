@@ -27,11 +27,10 @@ public interface Sortable {
     /**
      * Runs quicksort on an object that implements Sortable
      *
-     * @param sortMe          the object to be sorted
      * @param greatestToLeast if true, sorting will be form greatest to least, otherwise will be least to greatest
      */
-    default<T extends Sortable> void QuickSort(T sortMe, boolean greatestToLeast) {
-        _SortHelper(sortMe, 0, sortMe.Length() - 1, greatestToLeast);
+    default<T extends Sortable> void QuickSort(boolean greatestToLeast) {
+        _SortHelper(this, 0, this.Length() - 1, greatestToLeast);
     }
 
     default<T extends Sortable> void _SortHelper(T sortMe, int lo, int hi, boolean greatestToLeast) {

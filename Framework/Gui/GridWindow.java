@@ -96,4 +96,8 @@ public class GridWindow extends UIGrid {
         win.RunGui();
     }
 
+    public boolean IsClosed(){
+        return win.IsClosed();
+    }
+
 }

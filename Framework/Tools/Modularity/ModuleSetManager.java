@@ -10,11 +10,10 @@ import static Framework.Util.IsMethodOverridden;
  * the ModuleSetManager class is used to store and use module objects. the type argument is the baseclass module type that the ModuleSetManager will manage
  */
 public class ModuleSetManager<baseModule>{
-    Class<baseModule> baseClass;
-    boolean doneAddingModules=false;
-    HashMap<String,ArrayList<baseModule>> moduleLists=new HashMap<>();
-    ArrayList<String>methodNames;
-    ArrayList<baseModule> modules =new ArrayList<>();
+    public Class<baseModule> baseClass;
+    public HashMap<String,ArrayList<baseModule>> moduleLists=new HashMap<>();
+    public ArrayList<String>methodNames;
+    public ArrayList<baseModule> modules =new ArrayList<>();
 
     /**
      * the module base class object should define all of the method hooks that modules can use, the behavior of the base class object will be ignored
@@ -33,9 +32,6 @@ public class ModuleSetManager<baseModule>{
      * adds a module to the ModuleSetManager. the module should override any functions in the baseClass that the will be used with the model
      */
     public void AddModule(baseModule newMod) {
-        if (doneAddingModules) {
-            throw new IllegalStateException("can't add more modules after running iteration");
-        }
         for (String method : methodNames) {
             if(IsMethodOverridden(newMod.getClass(),baseClass,method)){
                 moduleLists.get(method).add(newMod);
@@ -48,7 +44,6 @@ public class ModuleSetManager<baseModule>{
      * use with foreach loop to iterate over modules that override a given method. used to run the module functions when appropriate
      */
     public Iterable<baseModule> IterMethod(String methodName){
-        doneAddingModules=true;
         return moduleLists.get(methodName);
     }
 

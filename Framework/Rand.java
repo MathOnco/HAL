@@ -252,6 +252,16 @@ public class Rand implements Serializable {
         }
     }
 
+
+    /**
+     * Samples and exponential distribution with the argument rate parameter
+     * equivalent to the timing of the next poisson event with the same rate parameter
+     */
+    public double ExponentialDist(double rate){
+        return -Math.log(Double())/rate;
+    }
+
+
     /**
      * Shuffles an array of integers
      *

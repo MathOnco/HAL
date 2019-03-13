@@ -158,7 +158,7 @@ public class DivisionDeathMutation extends AgentGrid2D<CellEx> {
         super(x, y, CellEx.class);
     }
     public void Setup(){
-        for (DivDeathModule module : mods.IterMethod("Setup")) {
+        for (DivDeathModule module : mods.IterMethod("Reset")) {
             module.Setup();
         }
         divProbMods=mods.CountModsWithMethod("SetDivProb");

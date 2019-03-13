@@ -1451,21 +1451,86 @@ public final class Util {
         return ret;
     }
 
+    public static long Log2(long n){
+        long y,v;
+        if (n < 0) {
+            throw new IllegalArgumentException("cannot take long of negative input");
+        }
+        v=n;
+        y=-1;
+        while(v>0){
+            v>>=1;
+            y++;
+        }
+        return y;
+    }
+
+    //computes log base 2 using bit shifting
+    public static int Log2(int n){
+        int y,v;
+        if (n < 0) {
+            throw new IllegalArgumentException("cannot take long of negative input");
+        }
+        v=n;
+        y=-1;
+        while(v>0){
+            v>>=1;
+            y++;
+        }
+        return y;
+    }
+
     /**
-     * Factorial of a positive integer todo: make more efficient
+     * Factorial of a positive integer, uses FactorialSplit
      *
-     * @param toFact 0 or a natural number
+     * @param n 0 or a natural number
      * @return Factorial of toFact. Factorial(0) is 1
      */
-    public static int Factorial(int toFact) {
-        if (toFact < 0) {
+    public static long Factorial(long n) {
+        if (n < 0) {
             throw new IllegalArgumentException("Factorial input cannot be negative");
         }
-        int ret = 1;
-        for (int i = 1; i <= toFact; i++) {
-            ret *= i;
+        if(n<2){
+            return 1;
         }
-        return ret;
+        long[]currentN=new long[]{1};//rare break from tradition
+        long log2n=Log2(n);
+        long p=1,r=1,h=0,shift=0,high=1;
+        while(h!=n){
+            shift+=h;
+            h=n>>log2n--;
+            long len=high;
+            high=(h-1)|1;
+            len=(high-len)/2;
+            if(len>0){
+                p*=FactInternal(len,currentN);
+                r*=p;
+            }
+        }
+        return r<<shift;
+    }
+
+    //todo fix or get rid of this, factorial, and BinomialDistPMF
+    public static long NchooseK(long n,long k){
+        if(n<0||n<k){
+            throw new IllegalArgumentException("n and k must be > 0 and k must be <= n");
+        }
+        if(k==0||n==k){return 1;}
+        if((Factorial(k)==0)||(Factorial(n-k))==0||(Factorial(k)*Factorial(n-k))==0){
+            System.out.println("here");
+        }
+        return Factorial(n)/((Factorial(k)*Factorial(n-k)));
+    }
+
+    public static double BinomialDistPMF(long n,double p,long k){
+        return NchooseK(n,k)*Math.pow(p,k)*Math.pow(1-p,n-k);
+    }
+
+    private static long FactInternal(long n, long[] currentN){
+        long m=n/2;
+        if (m==0){return currentN[0]+=2;}
+        if(m==2){return (currentN[0]+=2)*(currentN[0]+=2);}
+        return FactInternal(n-m,currentN)*FactInternal(m,currentN);
     }
 
     /**
@@ -1478,6 +1543,40 @@ public final class Util {
     public static double PoissonProb(int sampleSize, double avg) {
         return Math.pow(Math.E, -avg) * Math.pow(avg, sampleSize) / Factorial(sampleSize);
     }
+
+    //to get distribution of agents, use std dev: n*0.125*mean_move_dist
+    public static double NormalDistPMF(double mean,double std,double pos){
+        double meanDist=mean-pos;
+        return 1/(Math.sqrt(2*Math.PI*std*std))*Math.exp(-(meanDist*meanDist)/(2*std*std));
+    }
+
+//    public static double BinomialDistPDF(long n,double p, long pos){
+//        Math.l
+//    }
+
+    /**
+     * transforms val with a sigmoid curve with the given properties
+     *
+     * @param val         the input value
+     * @param stretch     linearly scales the sigmoid curve in the x dimension, the default is 1
+     * @param inflectionX the point at which the slope changes sign
+     * @param minCap      the minimum return value of the sigmoid function
+     * @param maxCap      the maximum return value of the sigmoid function
+     */
+    public static double Sigmoid(double val, double stretch, double inflectionX, double minCap, double maxCap) {
+        return minCap + ((maxCap - minCap)) / (1.0 + Math.exp(((-val) + inflectionX) / stretch));
+    }
+
+    /**
+     * transforms val with a sigmoid curve with a minCap of 0, a maxCap of 1, and an inflectionX value of 0
+     *
+     * @param val     the input value
+     * @param stretch linearly scales the sigmoid curve in the x dimension, the default is 1
+     */
+    public static double Sigmoid(double val, double stretch) {
+        return 1 / (1.0 + Math.exp(-val / stretch));
+    }
+
 
 
 //    /**
@@ -1870,30 +1969,9 @@ public final class Util {
 
     }
 
-
     /**
-     * transforms val with a sigmoid curve with the given properties
-     *
-     * @param val         the input value
-     * @param stretch     linearly scales the sigmoid curve in the x dimension, the default is 1
-     * @param inflectionX the point at which the slope changes sign
-     * @param minCap      the minimum return value of the sigmoid function
-     * @param maxCap      the maximum return value of the sigmoid function
+     * gets the probability density value for a position in a normal distribution with given mean and standard deviation
      */
-    public static double Sigmoid(double val, double stretch, double inflectionX, double minCap, double maxCap) {
-        return minCap + ((maxCap - minCap)) / (1.0 + Math.exp(((-val) + inflectionX) / stretch));
-    }
-
-    /**
-     * transforms val with a sigmoid curve with a minCap of 0, a maxCap of 1, and an inflectionX value of 0
-     *
-     * @param val     the input value
-     * @param stretch linearly scales the sigmoid curve in the x dimension, the default is 1
-     */
-    public static double Sigmoid(double val, double stretch) {
-        return 1 / (1.0 + Math.exp(-val / stretch));
-    }
-
 
     /**
      * returns a timestamp of the form "yyyy_MM_dd_HH_mm_ss" as a string
@@ -1971,6 +2049,23 @@ public final class Util {
             }
         }
         return validCt;
+    }
+
+    /**
+     * finds the area of overlap between 2 circles of equal radii
+     */
+    public static double CircleOverlapArea(double radii,double centerDist){
+        return 2*radii*radii*Math.acos(centerDist/(2*radii))-0.5*Math.sqrt(centerDist*centerDist*(2*radii-centerDist)*(2*radii+centerDist));
+    }
+    public static double CircleOverlapArea(double r1,double r2,double centerDist){
+        double d=centerDist;
+        double dsq=d*d;
+        double r1sq=r1*r1;
+        double r2sq=r2*r2;
+        double term1=r1sq*Math.acos((dsq+r1sq-r2sq)/(2*d*r1));
+        double term2=r2sq*Math.acos((dsq+r2sq-r1sq)/(2*d*r2));
+        double term3=0.5*Math.sqrt((-d+r1+r2)*(d+r1-r2)*(d-r1+r2)*(d+r1+r2));
+        return term1+term2-term3;
     }
 
 
@@ -2133,14 +2228,6 @@ public final class Util {
         return out;
     }
 
-    public static <T> boolean AssertEqual(T value,T expected){
-        if(value!=expected){
-            System.out.println("assert failed");
-            return true;
-        }
-        return false;
-    }
-
 
     static int InterpComp(double val, int minComp, int maxComp) {
         return (int) ((maxComp - minComp) * val) + minComp;
@@ -2186,9 +2273,6 @@ public final class Util {
         return null;
     }
 
-    static double CircleOverlapArea(double a,double b){
-        return 2*a*a*Math.acos(b/(2*a))-0.5*Math.sqrt(b*b*(2*a-b)*(2*a+b));
-    }
 
 //    static public int[] RingHood(double innerRadius,double outerRadius) {
 //        if(innerRadius<=outerRadius){
