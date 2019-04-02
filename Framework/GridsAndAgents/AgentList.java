@@ -18,7 +18,8 @@ public class AgentList<T> implements Iterable<T>,Serializable{
     ArrayList<myIter> usedIters=new ArrayList<>();
     int iLastAlive;
     int pop;
-    int stateID;
+    long stateID;
+    static final long DEAD_ID=Long.MIN_VALUE;
 
     /**
      * creates an empty AgentList
@@ -89,7 +90,7 @@ public class AgentList<T> implements Iterable<T>,Serializable{
         int ct=0;
         while(n!=null){
             if(n.mySet==this){
-                n.stateID=Integer.MAX_VALUE;
+                n.stateID=DEAD_ID;
                 n.PopNode();
                 deads.add(n);
                 pop--;
@@ -132,7 +133,7 @@ public class AgentList<T> implements Iterable<T>,Serializable{
             int iDead=dead.i;
             if(iDead<=iLastAlive){
                 AgentListNode<T> swap= nodes.get(iSwap);
-                while(!(swap.stateID ==-1)){
+                while((swap.stateID ==DEAD_ID)){
                     iSwap--;
                     if(iSwap<=iLastAlive){
                         deads.clear();
@@ -161,7 +162,7 @@ public class AgentList<T> implements Iterable<T>,Serializable{
         return nodes.get(rn.Int(pop)).agent;
     }
     void RemoveNode(AgentListNode<T> node) {
-        node.stateID=Integer.MAX_VALUE;
+        node.stateID=DEAD_ID;
         deads.add(node);
         //map.remove(node.agent);
         pop--;
@@ -180,7 +181,7 @@ public class AgentList<T> implements Iterable<T>,Serializable{
         return new myIter(this);
     }
     private class myIter implements Iterator<T>,Serializable{
-        int stateID;
+        long stateID;
         final AgentList<T> myList;
         int iNode;
         T ret;
@@ -188,7 +189,7 @@ public class AgentList<T> implements Iterable<T>,Serializable{
         myIter(AgentList<T> myList){
             this.myList=myList;
         }
-        void Setup(int stateID){
+        void Setup(long stateID){
             this.stateID = stateID;
             this.iNode =0;
             this.ret=null;
@@ -221,7 +222,7 @@ public class AgentList<T> implements Iterable<T>,Serializable{
 class AgentListNode<T> implements Serializable{
     T agent;
     int i;
-    int stateID;
+    long stateID;
     AgentListNode<T> next;
     AgentListNode<T> prev;
     final AgentList<T> mySet;

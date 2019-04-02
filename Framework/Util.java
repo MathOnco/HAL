@@ -8,6 +8,8 @@ import java.awt.*;
 import java.io.*;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -2224,6 +2226,93 @@ public final class Util {
             for (int x = 1; x < nCols; x++) {
                 out[y]+=mat[y*nCols+x]*vec[x];
             }
+        }
+        return out;
+    }
+
+    //Py4j byte array functions
+
+    static public byte[] Py4jDoublesOut(double[]doubles){
+        ByteBuffer out= ByteBuffer.allocate(Double.BYTES*doubles.length);
+        out.order(ByteOrder.LITTLE_ENDIAN);
+        for (int i = 0; i < doubles.length; i++) {
+            out.putDouble(doubles[i]);
+        }
+        return out.array();
+    }
+    static public byte[] Py4jDoublesOut(double[][]doubles){
+        int maxLen=0;
+        for (int i = 0; i < doubles.length; i++) {
+            maxLen=Math.max(doubles[i].length,maxLen);
+        }
+        ByteBuffer out= ByteBuffer.allocate(Double.BYTES*doubles.length*maxLen);
+        out.order(ByteOrder.LITTLE_ENDIAN);
+        for (int j = 0; j < doubles.length; j++) {
+            double[] row=doubles[j];
+        for (int i = 0; i < maxLen; i++) {
+            if(row.length>i) {
+                out.putDouble(row[i]);
+            }else{
+                out.putDouble(0);
+            }
+        }
+        }
+        return out.array();
+    }
+    static public byte[] Py4jDoublesOut(ArrayList<double[]> doubles){
+        int maxLen=0;
+        for (int i = 0; i < doubles.size(); i++) {
+            maxLen=Math.max(doubles.get(i).length,maxLen);
+        }
+        ByteBuffer out= ByteBuffer.allocate(Double.BYTES* doubles.size() *maxLen);
+        out.order(ByteOrder.LITTLE_ENDIAN);
+        for (int j = 0; j < doubles.size(); j++) {
+            double[] row= doubles.get(j);
+            for (int i = 0; i < maxLen; i++) {
+                if(row.length>i) {
+                    out.putDouble(row[i]);
+                }else{
+                    out.putDouble(0);
+                }
+            }
+        }
+        return out.array();
+    }
+
+    static public ArrayList<double[]> Py4jDoublesInAsArrayList(byte[] in,int nRows) {
+        int length = in.length / Double.BYTES;
+        ArrayList<double[]> out = new ArrayList<>(nRows);
+        ByteBuffer buf = ByteBuffer.wrap(in);
+        buf.order(ByteOrder.LITTLE_ENDIAN);
+        for (int i = 0; i < nRows; i++) {
+            out.add(new double[length/nRows]);
+            double[] row = out.get(out.size()-1);
+            for (int j = 0; j < row.length; j++) {
+                row[j] = buf.getDouble();
+            }
+        }
+        return out;
+    }
+    static public double[][] Py4jDoublesIn(byte[] in,int nRows) {
+        int length = in.length / Double.BYTES;
+        double[][] out = new double[nRows][length / nRows];
+        ByteBuffer buf = ByteBuffer.wrap(in);
+        buf.order(ByteOrder.LITTLE_ENDIAN);
+        for (int i = 0; i < out.length; i++) {
+            double[] row = out[i];
+            for (int j = 0; j < row.length; j++) {
+                row[j] = buf.getDouble();
+            }
+        }
+        return out;
+    }
+    static public double[] Py4jDoublesIn(byte[] in){
+        int length=in.length/Double.BYTES;
+        double[]out=new double[length];
+        ByteBuffer buf=ByteBuffer.wrap(in);
+        buf.order(ByteOrder.LITTLE_ENDIAN);
+        for (int i = 0; i < length; i++) {
+            out[i]=buf.getDouble();
         }
         return out;
     }
