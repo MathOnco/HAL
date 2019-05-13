@@ -6,6 +6,8 @@ import Framework.Interfaces.VoidFunction;
 import Framework.Util;
 
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -34,6 +36,8 @@ public class UIPlot implements GuiComp,Serializable{
     static final double RESCALE_FACTOR=0.3;
     NumberFormat form=new DecimalFormat("0.####E0");
     DrawFunction AdditionalDraws=null;
+    boolean clickOn;
+    UIGrid clickAlphaGrid=null;
 
     /**
      * @param xPix width of the UIPlot in pixels
@@ -60,6 +64,35 @@ public class UIPlot implements GuiComp,Serializable{
         Refresh(bkColor,axColor);
     }
 
+    public void ActivateClickCoords(int drawColor){
+        final int clear=Util.RGBA(0,0,0,0);
+        clickOn=false;
+        clickAlphaGrid=new UIGrid(grid.xDim,grid.yDim,grid.scale);
+        clickAlphaGrid.Clear(Util.RGBA(0,0,0,0));
+        grid.AddAlphaGrid(clickAlphaGrid);
+        grid.AddMouseListeners(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                if(clickOn){
+                    clickOn=false;
+                    clickAlphaGrid.Clear(clear);
+
+                }
+                else{
+                    clickOn=true;
+                    clickAlphaGrid.Clear(clear);
+                    double x=grid.ClickXpt(e);
+                    double y=grid.ClickYpt(e);
+                    String drawStr=form.format(x)+","+form.format(y);
+                    int xLeft=Math.min(Math.max(0,(int)(x-(drawStr.length()*4/2.0))),grid.xDim-drawStr.length()*4);
+                    int yTop=Math.max(5,(int)y);
+                    clickAlphaGrid.SetString(drawStr,xLeft,yTop,drawColor,clear);
+                    clickAlphaGrid.SetPix(grid.ClickXsq(e),grid.ClickYsq(e),drawColor);
+                }
+            }
+        });
+    }
+
     public UIPlot(int xPix, int yPix, int scaleFactor,double xMin,double yMin,double xMax,double yMax, int compX, int compY) {
         this(xPix,yPix,scaleFactor,xMin,yMin,xMax,yMax,compX,compY,true);
     }
@@ -70,18 +103,30 @@ public class UIPlot implements GuiComp,Serializable{
         this(xPix,yPix,scaleFactor,xMin,yMin,xMax,yMax,1,1,true);
     }
     public UIPlot(int xPix, int yPix, int scaleFactor, int compX, int compY, boolean active) {
-        this(xPix,yPix,scaleFactor,-1,-1,1,1,compX,compY,active);
+        this(xPix,yPix,scaleFactor,0,0,0,0,compX,compY,active);
     }
     public UIPlot(int xPix, int yPix, int scaleFactor, int compX, int compY) {
-        this(xPix,yPix,scaleFactor,-1,-1,1,1,compX,compY,true);
+        this(xPix,yPix,scaleFactor,0,0,0,0,compX,compY,true);
     }
     public UIPlot(int xPix, int yPix, int scaleFactor,boolean active) {
-        this(xPix,yPix,scaleFactor,-1,-1,1,1,1,1,active);
+        this(xPix,yPix,scaleFactor,0,0,0,0,1,1,active);
     }
     public UIPlot(int xPix, int yPix, int scaleFactor) {
-        this(xPix,yPix,scaleFactor,-1,-1,1,1,1,1,true);
+        this(xPix,yPix,scaleFactor,0,0,0,0,1,1,true);
     }
 
+//    public UIPlot(int xPix, int yPix, int scaleFactor, int compX, int compY, boolean active) {
+//        this(xPix,yPix,scaleFactor,-1,-1,1,1,compX,compY,active);
+//    }
+//    public UIPlot(int xPix, int yPix, int scaleFactor, int compX, int compY) {
+//        this(xPix,yPix,scaleFactor,-1,-1,1,1,compX,compY,true);
+//    }
+//    public UIPlot(int xPix, int yPix, int scaleFactor,boolean active) {
+//        this(xPix,yPix,scaleFactor,-1,-1,1,1,1,1,active);
+//    }
+//    public UIPlot(int xPix, int yPix, int scaleFactor) {
+//        this(xPix,yPix,scaleFactor,-1,-1,1,1,1,1,true);
+//    }
     /**
      * call this once per step of your model, and the function will ensure that your model runs at the rate provided in
      * milliseconds. the function will take the amount time between calls into account to ensure a consistent tick
@@ -101,6 +146,22 @@ public class UIPlot implements GuiComp,Serializable{
             ret.AddSegment(xys[0],xys[1]);
         }
         return ret;
+    }
+
+    public void Clear(double xMin,double xMax,double yMin,double yMax){
+        if(last!=null) {
+            last.next = deadPoints;
+        }
+        deadPoints=first;
+        first=null;
+        last=null;
+        plotXstart=xMin;
+        plotYstart=yMin;
+        plotXend=xMax;
+        plotYend=yMax;
+        SetScale();
+        Refresh(bkColor,axColor);
+        clearState++;
     }
 
     public void Clear(){
@@ -182,10 +243,13 @@ public class UIPlot implements GuiComp,Serializable{
         grid.SetString(yStart,xLine,5, axColor, bkColor);
         grid.SetString(xStart,0,yLine+7, axColor, bkColor);
         grid.SetString(yEnd,xLine, grid.yDim, axColor, bkColor);
-        grid.SetString(xEnd, grid.xDim-(yEnd.length()*4),yLine+7, axColor, bkColor);
+        grid.SetString(xEnd, grid.xDim-(xEnd.length()*4),yLine+7, axColor, bkColor);
     }
     void Refresh(int bkColor,int axColor){
         grid.Clear(bkColor);
+        if(clickAlphaGrid!=null){
+            clickAlphaGrid.Clear(Util.RGBA(0,0,0,0));
+        }
         SetAxes(axColor);
         this.bkColor=bkColor;
         this.axColor=axColor;
@@ -232,7 +296,7 @@ public class UIPlot implements GuiComp,Serializable{
         return (int)((x-plotXstart)*plotScaleX);
     }
     int ConvY(double y){
-        return (int)((y-plotXstart)*plotScaleY);
+        return (int)((y-plotYstart)*plotScaleY);
     }
     void SetPoint(PlotPointInternal newPt){
         if(first==null){
@@ -308,6 +372,7 @@ public class UIPlot implements GuiComp,Serializable{
         Refresh(bkColor,axColor);
     }
 
+    //todo: change click coords readout when model resizes
     public void SetDims(double xMin,double xMax,double yMin,double yMax){
         plotYstart = yMax;
         plotYend = yMin;

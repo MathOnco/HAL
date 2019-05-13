@@ -5,5 +5,5 @@ package Framework.Interfaces;
  */
 @FunctionalInterface
 public interface DoubleToDouble {
-    public double DoubleToDouble(double in);
+    public double Eval(double in);
 }

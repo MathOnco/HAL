@@ -5,8 +5,8 @@ import Framework.GridsAndAgents.AgentSQ2Dunstackable;
 import Framework.GridsAndAgents.PDEGrid2D;
 import Framework.Gui.UIGrid;
 import Framework.Rand;
-import Framework.Tools.ClinicianSim.ClinicianSim;
-import Framework.Tools.ClinicianSim.TreatableTumor;
+import Framework.Tools.InteractiveModel.InteractiveModel;
+import Framework.Tools.InteractiveModel.TreatableTumor;
 
 import static Examples.ClinicianSim.ExampleModelInteractive.RESISTANT;
 import static Framework.Util.*;
@@ -32,9 +32,8 @@ public class ExampleModelInteractive extends AgentGrid2D<ExampleCellInteractive>
     public static void main(String[] args) {
         ExampleModelInteractive ex=new ExampleModelInteractive(100,100,new Rand());
         ex.InitTumor(10,0.5);
-        ClinicianSim sim=new ClinicianSim(ex,400,20,100,100,5,100,50,1000,true,true);
+        InteractiveModel sim=new InteractiveModel(ex,400,20,100,100,5,100,50,1000,true,true);
         sim.RunGui();
-        sim.RunModel();
     }
 
     public void InitTumor(int radius, double resistantProb) {

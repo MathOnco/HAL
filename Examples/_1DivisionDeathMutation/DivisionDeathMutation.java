@@ -1,5 +1,6 @@
 package Examples._1DivisionDeathMutation;
 
+import Beta.LapTimer;
 import Framework.GridsAndAgents.AgentGrid2D;
 import Framework.GridsAndAgents.AgentSQ2Dunstackable;
 import Framework.Gui.GridWindow;
@@ -8,7 +9,10 @@ import Framework.Tools.FileIO;
 import Framework.Rand;
 import Framework.Util;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+
+import static Framework.Util.WHITE;
 
 //cells grow and mutate
 class CellEx extends AgentSQ2Dunstackable<DivisionDeathMutation>{
@@ -41,7 +45,7 @@ class CellEx extends AgentSQ2Dunstackable<DivisionDeathMutation>{
 public class DivisionDeathMutation extends AgentGrid2D<CellEx> {
     final static int BLACK= Util.RGB(0,0,0);
     double DIV_PROB =0.2;
-    double MUT_PROB =0.01;
+    double MUT_PROB =0.003;
     double DIE_PROB =0.1;
     double MUT_ADVANTAGE =1.08;
     int MAX_MUTATIONS =19;
@@ -95,13 +99,17 @@ public class DivisionDeathMutation extends AgentGrid2D<CellEx> {
     }
 
     public static void main(String[]args){
-        int x=500,y=500,scaleFactor=2;
+        ArrayList<Double[]>out=new ArrayList<>();
+        //int x=500,y=500,scaleFactor=2;
+        int x=1000,y=1000,scaleFactor=1;
         GridWindow vis=new GridWindow(x,y,scaleFactor);//used for visualization
         DivisionDeathMutation grid=new DivisionDeathMutation(x,y,vis);
         grid.InitTumor(5);
-        for (int tick = 0; tick < 1000; tick++) {
+        LapTimer lt=new LapTimer();
+        for (int tick = 0; tick < 10000000; tick++) {
             vis.TickPause(0);//set to nonzero value to cap tick rate.
             grid.StepCells();
+            vis.SetString("Step Time: "+lt.Lap(),0,grid.yDim,BLACK,WHITE);
         }
     }
 }

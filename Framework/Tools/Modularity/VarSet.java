@@ -1,6 +1,6 @@
 package Framework.Tools.Modularity;
 
 public interface VarSet {
-    double[]getVars();
-    void setVars(double[]newVars);
+    double[] GetVars();
+    void SetVars(double[]newVars);
 }

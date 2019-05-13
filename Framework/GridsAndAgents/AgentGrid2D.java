@@ -416,7 +416,7 @@ public class AgentGrid2D<T extends AgentBaseSpatial> extends GridBase2D implemen
         }
     }
     /**
-     * gets all agents that are within rad, and adds them to the ArrayList
+     * gets all agents that are within rad, and adds them to the ArrayList, displacementInfo contains the following info for each agent: [dist from point,x disp,y disp]
      */
     public void GetAgentsRad(final ArrayList<T> retAgentList,final ArrayList<double[]> displacementInfo, final double x, final double y, final double rad) {
         for (int xSq = (int) Math.floor(x - rad); xSq < (int) Math.ceil(x + rad); xSq++) {
@@ -641,6 +641,7 @@ public class AgentGrid2D<T extends AgentBaseSpatial> extends GridBase2D implemen
         if (Pop() > 0) {
             throw new IllegalStateException("Something is wrong with Reset, tell Rafael Bravo to fix this!");
         }
+        CleanAgents();
         ResetTick();
     }
 
@@ -1165,7 +1166,7 @@ public class AgentGrid2D<T extends AgentBaseSpatial> extends GridBase2D implemen
 //        agents.AddAgent(foreignAgent);
 //        ((AgentGrid2D)foreignAgent.myGrid).agents.NullAgent(foreignAgent);
 //        foreignAgent.myGrid=this;
-//        foreignAgent.Setup(newX,newY);
+//        foreignAgent.Reset(newX,newY);
 //    }
 //    public void ChangeGridsPT(T foreignAgent,double newX,double newY){
 //        if(!foreignAgent.alive){
@@ -1178,7 +1179,7 @@ public class AgentGrid2D<T extends AgentBaseSpatial> extends GridBase2D implemen
 //        agents.AddAgent(foreignAgent);
 //        ((AgentGrid2D)foreignAgent.myGrid).agents.NullAgent(foreignAgent);
 //        foreignAgent.myGrid=this;
-//        foreignAgent.Setup(newX,newY);
+//        foreignAgent.Reset(newX,newY);
 //    }
 //    public void ChangeGridsSQ(T foreignAgent,int newI){
 //        if(!foreignAgent.alive){
@@ -1191,7 +1192,7 @@ public class AgentGrid2D<T extends AgentBaseSpatial> extends GridBase2D implemen
 //        ((AgentGrid2D)foreignAgent.myGrid).agents.NullAgent(foreignAgent);
 //        agents.AddAgent(foreignAgent);
 //        foreignAgent.myGrid=this;
-//        foreignAgent.Setup(newI);
+//        foreignAgent.Reset(newI);
 //    }
 
 //    /**

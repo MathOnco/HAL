@@ -1,11 +1,14 @@
 package Framework;
 
+import Framework.Interfaces.DoubleToDouble;
+import Framework.Interfaces.IntToDouble;
 import Framework.Interfaces.RNG;
 import Framework.Tools.Internal.Binomial;
 import Framework.Tools.Internal.Gaussian;
 import Framework.Tools.Internal.SplittableRN;
 
 import java.io.Serializable;
+import java.util.function.IntToDoubleFunction;
 
 import static Framework.Util.DistSquared;
 import static Framework.Util.Norm;
@@ -88,7 +91,7 @@ public class Rand implements Serializable {
      * returns a random number from the binomial distribution (number of heads from n weighted coin flips with probability p of heads)
      */
     public int Binomial(int n, double p) {
-        return bn.SampleInt(n, p, this);
+        return bn.SampleIntFast(n, p, this);
     }
 
     /**
@@ -100,20 +103,22 @@ public class Rand implements Serializable {
 
     public void Multinomial(double[] probabilities, int n, int[] ret) {
         double pSum = 1;
-        if (probabilities.length == 1) {
-            ret[0] = n;
-            return;
-        }
         for (int i = 0; i < probabilities.length; i++) {
-            if (probabilities[i] == 1) {
-                ret[i] = n;
-                return;
-            }
             if (probabilities[i] != 0) {
+                if(probabilities[i]-pSum==0){
+                    ret[i]=n;
+                    for (; i < probabilities.length; i++) {
+                        ret[i]=0;
+                    }
+                    return;
+                }
                 int ni = bn.SampleInt(n, probabilities[i] / pSum, this);
                 ret[i] = ni;
                 n -= ni;
                 pSum -= probabilities[i];
+            }
+            else{
+                ret[i]=0;
             }
         }
     }
@@ -251,6 +256,16 @@ public class Rand implements Serializable {
             out[i] = rn.Int(max - min) + min;
         }
     }
+
+
+    /**
+     * Samples and exponential distribution with the argument rate parameter
+     * equivalent to the timing of the next poisson event with the same rate parameter
+     */
+    public double ExponentialDist(double rate){
+        return -Math.log(Double())/rate;
+    }
+
 
     /**
      * Shuffles an array of integers

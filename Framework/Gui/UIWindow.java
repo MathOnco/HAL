@@ -23,6 +23,7 @@ public class UIWindow {
     KeyRecorder kr;
     final boolean active;
     final boolean killOnClose;
+    private boolean isClosed;
     final private GridBagConstraints gbc;
     public final JFrame frame;
     public final JPanel panel;
@@ -64,6 +65,7 @@ public class UIWindow {
                         }
                         frame.setVisible(false);
                         frame.dispose();
+                        isClosed=true;
                         System.exit(0);
                     }
                 });
@@ -78,6 +80,7 @@ public class UIWindow {
                             }
                             frame.setVisible(false);
                             frame.dispose();
+                            isClosed=true;
                         }
                     }
                 });
@@ -253,6 +256,10 @@ public class UIWindow {
             this.frame.setVisible(true);
             panel.setVisible(true);
         }
+    }
+
+    public boolean IsClosed(){
+        return isClosed;
     }
 
     public void SetParamValues(String[]vals){

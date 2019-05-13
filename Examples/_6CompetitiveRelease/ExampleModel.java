@@ -7,6 +7,8 @@ package Examples._6CompetitiveRelease;
         import Framework.Gui.PlotWindow;
         import Framework.Tools.FileIO;
         import Framework.Rand;
+        import Framework.Util;
+
         import static Examples._6CompetitiveRelease.ExampleModel.*;
         import static Framework.Util.*;
 
@@ -14,8 +16,19 @@ public class ExampleModel extends AgentGrid2D<ExampleCell> {
     //model constants
     public final static int RESISTANT = RGB(0, 1, 0), SENSITIVE = RGB(0, 0, 1);
     public final static int NO_DRUG=0,CONSTANT_DRUG=1,PULSED_DRUG=2;
-    public double DIV_PROB_SEN = 0.025, DIV_PROB_RES = 0.01, DEATH_PROB = 0.001, DRUG_START = 400, DRUG_PERIOD = 200,
-            DRUG_DURATION = 40, DRUG_DIFF_RATE = 2, DRUG_UPTAKE = -0.09, DRUG_DEATH = 0.2, DRUG_BOUNDARY_VAL = 1.0;
+    public double TIMESTEP=1;
+    public double TIMESTEP_PDE=1;
+    public double SPACE_STEP=1;
+    public double DIV_PROB_SEN = Util.ProbScale(0.025,TIMESTEP);
+    public double DIV_PROB_RES = Util.ProbScale(0.01,TIMESTEP);
+    public double DEATH_PROB = Util.ProbScale(0.001,TIMESTEP);
+    public double DRUG_START = 400/TIMESTEP;
+    public double DRUG_PERIOD = 200/TIMESTEP;
+    public double DRUG_DURATION = 40/TIMESTEP;
+    public double DRUG_DIFF_RATE = 2*(TIMESTEP_PDE/(SPACE_STEP*SPACE_STEP));
+    public double DRUG_UPTAKE = -0.09 *TIMESTEP_PDE;
+    public double DRUG_DEATH = Util.ProbScale(0.2,TIMESTEP);
+    public double DRUG_BOUNDARY_VAL = 1.0;
     //internal model objects
     public PDEGrid2D drug;
     public Rand rn;
@@ -35,7 +48,7 @@ public class ExampleModel extends AgentGrid2D<ExampleCell> {
         ExampleModel[] models = new ExampleModel[3];
         FileIO popsOut=new FileIO("populations.csv","w");
         for (int i = 0; i < models.length; i++) {
-            models[i]=new ExampleModel(x,y,new Rand(1));
+            models[i]=new ExampleModel(x,y,new Rand(0));
             models[i].InitTumor(tumorRad, resistantProp);
         }
         models[NO_DRUG].DRUG_DURATION =0;
@@ -53,7 +66,7 @@ public class ExampleModel extends AgentGrid2D<ExampleCell> {
             plot.AddPoint(tick,models[CONSTANT_DRUG].Pop(),BLUE);
             plot.AddPoint(tick,models[PULSED_DRUG].Pop(),GREEN);
             if((tick)%100==0) {
-        //        win.ToPNG("ModelsTick" +tick+".png");
+                win.ToPNG("ModelsTick" +tick+".png");
             }
         }
         popsOut.Close();

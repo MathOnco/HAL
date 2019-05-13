@@ -133,12 +133,12 @@ class CellEx extends AgentSQ2Dunstackable<DivisionDeathMutation> implements VarS
     }
 
     @Override
-    public double[] getVars() {
+    public double[] GetVars() {
         return vars;
     }
 
     @Override
-    public void setVars(double[] newVars) {
+    public void SetVars(double[] newVars) {
         this.vars=newVars;
     }
 }
@@ -158,7 +158,7 @@ public class DivisionDeathMutation extends AgentGrid2D<CellEx> {
         super(x, y, CellEx.class);
     }
     public void Setup(){
-        for (DivDeathModule module : mods.IterMethod("Setup")) {
+        for (DivDeathModule module : mods.IterMethod("Reset")) {
             module.Setup();
         }
         divProbMods=mods.CountModsWithMethod("SetDivProb");

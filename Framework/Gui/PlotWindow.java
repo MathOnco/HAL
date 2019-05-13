@@ -88,4 +88,8 @@ public class PlotWindow extends UIPlot {
     public PlotWindow(String title,int xPix, int yPix,int scaleFactor,double xMin,double yMin,double xMax,double yMax,boolean killOnClose,GuiCloseAction CloseAction) {
         this(title,xPix,yPix,scaleFactor,xMin,yMin,xMax,yMax,killOnClose,CloseAction,true);
     }
+
+    public boolean IsClosed(){
+        return win.IsClosed();
+    }
 }

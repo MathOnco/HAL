@@ -338,10 +338,10 @@ public class UIGrid extends GridBase2D implements GuiComp {
         if (xs.length < 2) {
             throw new IllegalArgumentException("arrays too short, must define at least 2 points! length: " + xs.length);
         }
-        if (startPoint < 0 || startPoint > xs.length || endPoint < 0 || endPoint > xs.length || startPoint >= endPoint - 1) {
+        if (startPoint < 0 || startPoint > xs.length || endPoint < 0 || endPoint > xs.length || startPoint > endPoint - 1) {
             throw new IllegalArgumentException("invalid startPoint or endPoint for plotting " + xs.length + " points! startPoint: " + startPoint + " endPoint: " + endPoint);
         }
-        for (int i = startPoint; i < endPoint - 1; i++) {
+        for (int i = startPoint; i < endPoint; i++) {
             Util.AlongLineAction(xs[i] * scaleX, ys[i] * scaleY, xs[i + 1] * scaleX, ys[i + 1] * scaleY, (int x, int y) -> {
                 this.SetPix(x, y, color);
             });
@@ -987,7 +987,7 @@ public class UIGrid extends GridBase2D implements GuiComp {
             , 6438//o
             , 4423//p
             , 7492//q
-            , 9455//r
+            , 8431//r
             , 10725//s
             , 10216//t
             , 15406//u

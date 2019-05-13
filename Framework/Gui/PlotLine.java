@@ -18,6 +18,7 @@ public class PlotLine implements Serializable{
     public PlotLine(UIPlot plot, int color){
         this.myPlot=plot;
         this.color=color;
+        this.clearState=myPlot.clearState;
     }
 
     /**

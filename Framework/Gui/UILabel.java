@@ -40,7 +40,7 @@ public class UILabel implements GuiComp {
      * @param text label text
      */
     public UILabel(String text, boolean active){
-        this(text,1,1,true);
+        this(text,1,1,active);
     }
     public UILabel(String text){
         this(text,1,1,true);

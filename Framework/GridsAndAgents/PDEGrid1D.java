@@ -91,7 +91,7 @@ public class PDEGrid1D extends GridBase1D implements Serializable {
         if (Math.abs(xVel) > 1) {
             throw new IllegalArgumentException("Advection rate above maximum stable value of 1.0");
         }
-        Advection1(field, deltas, xVel, xDim, true, (x) -> boundaryValue);
+        Advection1(field, deltas, xVel, xDim, wrapX, (x) -> boundaryValue);
     }
 
     /**
@@ -102,7 +102,7 @@ public class PDEGrid1D extends GridBase1D implements Serializable {
         if (Math.abs(xVel) > 1) {
             throw new IllegalArgumentException("Advection rate above maximum stable value of 1.0");
         }
-        Advection1(field, deltas, xVel, xDim, true, BoundaryConditionFn);
+        Advection1(field, deltas, xVel, xDim, wrapX, BoundaryConditionFn);
     }
 
     /**

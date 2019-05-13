@@ -2,6 +2,7 @@ package Framework.GridsAndAgents;
 
 import Framework.Interfaces.OverlapForceResponse3D;
 import Framework.Rand;
+import Framework.Util;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ public class SphericalAgent3D<A extends SphericalAgent3D,G extends AgentGrid3D<A
     public double xVel;
     public double yVel;
     public double zVel;
+    private static ThreadLocal<double[]>scratchCoordDefault=new ThreadLocal<>();
     public void Init(double radius){
         this.radius=radius;
         this.xVel=xVel;
@@ -158,8 +160,24 @@ public class SphericalAgent3D<A extends SphericalAgent3D,G extends AgentGrid3D<A
         if(rn!=null){
             rn.RandomPointOnSphereEdge(divRadius, scratchCoordArr);
         }
+        else {
+            double normSq = Util.NormSquared(scratchCoordArr[0], scratchCoordArr[1], scratchCoordArr[2]);
+            if (normSq != divRadius * divRadius) {
+                double norm = Math.sqrt(normSq);
+                scratchCoordArr[0] = scratchCoordArr[0] * divRadius / norm;
+                scratchCoordArr[1] = scratchCoordArr[1] * divRadius / norm;
+                scratchCoordArr[2] = scratchCoordArr[2] * divRadius / norm;
+            }
+        }
         A child=(G.NewAgentPTSafe(Xpt()+scratchCoordArr[0],Ypt()+scratchCoordArr[1],Zpt()+scratchCoordArr[2],Xpt(),Ypt(),Zpt()));
         MoveSafePT(Xpt()-scratchCoordArr[0], Ypt()-scratchCoordArr[1], Zpt()-scratchCoordArr[2]);
         return child;
+    }
+
+    public A Divide(double divRadius,Rand rn){
+        if(scratchCoordDefault.get()==null){
+            scratchCoordDefault.set(new double[3]);
+        }
+        return Divide(divRadius,scratchCoordDefault.get(),rn);
     }
 }

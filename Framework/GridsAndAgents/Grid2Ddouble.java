@@ -180,9 +180,9 @@ public class Grid2Ddouble extends GridBase2D implements Serializable {
      * returns the gradient of the field in the Y direction at the coordinates specified
      */
     public double GradientY(int x, int y) {
-        double left = PDEequations.DisplacedX2D(field,x-1,y, xDim, yDim, wrapX,(X,Y)->Get(X+1,Y));
-        double right = PDEequations.DisplacedX2D(field,x + 1, y, xDim, yDim,wrapX,(X,Y)->Get(X-1,Y));
-        return right - left;
+        double down = PDEequations.DisplacedX2D(field,x,y-1, xDim, yDim, wrapX,(X,Y)->Get(X+1,Y));
+        double up = PDEequations.DisplacedX2D(field,x, y+1, xDim, yDim,wrapX,(X,Y)->Get(X-1,Y));
+        return up - down;
     }
 
     /**

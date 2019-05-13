@@ -154,7 +154,7 @@ class StemCellCA extends AgentGrid2D<CACell> {
         win.AddCol(0, new UIButton("Run",true,(clickEvent)->{//inline function defines what happens when the run button is clicked
             //greys out the menu gui while the model is running
             win.GreyOut(true);
-            UIWindow visGui=new UIWindow("StemCellCA",false,(closeEvent)->{//guiwindow inline function defines what happens when the agent visualization gui is closed
+            UIWindow visModel=new UIWindow("StemCellCA",false,(closeEvent)->{//guiwindow inline function defines what happens when the agent visualization gui is closed
                 win.GreyOut(false);//allow interaction with the menu gui again
                 if(runGrid.outFile!=null) {
                     runGrid.outFile.Close();//make sure to close the file, even if execution is cut off
@@ -163,13 +163,13 @@ class StemCellCA extends AgentGrid2D<CACell> {
                 runGrid.RUN_DURATION=0;//stop the model if the visualization is closed
             });
             //visGui contains a label that displays the tick and another that displays the population
-            visGui.AddCol(0, tickLabel);
-            visGui.AddCol(1, popLabel);
-            visGui.AddCol(0, vis);
+            visModel.AddCol(0, tickLabel);
+            visModel.AddCol(1, popLabel);
+            visModel.AddCol(0, vis);
             runGrid.Init(win.GetDouble("DIV_PROB"),win.GetDouble("DEATH_PROB"),win.GetDouble("STEM_DIV_PROB"),win.GetInt("MAX_DIVS"),win.GetInt("TICK_PAUSE"),win.GetInt("RUN_TICKS"),win.GetString("OUTPUT_FILE"),win.GetBool("Record"),vis,tickLabel,popLabel,win);
-            visGui.RunGui();
+            visModel.RunGui();
             runGrid.Run();
-            visGui.Close();
+            visModel.Close();
         }));
         //starts the main gui
         win.RunGui();
