@@ -1,6 +1,5 @@
 package Examples._1DivisionDeathMutation;
 
-import Beta.LapTimer;
 import Framework.GridsAndAgents.AgentGrid2D;
 import Framework.GridsAndAgents.AgentSQ2Dunstackable;
 import Framework.Gui.GridWindow;
@@ -105,11 +104,9 @@ public class DivisionDeathMutation extends AgentGrid2D<CellEx> {
         GridWindow vis=new GridWindow(x,y,scaleFactor);//used for visualization
         DivisionDeathMutation grid=new DivisionDeathMutation(x,y,vis);
         grid.InitTumor(5);
-        LapTimer lt=new LapTimer();
         for (int tick = 0; tick < 10000000; tick++) {
             vis.TickPause(0);//set to nonzero value to cap tick rate.
             grid.StepCells();
-            vis.SetString("Step Time: "+lt.Lap(),0,grid.yDim,BLACK,WHITE);
         }
     }
 }
