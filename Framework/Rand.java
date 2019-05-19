@@ -1,14 +1,11 @@
 package Framework;
 
-import Framework.Interfaces.DoubleToDouble;
-import Framework.Interfaces.IntToDouble;
 import Framework.Interfaces.RNG;
 import Framework.Tools.Internal.Binomial;
 import Framework.Tools.Internal.Gaussian;
 import Framework.Tools.Internal.SplittableRN;
 
 import java.io.Serializable;
-import java.util.function.IntToDoubleFunction;
 
 import static Framework.Util.DistSquared;
 import static Framework.Util.Norm;

@@ -147,6 +147,28 @@ public class GifMaker {
         }
     }
 
+//    public void AddFrame(UIWindow vis){
+//        if(scaledBuff==null||scaledBuff.getHeight()!=vis.panel.getHeight()||scaledBuff.getWidth()!=vis.panel.getWidth()) {
+//            scaledBuff = new BufferedImage(vis.panel.getHeight(), vis.panel.getWidth(), BufferedImage.TYPE_INT_RGB);
+//            g=scaledBuff.createGraphics();
+//        }
+//        vis.panel.paint(g);
+//        RenderedImage img=scaledBuff;
+//        //RenderedImage img= (RenderedImage)(vis.panel.buff.getScaledInstance(vis.panel.scaleX*vis.xDim,-vis.panel.scaleX*vis.yDim,Image.SCALE_FAST));
+//        try {
+//            gifWriter.writeToSequence(
+//                    new IIOImage(
+//
+//                            img
+//                            ,
+//                            null,
+//                            imageMetaData),
+//                    imageWriteParam);
+//        }
+//        catch (Exception e){
+//            System.err.println("unable to write UIWindow to gif sequence");
+//        }
+//    }
     /**
      * Close this GifMaker object
      */

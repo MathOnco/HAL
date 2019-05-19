@@ -1,5 +1,7 @@
 package Framework.Gui;
+import Framework.GridsAndAgents.GridBase2D;
 import Framework.Interfaces.ColorIntGenerator;
+import Framework.Interfaces.Grid2D;
 import Framework.Util;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
@@ -18,7 +20,7 @@ import static Framework.Util.*;
 /**
  * Created by rafael on 5/28/17.
  */
-public class OpenGL2DWindow {
+public class OpenGL2DWindow extends GridBase2D {
     final boolean active;
     final public int xPix;
     final public int yPix;
@@ -37,6 +39,7 @@ public class OpenGL2DWindow {
      * @param active if set to false, the OpenGL2DWindow will not actually render and its methods will be skipped (default true)
      */
     public OpenGL2DWindow(String title, int xPix, int yPix, int xDim, int yDim, boolean active) {
+        super(xDim,yDim,false,false);
         this.active = active;
         this.xPix = xPix;
         this.yPix = yPix;
@@ -125,6 +128,48 @@ public class OpenGL2DWindow {
      */
     public boolean IsActive() {
         return active;
+    }
+
+    /**
+     * duplicates UIGrid functionality, draws a rectangle large enough to fill one lattice position
+     */
+    public void SetPix(int i,int color){
+        int x=ItoX(i);
+        int y=ItoY(i);
+        SetPix(x,y,color);
+    }
+
+    /**
+     * duplicates UIGrid functionality, draws a rectangle large enough to fill one lattice position
+     */
+    public void SetPix(int x,int y,int color){
+        Rectangle(x,y,x+1,y+1,color);
+    }
+
+    /**
+     * draws a rectangle between (x1,y1) and (x2,y2) coded by Jill Gallaher
+     */
+    public void Rectangle(double x1, double y1, double x2, double y2, int color) {
+        if (active) {
+            glColor4f((float) GetRed(color), (float) GetGreen(color), (float) GetBlue(color), (float) GetAlpha(color));
+            glBegin(GL_QUADS);
+            glVertex2f((float) x1, (float) y1);
+            glVertex2f((float) x2, (float) y1);
+            glVertex2f((float) x2, (float) y2);
+            glVertex2f((float) x1, (float) y2);
+            glEnd();
+        }
+    }
+    /**
+     * draws a rectangle centered at position x,y
+     */
+    public void RectangleAtPoint(double x, double y, double width, double height, int color) {
+        double wRad=width/2.0;
+        double hRad=height/2.0;
+         Rectangle(x-wRad,y-hRad,x+wRad,y+hRad,color);
+    }
+    public void Square(double x, double y, double rad, int color) {
+        Rectangle(x-rad,y-rad,x+rad,y+rad,color);
     }
 
     /**
@@ -260,4 +305,5 @@ public class OpenGL2DWindow {
 
         }
     }
+
 }

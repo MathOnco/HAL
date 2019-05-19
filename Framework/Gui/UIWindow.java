@@ -5,11 +5,14 @@ import Framework.Interfaces.MenuItem;
 import Framework.Tools.Internal.KeyRecorder;
 import Framework.Tools.Internal.ParamSet;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -32,6 +35,8 @@ public class UIWindow {
     final ArrayList<Component> subComps;
     final ArrayList<Integer> subCompCoords;
     final ArrayList<Integer> subCompSizes;
+    protected BufferedImage drawBuff;
+    protected Graphics drawGraphics;
     final int[] locs;
     final GuiCloseAction closeAction;
     final TickTimer tt=new TickTimer();
@@ -365,5 +370,37 @@ public class UIWindow {
             frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
         }
     }
+//    private void SaveImage(String filePath,String type){
+//        if(active) {
+//           // if(drawBuff==null||drawBuff.getHeight()!=panel.getHeight()||drawBuff.getWidth()!=panel.getWidth()) {
+//           //     drawBuff = new BufferedImage(panel.getHeight(), panel.getWidth(), BufferedImage.TYPE_INT_RGB);
+//           // }
+//            Dimension size=frame.getSize();
+//            drawBuff=(BufferedImage)frame.createImage(size.width,size.height);
+//            drawGraphics=drawBuff.getGraphics();
+//            frame.paint(drawGraphics);
+//            drawGraphics.dispose();
+//            frame.repaint();
+//            try {
+//                ImageIO.write(drawBuff, type, new File(filePath));
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
+//    }
+//    public void ToPNG(String filePath) {
+//        SaveImage(filePath,"png");
+//    }
+//    public void ToJPG(String filePath) {
+//        SaveImage(filePath,"jpg");
+//    }
+//    public void ToGIF(String filePath) {
+//        SaveImage(filePath,"gif");
+//    }
+
+
+//    public void paintComponent(Graphics g) {
+//        panel.paintComponent(g);
+//    }
 }
 
