@@ -6,6 +6,11 @@ import Framework.Util;
 import java.util.ArrayList;
 
 public class UnitTester {
+
+
+//    public static double[] ConvergenceTester1D(){
+//    }
+
     ArrayList<VoidFunction> tests=new ArrayList<>();
     ArrayList<Boolean> passRecord=new ArrayList<>();
     ArrayList<String> names=new ArrayList<>();

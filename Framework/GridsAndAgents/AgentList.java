@@ -19,7 +19,7 @@ public class AgentList<T> implements Iterable<T>,Serializable{
     int iLastAlive;
     int pop;
     long stateID;
-    static final long DEAD_ID=Long.MIN_VALUE;
+    static final long DEAD_ID=Long.MAX_VALUE;
 
     /**
      * creates an empty AgentList

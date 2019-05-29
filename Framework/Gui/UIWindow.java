@@ -262,6 +262,12 @@ public class UIWindow {
             panel.setVisible(true);
         }
     }
+    public boolean IsActive(){
+        return !isClosed&&active;
+    }
+    public boolean IsRunning(){
+        return alive;
+    }
 
     public boolean IsClosed(){
         return isClosed;

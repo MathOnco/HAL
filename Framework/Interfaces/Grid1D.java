@@ -1,32 +1,24 @@
-package Framework.GridsAndAgents;
+package Framework.Interfaces;
 
-import Framework.Interfaces.*;
-import Framework.Rand;
 import Framework.Util;
-
-import java.io.Serializable;
 
 import static Framework.Util.InDim;
 
 /**
  * holds functions that all 1D Grids share
  */
-public abstract class GridBase1D implements Serializable {
-    public final int xDim;
-    public final int length;
-    public boolean wrapX;
-    int tick;
+public interface Grid1D {
 
     /**
      * gets the index of the square at the specified coordinates with wrap around
      */
-    public int WrapI(int x) {
+    default public int WrapI(int x) {
         //wraps Coords to proper index
         if (In(x)) {
             return x;
         }
-        if(wrapX) {
-            return Util.Wrap(x,xDim);
+        if(IsWrapX()) {
+            return Util.Wrap(x, Xdim());
         }
         throw new IllegalArgumentException("cannot map to index in bounds!" );
     }
@@ -34,14 +26,14 @@ public abstract class GridBase1D implements Serializable {
     /**
      * returns whether the specified coordinates are inside the typeGrid bounds
      */
-    public boolean In(int x) {
-        return x >= 0 && x < xDim;
+    default public boolean In(int x) {
+        return x >= 0 && x < Xdim();
     }
 
     /**
      * returns whether the specified coordinates are inside the typeGrid bounds
      */
-    public boolean In(double x) {
+    default public boolean In(double x) {
         int xInt = (int) Math.floor(x);
         return In(xInt);
     }
@@ -49,24 +41,24 @@ public abstract class GridBase1D implements Serializable {
     /**
      * returns whether the specified coordinates are inside the Grid bounds with wraparound
      */
-    public boolean InWrap(int x){
-        return wrapX || InDim(x, xDim);
+    default public boolean InWrap(int x){
+        return IsWrapX() || InDim(x, Xdim());
     }
 
     /**
      * returns whether the specified coordinates are inside the Grid bounds with wraparound
      */
-    public boolean InWrap(double x){
-        return wrapX || InDim(x, xDim);
+    default public boolean InWrap(double x){
+        return IsWrapX() || InDim(x, Xdim());
     }
 
     /**
      * gets the displacement from the first coorinate to the second. using wraparound if allowed over the given axis to
      * find the shortest displacement.
      */
-    public double DispX(double x1, double x2) {
-        if (wrapX) {
-            return Util.DispWrap(x2, x1, xDim);
+    default public double DispX(double x1, double x2) {
+        if (IsWrapX()) {
+            return Util.DispWrap(x2, x1, Xdim());
         } else {
             return x2 - x1;
         }
@@ -76,14 +68,14 @@ public abstract class GridBase1D implements Serializable {
      * gets the distance between two positions with or without grid wrap around (if wraparound is enabled, the shortest
      * distance taking this into account will be returned)
      */
-    public double Dist(double x1, double x2) {
+    default public double Dist(double x1, double x2) {
         return Math.abs(DispX(x1, x2));
     }
 
     /**
      * gets the distance between two positions squared with or without grid wrap around
      */
-    public double DistSquared(double x1, double x2) {
+    default public double DistSquared(double x1, double x2) {
         double dist = DispX(x1, x2);
         return dist * dist;
     }
@@ -91,11 +83,11 @@ public abstract class GridBase1D implements Serializable {
     /**
      * applies the action function to all positions in the rectangle, will use wraparound if appropriate
      */
-    public void ApplyRectangle(int startX, int width, IndexAction Action) {
+    default public void ApplyRectangle(int startX, int width, IndexAction Action) {
         for (int x = startX; x < startX + width; x++) {
             int xFinal = x;
-            if (wrapX) {
-                xFinal = Util.Wrap(x, xDim);
+            if (IsWrapX()) {
+                xFinal = Util.Wrap(x, Xdim());
             }
             Action.Action(xFinal);
         }
@@ -104,14 +96,14 @@ public abstract class GridBase1D implements Serializable {
     /**
      * applies the action function to all positions in the neighborhood
      */
-    int ApplyHood(int[] hood, int centerX, IndexAction Action) {
+    default int ApplyHood(int[] hood, int centerX, IndexAction Action) {
         int ptCt = 0;
         int iStart = hood.length / 2;
         for (int i = iStart; i < hood.length; i++) {
             int x = hood[i] + centerX;
-            if (!Util.InDim(x, xDim)) {
-                if (wrapX) {
-                    x = Util.Wrap(x, xDim);
+            if (!Util.InDim(x, Xdim())) {
+                if (IsWrapX()) {
+                    x = Util.Wrap(x, Xdim());
                 } else {
                     continue;
                 }
@@ -125,7 +117,7 @@ public abstract class GridBase1D implements Serializable {
      * applies the action function to all positions in the neighborhood up to validCount, assumes the neighborhood is
      * already mapped
      */
-    void ApplyHoodMapped(int[] hood, int validCount, IndexAction Action) {
+    default void ApplyHoodMapped(int[] hood, int validCount, IndexAction Action) {
         for (int i = 0; i < validCount; i++) {
             Action.Action(hood[i]);
         }
@@ -136,16 +128,16 @@ public abstract class GridBase1D implements Serializable {
      * EvaluationFunctoin. this function should take as argument (i,x,y) of a location and return a boolean that decides
      * whether that location should be included as a valid one.
      */
-    public int MapHood(int[] hood, int centerX, Coords1DBool Eval) {
+    default public int MapHood(int[] hood, int centerX, Coords1DBool Eval) {
         //moves coordinates to be around origin
         //if any of the coordinates are outside the bounds, they will not be added
         int ptCt = 0;
         int iStart = hood.length / 2;
         for (int i = iStart; i < hood.length; i++) {
             int x = hood[i] + centerX;
-            if (!Util.InDim(x, xDim)) {
-                if (wrapX) {
-                    x = Util.Wrap(x, xDim);
+            if (!Util.InDim(x, Xdim())) {
+                if (IsWrapX()) {
+                    x = Util.Wrap(x, Xdim());
                 } else {
                     continue;
                 }
@@ -164,16 +156,16 @@ public abstract class GridBase1D implements Serializable {
      * returns the number of valid locations it set. this function differs from HoodToIs and CoordsToIs in that it takes
      * no ret[], MapHood instead puts the result of the mapping back into the hood array.
      */
-    public int MapHood(int[] hood, int centerX) {
+    default public int MapHood(int[] hood, int centerX) {
         //moves coordinates to be around origin
         //if any of the coordinates are outside the bounds, they will not be added
         int ptCt = 0;
         int iStart = hood.length / 2;
         for (int i = iStart; i < hood.length; i++) {
             int x = hood[i] + centerX;
-            if (!Util.InDim(x, xDim)) {
-                if (wrapX) {
-                    x = Util.Wrap(x, xDim);
+            if (!Util.InDim(x, Xdim())) {
+                if (IsWrapX()) {
+                    x = Util.Wrap(x, Xdim());
                 } else {
                     continue;
                 }
@@ -187,13 +179,13 @@ public abstract class GridBase1D implements Serializable {
     /**
      * returns whether a valid index exists in the neighborhood
      */
-    public boolean ContainsValidI(int[] hood, int centerX, IndexBool IsValid) {
+    default public boolean ContainsValidI(int[] hood, int centerX, IndexBool IsValid) {
         int iStart = hood.length / 2;
         for (int i = iStart; i < hood.length; i++) {
             int x = hood[i] + centerX;
-            if (!Util.InDim(x, xDim)) {
-                if (wrapX) {
-                    x = Util.Wrap(x, xDim);
+            if (!Util.InDim(x, Xdim())) {
+                if (IsWrapX()) {
+                    x = Util.Wrap(x, Xdim());
                 } else {
                     continue;
                 }
@@ -206,57 +198,19 @@ public abstract class GridBase1D implements Serializable {
     }
 
     /**
-     * gets a random index from the full neighborhood, if the index does not map, returns -1
-     */
-    public int RandomHoodIndex(int[]hood, int centerX, Rand rng){
-        int i=rng.Int(hood.length/2)+hood.length/2;
-        int x = hood[i] + centerX;
-        if (!Util.InDim(x, xDim)) {
-            if (wrapX) {
-                x = Util.Wrap(x, xDim);
-            } else {
-                return -1;
-            }
-        }
-        return x;
-    }
-
-
-    /**
      * returns the index of the center of the square in otherGrid that the coordinate maps to.
      */
-    public int ConvXsq(int x, GridBase1D other) {
-        return (int) (((x + 0.5) * other.xDim) / xDim);
+    default public int ConvXsq(int x, Grid1D other) {
+        return (int) (((x + 0.5) * other.Xdim()) / Xdim());
     }
 
     /**
      * returns the position that x rescales to in the other grid
      */
-    public double ConvXpt(double x, GridBase1D other) {
-        return x * other.xDim / xDim;
+    default public double ConvXpt(double x, Grid1D other) {
+        return x * other.Xdim() / Xdim();
     }
 
-    /**
-     * increments the internal grid tick counter by 1, used with the Age() and BirthTick() functions to get age
-     * information about the agents on an AgentGrid. can otherwise be used as a counter with the other grid types.
-     */
-    public void IncTick() {
-        tick++;
-    }
-
-    /**
-     * gets the current grid timestep.
-     */
-    public int GetTick() {
-        return tick;
-    }
-
-    /**
-     * sets the tick to 0.
-     */
-    public void ResetTick() {
-        tick = 0;
-    }
 
 //    /**
 //     * gets the indices of the squares that lie within a given radius of a position
@@ -285,11 +239,9 @@ public abstract class GridBase1D implements Serializable {
 //        return retCt;
 //    }
 
-    public GridBase1D(int xDim, boolean wrapX) {
-        this.xDim = xDim;
-        this.wrapX = wrapX;
-        this.length = xDim;
-    }
+    public int Xdim();
+    public int Length();
+    public boolean IsWrapX();
 
 }
 

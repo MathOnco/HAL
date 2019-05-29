@@ -1,12 +1,13 @@
-package Examples._5SpreadingAndMetastasis;
+package Examples._5Example3D;
 import Framework.GridsAndAgents.*;
-import Framework.Gui.GridWindow;
 import Framework.Gui.OpenGL3DWindow;
+import Framework.Interfaces.DoubleToInt;
 import Framework.Rand;
+import Framework.Util;
 
 import java.util.LinkedList;
 
-import static Examples._5SpreadingAndMetastasis.Example3D.*;
+import static Examples._5Example3D.Example3D.*;
 import static Framework.Util.*;
 
 class ExCell3D extends AgentSQ3D<Example3D>{
@@ -68,13 +69,19 @@ public class Example3D extends AgentGrid3D<ExCell3D> {
     final static int BACKGROUND_COLOR =RGB256(38,1,5), VESSEL_COLOR =RGB256(255,78,68);
     final static int VESSEL=0,TUMOR=1;
     double DIFF_RATE=0.5/6;//maximum stable diffusion rate
-    double TUMOR_METABOLISM_RATE =-0.02;
-    double NORMAL_METABOLISM_RATE =-0.003;
+    double TUMOR_METABOLISM_RATE =-0.04;
+    double NORMAL_METABOLISM_RATE =-0.005;
     double VESSEL_CONC=1;
     double DEATH_CONC=0.01;
     double METASTASIS_PROB=0.00001;
     double METASTASIS_CONC=0.3;
     int[]vnHood=VonNeumannHood3D(false);//3D von neuman neighborhood is of the form [x1,y1,z1,x2,y2,z2...]
+    int[]vnHood2D=Util.GenHood3D(new int[]{
+            1,0,0,
+            -1,0,0,
+            0,0,1,
+            0,0,-1,
+    });//3D von neuman neighborhood is of the form [x1,y1,z1,x2,y2,z2...]
     PDEGrid3D oxygen;
     Rand rn=new Rand();
     LinkedList<ExCell3D> vessels=new LinkedList<>();//used to make metastasis more efficient (and as an example)
@@ -103,7 +110,7 @@ public class Example3D extends AgentGrid3D<ExCell3D> {
         }
         DiffStep();
     }
-    public int GenVessels(double vesselSpacingMin){
+    public int GenVessels(double vesselSpacingMin,double migProb){
         //create a Grid to store the locations that are too close for placing another vessel
         Grid2Ddouble openSpots=new Grid2Ddouble(xDim,zDim);
         //create a neighborhood that defines all indices that are too close
@@ -115,7 +122,7 @@ public class Example3D extends AgentGrid3D<ExCell3D> {
             if(openSpots.Get(i)==0){
                 int x=openSpots.ItoX(i);
                 int y=openSpots.ItoY(i);
-                GenVessel(x,y);
+                GenVessel(x,y,migProb);
                 vesselCt++;
                 int nSpots=openSpots.MapHood(vesselSpacingHood,x,y);
                 for (int j = 0; j < nSpots; j++) {
@@ -126,7 +133,7 @@ public class Example3D extends AgentGrid3D<ExCell3D> {
         }
         return vesselCt;
     }
-    public void DrawCells(OpenGL3DWindow vis){
+    public void DrawCells(OpenGL3DWindow vis, DoubleToInt DrawConcs){
         vis.ClearBox(BACKGROUND_COLOR,RGB(1,0,0));//used to clear gui
         for (ExCell3D cellOrVessel : this) {
             switch (cellOrVessel.type){
@@ -134,16 +141,38 @@ public class Example3D extends AgentGrid3D<ExCell3D> {
                 case TUMOR: vis.Circle(cellOrVessel.Xpt(),cellOrVessel.Ypt(),cellOrVessel.Zpt(),0.3,HeatMapBRG(Math.pow(oxygen.Get(cellOrVessel.Isq()),0.5)*0.8+0.2));
             }
         }
+        if(DrawConcs!=null){
+            for (int x = 0; x < oxygen.xDim; x++) {
+                for (int z = 0; z < oxygen.zDim; z++) {
+                    double oxygenSum=0;
+                    //add column to avgConcs
+                    for (int y = 0; y < oxygen.yDim; y++) {
+                        oxygenSum+=oxygen.Get(x,y,z);
+                    }
+                    oxygenSum/=oxygen.yDim;
+                    vis.SetPixXZ(x,z,DrawConcs.DoubleToInt(oxygenSum));
+                }
+            }
+        }
         vis.Update();
     }
-    public void GenVessel(int x,int z){
+    public void DrawConcs(OpenGL3DWindow vis){
+
+    }
+    public void GenVessel(int x,int z,double migProb) {
         for (int y = 0; y < yDim; y++) {
             //clear out any agents that are in the path of the vessel
-            ExCell3D occupant=GetAgent(x,y,z);
-            if(occupant!=null){
+            if (rn.Double() < migProb) {
+                int openCt = MapHood(vnHood2D, x, y, z);
+                int i = vnHood2D[rn.Int(openCt)];
+                x=ItoX(i);
+                z=ItoZ(i);
+            }
+            ExCell3D occupant = GetAgent(x, y, z);
+            if (occupant != null) {
                 occupant.Dispose();
             }
-            NewAgentSQ(x,y,z).InitVessel();
+            NewAgentSQ(x, y, z).InitVessel();
         }
     }
     public void GenCells(int initPopSize){
@@ -162,23 +191,24 @@ public class Example3D extends AgentGrid3D<ExCell3D> {
         }
     }
     public static void main(String[] args) {
-        int x=150,y=150,z=4;
+        int x=80,y=80,z=20;
         Example3D ex=new Example3D(x,z,y);
-        ex.GenVessels(20);
+        ex.GenVessels(15,0.8);
         //Diffuse to steady state
         for (int i = 0; i < 100; i++) {
             ex.DiffStep();
         }
-        GridWindow visResource=new GridWindow(x,y,5);
-        OpenGL3DWindow vis=new OpenGL3DWindow("TumorVis", 500,500,x,z,y);
+        //GridWindow visResource=new GridWindow(x,y,5);
+        OpenGL3DWindow vis=new OpenGL3DWindow("TumorVis", 1000,1000,x,z,y);
         while (!vis.IsClosed()){
             ex.StepAll();
-            ex.DrawCells(vis);
-            visResource.DrawPDEGridXZ(ex.oxygen, (val)->HeatMapBRG(Math.pow(val,0.5)));
+            ex.DrawCells(vis, Util::HeatMapRGB);
+            //visResource.DrawPDEGridXZ(ex.oxygen, (val)->HeatMapBRG(Math.pow(val,0.5)));
             ex.CleanAgents();//Equivalent to calling CleanAgents, ShuffleAgents, and IncTick grid functions
             ex.ShuffleAgents(ex.rn);//Equivalent to calling CleanAgents, ShuffleAgents, and IncTick grid functions
+            vis.TickPause(100);
         }
         vis.Close();
-        visResource.Close();
+        //visResource.Close();
     }
 }

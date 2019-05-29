@@ -26,6 +26,7 @@ import java.util.concurrent.Executors;
 public final class Util {
 
     public static final double DOUBLE_EPSILON = 2.22E-16;
+    private static Scanner inputReader=null;
 
     /**
      * returns a color integer based on the RGB components passed in. color values should be scaled from 0 to 1
@@ -1968,12 +1969,12 @@ public final class Util {
     }
 
     /**
-     * adjusts probability that an event will occur in 1 unit of time to the probability that the event will occur in
-     * timeFraction duration
+     * adjusts probability that an event will occur in 1 unit of time to the probability that the event will occur at
+     * least once over the duration
      *
      * @param prob     probability that an event occurs in 1 unit of time
      * @param duration duration in units of time over which event may occur
-     * @return the probability that the event will occur in timeFraction
+     * @return the probability that the event will occur at least once over the duration
      */
     public static double ProbScale(double prob, double duration) {
         return 1.0f - (Math.pow(1.0 - prob, duration));
@@ -2134,6 +2135,13 @@ public final class Util {
             }
         }
         return null;
+    }
+
+    public static String UserInput(){
+        if(inputReader==null){
+            inputReader=new Scanner(System.in);
+        }
+        return inputReader.nextLine();
     }
 
     /**

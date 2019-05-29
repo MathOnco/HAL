@@ -1,15 +1,16 @@
-package Examples._6CompetitiveRelease;
+package Examples.CompetitiveReleasePerformanceTest;
 
-        import Framework.GridsAndAgents.AgentGrid2D;
-        import Framework.GridsAndAgents.PDEGrid2D;
-        import Framework.Gui.GridWindow;
-        import Framework.GridsAndAgents.AgentSQ2Dunstackable;
-        import Framework.Gui.PlotWindow;
-        import Framework.Tools.FileIO;
-        import Framework.Rand;
+import Framework.GridsAndAgents.AgentGrid2D;
+import Framework.GridsAndAgents.AgentSQ2Dunstackable;
+import Framework.GridsAndAgents.PDEGrid2D;
+import Framework.Gui.GridWindow;
+import Framework.Rand;
+import Framework.Util;
 
-        import static Examples._6CompetitiveRelease.ExampleModel.*;
-        import static Framework.Util.*;
+import java.util.Scanner;
+
+import static Examples._6CompetitiveRelease.ExampleModel.RESISTANT;
+import static Framework.Util.*;
 
 public class ExampleModel extends AgentGrid2D<ExampleCell> {
     //model constants
@@ -26,6 +27,7 @@ public class ExampleModel extends AgentGrid2D<ExampleCell> {
     public double DRUG_UPTAKE = -0.03 *TIMESTEP;
     public double DRUG_DEATH = ProbScale(0.8,TIMESTEP);
     public double DRUG_BOUNDARY_VAL = 1.0;
+    //public double DRUG_UPTAKE = 0;
     //internal model objects
     public PDEGrid2D drug;
     public Rand rn;
@@ -38,54 +40,29 @@ public class ExampleModel extends AgentGrid2D<ExampleCell> {
     }
 
     public static void main(String[] args) {
-        int x = 100, y = 100, visScale = 5, tumorRad = 10, msPause = 5;
+        int x = 150, y = 150, visScale = 5, tumorRad = 10, msPause = 5;
+        //GridWindow win=new GridWindow(x,y,5);
         double resistantProp = 0.5;
-        GridWindow win = new GridWindow("Competitive Release", x*3, y, visScale,true);
-        PlotWindow plot=new PlotWindow("Tumor Burden Over Time",250,250,2);
-        ExampleModel[] models = new ExampleModel[3];
-        FileIO popsOut=new FileIO("populations.csv","w");
-        for (int i = 0; i < models.length; i++) {
-            models[i]=new ExampleModel(x,y,new Rand(0));
-            models[i].InitTumor(tumorRad, resistantProp);
-        }
-        models[0].DRUG_DURATION =0;
-        models[1].DRUG_DURATION =models[1].DRUG_PERIOD;
+        ExampleModel m=new ExampleModel(x,y,new Rand(0));
+        m.DRUG_START=0;
+        m.DRUG_DURATION=m.DRUG_PERIOD;
+        m.InitTumor();
         //Main run loop
-        for (int tick = 0; tick < 10000; tick++) {
-            win.TickPause(msPause);
-            for (int i = 0; i < models.length; i++) {
-                models[i].ModelStep(tick);
-                models[i].DrawModel(win,i);
-            }
-            //data recording
-            popsOut.Write(models[0].Pop()+","+models[1].Pop()+","+models[2].Pop()+"\n");
-            plot.AddPoint(tick,models[0].Pop(),RED);
-            plot.AddPoint(tick,models[1].Pop(),BLUE);
-            plot.AddPoint(tick,models[2].Pop(),GREEN);
-            if(tick%(int)(10/models[0].TIMESTEP)==0) {
-                win.ToPNG("ModelsDay" +tick*models[0].TIMESTEP+".png");
-            }
-        }
-        popsOut.Close();
-        win.Close();
-    }
-
-    public void InitTumor(int radius, double resistantProb) {
-        //get a list of indices that fill a circle at the center of the grid
-        int[] tumorNeighborhood = CircleHood(true, radius);
-        int hoodSize=MapHood(tumorNeighborhood,xDim/2,yDim/2);
-        for (int i = 0; i < hoodSize; i++) {
-            NewAgentSQ(tumorNeighborhood[i]).type = rn.Double() < resistantProb ? RESISTANT : SENSITIVE;
+        UserInput();
+        for (int tick = 0; tick < 100000; tick++) {
+            m.ModelStep(tick);
+            //m.DrawModel(win,0);
+            //win.TickPause(10);
         }
     }
 
-    public void ModelStep(int tick) {
-        ShuffleAgents(rn);
-        for (ExampleCell cell : this) {
-            cell.CellStep();
+    public void InitTumor() {
+        for (int i = 0; i < length; i++) {
+            NewAgentSQ(i).type=RESISTANT;
         }
- //       drug.Update();
-        //check if drug should enter through the boundaries
+    }
+
+    public void DiffusionStep(int tick){
         if (tick > DRUG_START && (tick - DRUG_START) % DRUG_PERIOD < DRUG_DURATION) {
             drug.DiffusionADI(DRUG_DIFF_RATE, DRUG_BOUNDARY_VAL);
         } else {
@@ -93,15 +70,28 @@ public class ExampleModel extends AgentGrid2D<ExampleCell> {
         }
         drug.Update();
     }
+    public void StepAllCells(int tick){
+        ShuffleAgents(rn);
+        for (ExampleCell cell : this) {
+            cell.CellStep();
+        }
+    }
+
+    public void ModelStep(int tick) {
+        StepAllCells(tick);
+        DiffusionStep(tick);
+    }
 
     public void DrawModel(GridWindow vis, int iModel) {
         for (int i = 0; i < length; i++) {
             ExampleCell drawMe = GetAgent(i);
             //if the cell does not exist, draw the drug concentration
             vis.SetPix(ItoX(i)+iModel*xDim,ItoY(i), drawMe == null ? HeatMapRGB(drug.Get(i)) : drawMe.type);
+            //vis.SetPix(i,HeatMapRGB(drug.Get(i)));
         }
     }
 }
+
 class ExampleCell extends AgentSQ2Dunstackable<ExampleModel> {
     public int type;
 

@@ -1,5 +1,7 @@
 package Framework.GridsAndAgents;
 import Framework.Interfaces.Coords2DDouble;
+import Framework.Interfaces.DoubleArrayToVoid;
+import Framework.Interfaces.VoidFunction;
 import Framework.Tools.Internal.PDEequations;
 import Framework.Util;
 
@@ -37,6 +39,13 @@ public class PDEGrid2D extends GridBase2D implements Serializable {
         deltas = new double[this.xDim * this.yDim];
     }
 
+    public double[]GetField(){
+        return field;
+    }
+    public double[]GetDeltas(){
+        return deltas;
+    }
+
     /**
      * runs diffusion on the current field using the ADI (alternating direction implicit) method. without a
      * boundaryValue argument, a zero flux boundary is imposed. wraparound will not work with ADI. ADI is numerically
@@ -63,6 +72,39 @@ public class PDEGrid2D extends GridBase2D implements Serializable {
         EnsureScratchF1();
         EnsureScratchF2();
         DiffusionADI2(true, field, scratchField1, scratch, xDim, yDim, diffCoef / 2, true, boundaryValue);
+        DiffusionADI2(false, scratchField1, scratchField2, scratch, xDim, yDim, diffCoef / 2, true, boundaryValue);
+        for (int i = 0; i < length; i++) {
+            deltas[i]+=scratchField2[i]-field[i];
+        }
+    }
+    /**
+     * runs diffusion on the current field using the ADI (alternating direction implicit) method. without a
+     * boundaryValue argument, a zero flux boundary is imposed. wraparound will not work with ADI. ADI is numerically
+     * stable at any diffusion rate.
+     */
+    public void DiffusionADI(double diffCoef, DoubleArrayToVoid BetweenAction) {
+        EnsureScratch();
+        EnsureScratchF1();
+        EnsureScratchF2();
+        DiffusionADI2(true, field, scratchField1, scratch, xDim, yDim, diffCoef / 2, false, 0);
+        BetweenAction.Action(scratchField1);
+        DiffusionADI2(false, scratchField1, scratchField2, scratch, xDim, yDim, diffCoef / 2, false, 0);
+        for (int i = 0; i < length; i++) {
+            deltas[i]+=scratchField2[i]-field[i];
+        }
+    }
+
+    /**
+     * runs diffusion on the current field using the ADI (alternating direction implicit) method. ADI is numerically
+     * stable at any diffusion rate. Adding a boundary value to the function call will cause boundary conditions to be
+     * imposed.
+     */
+    public void DiffusionADI(double diffCoef, double boundaryValue, DoubleArrayToVoid BetweenAction) {
+        EnsureScratch();
+        EnsureScratchF1();
+        EnsureScratchF2();
+        DiffusionADI2(true, field, scratchField1, scratch, xDim, yDim, diffCoef / 2, true, boundaryValue);
+        BetweenAction.Action(scratchField1);
         DiffusionADI2(false, scratchField1, scratchField2, scratch, xDim, yDim, diffCoef / 2, true, boundaryValue);
         for (int i = 0; i < length; i++) {
             deltas[i]+=scratchField2[i]-field[i];

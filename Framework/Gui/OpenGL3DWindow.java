@@ -1,5 +1,6 @@
 package Framework.Gui;
 
+import Framework.GridsAndAgents.GridBase3D;
 import Framework.Interfaces.ColorIntGenerator;
 import Framework.Util;
 import org.lwjgl.BufferUtils;
@@ -21,7 +22,7 @@ import static org.lwjgl.opengl.GL11.*;
 /**
  * Created by rafael on 5/28/17.
  */
-public class OpenGL3DWindow {
+public class OpenGL3DWindow extends GridBase3D {
     final boolean active;
     public final int xDim;
     public final int yDim;
@@ -49,6 +50,7 @@ public class OpenGL3DWindow {
      * @param active if set to false, the OpenGL2DWindow will not actually render and its methods will be skipped (default true)
      */
     public OpenGL3DWindow(String title, int xPix, int yPix, int xDim, int yDim, int zDim, boolean active) {
+        super(xDim,yDim,zDim,false,false,false);
         this.active = active;
         int maxDim = Math.max(xDim, yDim);
         this.maxDim = Math.max(maxDim, zDim);
@@ -243,6 +245,53 @@ public class OpenGL3DWindow {
             }
             glEnd();
             glPopMatrix();
+        }
+    }
+    public void SetPixXY(int x,int y,int color){
+        RectangleXY(x,y,x+1,y+1,zDim,color);
+    }
+
+    public void SetPixXZ(int x,int z,int color){
+        RectangleXZ(x,z,x+1,z+1,0,color);
+    }
+
+    public void SetPixYZ(int y,int z,int color){
+        RectangleYZ(y,z,y+1,z+1,0,color);
+    }
+    /**
+     * draws a rectangle between (x1,y1,z) and (x2,y2,z)
+     */
+    public void RectangleXY(double x1, double y1, double x2, double y2, double z, int color) {
+        if (active) {
+            glColor4f((float) GetRed(color), (float) GetGreen(color), (float) GetBlue(color), (float) GetAlpha(color));
+            glBegin(GL_QUADS);
+            glVertex3f((float) x1+trans, (float) y1+trans,(float)-z+trans);
+            glVertex3f((float) x2+trans, (float) y1+trans,(float)-z+trans);
+            glVertex3f((float) x2+trans, (float) y2+trans,(float)-z+trans);
+            glVertex3f((float) x1+trans, (float) y2+trans,(float)-z+trans);
+            glEnd();
+        }
+    }
+    public void RectangleXZ(double x1, double z1, double x2, double z2, double y, int color) {
+        if (active) {
+            glColor4f((float) GetRed(color), (float) GetGreen(color), (float) GetBlue(color), (float) GetAlpha(color));
+            glBegin(GL_QUADS);
+            glVertex3f((float) x1+trans, (float) y+trans,(float)-z1+trans);
+            glVertex3f((float) x2+trans, (float) y+trans,(float)-z1+trans);
+            glVertex3f((float) x2+trans, (float) y+trans,(float)-z2+trans);
+            glVertex3f((float) x1+trans, (float) y+trans,(float)-z2+trans);
+            glEnd();
+        }
+    }
+    public void RectangleYZ(double y1, double z1, double y2, double z2, double x, int color) {
+        if (active) {
+            glColor4f((float) GetRed(color), (float) GetGreen(color), (float) GetBlue(color), (float) GetAlpha(color));
+            glBegin(GL_QUADS);
+            glVertex3f((float) x+trans, (float) y1+trans,(float)-z1+trans);
+            glVertex3f((float) x+trans, (float) y1+trans,(float)-z2+trans);
+            glVertex3f((float) x+trans, (float) y2+trans,(float)-z2+trans);
+            glVertex3f((float) x+trans, (float) y2+trans,(float)-z1+trans);
+            glEnd();
         }
     }
 

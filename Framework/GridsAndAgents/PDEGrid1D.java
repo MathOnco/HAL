@@ -32,7 +32,12 @@ public class PDEGrid1D extends GridBase1D implements Serializable {
         field = new double[this.xDim];
         deltas = new double[this.xDim];
     }
-
+    public double[]GetField(){
+        return field;
+    }
+    public double[]GetDeltas(){
+        return deltas;
+    }
     /**
      * gets the prev field value at the specified coordinates
      */
@@ -44,7 +49,7 @@ public class PDEGrid1D extends GridBase1D implements Serializable {
      * sets the prev field value at the specified coordinates
      */
     public void Set(int x, double val) {
-        deltas[x] = val;
+        deltas[x] = val-field[x];
     }
 
     /**

@@ -37,7 +37,12 @@ public class PDEGrid3D extends GridBase3D implements Serializable {
         deltas = new double[numElements];
         scratch = null;
     }
-
+    public double[]GetField(){
+        return field;
+    }
+    public double[]GetDeltas(){
+        return deltas;
+    }
     /**
      * gets to the current field value at the specified coordinates
      */

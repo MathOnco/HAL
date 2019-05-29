@@ -1,11 +1,9 @@
 *
 # only allow scource files
-!Framework/*
-!LEARN_HERE/*
-!Testing/*
-!Raf/*
-!Examples/*
-!Testing/*
+!Framework/**
+!LEARN_HERE/**
+!Testing/**
+!Examples/**
 !.gitignore
 !HalColorSchemes.jar
 !manual.pdf
