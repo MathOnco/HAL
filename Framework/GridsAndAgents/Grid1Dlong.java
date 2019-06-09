@@ -1,5 +1,6 @@
 package Framework.GridsAndAgents;
 
+import Framework.Interfaces.Grid1D;
 import Framework.Tools.Internal.PDEequations;
 import Framework.Util;
 
@@ -9,14 +10,19 @@ import java.util.Arrays;
 /**
  * a 1D Grid of longs
  */
-public class Grid1Dlong extends GridBase1D implements Serializable {
+public class Grid1Dlong implements Grid1D,Serializable {
+    final public int xDim;
+    final public int length;
+    public boolean wrapX;
     long[] field;
 
     /**
      * creates a new Grid1Dlong of length xDim without wraparound
      */
     public Grid1Dlong(int xDim) {
-        super(xDim, false);
+        this.xDim=xDim;
+        this.length=xDim;
+        this.wrapX=false;
         field = new long[this.xDim];
     }
 
@@ -24,8 +30,8 @@ public class Grid1Dlong extends GridBase1D implements Serializable {
      * creates a new Grid1Dlong of length xDim with optional wraparound
      */
     public Grid1Dlong(int xDim, boolean wrapX) {
-        super(xDim, wrapX);
-        field = new long[this.xDim];
+        this(xDim);
+        this.wrapX=wrapX;
     }
 
     /**
@@ -137,5 +143,20 @@ public class Grid1Dlong extends GridBase1D implements Serializable {
             min = Math.min(Get(i), min);
         }
         return min;
+    }
+
+    @Override
+    public int Xdim() {
+        return xDim;
+    }
+
+    @Override
+    public int Length() {
+        return length;
+    }
+
+    @Override
+    public boolean IsWrapX() {
+        return wrapX;
     }
 }

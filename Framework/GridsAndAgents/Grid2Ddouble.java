@@ -1,6 +1,7 @@
 package Framework.GridsAndAgents;
 
 import Framework.Interfaces.DoubleToDouble;
+import Framework.Interfaces.Grid2D;
 import Framework.Tools.Internal.PDEequations;
 import Framework.Util;
 
@@ -11,22 +12,30 @@ import java.util.Arrays;
 /**
  * a 2D Grid of doubles
  */
-public class Grid2Ddouble extends GridBase2D implements Serializable {
+public class Grid2Ddouble implements Grid2D,Serializable {
+    final public int xDim;
+    final public int yDim;
+    final public int length;
+    public boolean wrapX;
+    public boolean wrapY;
     double[] field;
 
     /**
      * creates a new Grid2Ddouble of length xDim without wraparound
      */
     public Grid2Ddouble(int xDim, int yDim) {
-        super(xDim, yDim, false, false);
-        field = new double[this.xDim * this.yDim];
+        this(xDim,yDim,false,false);
     }
 
     /**
      * creates a new Grid2Ddouble of length xDim with optional wraparound
      */
     public Grid2Ddouble(int xDim, int yDim, boolean wrapX, boolean wrapY) {
-        super(xDim, yDim, wrapX, wrapY);
+        this.xDim=xDim;
+        this.yDim=yDim;
+        this.length=xDim*yDim;
+        this.wrapX=wrapX;
+        this.wrapY=wrapY;
         field = new double[this.xDim * this.yDim];
     }
 
@@ -203,5 +212,30 @@ public class Grid2Ddouble extends GridBase2D implements Serializable {
         double down = PDEequations.DisplacedY2D(field,x,y-1, xDim, yDim, wrapX,(X,Y)->boundaryCond);
         double up = PDEequations.DisplacedY2D(field,x, y+1, xDim, yDim,wrapX,(X,Y)->boundaryCond);
         return up - down;
+    }
+
+    @Override
+    public int Xdim() {
+        return xDim;
+    }
+
+    @Override
+    public int Ydim() {
+        return yDim;
+    }
+
+    @Override
+    public int Length() {
+        return length;
+    }
+
+    @Override
+    public boolean IsWrapX() {
+        return wrapX;
+    }
+
+    @Override
+    public boolean IsWrapY() {
+        return wrapY;
     }
 }

@@ -1,5 +1,6 @@
 package Framework.GridsAndAgents;
 
+import Framework.Interfaces.Grid2D;
 import Framework.Util;
 
 import java.io.Serializable;
@@ -9,22 +10,30 @@ import java.util.Arrays;
 /**
  * a 2D Grid of longs
  */
-public class Grid2Dlong extends GridBase2D implements Serializable {
+public class Grid2Dlong implements Grid2D,Serializable {
+    final public int xDim;
+    final public int yDim;
+    final public int length;
+    public boolean wrapX;
+    public boolean wrapY;
     long[] field;
 
     /**
      * creates a new Grid2Dlong of dimensions xDim by yDim without wraparound
      */
     public Grid2Dlong(int xDim, int yDim) {
-        super(xDim, yDim, false, false);
-        field = new long[this.xDim * this.yDim];
+        this(xDim,yDim,false,false);
     }
 
     /**
      * creates a new Grid2Dlong of dimensions xDim by yDim with optional wraparound
      */
     public Grid2Dlong(int xDim, int yDim, boolean wrapX, boolean wrapY) {
-        super(xDim, yDim, wrapX, wrapY);
+        this.xDim=xDim;
+        this.yDim=yDim;
+        this.length=xDim*yDim;
+        this.wrapX=wrapX;
+        this.wrapY=wrapY;
         field = new long[this.xDim * this.yDim];
     }
 
@@ -160,6 +169,31 @@ public class Grid2Dlong extends GridBase2D implements Serializable {
             min = Math.min(Get(i), min);
         }
         return min;
+    }
+
+    @Override
+    public int Xdim() {
+        return xDim;
+    }
+
+    @Override
+    public int Ydim() {
+        return yDim;
+    }
+
+    @Override
+    public int Length() {
+        return length;
+    }
+
+    @Override
+    public boolean IsWrapX() {
+        return wrapX;
+    }
+
+    @Override
+    public boolean IsWrapY() {
+        return wrapY;
     }
 
 //    public Grid2Ddouble DotProduct(Grid2Ddouble rightMatrix){

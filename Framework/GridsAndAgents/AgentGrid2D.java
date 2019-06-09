@@ -16,7 +16,13 @@ import static Framework.Util.Norm;
  * AgentGrid2Ds can hold any type of 2D Agent
  * @param <T> the type of agent that the AgentGrid2D will hold
  */
-public class AgentGrid2D<T extends AgentBaseSpatial> extends GridBase2D implements Iterable<T>,Serializable {
+public class AgentGrid2D<T extends AgentBaseSpatial> implements Grid2D,Iterable<T>,Serializable {
+    final public int xDim;
+    final public int yDim;
+    final public int length;
+    public boolean wrapX;
+    public boolean wrapY;
+    int tick;
     InternalGridAgentList<T> agents;
     T[] grid;
     ArrayList<ArrayList<T>> usedAgentSearches = new ArrayList<>();
@@ -32,7 +38,12 @@ public class AgentGrid2D<T extends AgentBaseSpatial> extends GridBase2D implemen
      * boundary
      */
     public AgentGrid2D(int x, int y, Class<T> agentClass, boolean wrapX, boolean wrapY) {
-        super(x, y, wrapX, wrapY);
+        this.xDim=x;
+        this.yDim=y;
+        this.length=xDim*yDim;
+        this.wrapX=wrapX;
+        this.wrapY=wrapY;
+        this.tick=0;
         //creates a new typeGrid with given dimensions
         agents = new InternalGridAgentList<T>(agentClass, this);
         grid = (T[]) new AgentBaseSpatial[length];
@@ -1093,6 +1104,31 @@ public class AgentGrid2D<T extends AgentBaseSpatial> extends GridBase2D implemen
         return agents.GetNewAgent(tick);
     }
 
+    @Override
+    public int Xdim() {
+        return xDim;
+    }
+
+    @Override
+    public int Ydim() {
+        return yDim;
+    }
+
+    @Override
+    public int Length() {
+        return length;
+    }
+
+    @Override
+    public boolean IsWrapX() {
+        return wrapX;
+    }
+
+    @Override
+    public boolean IsWrapY() {
+        return wrapY;
+    }
+
 
     private class AgentsIterator2D implements Iterator<T>, Iterable<T>, Serializable {
         final AgentGrid2D<T> myGrid;
@@ -1132,6 +1168,30 @@ public class AgentGrid2D<T extends AgentBaseSpatial> extends GridBase2D implemen
             return this;
         }
     }
+
+
+    /**
+     * increments the internal grid tick counter by 1, used with the Age() and BirthTick() functions to get age
+     * information about the agents on an AgentGrid. can otherwise be used as a counter with the other grid types.
+     */
+    public void IncTick() {
+        tick++;
+    }
+
+    /**
+     * gets the current grid timestep.
+     */
+    public int GetTick() {
+        return tick;
+    }
+
+    /**
+     * sets the tick to 0.
+     */
+    public void ResetTick() {
+        tick = 0;
+    }
+
 //    void RemAgentFromSquare(T agent,int iGrid){
 //        //internal function, removes agent from typeGrid square
 //        if(typeGrid[iGrid]==agent){

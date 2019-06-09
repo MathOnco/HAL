@@ -78,7 +78,7 @@ public class MetabolismCell<A extends MetabolismCell,G extends MetabolismGrid<A>
             return iChosen;
         }
         if (type==CANCER) {
-            int iVessel = G.RandomHoodIndex(G.mooreHood,Xsq(),Ysq(),G.rn);
+            int iVessel = G.RandomHoodI(G.mooreHood,Xsq(),Ysq(),G.rn);
             if(iVessel>0){
                 MetabolismCell v=G.GetAgent(iVessel);
                 if(v!=null&&v.type==VESSEL){

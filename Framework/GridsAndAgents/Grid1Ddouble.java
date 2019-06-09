@@ -1,5 +1,6 @@
 package Framework.GridsAndAgents;
 
+import Framework.Interfaces.Grid1D;
 import Framework.Tools.Internal.PDEequations;
 import Framework.Util;
 
@@ -9,14 +10,19 @@ import java.util.Arrays;
 /**
  * a 1D Grid of doubles
  */
-public class Grid1Ddouble extends GridBase1D implements Serializable {
+public class Grid1Ddouble implements Grid1D,Serializable {
+    final public int xDim;
+    final public int length;
+    boolean wrapX;
     double[] field;
 
     /**
      * creates a new Grid1Ddouble of length xDim without wraparound
      */
     public Grid1Ddouble(int xDim) {
-        super(xDim, false);
+        this.xDim=xDim;
+        this.length=xDim;
+        this.wrapX=false;
         field = new double[this.xDim];
     }
 
@@ -24,8 +30,8 @@ public class Grid1Ddouble extends GridBase1D implements Serializable {
      * creates a new Grid1Ddouble of length xDim with optional wraparound
      */
     public Grid1Ddouble(int xDim, boolean wrapX) {
-        super(xDim, wrapX);
-        field = new double[this.xDim];
+        this(xDim);
+        this.wrapX=wrapX;
     }
 
     /**
@@ -157,5 +163,20 @@ public class Grid1Ddouble extends GridBase1D implements Serializable {
         double left = PDEequations.Displaced1D(field,x-1, xDim, wrapX,(X)->boundaryCond);
         double right = PDEequations.Displaced1D(field,x + 1, xDim,wrapX,(X)->boundaryCond);
         return right-left;
+    }
+
+    @Override
+    public int Xdim() {
+        return 0;
+    }
+
+    @Override
+    public int Length() {
+        return 0;
+    }
+
+    @Override
+    public boolean IsWrapX() {
+        return false;
     }
 }

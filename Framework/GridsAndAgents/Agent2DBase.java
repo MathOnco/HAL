@@ -38,36 +38,36 @@ public abstract class Agent2DBase<T extends AgentGrid2D> extends AgentBaseSpatia
     /**
      * returns the index of the center of the square in otherGrid that the coordinate maps to.
      */
-    public int ConvXsq(GridBase2D other) {
-        return (int) (((Xsq() + 0.5) * other.xDim) / G.xDim);
+    public int MapXsq(Grid2D other) {
+        return (int) (((Xsq() + 0.5) * other.Xdim()) / G.xDim);
     }
 
     /**
      * returns the index of the center of the square in otherGrid that the coordinate maps to.
      */
-    public int ConvYsq(GridBase2D other) {
-        return (int) (((Ysq() + 0.5) * other.yDim) / G.yDim);
+    public int MapYsq(Grid2D other) {
+        return (int) (((Ysq() + 0.5) * other.Ydim()) / G.yDim);
     }
 
     /**
      * returns the index of the center of the square in otherGrid that the coordinate maps to.
      */
-    public int ConvI(GridBase2D other) {
-        return other.I(ConvXsq(other), ConvYsq(other));
+    public int MapI(Grid2D other) {
+        return other.I(MapXsq(other), MapYsq(other));
     }
 
     /**
      * returns the provided coordinate scaled to the dimensions of the otherGrid.
      */
-    public double ConvXpt(GridBase2D other) {
-        return Xpt() * other.xDim / G.xDim;
+    public double MapXpt(Grid2D other) {
+        return Xpt() * other.Xdim() / G.xDim;
     }
 
     /**
      * returns the provided coordinate scaled to the dimensions of the otherGrid.
      */
-    public double ConvYpt(GridBase2D other) {
-        return Ypt() * other.yDim / G.yDim;
+    public double MapYpt(Grid2D other) {
+        return Ypt() * other.Ydim() / G.yDim;
     }
 
     /**

@@ -9,7 +9,6 @@ import java.io.Serializable;
  */
 
 
-//TODO: TEST!!!
 public class Gaussian implements Serializable{
     double V1=0,V2=0,S=0,phase=0;
     public double Sample(double mean, double stdDev, Rand rn) {

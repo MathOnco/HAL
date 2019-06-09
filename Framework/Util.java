@@ -755,6 +755,9 @@ public final class Util {
         val = Util.Bound(val, 0, 1);
         return (max - min) * val + min;
     }
+    public static double InterpolateNoBound(double val, double min, double max) {
+        return (max - min) * val + min;
+    }
 
 //    /**
 //     * interpolates value from 0 to 1 to be between min and max
@@ -771,6 +774,11 @@ public final class Util {
     public static double Interpolate2D(double x, double y, double bottomLeft, double bottomRight, double topLeft, double topRight) {
         x = Util.Bound(x, 0, 1);
         y = Util.Bound(y, 0, 1);
+        double bottom = (bottomRight - bottomLeft) * x + bottomLeft;
+        double top = (topRight - topLeft) * x + topLeft;
+        return (top - bottom) * y + bottom;
+    }
+    public static double Interpolate2DNoBound(double x, double y, double bottomLeft, double bottomRight, double topLeft, double topRight) {
         double bottom = (bottomRight - bottomLeft) * x + bottomLeft;
         double top = (topRight - topLeft) * x + topLeft;
         return (top - bottom) * y + bottom;
@@ -2137,7 +2145,7 @@ public final class Util {
         return null;
     }
 
-    public static String UserInput(){
+    public static String AwaitInput(){
         if(inputReader==null){
             inputReader=new Scanner(System.in);
         }

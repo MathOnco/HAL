@@ -2,6 +2,7 @@ package Framework.GridsAndAgents;
 
 import Framework.Interfaces.AgentRadDispToAction1D;
 import Framework.Interfaces.AgentToBool;
+import Framework.Interfaces.Grid1D;
 import Framework.Rand;
 import Framework.Util;
 
@@ -15,13 +16,17 @@ import java.util.List;
  * AgentGrid1Ds can hold any type of 1D agent
  * @param <T> the type of agent that the AgentGrid1D will hold
  */
-public class AgentGrid1D<T extends AgentBaseSpatial> extends GridBase1D implements Iterable<T>,Serializable {
+public class AgentGrid1D<T extends AgentBaseSpatial> implements Grid1D,Iterable<T>,Serializable {
+    final public int xDim;
+    final public int length;
+    public boolean wrapX;
     InternalGridAgentList<T> agents;
     T[] grid;
     ArrayList<ArrayList<T>> usedAgentSearches = new ArrayList<>();
     ArrayList<AgentsIterator1D> usedIterIs = new ArrayList<>();
     final int[] counts;
     final double moveSafeXdim;
+    int tick;
 
     /**
      * pass to the constructor the dimensions of the grid and the agent class type, written T.type where T is the name
@@ -29,8 +34,11 @@ public class AgentGrid1D<T extends AgentBaseSpatial> extends GridBase1D implemen
      * boundary
      */
     public AgentGrid1D(int x, Class<T> agentClass, boolean wrapX) {
-        super(x, wrapX);
         //creates a new typeGrid with given dimensions
+        this.xDim=x;
+        this.length=x;
+        this.wrapX=wrapX;
+        this.tick=0;
         agents = new InternalGridAgentList<T>(agentClass, this);
         grid = (T[]) new AgentBaseSpatial[length];
         counts = new int[length];
@@ -855,6 +863,21 @@ public class AgentGrid1D<T extends AgentBaseSpatial> extends GridBase1D implemen
         return agents.GetNewAgent(tick);
     }
 
+    @Override
+    public int Xdim() {
+        return xDim;
+    }
+
+    @Override
+    public int Length() {
+        return length;
+    }
+
+    @Override
+    public boolean IsWrapX() {
+        return wrapX;
+    }
+
     private class AgentsIterator1D implements Iterator<T>, Iterable<T>, Serializable {
         final AgentGrid1D<T> myGrid;
         ArrayList<T> myAgents;
@@ -893,6 +916,29 @@ public class AgentGrid1D<T extends AgentBaseSpatial> extends GridBase1D implemen
             return this;
         }
     }
+
+    /**
+     * increments the internal grid tick counter by 1, used with the Age() and BirthTick() functions to get age
+     * information about the agents on an AgentGrid. can otherwise be used as a counter with the other grid types.
+     */
+    public void IncTick() {
+        tick++;
+    }
+
+    /**
+     * gets the current grid timestep.
+     */
+    public int GetTick() {
+        return tick;
+    }
+
+    /**
+     * sets the tick to 0.
+     */
+    public void ResetTick() {
+        tick = 0;
+    }
+
 
 //    public void MultiThreadAgents(int nThreads, AgentStepFunction<T> StepFunction){
 //        int last=agents.iLastAlive;

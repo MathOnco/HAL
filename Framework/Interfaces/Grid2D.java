@@ -1,5 +1,6 @@
 package Framework.Interfaces;
 
+import Framework.Rand;
 import Framework.Util;
 
 import static Framework.Util.*;
@@ -296,37 +297,37 @@ public abstract interface Grid2D {
     /**
      * returns the index of the center of the square in otherGrid that the coordinate maps to.
      */
-    default public int ConvXsq(int x, Grid2D other) {
+    default public int MapXsq(int x, Grid2D other) {
         return (int) (((x + 0.5) * other.Xdim()) / Xdim());
     }
 
     /**
      * returns the index of the center of the square in otherGrid that the coordinate maps to.
      */
-    default public int ConvYsq(int y, Grid2D other) {
+    default public int MapYsq(int y, Grid2D other) {
         return (int) (((y + 0.5) * other.Ydim()) / Ydim());
     }
 
     /**
      * returns the index of the center of the square in otherGrid that the coordinate maps to.
      */
-    default public int ConvI(int i, Grid2D other) {
+    default public int MapI(int i, Grid2D other) {
         int x = ItoX(i);
         int y = ItoY(i);
-        return other.I(ConvXsq(x, other), ConvYsq(y, other));
+        return other.I(MapXsq(x, other), MapYsq(y, other));
     }
 
     /**
      * returns the position that x rescales to in the other grid
      */
-    default public double ConvXpt(double x, Grid2D other) {
+    default public double MapXpt(double x, Grid2D other) {
         return x * other.Xdim() / Xdim();
     }
 
     /**
      * returns the position that y rescales to in the other grid
      */
-    default public double ConvYpt(double y, Grid2D other) {
+    default public double MapYpt(double y, Grid2D other) {
         return y * other.Ydim() / Ydim();
     }
 
@@ -385,6 +386,31 @@ public abstract interface Grid2D {
             }
         }
         return Count;
+    }
+
+    /**
+     * gets a random index from the full neighborhood, if the index does not map, returns -1
+     */
+
+    default public int RandomHoodI(int[]hood, int centerX, int centerY, Rand rng){
+        int i=rng.Int(hood.length/3)*2+hood.length/3;
+        int x = hood[i] + centerX;
+        int y = hood[i + 1] + centerY;
+        if (!Util.InDim(x, Xdim())) {
+            if (IsWrapX()) {
+                x = Util.Wrap(x, Xdim());
+            } else {
+                return -1;
+            }
+        }
+        if (!Util.InDim(y, Ydim())) {
+            if (IsWrapY()) {
+                y = Util.Wrap(y, Ydim());
+            } else {
+                return -1;
+            }
+        }
+        return I(x,y);
     }
 
     /**

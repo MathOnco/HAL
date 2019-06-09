@@ -16,7 +16,15 @@ import static Framework.Util.Norm;
  * AgentGrid3Ds can hold any type of 3D Agent
  * @param <T> the type of agent that the AgentGrid3D will hold
  */
-public class AgentGrid3D<T extends AgentBaseSpatial> extends GridBase3D implements Iterable<T>,Serializable {
+public class AgentGrid3D<T extends AgentBaseSpatial> implements Grid3D,Iterable<T>,Serializable {
+    public final int xDim;
+    public final int yDim;
+    public final int zDim;
+    public final int length;
+    public boolean wrapX;
+    public boolean wrapY;
+    public boolean wrapZ;
+    int tick;
     InternalGridAgentList<T> agents;
     T[] grid;
     ArrayList<ArrayList<T>> usedAgentSearches = new ArrayList<>();
@@ -33,7 +41,14 @@ public class AgentGrid3D<T extends AgentBaseSpatial> extends GridBase3D implemen
      * boundary
      */
     public AgentGrid3D(int x, int y, int z, Class<T> agentClass, boolean wrapX, boolean wrapY, boolean wrapZ) {
-        super(x, y, z, wrapX, wrapY, wrapZ);
+        this.xDim=x;
+        this.yDim=y;
+        this.zDim=z;
+        this.length=x*y*z;
+        this.wrapX=wrapX;
+        this.wrapY=wrapY;
+        this.wrapZ=wrapZ;
+        this.tick=0;
         agents = new InternalGridAgentList<T>(agentClass, this);
         grid = (T[]) new AgentBaseSpatial[length];
         counts = new int[length];
@@ -1212,6 +1227,41 @@ public class AgentGrid3D<T extends AgentBaseSpatial> extends GridBase3D implemen
         return agents;
     }
 
+    @Override
+    public int Xdim() {
+        return xDim;
+    }
+
+    @Override
+    public int Ydim() {
+        return yDim;
+    }
+
+    @Override
+    public int Zdim() {
+        return zDim;
+    }
+
+    @Override
+    public int Length() {
+        return length;
+    }
+
+    @Override
+    public boolean IsWrapX() {
+        return wrapX;
+    }
+
+    @Override
+    public boolean IsWrapY() {
+        return wrapY;
+    }
+
+    @Override
+    public boolean IsWrapZ() {
+        return wrapZ;
+    }
+
 
     private class AgentsIterator3D implements Iterator<T>, Iterable<T>, Serializable {
         final AgentGrid3D<T> G;
@@ -1251,7 +1301,27 @@ public class AgentGrid3D<T extends AgentBaseSpatial> extends GridBase3D implemen
             return this;
         }
     }
+    /**
+     * increments the internal grid tick counter by 1, used with the Age() and BirthTick() functions to get age
+     * information about the agents on an AgentGrid. can otherwise be used as a counter with the other grid types.
+     */
+    public void IncTick() {
+        tick++;
+    }
 
+    /**
+     * gets the current grid timestep.
+     */
+    public int GetTick() {
+        return tick;
+    }
+
+    /**
+     * sets the tick to 0.
+     */
+    public void ResetTick() {
+        tick = 0;
+    }
 //    void AddAgentToSquare(T agent,int iGrid){
 //        //internal function, adds agent to typeGrid voxel
 //        if(typeGrid[iGrid]==null) {

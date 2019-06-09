@@ -101,16 +101,12 @@ class Grid extends MetabolismGrid<Cell> {
         ShuffleAgents(rn);
     }
     public void DefaultTumorTest(double numDays,double radius,double glycPheno,double arPheno){
-        GridWindow vis=new GridWindow(xDim,yDim,10);
+        MetabolismModelVis vis=new MetabolismModelVis(this,true,true,1);
         DefaultSetup(radius,glycPheno,arPheno);
         for (int i = 0; i < numDays/CELL_TIME_STEP; i++) {
             DefaultGridStep();
-            DrawCells(vis);
-            if(i==(int)(10/CELL_TIME_STEP)) {
-                vis.ToPNG("DefaultTumor"+numDays+"Days"+radius+"TumorRad"+glycPheno+"glycPheno"+arPheno+"arPheno.png");
-            }
+            vis.Draw();
         }
-        vis.ToPNG("DefaultTumor"+numDays+"Days"+radius+"TumorRad"+glycPheno+"glycPheno"+arPheno+"arPheno.png");
         vis.Close();
     }
 
@@ -161,7 +157,8 @@ class Grid extends MetabolismGrid<Cell> {
 
 public class MetabolismTester {
     public static void main(String[] args) {
-        Grid model=new Grid(20,20,new Rand(0));
+        Grid model=new Grid(60,60,new Rand(0));
+        model.VESSEL_STABILITY=1;
         //model.DefaultTumorTest(80,10,model.NORMAL_GLYCOLYTIC_PHENO,model.NORMAL_ACID_RESIST_PHENO);
         model.DefaultTumorTest(20,10,40,6.2);
         //model.GenVessselsAndCellsTest();

@@ -20,7 +20,10 @@ import java.util.Arrays;
  * a gui item that is used to efficiently visualize a grid in 2 dimensions
  * uses an array of pixels whose color values are individually set
  */
-public class UIGrid extends GridBase2D implements GuiComp {
+public class UIGrid implements Grid2D,GuiComp {
+    final public int xDim;
+    final public int yDim;
+    final public int length;
     boolean active;
     final PaintPanel panel;
     public final int scale;
@@ -42,7 +45,9 @@ public class UIGrid extends GridBase2D implements GuiComp {
      * @param active
      */
     public UIGrid(int gridW, int gridH, int scaleFactor, int compX, int compY, boolean active) {
-        super(gridW, gridH, false, false);
+        this.xDim=gridW;
+        this.yDim=gridH;
+        this.length=xDim*yDim;
         this.active = active;
         this.compX = compX;
         this.compY = compY;
@@ -1003,6 +1008,31 @@ public class UIGrid extends GridBase2D implements GuiComp {
             , 32767//full
 
     };
+
+    @Override
+    public int Xdim() {
+        return xDim;
+    }
+
+    @Override
+    public int Ydim() {
+        return yDim;
+    }
+
+    @Override
+    public int Length() {
+        return length;
+    }
+
+    @Override
+    public boolean IsWrapX() {
+        return false;
+    }
+
+    @Override
+    public boolean IsWrapY() {
+        return false;
+    }
 }
 class PaintPanel extends JPanel {
 

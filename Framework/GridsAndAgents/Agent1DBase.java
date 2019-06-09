@@ -1,6 +1,7 @@
 package Framework.GridsAndAgents;
 
 import Framework.Interfaces.Coords1DBool;
+import Framework.Interfaces.Grid1D;
 
 import java.io.Serializable;
 
@@ -25,22 +26,22 @@ public abstract class Agent1DBase<T extends AgentGrid1D> extends AgentBaseSpatia
     /**
      * returns the index of the center of the square in otherGrid that the coordinate maps to.
      */
-    public int ConvXsq(GridBase1D other) {
-        return (int) (((Xsq() + 0.5) * other.xDim) / G.xDim);
+    public int MapXsq(Grid1D other) {
+        return (int) (((Xsq() + 0.5) * other.Xdim()) / G.xDim);
     }
 
     /**
      * returns the index of the center of the square in otherGrid that the coordinate maps to.
      */
-    public int ConvI(GridBase1D other) {
-        return ConvXsq(other);
+    public int MapI(Grid1D other) {
+        return MapXsq(other);
     }
 
     /**
      * returns the provided coordinate scaled to the dimensions of the otherGrid.
      */
-    public double ConvXpt(GridBase2D other) {
-        return Xpt() * other.xDim / G.xDim;
+    public double MapXpt(Grid1D other) {
+        return Xpt() * other.Xdim() / G.xDim;
     }
 
 

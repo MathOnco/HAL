@@ -1,12 +1,19 @@
 package Framework.GridsAndAgents;
 
+import Framework.Interfaces.Grid2D;
+
 import java.io.Serializable;
 import java.util.Arrays;
 
 /**
  * a 2D Grid of objects
  */
-public class Grid2Dobject<T> extends GridBase2D implements Serializable{
+public class Grid2Dobject<T> implements Grid2D,Serializable{
+    final public int xDim;
+    final public int yDim;
+    final public int length;
+    public boolean wrapX;
+    public boolean wrapY;
     T[] field;
 
     /**
@@ -20,7 +27,11 @@ public class Grid2Dobject<T> extends GridBase2D implements Serializable{
      * creates a new Grid2Dobject of dimensions xDim by yDim with optional wraparound
      */
     public Grid2Dobject(int xDim, int yDim, boolean wrapX, boolean wrapY){
-        super(xDim,yDim,wrapX,wrapY);
+        this.xDim=xDim;
+        this.yDim=yDim;
+        this.length=xDim*yDim;
+        this.wrapX=wrapX;
+        this.wrapY=wrapY;
         field =(T[])new Object[this.xDim * this.yDim];
     }
     /**
@@ -58,5 +69,30 @@ public class Grid2Dobject<T> extends GridBase2D implements Serializable{
      */
     public void SetAll(T[]vals){
         System.arraycopy(vals,0, field,0,length);
+    }
+
+    @Override
+    public int Xdim() {
+        return xDim;
+    }
+
+    @Override
+    public int Ydim() {
+        return yDim;
+    }
+
+    @Override
+    public int Length() {
+        return length;
+    }
+
+    @Override
+    public boolean IsWrapX() {
+        return wrapX;
+    }
+
+    @Override
+    public boolean IsWrapY() {
+        return wrapY;
     }
 }

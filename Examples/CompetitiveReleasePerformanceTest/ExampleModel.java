@@ -5,9 +5,6 @@ import Framework.GridsAndAgents.AgentSQ2Dunstackable;
 import Framework.GridsAndAgents.PDEGrid2D;
 import Framework.Gui.GridWindow;
 import Framework.Rand;
-import Framework.Util;
-
-import java.util.Scanner;
 
 import static Examples._6CompetitiveRelease.ExampleModel.RESISTANT;
 import static Framework.Util.*;
@@ -39,21 +36,29 @@ public class ExampleModel extends AgentGrid2D<ExampleCell> {
         drug = new PDEGrid2D(xDim, yDim);
     }
 
-    public static void main(String[] args) {
-        int x = 150, y = 150, visScale = 5, tumorRad = 10, msPause = 5;
-        //GridWindow win=new GridWindow(x,y,5);
-        double resistantProp = 0.5;
+    @FunctionalInterface
+    interface ModelStep{
+        void Run(ExampleModel m,int tick);
+    }
+
+    public static void RunModel(int sideLen,ModelStep Step){
+        int x = sideLen, y = sideLen;
         ExampleModel m=new ExampleModel(x,y,new Rand(0));
         m.DRUG_START=0;
         m.DRUG_DURATION=m.DRUG_PERIOD;
         m.InitTumor();
-        //Main run loop
-        UserInput();
         for (int tick = 0; tick < 100000; tick++) {
-            m.ModelStep(tick);
-            //m.DrawModel(win,0);
-            //win.TickPause(10);
+            Step.Run(m,tick);
         }
+    }
+
+    public static void main(String[] args) {
+        AwaitInput();
+        RunModel(60, ExampleModel::ModelStep60);
+        RunModel(90, ExampleModel::ModelStep90);
+        RunModel(120, ExampleModel::ModelStep120);
+        RunModel(150, ExampleModel::ModelStep150);
+        RunModel(180, ExampleModel::ModelStep180);
     }
 
     public void InitTumor() {
@@ -77,9 +82,25 @@ public class ExampleModel extends AgentGrid2D<ExampleCell> {
         }
     }
 
-    public void ModelStep(int tick) {
-        StepAllCells(tick);
-        DiffusionStep(tick);
+    public static void ModelStep60(ExampleModel m,int tick) {
+        m.StepAllCells(tick);
+        m.DiffusionStep(tick);
+    }
+    public static void ModelStep90(ExampleModel m,int tick) {
+        m.StepAllCells(tick);
+        m.DiffusionStep(tick);
+    }
+    public static void ModelStep120(ExampleModel m,int tick) {
+        m.StepAllCells(tick);
+        m.DiffusionStep(tick);
+    }
+    public static void ModelStep150(ExampleModel m,int tick) {
+        m.StepAllCells(tick);
+        m.DiffusionStep(tick);
+    }
+    public static void ModelStep180(ExampleModel m,int tick) {
+        m.StepAllCells(tick);
+        m.DiffusionStep(tick);
     }
 
     public void DrawModel(GridWindow vis, int iModel) {

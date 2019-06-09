@@ -1,5 +1,4 @@
 package Framework.Gui;
-import Framework.GridsAndAgents.GridBase2D;
 import Framework.Interfaces.ColorIntGenerator;
 import Framework.Interfaces.Grid2D;
 import Framework.Util;
@@ -20,12 +19,15 @@ import static Framework.Util.*;
 /**
  * Created by rafael on 5/28/17.
  */
-public class OpenGL2DWindow extends GridBase2D {
+public class OpenGL2DWindow implements Grid2D {
     final boolean active;
     final public int xPix;
     final public int yPix;
     final public int xDim;
     final public int yDim;
+    final public int length;
+    public boolean wrapX=false;
+    public boolean wrapY=false;
     TickTimer tt = new TickTimer();
     final float[] circlPtsDefault = Util.GenCirclePoints(1, 20);
 
@@ -39,12 +41,12 @@ public class OpenGL2DWindow extends GridBase2D {
      * @param active if set to false, the OpenGL2DWindow will not actually render and its methods will be skipped (default true)
      */
     public OpenGL2DWindow(String title, int xPix, int yPix, int xDim, int yDim, boolean active) {
-        super(xDim,yDim,false,false);
         this.active = active;
         this.xPix = xPix;
         this.yPix = yPix;
         this.xDim = xDim;
         this.yDim = yDim;
+        this.length=xDim*yDim;
         if (active) {
             try {
                 Display.setDisplayMode(new DisplayMode(xPix, yPix));
@@ -306,4 +308,28 @@ public class OpenGL2DWindow extends GridBase2D {
         }
     }
 
+    @Override
+    public int Xdim() {
+        return xDim;
+    }
+
+    @Override
+    public int Ydim() {
+        return yDim;
+    }
+
+    @Override
+    public int Length() {
+        return length;
+    }
+
+    @Override
+    public boolean IsWrapX() {
+        return wrapX;
+    }
+
+    @Override
+    public boolean IsWrapY() {
+        return wrapY;
+    }
 }

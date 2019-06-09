@@ -1,5 +1,6 @@
 package Framework.GridsAndAgents;
 import Framework.Interfaces.Coords3DDouble;
+import Framework.Interfaces.Grid3D;
 import Framework.Util;
 //import AgentFramework.Util;
 
@@ -14,14 +15,28 @@ import static Framework.Tools.Internal.PDEequations.*;
  * the intended usage is that during a diffusion tick, the current values will be read, and the next values will be written to
  * after updates, Update is called to set the delta field as the current field.
  */
-public class PDEGrid3D extends GridBase3D implements Serializable {
+public class PDEGrid3D implements Grid3D,Serializable {
+    public final int xDim;
+    public final int yDim;
+    public final int zDim;
+    public final int length;
+    public boolean wrapX;
+    public boolean wrapY;
+    public boolean wrapZ;
     public double[] field;
     public double[] deltas;
     public double[] scratch;
     public double[] maxDifscratch;
+    int updateCt=0;
 
     public PDEGrid3D(int xDim, int yDim, int zDim, boolean wrapX, boolean wrapY, boolean wrapZ) {
-        super(xDim, yDim, zDim, wrapX, wrapY, wrapZ);
+        this.xDim=xDim;
+        this.yDim=yDim;
+        this.zDim=zDim;
+        this.length=xDim*yDim*zDim;
+        this.wrapX=wrapX;
+        this.wrapY=wrapY;
+        this.wrapZ=wrapZ;
         int numElements = this.xDim * this.yDim * this.zDim;
 
         field = new double[numElements];
@@ -30,7 +45,7 @@ public class PDEGrid3D extends GridBase3D implements Serializable {
     }
 
     public PDEGrid3D(int xDim, int yDim, int zDim) {
-        super(xDim, yDim, zDim, false, false, false);
+        this(xDim, yDim, zDim, false, false, false);
 
         int numElements = this.xDim * this.yDim * this.zDim;
         field = new double[numElements];
@@ -108,7 +123,10 @@ public class PDEGrid3D extends GridBase3D implements Serializable {
             field[i] += deltas[i];
         }
         Arrays.fill(deltas, 0);
-        IncTick();
+        updateCt++;
+    }
+    public int UpdateCt(){
+        return updateCt;
     }
 
     /**
@@ -325,5 +343,39 @@ public class PDEGrid3D extends GridBase3D implements Serializable {
         for (int i = 0; i < length; i++) {
             Mul(i, val);
         }
+    }
+    @Override
+    public int Xdim() {
+        return xDim;
+    }
+
+    @Override
+    public int Ydim() {
+        return yDim;
+    }
+
+    @Override
+    public int Zdim() {
+        return zDim;
+    }
+
+    @Override
+    public int Length() {
+        return length;
+    }
+
+    @Override
+    public boolean IsWrapX() {
+        return wrapX;
+    }
+
+    @Override
+    public boolean IsWrapY() {
+        return wrapY;
+    }
+
+    @Override
+    public boolean IsWrapZ() {
+        return wrapZ;
     }
 }

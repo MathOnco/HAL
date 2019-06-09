@@ -1,7 +1,7 @@
 package Framework.Gui;
 
-import Framework.GridsAndAgents.GridBase3D;
 import Framework.Interfaces.ColorIntGenerator;
+import Framework.Interfaces.Grid3D;
 import Framework.Util;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
@@ -22,11 +22,12 @@ import static org.lwjgl.opengl.GL11.*;
 /**
  * Created by rafael on 5/28/17.
  */
-public class OpenGL3DWindow extends GridBase3D {
+public class OpenGL3DWindow implements Grid3D {
     final boolean active;
     public final int xDim;
     public final int yDim;
     public final int zDim;
+    public final int length;
     final int maxDim;
     final float scaleDims;
     final float trans;
@@ -50,13 +51,13 @@ public class OpenGL3DWindow extends GridBase3D {
      * @param active if set to false, the OpenGL2DWindow will not actually render and its methods will be skipped (default true)
      */
     public OpenGL3DWindow(String title, int xPix, int yPix, int xDim, int yDim, int zDim, boolean active) {
-        super(xDim,yDim,zDim,false,false,false);
         this.active = active;
         int maxDim = Math.max(xDim, yDim);
         this.maxDim = Math.max(maxDim, zDim);
         this.xDim = xDim;
         this.yDim = yDim;
         this.zDim = zDim;
+        this.length=xDim*yDim*zDim;
         this.xPix = xPix;
         this.yPix = yPix;
         scaleDims = (float) (2.0 / this.maxDim);
@@ -416,6 +417,41 @@ public class OpenGL3DWindow extends GridBase3D {
             }
 
         }
+    }
+
+    @Override
+    public int Xdim() {
+        return xDim;
+    }
+
+    @Override
+    public int Ydim() {
+        return yDim;
+    }
+
+    @Override
+    public int Zdim() {
+        return zDim;
+    }
+
+    @Override
+    public int Length() {
+        return length;
+    }
+
+    @Override
+    public boolean IsWrapX() {
+        return false;
+    }
+
+    @Override
+    public boolean IsWrapY() {
+        return false;
+    }
+
+    @Override
+    public boolean IsWrapZ() {
+        return false;
     }
 }
 

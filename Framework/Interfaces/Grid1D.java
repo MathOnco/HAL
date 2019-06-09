@@ -1,5 +1,6 @@
 package Framework.Interfaces;
 
+import Framework.Rand;
 import Framework.Util;
 
 import static Framework.Util.InDim;
@@ -177,6 +178,22 @@ public interface Grid1D {
     }
 
     /**
+     * gets a random index from the full neighborhood, if the index does not map, returns -1
+     */
+    public default int RandomHoodI(int[] hood, int centerX, Rand rng){
+        int i=rng.Int(hood.length/2)+hood.length/2;
+        int x = hood[i] + centerX;
+        if (!Util.InDim(x, Xdim())) {
+            if (IsWrapX()) {
+                x = Util.Wrap(x, Xdim());
+            } else {
+                return -1;
+            }
+        }
+        return x;
+    }
+
+    /**
      * returns whether a valid index exists in the neighborhood
      */
     default public boolean ContainsValidI(int[] hood, int centerX, IndexBool IsValid) {
@@ -200,14 +217,14 @@ public interface Grid1D {
     /**
      * returns the index of the center of the square in otherGrid that the coordinate maps to.
      */
-    default public int ConvXsq(int x, Grid1D other) {
+    default public int MapXsq(int x, Grid1D other) {
         return (int) (((x + 0.5) * other.Xdim()) / Xdim());
     }
 
     /**
      * returns the position that x rescales to in the other grid
      */
-    default public double ConvXpt(double x, Grid1D other) {
+    default public double MapXpt(double x, Grid1D other) {
         return x * other.Xdim() / Xdim();
     }
 

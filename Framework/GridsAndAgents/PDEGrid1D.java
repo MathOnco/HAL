@@ -2,6 +2,7 @@ package Framework.GridsAndAgents;
 
 import Framework.Interfaces.Coords1DDouble;
 import Framework.Interfaces.Coords2DDouble;
+import Framework.Interfaces.Grid1D;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -12,7 +13,9 @@ import static Framework.Tools.Internal.PDEequations.*;
 /**
  * a 1D
  */
-public class PDEGrid1D extends GridBase1D implements Serializable {
+public class PDEGrid1D implements Grid1D,Serializable {
+    final public int xDim,length;
+    public boolean wrapX;
     protected double[] deltas;
     protected double[] field;
     //double[] intermediateScratch;
@@ -20,17 +23,19 @@ public class PDEGrid1D extends GridBase1D implements Serializable {
     double[] maxDifscratch;
     boolean adiOrder = true;
     boolean adiX = true;
+    int updateCt;
 
     public PDEGrid1D(int xDim) {
-        super(xDim, false);
+        this.xDim=xDim;
+        this.length=xDim;
+        this.wrapX=false;
         field = new double[this.xDim];
         deltas = new double[this.xDim];
     }
 
     public PDEGrid1D(int xDim, boolean wrapX) {
-        super(xDim, wrapX);
-        field = new double[this.xDim];
-        deltas = new double[this.xDim];
+        this(xDim);
+        this.wrapX=wrapX;
     }
     public double[]GetField(){
         return field;
@@ -74,7 +79,9 @@ public class PDEGrid1D extends GridBase1D implements Serializable {
             field[i] += deltas[i];
         }
         Arrays.fill(deltas, 0);
-        IncTick();
+    }
+    public int UpdateCt(){
+        return updateCt;
     }
 
     /**
@@ -288,5 +295,20 @@ public class PDEGrid1D extends GridBase1D implements Serializable {
         if (scratch == null) {
             scratch = new double[xDim * 2 + 4];
         }
+    }
+
+    @Override
+    public int Xdim() {
+        return 0;
+    }
+
+    @Override
+    public int Length() {
+        return 0;
+    }
+
+    @Override
+    public boolean IsWrapX() {
+        return false;
     }
 }

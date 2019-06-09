@@ -42,11 +42,18 @@ public class MathTests {
             }
         }
     }
-    static void ODETestR45(Derivative ode, OdeSolution solution, double[]t0state, double[]ts, double tol){
+    static void ODETestR45(Derivative ode, OdeSolution solution, double[]t0state, double dt, double tf, double tol){
         double[]state=t0state.clone();
         double[]actual=new double[state.length];
         ODESolver solver=new ODESolver();
         double t=0;
+        double[]ts=new double[(int)(tf/dt)];
+        int k=0;
+        while(t<tf){
+            ts[k]=t;
+            t+=dt;
+        }
+        t=0;
         for (int i = 0; i < ts.length; i++) {
             solver.Runge45(ode,state,t,ts[i],tol,tol);
             t=ts[i];
@@ -140,13 +147,27 @@ public class MathTests {
             }
         });
 
-        tester.AddTest("simple differential equation",()->{
+        tester.AddTest("simple differential equation R4",()->{
             double a=1.5,b=1,c=3,d=1;
             double[]s0=new double[]{5,10};
 
             ODETestR4((t,state,out)->{
                 out[0]=a*state[0]-b*state[0]*state[1];
                 out[1]=c*state[0]*state[1]-d*state[1];
+                    },
+                    (t,out)->{
+
+                    },
+                    new double[]{0,0},0.1,100,0.01
+            );
+        });
+        tester.AddTest("simple differential equation RK45",()->{
+            double a=1.5,b=1,c=3,d=1;
+            double[]s0=new double[]{5,10};
+
+            ODETestR45((t,state,out)->{
+                        out[0]=a*state[0]-b*state[0]*state[1];
+                        out[1]=c*state[0]*state[1]-d*state[1];
                     },
                     (t,out)->{
 

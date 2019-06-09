@@ -8,7 +8,7 @@ import Framework.Interfaces.DoubleToColor;
 import Framework.Util;
 
 public class MetabolismModelVis extends UIWindow {
-    public final MetabolismGrid G;
+    public MetabolismGrid G;
     public final UIGrid cellVis;
     public final UIGrid oxygenVis;
     public final UIGrid glucoseVis;
@@ -16,8 +16,8 @@ public class MetabolismModelVis extends UIWindow {
     public final UIGrid phenoVis;
     public final UILabel days;
 
-    public MetabolismModelVis(MetabolismGrid model, boolean active,int scaleFactor) {
-        super(active);
+    public MetabolismModelVis(MetabolismGrid model,boolean active, boolean killOnClose,int scaleFactor) {
+        super(killOnClose,null,true);
         if(active) {
             //first col
             this.G = model;

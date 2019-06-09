@@ -1,6 +1,7 @@
 package Framework.GridsAndAgents;
 import Framework.Interfaces.Coords2DDouble;
 import Framework.Interfaces.DoubleArrayToVoid;
+import Framework.Interfaces.Grid2D;
 import Framework.Interfaces.VoidFunction;
 import Framework.Tools.Internal.PDEequations;
 import Framework.Util;
@@ -16,7 +17,12 @@ import static Framework.Tools.Internal.PDEequations.*;
  * the intended usage is that during a diffusion tick, the current values will be read, and the prev values will be written to
  * after updates, Update is called to set the prev field as the current field.
  */
-public class PDEGrid2D extends GridBase2D implements Serializable {
+public class PDEGrid2D implements Grid2D,Serializable {
+    final public int xDim;
+    final public int yDim;
+    final public int length;
+    public boolean wrapX;
+    public boolean wrapY;
     protected double[] deltas;
     protected double[] field;
     //double[] intermediateScratch;
@@ -26,17 +32,23 @@ public class PDEGrid2D extends GridBase2D implements Serializable {
     protected double[] maxDifscratch;
     boolean adiOrder = true;
     boolean adiX = true;
+    int updateCt;
 
     public PDEGrid2D(int xDim, int yDim) {
-        super(xDim, yDim, false, false);
-        field = new double[this.xDim * this.yDim];
-        deltas = new double[this.xDim * this.yDim];
+        this(xDim,yDim,false,false);
     }
 
     public PDEGrid2D(int xDim, int yDim, boolean wrapX, boolean wrapY) {
-        super(xDim, yDim, wrapX, wrapY);
+        this.xDim=xDim;
+        this.yDim=yDim;
+        this.length=xDim*yDim;
+        this.wrapX=wrapX;
+        this.wrapY=wrapY;
         field = new double[this.xDim * this.yDim];
         deltas = new double[this.xDim * this.yDim];
+    }
+    public int UpdateCt(){
+        return updateCt;
     }
 
     public double[]GetField(){
@@ -199,6 +211,7 @@ public class PDEGrid2D extends GridBase2D implements Serializable {
             field[i] += deltas[i];
         }
         Arrays.fill(deltas, 0);
+        updateCt++;
     }
 
     /**
@@ -461,5 +474,30 @@ public class PDEGrid2D extends GridBase2D implements Serializable {
         if (scratchField2 == null) {
             scratchField2 = new double[field.length];
         }
+    }
+
+    @Override
+    public int Xdim() {
+        return xDim;
+    }
+
+    @Override
+    public int Ydim() {
+        return yDim;
+    }
+
+    @Override
+    public int Length() {
+        return length;
+    }
+
+    @Override
+    public boolean IsWrapX() {
+        return wrapX;
+    }
+
+    @Override
+    public boolean IsWrapY() {
+        return wrapY;
     }
 }

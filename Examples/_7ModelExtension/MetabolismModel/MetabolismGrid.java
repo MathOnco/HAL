@@ -7,6 +7,8 @@ import Framework.Gui.UIGrid;
 import Framework.Rand;
 import Framework.Util;
 
+import java.io.Serializable;
+
 import static Framework.Util.*;
 import static Examples._7ModelExtension.MetabolismModel.MetabolismCell.*;
 
@@ -14,7 +16,7 @@ import static Examples._7ModelExtension.MetabolismModel.MetabolismCell.*;
  * Created by bravorr on 6/28/17.
  */
 
-public class MetabolismGrid<A extends MetabolismCell> extends AgentGrid2D<A> {
+public class MetabolismGrid<A extends MetabolismCell> extends AgentGrid2D<A> implements Serializable{
     public PDEGrid2D oxygen;
     public PDEGrid2D glucose;
     public PDEGrid2D protons;
@@ -39,6 +41,7 @@ public class MetabolismGrid<A extends MetabolismCell> extends AgentGrid2D<A> {
      public  double CELL_TIME_STEP=1.0/12;//in days
      public  double EPS=2e-16;
      public  double DELTA_TOL=1e-4;
+     public  double MAX_DIFF_STEPS=500;
     //OXYGEN
      public  double DELTA_SCALE=10;
      public  double OXYGEN_MAX_RATE =0.012;
@@ -93,7 +96,7 @@ public class MetabolismGrid<A extends MetabolismCell> extends AgentGrid2D<A> {
      public  double NORMAL_DEATH_PROB=ProbScale(0.005,CELL_TIME_STEP);
     // public  double APOPTOTIC_REMOVE_PROB=ProbScale(0.5,CELL_TIME_STEP);
     public  double APOPTOTIC_REMOVE_PROB=0;
-     public  double NECROTIC_REMOVE_PROB=(double)Math.pow(0.0005,CELL_TIME_STEP);
+     public  double NECROTIC_REMOVE_PROB=ProbScale(0.0005,CELL_TIME_STEP);
 
     //VESSEL CONSTANTS
      public  double MIN_VESSEL_SPACING =80/GRID_SIZE;
@@ -102,7 +105,7 @@ public class MetabolismGrid<A extends MetabolismCell> extends AgentGrid2D<A> {
      public  int VESSEL_STABILITY=20;
      public double HYPOX_ZONE_TO_VESSEL_SCALAR=100;
     public double HYPOX_ZONE_TO_VESSEL_POWER=0.93;
-    public double VESSEL_ADD_PROB=0.5*CELL_TIME_STEP;
+    public double VESSEL_ADD_PROB=ProbScale(0.5,CELL_TIME_STEP);
 
      public  double ANGEOGENESIS_MIN_O_CONC=0.0008;
      public  double ANGEOGENESIS_MAX_O_CONC=0.002;
@@ -210,9 +213,8 @@ public class MetabolismGrid<A extends MetabolismCell> extends AgentGrid2D<A> {
         for (int i = 0; i < len; i++) {
             A c = GetAgent(cancerSQs[i]);
             if (c != null&&!(c.type == A.VESSEL)) {
-                c.type = CANCER;
-                c.acidResistancePheno=arPheno;
-                c.glycolysisPheno=glycPheno;
+                c.Die(0);
+                GenTumorCell(cancerSQs[i],glycPheno,arPheno,true);
             }
         }
     }
@@ -246,7 +248,6 @@ public class MetabolismGrid<A extends MetabolismCell> extends AgentGrid2D<A> {
         int numGen=(int)(rn.Double()*Math.pow(hypoxicArea/HYPOX_ZONE_TO_VESSEL_SCALAR,HYPOX_ZONE_TO_VESSEL_POWER));
         int numGenFinal=numGen;
 
-        //System.out.println(CountBelowAngio());
         for (int i = 0; i < numGen; i++) {
             if(rn.Double()<VESSEL_ADD_PROB){
                 numGenFinal--;
@@ -255,8 +256,6 @@ public class MetabolismGrid<A extends MetabolismCell> extends AgentGrid2D<A> {
         if(numGenFinal>0){
             NewVessels(numGenFinal,hypoxicArea);
         }
-        //if(rn.nextDouble()<(hypoxicArea*1.0)/(compX*compY)){
-        //}
     }
     public void NewVessels(int count,int hypoxicArea){
         if(hypoxicArea>count) {
@@ -395,7 +394,7 @@ public class MetabolismGrid<A extends MetabolismCell> extends AgentGrid2D<A> {
             diffCount++;
         }
         //while (o2MaxDelta > OXYGEN_MAX_DELTA || glucoseMaxDelta > GLUCOSE_MAX_DELTA || protonsMaxDelta > ACID_MAX_DELTA);
-        while (maxDelta>DELTA_TOL);
+        while (maxDelta>DELTA_TOL&&diffCount<MAX_DIFF_STEPS);
         //FileIO maxDeltasOut=new FileIO("MaxDeltasType.csv","w");
         //maxDeltasOut.WriteDelimit(maxDeltas.toArray(),",");
         //maxDeltasOut.Close();

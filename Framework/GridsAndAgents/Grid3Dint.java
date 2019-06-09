@@ -1,5 +1,6 @@
 package Framework.GridsAndAgents;
 
+import Framework.Interfaces.Grid3D;
 import Framework.Util;
 
 import java.io.Serializable;
@@ -8,14 +9,27 @@ import java.util.Arrays;
 /**
  * a 3D Grid of ints
  */
-public class Grid3Dint extends GridBase3D implements Serializable {
+public class Grid3Dint implements Grid3D,Serializable {
+    public final int xDim;
+    public final int yDim;
+    public final int zDim;
+    public final int length;
+    public boolean wrapX;
+    public boolean wrapY;
+    public boolean wrapZ;
     int[] field;
 
     /**
      * creates a new Grid3Dint of dimensions xDim by yDim by zDim without wraparound
      */
     public Grid3Dint(int xDim, int yDim, int zDim, boolean wrapX, boolean wrapY, boolean wrapZ) {
-        super(xDim, yDim, zDim, wrapX, wrapY, wrapZ);
+        this.xDim=xDim;
+        this.yDim=yDim;
+        this.zDim=zDim;
+        this.length=xDim*yDim*zDim;
+        this.wrapX=wrapX;
+        this.wrapY=wrapY;
+        this.wrapZ=wrapZ;
         field = new int[length];
         //middleField = new int[numElements];
     }
@@ -24,11 +38,7 @@ public class Grid3Dint extends GridBase3D implements Serializable {
      * creates a new Grid3Dint of dimensions xDim by yDim by zDim with optional wraparound
      */
     public Grid3Dint(int xDim, int yDim, int zDim) {
-        super(xDim, yDim, zDim, false, false, false);
-
-        int numElements = this.xDim * this.yDim * this.zDim;
-        field = new int[numElements];
-        //middleField = new int[numElements];
+        this(xDim, yDim, zDim, false, false, false);
     }
 
     /**
@@ -137,5 +147,40 @@ public class Grid3Dint extends GridBase3D implements Serializable {
             tot += field[i];
         }
         return tot / length;
+    }
+
+    @Override
+    public int Xdim() {
+        return xDim;
+    }
+
+    @Override
+    public int Ydim() {
+        return yDim;
+    }
+
+    @Override
+    public int Zdim() {
+        return zDim;
+    }
+
+    @Override
+    public int Length() {
+        return length;
+    }
+
+    @Override
+    public boolean IsWrapX() {
+        return wrapX;
+    }
+
+    @Override
+    public boolean IsWrapY() {
+        return wrapY;
+    }
+
+    @Override
+    public boolean IsWrapZ() {
+        return wrapZ;
     }
 }

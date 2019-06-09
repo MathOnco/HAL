@@ -1,5 +1,6 @@
 package Framework.Interfaces;
 
+import Framework.Rand;
 import Framework.Util;
 
 import java.io.Serializable;
@@ -416,6 +417,38 @@ public interface Grid3D {
             }
         }
         return false;
+    }
+
+    /**
+     * gets a random index from the full neighborhood, if the index does not map, returns -1
+     */
+    default public int RandomHoodI(int[]hood, int centerX, int centerY, int centerZ, Rand rng){
+        int i=rng.Int(hood.length/4)*3+hood.length/4;
+        int x = hood[i] + centerX;
+        int y = hood[i + 1] + centerY;
+        int z = hood[i + 2] + centerZ;
+        if (!Util.InDim(x, Xdim())) {
+            if (IsWrapX()) {
+                x = Util.Wrap(x, Xdim());
+            } else {
+                return -1;
+            }
+        }
+        if (!Util.InDim(y, Ydim())) {
+            if (IsWrapY()) {
+                y = Util.Wrap(y, Ydim());
+            } else {
+                return -1;
+            }
+        }
+        if (!Util.InDim(z, Zdim())) {
+            if (IsWrapZ()) {
+                y = Util.Wrap(z, Zdim());
+            } else {
+                return -1;
+            }
+        }
+        return I(x,y,z);
     }
 
     /**
