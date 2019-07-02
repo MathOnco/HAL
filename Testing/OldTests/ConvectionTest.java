@@ -60,7 +60,7 @@ public class ConvectionTest {
                 return Util.HeatMapRBG(Util.ScaleMinToMax(val, (double) 0, (double) 1));
             });
             //g.ConvInhomogeneousSwap(xVels,yVels);
-            g.Advection(0.001,0.001);
+            g.Advection(0.001,0.001,0);
         }
         win.Close();
     }

@@ -10,7 +10,7 @@ class ExampleCell extends SphericalAgent2D<ExampleCell,ExampleGrid> {
     int color;
 
     public void Init(){
-        super.Init(0.2);
+        super.DefaultInit(0.2);
         this.color=Util.RGB(G.rng.Double(), G.rng.Double(), G.rng.Double());
     }
 

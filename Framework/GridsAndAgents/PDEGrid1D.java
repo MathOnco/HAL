@@ -1,8 +1,9 @@
 package Framework.GridsAndAgents;
 
 import Framework.Interfaces.Coords1DDouble;
-import Framework.Interfaces.Coords2DDouble;
 import Framework.Interfaces.Grid1D;
+import Framework.Tools.Internal.ADIequations;
+import Framework.Tools.TdmaSolver;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -24,6 +25,7 @@ public class PDEGrid1D implements Grid1D,Serializable {
     boolean adiOrder = true;
     boolean adiX = true;
     int updateCt;
+    private TdmaSolver tdma;
 
     public PDEGrid1D(int xDim) {
         this.xDim=xDim;
@@ -31,6 +33,7 @@ public class PDEGrid1D implements Grid1D,Serializable {
         this.wrapX=false;
         field = new double[this.xDim];
         deltas = new double[this.xDim];
+        tdma=new TdmaSolver(xDim);
     }
 
     public PDEGrid1D(int xDim, boolean wrapX) {
@@ -84,24 +87,23 @@ public class PDEGrid1D implements Grid1D,Serializable {
         return updateCt;
     }
 
-    /**
-     * runs advection, which moves the concentrations using a constant flow with the x and y velocities passed. this
-     * version of the function assumes wrap-around, so there can be no net flux of concentrations.
-     */
+
+
     public void Advection(double xVel) {
-        if (Math.abs(xVel) > 1) {
-            throw new IllegalArgumentException("Advection rate above maximum stable value of 1.0");
+        if (Math.abs(xVel) > 0.5) {
+            throw new IllegalArgumentException("Advection rate above maximum stable value of 0.5");
         }
-        Advection1(field, deltas, xVel, xDim, wrapX, null);
+        Advection1(field, deltas, xVel, xDim, wrapX, (x) -> 0);
     }
+
 
     /**
      * runs advection as described above with a boundary value, meaning that the boundary value will advect in from the
      * upwind direction, and the concentration will disappear in the downwind direction.
      */
     public void Advection(double xVel, double boundaryValue) {
-        if (Math.abs(xVel) > 1) {
-            throw new IllegalArgumentException("Advection rate above maximum stable value of 1.0");
+        if (Math.abs(xVel) > 0.5) {
+            throw new IllegalArgumentException("Advection rate above maximum stable value of 0.5");
         }
         Advection1(field, deltas, xVel, xDim, wrapX, (x) -> boundaryValue);
     }
@@ -111,8 +113,8 @@ public class PDEGrid1D implements Grid1D,Serializable {
      * bounds coordinates as arguments whenever a boundary value is needed, and should return the boundary value
      */
     public void Advection(double xVel, Coords1DDouble BoundaryConditionFn) {
-        if (Math.abs(xVel) > 1) {
-            throw new IllegalArgumentException("Advection rate above maximum stable value of 1.0");
+        if (Math.abs(xVel) > 0.5) {
+            throw new IllegalArgumentException("Advection rate above maximum stable value of 0.5");
         }
         Advection1(field, deltas, xVel, xDim, wrapX, BoundaryConditionFn);
     }
@@ -140,6 +142,12 @@ public class PDEGrid1D implements Grid1D,Serializable {
      */
     public void Advection(Grid2Ddouble xVels,Coords1DDouble BoundaryConditionFn,Coords1DDouble BoundaryXvel){
         Advection1(field,deltas,xVels.field,xDim,wrapX,BoundaryConditionFn,BoundaryXvel);
+    }
+    public void DiffusionCrank(double diffCoef){
+        ADIequations.Diffusion1ADI(field,deltas,diffCoef,xDim,wrapX,null,tdma);
+    }
+    public void DiffusionCrank(double diffCoef,Coords1DDouble BC){
+        ADIequations.Diffusion1ADI(field,deltas,diffCoef,xDim,wrapX,BC,tdma);
     }
 
     /**

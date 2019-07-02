@@ -58,7 +58,7 @@ public class PDEexample extends AgentGrid2D<SrcOrSink> {
         for (SrcOrSink srcOrSink : this) {
             srcOrSink.Reaction();
         }
-        diff.Advection(advectionX,advectionY);
+        diff.Advection(advectionX,advectionY,0);
         double drate=(Math.sin(stepI*1.0/250)+1)*0.05;
         diff.Diffusion(drate);
         diff.Update();

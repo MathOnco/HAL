@@ -24,7 +24,7 @@ public class SphericalAgent2D<A extends SphericalAgent2D,G extends AgentGrid2D<A
     /**
      * a default initialization function that sets the radius based on the argument, and the x and y velocities to 0
      */
-    public void Init(double radius) {
+    public void DefaultInit(double radius) {
         this.radius = radius;
         this.xVel = 0;
         this.yVel = 0;

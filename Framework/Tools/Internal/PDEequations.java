@@ -1,10 +1,8 @@
 package Framework.Tools.Internal;
-import Framework.GridsAndAgents.PDEGrid1D;
-import Framework.GridsAndAgents.PDEGrid2D;
-import Framework.GridsAndAgents.PDEGrid3D;
 import Framework.Interfaces.Coords1DDouble;
 import Framework.Interfaces.Coords2DDouble;
 import Framework.Interfaces.Coords3DDouble;
+import Framework.Tools.TdmaSolver;
 
 import static Framework.Util.*;
 
@@ -18,6 +16,7 @@ import static Framework.Util.*;
  * compr discont
  */
 public class PDEequations {
+
 
     public static void Diffusion1(double[]field,double[]deltas,double diffRate,int xDim,boolean wrapX,Coords1DDouble BC) {
         for (int x = 0; x < xDim; x++) {
@@ -282,6 +281,10 @@ public class PDEequations {
                 }
             }
         }
+    }
+
+    public static void TDMA(final double[] in,final double[] out, final double[] scratch, final double diffRate){
+
     }
 
 
@@ -709,7 +712,7 @@ public class PDEequations {
             return vals[x*yDim*zDim+y*zDim+Wrap(z,zDim)];
         }
         else if(BoundaryCond!=null){
-            return BoundaryCond.GenDouble(x,y,z);//Derichlet boundary conds.
+            return BoundaryCond.GenDouble(x,y,z);//Dirichlet boundary conds.
         }
         return 0;//Zero flux
     }
@@ -722,7 +725,7 @@ public class PDEequations {
             return vals[Wrap(x,xDim)]-centerVal;
         }
         else if(BoundaryCond!=null){
-            return (BoundaryCond.GenDouble(x)-centerVal)*2;//Derichlet boundary conds.
+            return (BoundaryCond.GenDouble(x)-centerVal)*2;//Dirichlet boundary conds.
         }
         return 0;//Zero flux
     }

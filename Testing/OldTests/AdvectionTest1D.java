@@ -14,7 +14,7 @@ public class AdvectionTest1D {
         PDEGrid3D grid=new PDEGrid3D(100,10,10);
         while(true){
             win.TickPause(0);
-            grid.Advection(0.1,0.1,0.1);
+            grid.Advection(0.1,0.1,0.1,0);
             grid.Set(0,1);
             grid.Update();
             win.DrawPDEGridXY(grid, Util::HeatMapRGB);

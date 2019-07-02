@@ -1,6 +1,7 @@
 package Framework.GridsAndAgents;
 import Framework.Interfaces.Coords3DDouble;
 import Framework.Interfaces.Grid3D;
+import Framework.Tools.TdmaSolver;
 import Framework.Util;
 //import AgentFramework.Util;
 
@@ -8,6 +9,7 @@ import Framework.Util;
 import java.io.Serializable;
 import java.util.Arrays;
 
+import static Framework.Tools.Internal.ADIequations.Diffusion3DADI;
 import static Framework.Tools.Internal.PDEequations.*;
 
 /**
@@ -26,8 +28,10 @@ public class PDEGrid3D implements Grid3D,Serializable {
     public double[] field;
     public double[] deltas;
     public double[] scratch;
+    public double[] scratch2;
     public double[] maxDifscratch;
     int updateCt=0;
+    TdmaSolver tdma;
 
     public PDEGrid3D(int xDim, int yDim, int zDim, boolean wrapX, boolean wrapY, boolean wrapZ) {
         this.xDim=xDim;
@@ -46,11 +50,6 @@ public class PDEGrid3D implements Grid3D,Serializable {
 
     public PDEGrid3D(int xDim, int yDim, int zDim) {
         this(xDim, yDim, zDim, false, false, false);
-
-        int numElements = this.xDim * this.yDim * this.zDim;
-        field = new double[numElements];
-        deltas = new double[numElements];
-        scratch = null;
     }
     public double[]GetField(){
         return field;
@@ -235,25 +234,20 @@ public class PDEGrid3D implements Grid3D,Serializable {
     }
 
 
-    /**
-     * runs advection, which moves the concentrations using a constant flow with the x and y velocities passed. this
-     * signature of the function assumes wrap-around, so there can be no net flux of concentrations.
-     */
     public void Advection(double xVel, double yVel, double zVel) {
-        if(Math.abs(xVel)+Math.abs(yVel)+Math.abs(zVel)>1){
-            throw new IllegalArgumentException("Advection rate component sum above stable maximum value of 1.0");
+        if(Math.abs(xVel)+Math.abs(yVel)+Math.abs(zVel)>0.5){
+            throw new IllegalArgumentException("Advection rate component sum above stable maximum value of 0.5");
         }
-                    Advection3(field, deltas,xVel,yVel,zVel, xDim, yDim, zDim,wrapX,wrapY,wrapZ,null);
+        Advection3(field, deltas,xVel,yVel,zVel, xDim, yDim, zDim,wrapX,wrapY,wrapZ,(x,y,z)->0);
     }
-
 
     /**
      * runs advection as described above with a boundary value, meaning that the boundary value will advect in from the
      * upwind direction, and the concentration will disappear in the downwind direction.
      */
     public void Advection(double xVel, double yVel, double zVel, double boundaryVal) {
-        if(Math.abs(xVel)+Math.abs(yVel)+Math.abs(zVel)>1){
-            throw new IllegalArgumentException("Advection rate component sum above stable maximum value of 1.0");
+        if(Math.abs(xVel)+Math.abs(yVel)+Math.abs(zVel)>0.5){
+            throw new IllegalArgumentException("Advection rate component sum above stable maximum value of 0.5");
         }
         Advection3(field, deltas,xVel,yVel,zVel, xDim, yDim, zDim,wrapX,wrapY,wrapZ,(x,y,z)->boundaryVal);
     }
@@ -263,8 +257,8 @@ public class PDEGrid3D implements Grid3D,Serializable {
      * bounds coordinates as arguments whenever a boundary value is needed, and should return the boundary value
      */
     public void Advection(double xVel, double yVel, double zVel, Coords3DDouble BoundaryConditionFn) {
-        if(Math.abs(xVel)+Math.abs(yVel)+Math.abs(zVel)>1){
-            throw new IllegalArgumentException("Advection rate component sum above stable maximum value of 1.0");
+        if(Math.abs(xVel)+Math.abs(yVel)+Math.abs(zVel)>0.5){
+            throw new IllegalArgumentException("Advection rate component sum above stable maximum value of 0.5");
         }
         Advection3(field, deltas,xVel,yVel,zVel, xDim, yDim, zDim,wrapX,wrapY,wrapZ,BoundaryConditionFn);
     }
@@ -306,6 +300,31 @@ public class PDEGrid3D implements Grid3D,Serializable {
     }
 
 
+    public void DiffusionADI(double diffRate){
+        if(scratch==null){
+            scratch=new double[length];
+        }
+        if(scratch2==null){
+            scratch2=new double[length];
+        }
+        if(tdma==null){
+            tdma=new TdmaSolver(Math.max(Math.max(xDim,yDim),zDim));
+        }
+        Diffusion3DADI(field,scratch,scratch2,deltas,diffRate,xDim,yDim,zDim,wrapX,wrapY,wrapZ,null,tdma);
+    }
+    public void DiffusionADI(double diffRate,double boundaryValue){
+        if(scratch==null){
+            scratch=new double[length];
+        }
+        if(scratch2==null){
+            scratch2=new double[length];
+        }
+        if(tdma==null){
+            tdma=new TdmaSolver(Math.max(Math.max(xDim,yDim),zDim));
+        }
+        Diffusion3DADI(field,scratch,scratch2,deltas,diffRate,xDim,yDim,zDim,wrapX,wrapY,wrapZ,(x,y,z)->boundaryValue,tdma);
+    }
+
     /**
      * sets all squares in the delta field using the vals array
      */
@@ -325,7 +344,16 @@ public class PDEGrid3D implements Grid3D,Serializable {
             }
         }
     }
-
+    /**
+     * gets the average value of all squares in the current field
+     */
+    public double GetAvg() {
+        double tot = 0;
+        for (int i = 0; i < length; i++) {
+            tot += field[i];
+        }
+        return tot / length;
+    }
 
     /**
      * adds specified value to all entries of the delta field

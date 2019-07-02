@@ -341,8 +341,10 @@ public class ODESolver implements Serializable{
         if(lenSet==len&&numSet>=num){
             return;
         }
+        lenSet=len;
+        numSet=num;
         //add new scratches entries if needed
-        if(scratches.size()<len-1){
+        if(scratches.size()<len){
             for (int i = scratches.size(); i < len; i++) {
                 scratches.add(null);
             }
@@ -350,20 +352,20 @@ public class ODESolver implements Serializable{
         //add more scratch to scratches entry if needed
         double[][]ss=scratches.get(len-1);
         if(ss==null||ss.length<num){
-           scratches.set(len-1,new double[num][len]);
-           ss=scratches.get(len-1);
+            ss=new double[num][len];
+           scratches.set(len-1,ss);
         }
         for (int i = 0; i < num; i++) {
             switch (i){
-                case 0: s0=new double[len];break;
-                case 1: s1=new double[len];break;
-                case 2: s2=new double[len];break;
-                case 3: s3=new double[len];break;
-                case 4: s4=new double[len];break;
-                case 5: s5=new double[len];break;
-                case 6: s6=new double[len];break;
-                case 7: s7=new double[len];break;
-                case 8: s8=new double[len];break;
+                case 0: s0=ss[i];break;
+                case 1: s1=ss[i];break;
+                case 2: s2=ss[i];break;
+                case 3: s3=ss[i];break;
+                case 4: s4=ss[i];break;
+                case 5: s5=ss[i];break;
+                case 6: s6=ss[i];break;
+                case 7: s7=ss[i];break;
+                case 8: s8=ss[i];break;
             }
         }
     }

@@ -38,7 +38,7 @@ public class MathTests {
             t+=dt;
             solution.Get(t,actual);
             for (int i = 0; i < state.length; i++) {
-                AssertEqual("Runge 4 ODE solution at time "+t+", value index "+i,state[i],actual[i]);
+                AssertRelativeError("Runge 4 ODE solution at time "+t+", value index "+i,state[i],actual[i],tol);
             }
         }
     }
@@ -49,17 +49,18 @@ public class MathTests {
         double t=0;
         double[]ts=new double[(int)(tf/dt)];
         int k=0;
-        while(t<tf){
-            ts[k]=t;
+        double err=tol;
+        for (int i = 0; i < ts.length; i++) {
             t+=dt;
+            ts[i]=t;
         }
         t=0;
         for (int i = 0; i < ts.length; i++) {
-            solver.Runge45(ode,state,t,ts[i],tol,tol);
+            err=solver.Runge45(ode,state,t,ts[i],err,tol);
             t=ts[i];
             solution.Get(t,actual);
             for (int j = 0; j < state.length; j++) {
-                AssertEqual("Runge 45 ODE solution at time "+t+", value index "+j,state[j],actual[j]);
+                AssertRelativeError("Runge 45 ODE solution at time "+t+", value index "+j,state[j],actual[j],tol);
             }
         }
     }
@@ -99,8 +100,50 @@ public class MathTests {
         }
     }
 
+    static void ProbScaleTest(double p,double[] tScales,int trials){
+        Rand rng=new Rand(0);
+        for (int i = 0; i < tScales.length; i++) {
+            int successCt=0;
+            double pScaled=Util.ProbScale(p,tScales[i]);
+            for (int j = 0; j < trials; j++) {
+                for (double k = 0; k < 1; k += tScales[i]) {
+                    if(rng.Double() < pScaled){
+                        successCt += 1;
+                        break;
+                    }
+                }
+            }
+            double expMean=p*trials;
+            double expStdDev=Math.sqrt((trials)*p*(1-p));
+            double meanTol=expStdDev*STD_DEV_TOL_SCALAR;
+            AssertEqual("Check Mean p:"+p+" tScale:"+tScales[i],successCt,expMean,meanTol);
+        }
+    }
+
 
     public static void AddTests(UnitTester tester){
+
+        tester.AddTest("ProbScale Test",()-> {
+
+                    double[] tScales = new double[]{1, 0.5, 0.25,0.1,0.01};
+                    double prob = 0;
+                    for (int probs = 0; probs < 5; probs++) {
+                        switch (probs) {
+                            case 0:
+                                prob = 0.0001;
+                                break;
+                            case 1:
+                                prob = 0.01;
+                                break;
+                            case 2:
+                                prob = 0.5;
+                                break;
+                        }
+                    }
+                    ProbScaleTest(prob,tScales,1000);
+                }
+        );
+
         tester.AddTest("Binomial Test",()->{
             for (int popSizes = 0; popSizes < 5; popSizes++) {
                 long pop=0;
@@ -147,34 +190,92 @@ public class MathTests {
             }
         });
 
-        tester.AddTest("simple differential equation R4",()->{
-            double a=1.5,b=1,c=3,d=1;
-            double[]s0=new double[]{5,10};
+        tester.AddTest("integral dy/dt=y R4 ",()->{
+            double[]s0=new double[]{1};
 
             ODETestR4((t,state,out)->{
-                out[0]=a*state[0]-b*state[0]*state[1];
-                out[1]=c*state[0]*state[1]-d*state[1];
+                out[0]=state[0];
                     },
                     (t,out)->{
-
+                out[0]=Math.exp(t);
                     },
-                    new double[]{0,0},0.1,100,0.01
+                    new double[]{1},0.1,100,0.01
             );
         });
-        tester.AddTest("simple differential equation RK45",()->{
-            double a=1.5,b=1,c=3,d=1;
-            double[]s0=new double[]{5,10};
+        tester.AddTest("integral dy/dt=y R45 ",()->{
+            double[]s0=new double[]{1};
 
             ODETestR45((t,state,out)->{
-                        out[0]=a*state[0]-b*state[0]*state[1];
-                        out[1]=c*state[0]*state[1]-d*state[1];
+                        out[0]=state[0];
                     },
                     (t,out)->{
-
+                        out[0]=Math.exp(t);
                     },
-                    new double[]{0,0},0.1,100,0.01
+                    new double[]{1},0.1,10,0.01
             );
         });
+        tester.AddTest("integral dy/dt=y*(1-y) (sigmoid) R4 ",()->{
+
+            ODETestR4((t,state,out)->{
+                        out[0]=state[0]*(1-state[0]);
+                    },
+                    (t,out)->{
+                        out[0]=Math.exp(t)/(999+Math.exp(t));
+                    },
+                    new double[]{0.001},0.1,100,0.01
+            );
+        });
+        tester.AddTest("integral dy/dt=y*(1-y) (sigmoid) R45 ",()->{
+
+            ODETestR45((t,state,out)->{
+                        out[0]=state[0]*(1-state[0]);
+                    },
+                    (t,out)->{
+                        out[0]=Math.exp(t)/(999+Math.exp(t));
+                    },
+                    new double[]{0.001},0.1,10,0.01
+            );
+        });
+//        tester.AddTest("integral dy/dt=y R45",()->{
+//            double[]s0=new double[]{1};
+//
+//            ODETestR45((t,state,out)->{
+//                        out[0]=state[0];
+//                    },
+//                    (t,out)->{
+//                        out[0]=Math.exp(t);
+//                    },
+//                    new double[]{1},0.1,100,0.01
+//            );
+//        });
+//        tester.AddTest("simple differential equation R4",()->{
+//            double a=1.5,b=1,c=3,d=1;
+//            double[]s0=new double[]{5,10};
+//
+//            ODETestR4((t,state,out)->{
+//                out[0]=a*state[0]-b*state[0]*state[1];
+//                out[1]=c*state[0]*state[1]-d*state[1];
+//                    },
+//                    (t,out)->{
+//
+//                    },
+//                    new double[]{0,0},0.1,100,0.01
+//            );
+//        });
+//        tester.AddTest("simple differential equation RK45",()->{
+//            double a=1.5,b=1,c=3,d=1;
+//            double[]s0=new double[]{5,10};
+//
+//            ODETestR45((t,state,out)->{
+//                        out[0]=a*state[0]-b*state[0]*state[1];
+//                        out[1]=c*state[0]*state[1]-d*state[1];
+//                    },
+//                    (t,out)->{
+//
+//                    },
+//                    new double[]{0,0},0.1,100,0.01
+//            );
+//        });
 
         tester.AddTest("Factorial Test",()->{
             tester.AssertEqual("3 Factorial",6L,Factorial(3));
