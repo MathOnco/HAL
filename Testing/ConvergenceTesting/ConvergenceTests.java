@@ -53,15 +53,15 @@ public class ConvergenceTests {
 
     public static void Diffusion1DBC(PDEGrid1D grid, double[] consts) {
         //Diffusion with 1 and 0 Dirichlet Boundary conditions
-//        grid.Diffusion(consts[0], (x) -> {
-//            if (x == -1) {
-//                return 0;
-//            } else {
-//                return 0;
-//            }
-//        });
+        grid.DiffusionCrank(consts[0], (x) -> {
+            if (x == -1) {
+                return 0;
+            } else {
+                return 0;
+            }
+        });
 
-        grid.DiffusionCrank(consts[0]);
+        //grid.DiffusionCrank(consts[0]);
     }
 
 
@@ -176,20 +176,23 @@ public class ConvergenceTests {
     }
 
     public static void Diffusion2DBC(PDEGrid2D grid, double[] consts) {
-        grid.DiffusionADI(consts[0]);
+        grid.DiffusionADI(consts[0],0);
     }
     public static double NoRxn3D(double x,double y,double z, int t, double v, double dx) {
         return v;
     }
 
     public static void Diffusion3DBC(PDEGrid3D grid, double[] consts) {
-        grid.Diffusion(consts[0]);
+        grid.DiffusionADI(consts[0],0);
+    }
+
+    public static void Advection3DBC(PDEGrid3D grid, double[] consts) {
+        grid.Advection(consts[0],0,0,1);
     }
 
 
-
     public static void ConvergenceEx1D(){
-        double[][] errors = ConvergenceTest1D(ConvergenceTests::NoRxn1D, ConvergenceTests::Diffusion1DBC, ConvergenceTests::Linfinity, 10,true, 5, new double[]{0.8}, 3, 9, new double[]{1}, new int[]{1, 2, 3, 4, 5}, new GridWindow(500, 500, 1), 0, Util::HeatMapRGB);
+        double[][] errors = ConvergenceTest1D(ConvergenceTests::NoRxn1D, ConvergenceTests::Diffusion1DBC, ConvergenceTests::Linfinity, 100,true, 50, new double[]{0.1}, 3, 1, new double[]{9}, new int[]{0,1,2, 3,4}, new GridWindow(500, 500, 1), 0, Util::HeatMapRGB);
 
         PlotWindow plot = new PlotWindow(500, 500);
         PlotLine line = new PlotLine(plot, RED);
@@ -202,7 +205,7 @@ public class ConvergenceTests {
     }
 
     public static  void ConvergenceEx2D(){
-        double[][] errors = ConvergenceTest2D(ConvergenceTests::NoRxn2D, ConvergenceTests::Diffusion2DBC, ConvergenceTests::Linfinity, 10,10,true,true, 30, new double[]{0.05}, 3, 9, new double[]{1}, new int[]{0, 1, 2, 3}, new GridWindow(500, 500, 1), 0, Util::HeatMapRGB);
+        double[][] errors = ConvergenceTest2D(ConvergenceTests::NoRxn2D, ConvergenceTests::Diffusion2DBC, ConvergenceTests::Linfinity, 10,10,true,true, 20, new double[]{0.05}, 3, 1, new double[]{9}, new int[]{0,1,2, 3}, new GridWindow(500, 500, 1), 0, Util::HeatMapRGB);
 
         PlotWindow plot = new PlotWindow(500, 500);
         PlotLine line = new PlotLine(plot, RED);
@@ -213,14 +216,14 @@ public class ConvergenceTests {
         writeResults("./Testing/ConvergenceTesting/Dx.txt",errors[SPACE_FACTOR]);
     }
     public static  void ConvergenceEx3D(){
-        double[][] errors = ConvergenceTest3D(ConvergenceTests::NoRxn3D, ConvergenceTests::Diffusion3DBC, ConvergenceTests::L2, 10,10,10,false,false,false, 100, new double[]{0.05}, 3, 9, new double[]{1}, new int[]{0, 1, 2, 3}, null, 0, Util::HeatMapRGB);
+        double[][] errors = ConvergenceTest3D(ConvergenceTests::NoRxn3D, ConvergenceTests::Advection3DBC, ConvergenceTests::Linfinity, 10,10,10,true,true,true, 10, new double[]{0.3}, 3, 3, new double[]{1}, new int[]{1,2,3,4}, new GridWindow(500, 500, 1), 0, Util::HeatMapRGB);
 
         PlotWindow plot = new PlotWindow(500, 500);
         PlotLine line = new PlotLine(plot, RED);
         for (int j = 0; j < errors[ERROR].length; j++) {
             line.AddSegment(errors[SPACE_FACTOR][j], errors[ERROR][j]);
         }
-        writeResults("./Testing/ConvergenceTesting/L2.txt",errors[ERROR]);
+        writeResults("./Testing/ConvergenceTesting/Linf.txt",errors[ERROR]);
         writeResults("./Testing/ConvergenceTesting/Dx.txt",errors[SPACE_FACTOR]);
     }
     public static double[][] ConvergenceTest1D(ConvergenceReaction1D RxnFn, ConvergenceDiffusionAdvection1D DifAdvFn, DoubleArrayToDouble ErrorFn, int xDim,boolean wrapX, int numTimeSteps, double[] rateConstants, double spaceScalingFactor, double timeScalingFactor, double[] rateConstantScalingFactors, int[] scalesToCompare) {
@@ -273,7 +276,7 @@ public class ConvergenceTests {
             Mass=0;
             for (int x = 0; x < xDim; x++) {
                 //curr.Set(x, Math.sin(Math.PI*(xDim-x-0.5)/(xDim)/2)); //Decreasing sinus function as initial condition
-                curr.Set(x, Math.sin(Math.PI*(x+0.5)/(xDim))); // Centered sinus function as initial condition
+                //curr.Set(x, Math.sin(Math.PI*(x+0.5)/(xDim))); // Centered sinus function as initial condition
                 //curr.Set(x, 1+Math.sin(2*Math.PI*(x+0.5)/(xDim))); // Centered sinus function as initial condition
                 //Step function as initial condition
 //                if (x > xDim/4) {
@@ -284,7 +287,7 @@ public class ConvergenceTests {
 //                }
                 //curr.Set(x, (xDim-x-0.5)/xDim); //Linear function as initial condition
                 //curr.Set(x, Math.exp(-(x + 0.5) * (1.0 / spaceScalar)*(x + 0.5) * (1.0 / spaceScalar)/(2))); //Normal distribution as initial condition
-                //curr.Set(x, Math.exp(-(x-(double)(xDim)/2 + 0.5) * (1.0 / spaceScalar)*(x-(double)(xDim)/2 + 0.5) * (1.0 / spaceScalar)/(1000)));
+                curr.Set(x, Math.exp(-(x-(double)(xDim)/2 + 0.5) * (1.0 / spaceScalar)*(x-(double)(xDim)/2 + 0.5) * (1.0 / spaceScalar)/(1000)));
                 //curr.Set(x, RxnFn.React((x + 0.5) * (1.0 / spaceScalar), -1, curr.Get(x), spaceScalar));
             }
             curr.Update();
@@ -306,7 +309,7 @@ public class ConvergenceTests {
                         }
                     }
 
-                    vis.TickPause(pauseMS);
+                    vis.TickPause(0);
                 }
                 for (int x = 0; x < xDim; x++) {
                     curr.Set(x, RxnFn.React((x + 0.5) * (1.0 / spaceScalar), t, curr.Get(x), spaceScalar));
@@ -403,9 +406,9 @@ public class ConvergenceTests {
                             vis.SetPix(x, y, drawColor);
                         }
                     }
-//                    if(t==0||t==numTimeSteps-1){
-//                        vis.ToPNG("FunFigure"+t+".png");
-//                    }
+                    if(t==0||t==numTimeSteps-1){
+                        vis.ToPNG("FunFigure"+t+".png");
+                    }
                     for (int x = 0; x < xDim; x++) {
                         for (int y = 0; y < yDim; y++) {
                             curr.Set(x, y, RxnFn.React((x + 0.5) * (1.0 / spaceScalar), (y + 0.5) * (1.0 / spaceScalar), t, curr.Get(x,y), spaceScalar));
@@ -541,6 +544,6 @@ public class ConvergenceTests {
     }
 
     public static void main(String[] args) {
-        ConvergenceEx2D();
+        ConvergenceEx1D();
     }
 }

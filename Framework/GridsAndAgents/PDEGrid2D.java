@@ -10,7 +10,7 @@ import Framework.Util;
 import java.io.Serializable;
 import java.util.Arrays;
 
-import static Framework.Tools.Internal.ADIequations.Diffusion2DADI;
+import static Framework.Tools.Internal.ADIequations.*;
 import static Framework.Tools.Internal.PDEequations.*;
 
 
@@ -94,6 +94,33 @@ public class PDEGrid2D implements Grid2D,Serializable {
             tdma=new TdmaSolver(Math.max(xDim,yDim));
         }
         Diffusion2DADI(field,scratch,deltas,diffCoef,xDim,yDim,wrapX,wrapY,(x,y)->boundaryCond,tdma);
+    }
+    public void DiffusionADI(double diffCoef,double boundaryCond, DoubleArrayToVoid BetweenAction) {
+        if(scratch==null){
+            scratch=new double[length];
+        }
+        if(tdma==null){
+            tdma=new TdmaSolver(Math.max(xDim,yDim));
+        }
+        Diffusion2DADIBetweenAction(field,scratch,deltas,diffCoef,xDim,yDim,wrapX,wrapY,(x,y)->boundaryCond,tdma,BetweenAction);
+    }
+    public static void Diffusion2DADIBetweenAction(double[]field, double[]scratch,double[]deltas, double diffRate, int xDim,int yDim, boolean wrapX,boolean wrapY, Coords2DDouble BC, TdmaSolver tdma,DoubleArrayToVoid BetweenAction){
+        for (int y = 0; y < yDim; y++) {//do the x rows
+            int finalY = y;
+            ADISolveRow(xDim,diffRate,2,wrapX,BC!=null,tdma,
+                    (i)->ExplicitDiffusionY2ADI(i,finalY,field,diffRate,xDim,yDim,wrapX,wrapY,BC),
+                    (i,v)->scratch[i*yDim+finalY]=v);
+        }
+        BetweenAction.Action(scratch);
+        for (int x = 0; x < xDim; x++) {//do the y columns
+            int finalX = x;
+            ADISolveRow(yDim,diffRate,2,wrapY,BC!=null,tdma,
+                    (i)->ExplicitDiffusionX2ADI(finalX,i,scratch,diffRate,xDim,yDim,wrapX,wrapY,BC),
+                    (i,v)->{
+                        int index=finalX*yDim+i;
+                        deltas[index]+=v-field[index];
+                    });
+        }
     }
 
 //    /**
