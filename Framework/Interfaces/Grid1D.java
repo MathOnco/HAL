@@ -181,7 +181,16 @@ public interface Grid1D {
      * gets a random index from the full neighborhood, if the index does not map, returns -1
      */
     public default int RandomHoodI(int[] hood, int centerX, Rand rng){
-        int i=rng.Int(hood.length/2)+hood.length/2;
+        int i=rng.Int(hood.length/2);
+        return GetHoodI(hood,centerX,i);
+    }
+
+
+    /**
+     * gets a specified index from the hood after mapping to the center position
+     */
+    public default int GetHoodI(int[]hood,int centerX,int entryIndex){
+        int i=entryIndex+hood.length/2;
         int x = hood[i] + centerX;
         if (!Util.InDim(x, Xdim())) {
             if (IsWrapX()) {

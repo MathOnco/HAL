@@ -2,6 +2,8 @@ package Framework.GridsAndAgents;
 
 
 import Framework.Interfaces.AgentToBool;
+import Framework.Interfaces.Coords1DBool;
+import Framework.Interfaces.IntToBool;
 import Framework.Util;
 
 import java.io.Serializable;
@@ -45,11 +47,13 @@ public class AgentSQ1D<T extends AgentGrid1D> extends Agent1DBase<T> implements 
             return;
         }
         if (G.wrapX) {
-            newX = Util.Wrap(newX, G.xDim);
-        } else if (!InDim(newX, G.xDim)) {
-            newX = Xsq();
+            MoveSQ(Util.Wrap(newX, G.xDim));
         }
-        MoveSQ(newX);
+    }
+    public void MoveSafeSQ(int newX, Coords1DBool IsValidMove) {
+        if(IsValidMove.Eval(newX)){
+            MoveSafeSQ(newX);
+        }
     }
 
     /**

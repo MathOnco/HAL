@@ -423,7 +423,16 @@ public interface Grid3D {
      * gets a random index from the full neighborhood, if the index does not map, returns -1
      */
     default public int RandomHoodI(int[]hood, int centerX, int centerY, int centerZ, Rand rng){
-        int i=rng.Int(hood.length/4)*3+hood.length/4;
+        int i=rng.Int(hood.length/4);
+        return GetHoodI(hood,centerX,centerY,centerZ,i);
+    }
+
+
+    /**
+     * gets one mapped index from the neighborhood
+     */
+    default public int GetHoodI(int[]hood,int centerX,int centerY,int centerZ,int entryIndex) {
+        int i=entryIndex*3+hood.length/4;
         int x = hood[i] + centerX;
         int y = hood[i + 1] + centerY;
         int z = hood[i + 2] + centerZ;
@@ -448,7 +457,7 @@ public interface Grid3D {
                 return -1;
             }
         }
-        return I(x,y,z);
+        return I(x, y, z);
     }
 
     /**

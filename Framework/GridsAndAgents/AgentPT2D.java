@@ -1,6 +1,8 @@
 package Framework.GridsAndAgents;
 
 import Framework.Interfaces.AgentToBool;
+import Framework.Interfaces.Coords2DBool;
+import Framework.Interfaces.Point2DBool;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -93,6 +95,11 @@ public class AgentPT2D<T extends AgentGrid2D> extends Agent2DBase<T> implements 
             newY = Ysq();
         MoveSQ(newX, newY);
     }
+    public void MoveSafeSQ(int newX, int newY, Coords2DBool IsValidMove) {
+        if(IsValidMove.Eval(newX,newY)){
+            MoveSafeSQ(newX,newY);
+        }
+    }
 
     /**
      * Similar to the move functions, only it will automatically either apply wraparound, or prevent moving along a
@@ -116,6 +123,11 @@ public class AgentPT2D<T extends AgentGrid2D> extends Agent2DBase<T> implements 
         } else if (!InDim(newY, G.yDim))
             newY = Ypt();
         MovePT(newX, newY);
+    }
+    public void MoveSafePT(double newX, double newY, Point2DBool IsValidMove) {
+        if(IsValidMove.Eval(newX,newY)){
+            MoveSafePT(newX,newY);
+        }
     }
 
     /**

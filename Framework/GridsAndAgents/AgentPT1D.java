@@ -1,6 +1,8 @@
 package Framework.GridsAndAgents;
 
 import Framework.Interfaces.AgentToBool;
+import Framework.Interfaces.Coords1DBool;
+import Framework.Interfaces.Point1DBool;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -61,11 +63,17 @@ public class AgentPT1D<T extends AgentGrid1D> extends Agent1DBase<T> implements 
             return;
         }
         if (G.wrapX) {
-            newX = Wrap(newX, G.xDim);
-        } else if (!InDim(newX, G.xDim)) {
-            newX = Xsq();
+            MoveSQ(Wrap(newX, G.xDim));
         }
-        MoveSQ(newX);
+        else{
+            MoveSQ(Xsq());
+        }
+    }
+
+    public void MoveSafeSQ(int newX, Coords1DBool IsValidMove) {
+        if(IsValidMove.Eval(newX)){
+            MoveSafeSQ(newX);
+        }
     }
 
     /**
@@ -81,11 +89,14 @@ public class AgentPT1D<T extends AgentGrid1D> extends Agent1DBase<T> implements 
             return;
         }
         if (G.wrapX) {
-            newX = Wrap(newX, G.moveSafeXdim);
-        } else if (!InDim(newX, G.xDim)) {
-            newX = Xpt();
+            MovePT(Wrap(newX, G.moveSafeXdim));
         }
-        MovePT(newX);
+    }
+
+    public void MoveSafePT(double newX, Point1DBool IsValidMove) {
+        if(IsValidMove.Eval(newX)){
+            MoveSafePT(newX);
+        }
     }
 
     /**

@@ -1,6 +1,8 @@
 package Framework.GridsAndAgents;
 
 import Framework.Interfaces.AgentToBool;
+import Framework.Interfaces.Coords3DBool;
+import Framework.Interfaces.Point3DBool;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -108,6 +110,11 @@ public class AgentPT3D<T extends AgentGrid3D> extends Agent3DBase<T> implements 
         MoveSQ(newX, newY, newZ);
     }
 
+    public void MoveSafeSQ(int newX, int newY,int newZ, Coords3DBool IsValidMove) {
+        if(IsValidMove.Eval(newX,newY,newZ)){
+            MoveSafeSQ(newX,newY,newZ);
+        }
+    }
     /**
      * Similar to the move functions, only it will automatically either apply wraparound, or prevent moving along a
      * partiular axis if movement would cause the agent to go out of bounds.
@@ -136,6 +143,11 @@ public class AgentPT3D<T extends AgentGrid3D> extends Agent3DBase<T> implements 
             newZ = Zpt();
         }
         MovePT(newX, newY, newZ);
+    }
+    public void MoveSafePT(double newX, double newY,double newZ, Point3DBool IsValidMove) {
+        if(IsValidMove.Eval(newX,newY,newZ)){
+            MoveSafePT(newX,newY,newZ);
+        }
     }
 
     /**

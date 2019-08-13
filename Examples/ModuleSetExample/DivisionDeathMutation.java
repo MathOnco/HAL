@@ -5,13 +5,9 @@ import Framework.Tools.Modularity.VarSetManager;
 import Framework.GridsAndAgents.AgentGrid2D;
 import Framework.GridsAndAgents.AgentSQ2Dunstackable;
 import Framework.Gui.GridWindow;
-import Framework.Gui.UIGrid;
 import Framework.Rand;
-import Framework.Tools.FileIO;
 import Framework.Tools.Modularity.ModuleSetManager;
 import Framework.Util;
-
-import java.util.Arrays;
 
 import static Framework.Util.BLACK;
 
@@ -72,10 +68,6 @@ class DivMutMod extends DivDeathModule {
     }
 
     @Override
-    public void Setup(){
-    }
-
-    @Override
     public void OnDiv(CellEx parent,CellEx c){
         if(parent!=null) {
             parent.vars[DIVIDED] = 1;
@@ -127,7 +119,7 @@ class CellEx extends AgentSQ2Dunstackable<DivisionDeathMutation> implements VarS
 
     void Mutate(){
         nMutations++;
-        for (DivDeathModule mod : G.mods.IterMethod("OnMut")) {
+        for (DivDeathModule mod : G.mods.Iter("OnMut")) {
             mod.OnMut(this);
         }
     }
@@ -158,7 +150,7 @@ public class DivisionDeathMutation extends AgentGrid2D<CellEx> {
         super(x, y, CellEx.class);
     }
     public void Setup(){
-        for (DivDeathModule module : mods.IterMethod("Reset")) {
+        for (DivDeathModule module : mods.Iter("Reset")) {
             module.Setup();
         }
         divProbMods=mods.CountModsWithMethod("SetDivProb");
@@ -174,30 +166,30 @@ public class DivisionDeathMutation extends AgentGrid2D<CellEx> {
         } else{
             c.nMutations=parent.nMutations;
         }
-        for (DivDeathModule module : mods.IterMethod("OnDiv")) {
+        for (DivDeathModule module : mods.Iter("OnDiv")) {
             module.OnDiv(parent,c);
         }
         return c;
     }
 
     public void StepCells(){
-        for (DivDeathModule module : mods.IterMethod("OnStep")) {
+        for (DivDeathModule module : mods.Iter("OnStep")) {
             module.OnStep();
         }
         for (CellEx c : this) {//iterate over all cells in the grid
-            for (DivDeathModule module : mods.IterMethod("OnStepCell")) {
+            for (DivDeathModule module : mods.Iter("OnStepCell")) {
                 module.OnStepCell(c);
             }
             int ct=MapEmptyHood(hood,c.Isq());
             double contactInhib=(hoodSize-ct)/hoodSize;
             double divProb=0;
             double dieProb=0;
-            for (DivDeathModule module : mods.IterMethod("SetDeathProb")) {
+            for (DivDeathModule module : mods.Iter("SetDeathProb")) {
                 dieProb+=module.SetDeathProb(c,contactInhib);
             }
             dieProb/=dieProbMods;
             if(dieProb>0&&rn.Double()<dieProb){
-                for (DivDeathModule module : mods.IterMethod("OnDeath")) {
+                for (DivDeathModule module : mods.Iter("OnDeath")) {
                     module.OnDeath(c);
                 }
                 c.Dispose();
@@ -205,7 +197,7 @@ public class DivisionDeathMutation extends AgentGrid2D<CellEx> {
             }
             double mutProb=0;
             if(c.nMutations<MAX_MUTATIONS) {
-                for (DivDeathModule module : mods.IterMethod("SetMutProb")) {
+                for (DivDeathModule module : mods.Iter("SetMutProb")) {
                     mutProb += module.SetMutProb(c, contactInhib);
                 }
             }
@@ -215,7 +207,7 @@ public class DivisionDeathMutation extends AgentGrid2D<CellEx> {
             }
 
             if(ct>0) {
-                for (DivDeathModule module : mods.IterMethod("SetDivProb")) {
+                for (DivDeathModule module : mods.Iter("SetDivProb")) {
                     divProb += module.SetDivProb(c, contactInhib);
                 }
                 divProb /= divProbMods;

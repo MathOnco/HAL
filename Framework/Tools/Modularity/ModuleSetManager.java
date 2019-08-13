@@ -43,7 +43,7 @@ public class ModuleSetManager<baseModule>{
     /**
      * use with foreach loop to iterate over modules that override a given method. used to run the module functions when appropriate
      */
-    public Iterable<baseModule> IterMethod(String methodName){
+    public Iterable<baseModule> Iter(String methodName){
         return moduleLists.get(methodName);
     }
 
