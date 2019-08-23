@@ -208,7 +208,6 @@ public class Genome<T extends Genome> implements Iterable<T>{
             myTracker.living.prevLiving = child;
         }
         myTracker.living = child;
-        this.DecPop();
     }
 
 

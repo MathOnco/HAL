@@ -19,7 +19,7 @@ public class ExampleModel extends AgentGrid2D<ExampleCell> {
     public double DRUG_DEATH = ProbScale(0.8, TIMESTEP);
     public double DRUG_START = 20 / TIMESTEP;
     public double DRUG_PERIOD = 15 / TIMESTEP;
-    public double DRUG_DURATION = 2 / TIMESTEP;
+    public double DRUG_DURATION = 3 / TIMESTEP;
     public double DRUG_UPTAKE = -0.03 * TIMESTEP;
     public double DRUG_DIFF_RATE = 0.02 * 60 * 60 * 24 * (TIMESTEP / (SPACE_STEP * SPACE_STEP));
     public double DRUG_BOUNDARY_VAL = 1.0;
@@ -58,7 +58,7 @@ public class ExampleModel extends AgentGrid2D<ExampleCell> {
             //data recording
             popsOut.Write(models[0].Pop() + "," + models[1].Pop() + "," + models[2].Pop() + "\n");
             if (tick % (int) (10 / models[0].TIMESTEP) == 0) {
-                win.ToPNG("ModelsDay" + (int)(tick * models[0].TIMESTEP) + ".png");
+                win.ToPNG("ModelsDay" + tick * models[0].TIMESTEP + ".png");
             }
         }
         //closing data collection

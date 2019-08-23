@@ -1497,7 +1497,10 @@ public final class Util {
      *
      * @param n 0 or a natural number
      * @return Factorial of toFact. Factorial(0) is 1
+     *
+     * possibly refactor with lround(exp(lgamma(n+1)))
      */
+
     public static long Factorial(long n) {
         if (n < 0) {
             throw new IllegalArgumentException("Factorial input cannot be negative");
