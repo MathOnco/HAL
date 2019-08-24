@@ -3,6 +3,8 @@ package Framework.Tools.PhylogenyTracker;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+//TODO: add sibling and children for-loop iteration, consider adding iter-living as well
+
 /**
  * the genome class is useful for keeping track of shared genetic information and phylogenies. extend this class to add any genetic/inherited information that needs to be tracked. an instance of the Genome class should be created once for every new mutation, and all agents with the same genome should share the same class instance as a member variable
  */
@@ -12,8 +14,8 @@ public class Genome<T extends Genome> implements Iterable<T>{
     Genome firstChild;
     Genome nextSibling;
     Genome prevSibling;
-    Genome nextLiving;
-    Genome prevLiving;
+    Genome next;
+    Genome prev;
     int id;
     final PhylogenyTrackerInternal<T> myTracker;
 
@@ -203,11 +205,11 @@ public class Genome<T extends Genome> implements Iterable<T>{
             current_right_child.prevSibling = new_clone;
             new_clone.nextSibling = current_right_child;
         }
-        child.nextLiving = myTracker.living;
-        if (myTracker.living != null) {
-            myTracker.living.prevLiving = child;
+        child.next = myTracker.listFirst;
+        if (myTracker.listFirst != null) {
+            myTracker.listFirst.prev = child;
         }
-        myTracker.living = child;
+        myTracker.listFirst = child;
     }
 
 
@@ -232,16 +234,16 @@ public class Genome<T extends Genome> implements Iterable<T>{
         if (my_left_sib != null) {
             my_left_sib.prevSibling = my_right_sib;
         }
+        if (prev != null) {
+            prev.next = next;
+        }
+        if (next != null) {
+            next.prev = prev;
+        }
     }
 
     void KillGenome() {
         myTracker.nLivingGenomes--;
-        if (prevLiving != null) {
-            prevLiving.nextLiving = nextLiving;
-        }
-        if (nextLiving != null) {
-            nextLiving.prevLiving = prevLiving;
-        }
         if (myTracker.removeEmptyLeaves && firstChild == null) {
             this.RemoveGenomeFromTree();
         }

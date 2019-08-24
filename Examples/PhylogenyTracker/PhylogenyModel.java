@@ -17,7 +17,7 @@ class CellGenome extends Genome<CellGenome>{
     int nMutations;
     int color;
     public CellGenome(CellGenome parent,Rand rn) {
-        super(parent, true);
+        super(parent, false);
         if(parent!=null) {
             this.nMutations = parent.nMutations + 1;
             this.color=parent.color;
@@ -26,7 +26,6 @@ class CellGenome extends Genome<CellGenome>{
             this.nMutations=0;
             this.color=Util.RGB256(128,128,128);
         }
-        IncPop();
     }
     public int GenMutComp(int initalVal,Rand rn,int mutRate){
         return initalVal+rn.Int(mutRate*2+1)-mutRate;
@@ -81,7 +80,7 @@ public class PhylogenyModel extends AgentGrid2D<CellEx> {
     int[]hood=Util.GenHood2D(new int[]{1,0,-1,0,0,1,0,-1}); //equivalent to int[]hood=Util.VonNeumannHood(false);
     Rand rn=new Rand(1);
     UIGrid vis;
-    FileIO outputFile=null;
+    FileIO outputFile;
     CellGenome seed=new CellGenome(null,rn);
     public PhylogenyModel(int x, int y, UIGrid vis) {
         super(x, y, CellEx.class);
@@ -136,7 +135,7 @@ public class PhylogenyModel extends AgentGrid2D<CellEx> {
         //int x=500,y=500,scaleFactor=2;
         int x=1000,y=1000,scaleFactor=1;
         GridWindow vis=new GridWindow(x,y,scaleFactor);//used for visualization
-        PhylogenyModel grid=new PhylogenyModel(x,y,vis);
+        PhylogenyModel grid=new PhylogenyModel(x,y,vis,"phylodata.csv");
         grid.InitTumor(5);
         for (int tick = 0; tick < 10000000; tick++) {
             vis.TickPause(0);//set to nonzero value to cap tick rate.

@@ -12,34 +12,36 @@ class PhylogenyTrackerInternal<T extends Genome> implements Iterable<T> {
     long totalPop;
     final public boolean removeEmptyLeaves;
     T progenitor;
-    T living;
+    T listFirst;
 
     public PhylogenyTrackerInternal(T progenitor, boolean removeEmptyLeaves) {
         this.progenitor = progenitor;
         this.removeEmptyLeaves = removeEmptyLeaves;
+        this.listFirst=progenitor;
     }
 
     @Override
     public Iterator<T> iterator() {
-        return new myIter(living);
+        return new myIter(progenitor);
     }
 
     private class myIter implements Iterator<T> {
         T curr;
 
-        myIter(T first) {
-            this.curr = first;
+        myIter(T last) {
+            this.curr = last;
         }
 
         @Override
         public boolean hasNext() {
-            return curr!=null&&curr.nextLiving != null;
+            return curr != null;
         }
 
         @Override
         public T next() {
-            curr = (T) curr.nextLiving;
-            return curr;
+            T ret=curr;
+            curr = (T) curr.prev;
+            return ret;
         }
     }
 
