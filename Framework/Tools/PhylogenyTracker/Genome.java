@@ -10,19 +10,19 @@ import java.util.Iterator;
  */
 public class Genome<T extends Genome> implements Iterable<T>{
     long pop;
-    Genome parent;
-    Genome firstChild;
-    Genome nextSibling;
-    Genome prevSibling;
-    Genome next;
-    Genome prev;
+    T parent;
+    T firstChild;
+    T nextSibling;
+    T prevSibling;
+    T next;
+    T prev;
     int id;
     final PhylogenyTrackerInternal<T> myTracker;
 
     /**
      * ﻿call this with the parent set to null to create a new phylogeny. the removeLeaves option specifies whether the phylogeny should continue to store dead leaves (lineages with no active individuals). should also be called whenever a new clone is created, along with IncPop to add one individual to the new clone.
      */
-    public Genome(Genome parent, boolean removeLeaves){
+    public Genome(T parent, boolean removeLeaves){
         if(parent!=null) {
             myTracker=parent.myTracker;
             parent.NewMutantGenome(this);
@@ -37,7 +37,7 @@ public class Genome<T extends Genome> implements Iterable<T>{
         this.pop = 0;
     }
 
-    public Genome(Genome parent){
+    public Genome(T parent){
         if(parent!=null) {
             myTracker=parent.myTracker;
             parent.NewMutantGenome(this);
@@ -69,7 +69,7 @@ public class Genome<T extends Genome> implements Iterable<T>{
     /**
      * returns the parent genome that was mutated to give rise to this genome
      */
-    public Genome GetParent() {
+    public T GetParent() {
         return parent;
     }
 
@@ -112,10 +112,10 @@ public class Genome<T extends Genome> implements Iterable<T>{
      */
     public void Traverse(GenomeFn GenomeFunction) {
         GenomeFunction.GenomeFn(this);
-        Genome child = firstChild;
+        T child = firstChild;
         while (child != null) {
             child.Traverse(GenomeFunction);
-            child = child.nextSibling;
+            child = (T)child.nextSibling;
         }
     }
 
@@ -125,11 +125,11 @@ public class Genome<T extends Genome> implements Iterable<T>{
     public void TraverseWithLineage(ArrayList<T> lineageStorage, GenomeLineageFn GenomeFunction) {
         lineageStorage.add((T) this);
         GenomeFunction.GenomeLineageFn(lineageStorage);
-        Genome child = firstChild;
+        T child = firstChild;
         while (child != null) {
             child.TraverseWithLineage(lineageStorage, GenomeFunction);
             lineageStorage.remove(lineageStorage.size() - 1);
-            child = child.nextSibling;
+            child = (T)child.nextSibling;
         }
     }
 
@@ -137,10 +137,10 @@ public class Genome<T extends Genome> implements Iterable<T>{
      * adds all direct descendants of the genome to the arraylist
      */
     public void GetChildren(ArrayList<T> childrenStorage) {
-        Genome child = firstChild;
+        T child = firstChild;
         while (child != null) {
             childrenStorage.add((T)child);
-            child = child.nextSibling;
+            child = (T)child.nextSibling;
         }
     }
 
@@ -148,10 +148,10 @@ public class Genome<T extends Genome> implements Iterable<T>{
      * adds all ancestors of the genome ot the arraylist
      */
     public void GetLineage(ArrayList<T> lineageStorage) {
-        Genome parent = this;
+        T parent = (T)this;
         while (parent != null) {
             lineageStorage.add((T)parent);
-            parent = parent.parent;
+            parent = (T)parent.parent;
         }
     }
 
@@ -199,7 +199,7 @@ public class Genome<T extends Genome> implements Iterable<T>{
 
     void NewMutantGenome(T child) {
         T new_clone = child;
-        Genome current_right_child = this.firstChild;
+        T current_right_child = this.firstChild;
         this.firstChild = new_clone;
         if (current_right_child != null) {
             current_right_child.prevSibling = new_clone;
@@ -215,9 +215,9 @@ public class Genome<T extends Genome> implements Iterable<T>{
 
     void RemoveGenomeFromTree() {
         myTracker.nTreeGenomes--;
-        Genome my_left_sib = this.nextSibling;
-        Genome my_right_sib = this.prevSibling;
-        Genome parent = this.parent;
+        T my_left_sib = this.nextSibling;
+        T my_right_sib = this.prevSibling;
+        T parent = this.parent;
         if (parent!=null&&this == parent.firstChild) {
             // clone is parent's most recent child
             parent.firstChild = my_left_sib;
