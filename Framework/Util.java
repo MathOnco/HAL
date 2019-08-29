@@ -691,6 +691,30 @@ public final class Util {
         return Math.sqrt(tot/a.length);
 
     }
+    /**
+     * prints an array to a string, using the .toString function, and separating entries with the delim argument
+     */
+    public static <T> String ArrToString(ArrayList<String> arr, String delim) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < arr.size() - 1; i++) {
+            sb.append(arr.get(i) + delim);
+        }
+        sb.append(arr.get(arr.size() - 1));
+        return sb.toString();
+    }
+
+    /**
+     * prints an array between start and end indices to a string, using the .toString function, and separating entries
+     * with the delim argument
+     */
+    public static <T> String ArrToString(ArrayList<String> arr, String delim, int start, int end) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = start; i < end-1; i++) {
+            sb.append(arr.get(i) + delim);
+        }
+        sb.append(arr.get(arr.size() - 1));
+        return sb.toString();
+    }
 
     /**
      * prints an array to a string, using the .toString function, and separating entries with the delim argument
@@ -2401,6 +2425,30 @@ public final class Util {
             return lo;
         }
     }
+
+    static public void Sort(IsEntry1Before2 Compare, SwapEntries Swap, int length){
+            _SortHelper(Compare, Swap, 0, length - 1);
+        }
+
+        static private void _SortHelper(IsEntry1Before2 Compare, SwapEntries Swap, int lo, int hi) {
+            if (lo < hi) {
+                int p = _Partition(Compare,Swap, lo, hi);
+                _SortHelper(Compare, Swap, lo, p - 1);
+                _SortHelper(Compare, Swap, p + 1, hi);
+            }
+        }
+
+        static private int _Partition(IsEntry1Before2 Compare, SwapEntries Swap, int lo, int hi) {
+                for (int j = lo; j < hi; j++) {
+                    if (!Compare.Compare(hi, j)) {
+                        Swap.Swap(lo, j);
+                        lo++;
+                    }
+                }
+                Swap.Swap(lo, hi);
+                return lo;
+        }
+
     static byte[] StateFromFile(String stateBytesFile) {
         Path path = Paths.get(stateBytesFile);
         try {
@@ -2497,3 +2545,4 @@ public final class Util {
 //        return ret;
 //    }
 }
+
