@@ -1,5 +1,7 @@
 package Framework.Tools.PhylogenyTracker;
 
+import Framework.Interfaces.GetGenomeAttrs;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -241,6 +243,19 @@ public class Genome<T extends Genome> implements Iterable<T>{
             next.prev = prev;
         }
     }
+
+    public void RecordClones(double timepoint){
+        myTracker.RecordClones(timepoint);
+    }
+
+    public void RecordClones(String timepointLabel){
+        myTracker.RecordClones(timepointLabel);
+    }
+
+    public void PopRecordToCSV(String path, String[]AttrHeaders, GetGenomeAttrs<T> GetAttrs, int includePopCutoff){
+        myTracker.PopRecordToCSV(path, AttrHeaders, GetAttrs,includePopCutoff);
+    }
+
 
     void KillGenome() {
         myTracker.nLivingGenomes--;
