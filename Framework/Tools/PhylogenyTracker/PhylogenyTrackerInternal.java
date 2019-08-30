@@ -18,8 +18,8 @@ class PhylogenyTrackerInternal<T extends Genome> implements Iterable<T> {
     final public boolean removeEmptyLeaves;
     T progenitor;
     T listFirst;
-    ArrayList<long[]>popRecords;
-    ArrayList<String> recordLabels;
+    ArrayList<long[]>popRecords=new ArrayList<>();
+    ArrayList<String> recordLabels=new ArrayList<>();
 
     public PhylogenyTrackerInternal(T progenitor, boolean removeEmptyLeaves) {
         this.progenitor = progenitor;
@@ -27,9 +27,9 @@ class PhylogenyTrackerInternal<T extends Genome> implements Iterable<T> {
         this.listFirst=progenitor;
     }
 
-    public void ResetRecord(){
-        popRecords=new ArrayList<>();
-        recordLabels=new ArrayList<>();
+    public void ResetCloneRecord(){
+        popRecords.clear();
+        recordLabels.clear();
     }
 
     @Override
@@ -61,6 +61,9 @@ class PhylogenyTrackerInternal<T extends Genome> implements Iterable<T> {
     }
 
     public void RecordClones(String timepointLabel){
+        if(CountCommas(timepointLabel)>0){
+            throw new IllegalArgumentException("timepoint label cannot contain commas");
+        }
         if(removeEmptyLeaves){
             throw new IllegalStateException("can't record pops with leaf removal on!");
         }
@@ -76,15 +79,27 @@ class PhylogenyTrackerInternal<T extends Genome> implements Iterable<T> {
         popRecords.add(pops);
         recordLabels.add(timepointLabel);
     }
+    private int CountCommas(String checkMe){
+        int ct=0;
+        for (int i = 0; i < checkMe.length(); i++) {
+            if('c'==checkMe.charAt(i)){
+                ct++;
+            }
+        }
+        return ct;
+    }
 
     public void PopRecordToCSV(String path, String[]AttrHeaders, GetGenomeAttrs<T> GetAttrs,int includePopCutoff){
         FileIO out=new FileIO(path,"w");
         for (String header : AttrHeaders) {
+            if(CountCommas(header)>0){
+                throw new IllegalArgumentException("attr header cannot contain commas");
+            }
             if(header=="CloneID"||header=="ParentID"){
                 throw new IllegalArgumentException("attr header cannot be CloneID or ParentID!");
             }
         }
-        out.Write(Util.ArrToString(AttrHeaders,",")+",CloneID,ParentID"+Util.ArrToString(recordLabels,",")+"\n");
+        out.Write(Util.ArrToString(AttrHeaders,",")+",CloneID,ParentID,"+Util.ArrToString(recordLabels,",")+"\n");
         long[]maxpops=new long[nGenomesEver];
         int[]parentIDs=new int[nGenomesEver];
         String[]attrsOut=new String[nGenomesEver];
@@ -96,7 +111,11 @@ class PhylogenyTrackerInternal<T extends Genome> implements Iterable<T> {
                 parentid=clone.GetParent().id;
             }
             parentIDs[id]=parentid;
-            attrsOut[id]=Util.ArrToString(GetAttrs.GetAttrs(clone),",");
+            attrsOut[id]=GetAttrs.GetAttrs(clone);
+            int commaCt=CountCommas(attrsOut[id]);
+            if(commaCt!=AttrHeaders.length-1){
+                throw new IllegalArgumentException("clone attrs must be separated by commas! expected number of commas: "+(AttrHeaders.length-1)+" actual: "+commaCt);
+            }
             id++;
         }
         //get maxpops
@@ -111,7 +130,7 @@ class PhylogenyTrackerInternal<T extends Genome> implements Iterable<T> {
         }
         for (id = 0; id <nGenomesEver ; id++) {
             if(maxpops[id]>includePopCutoff) {
-                out.Write(attrsOut + "," + id + "," + parentIDs[id] + ",");
+                out.Write(attrsOut[id] + "," + id + "," + parentIDs[id] + ",");
                 //get pops at each timepoint
                 for (int j = 0; j < popRecords.size(); j++) {
                     long pop = 0;
@@ -127,6 +146,7 @@ class PhylogenyTrackerInternal<T extends Genome> implements Iterable<T> {
                 out.Write("\n");
             }
         }
+        out.Close();
     }
 
     public int GetNumGenomes() {

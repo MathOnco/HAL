@@ -28,6 +28,7 @@ public class Genome<T extends Genome> implements Iterable<T>{
         if(parent!=null) {
             myTracker=parent.myTracker;
             parent.NewMutantGenome(this);
+            this.parent=parent;
         }
         else{
             myTracker=new PhylogenyTrackerInternal(this,removeLeaves);
@@ -43,6 +44,7 @@ public class Genome<T extends Genome> implements Iterable<T>{
         if(parent!=null) {
             myTracker=parent.myTracker;
             parent.NewMutantGenome(this);
+            this.parent=parent;
         }
         else{
             myTracker=new PhylogenyTrackerInternal(this,true);
@@ -242,6 +244,9 @@ public class Genome<T extends Genome> implements Iterable<T>{
         if (next != null) {
             next.prev = prev;
         }
+    }
+    public void ResetCloneRecord(){
+        myTracker.ResetCloneRecord();
     }
 
     public void RecordClones(double timepoint){
