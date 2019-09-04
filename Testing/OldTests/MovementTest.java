@@ -1,7 +1,7 @@
 package Testing.OldTests;
 
-import Framework.GridsAndAgents.AgentGrid2D;
-import Framework.GridsAndAgents.AgentSQ2Dunstackable;
+import HAL.GridsAndAgents.AgentGrid2D;
+import HAL.GridsAndAgents.AgentSQ2Dunstackable;
 
 /**
  * Created by Rafael on 10/28/2017.

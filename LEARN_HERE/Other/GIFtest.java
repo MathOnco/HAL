@@ -1,9 +1,9 @@
 package LEARN_HERE.Other;
 
-import Framework.Gui.GifMaker;
-import Framework.Gui.UIGrid;
-import Framework.Gui.UIWindow;
-import Framework.Util;
+import HAL.Gui.GifMaker;
+import HAL.Gui.UIGrid;
+import HAL.Gui.UIWindow;
+import HAL.Util;
 
 import java.util.Random;
 

@@ -1,10 +1,10 @@
 package LEARN_HERE.OffLatticeModel;
 
-import Framework.GridsAndAgents.AgentGrid2D;
-import Framework.GridsAndAgents.AgentPT2D;
-import Framework.Gui.OpenGL2DWindow;
-import Framework.Rand;
-import Framework.Util;
+import HAL.GridsAndAgents.AgentGrid2D;
+import HAL.GridsAndAgents.AgentPT2D;
+import HAL.Gui.OpenGL2DWindow;
+import HAL.Rand;
+import HAL.Util;
 
 class ExampleCell extends AgentPT2D<ExampleGrid> {
     int color;

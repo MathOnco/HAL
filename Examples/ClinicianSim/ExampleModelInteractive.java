@@ -1,15 +1,15 @@
 package Examples.ClinicianSim;
 
-import Framework.GridsAndAgents.AgentGrid2D;
-import Framework.GridsAndAgents.AgentSQ2Dunstackable;
-import Framework.GridsAndAgents.PDEGrid2D;
-import Framework.Gui.UIGrid;
-import Framework.Rand;
-import Framework.Tools.InteractiveModel.InteractiveModel;
-import Framework.Tools.InteractiveModel.TreatableTumor;
+import HAL.GridsAndAgents.AgentGrid2D;
+import HAL.GridsAndAgents.AgentSQ2Dunstackable;
+import HAL.GridsAndAgents.PDEGrid2D;
+import HAL.Gui.UIGrid;
+import HAL.Rand;
+import HAL.Tools.InteractiveModel.InteractiveModel;
+import HAL.Tools.InteractiveModel.TreatableTumor;
 
 import static Examples.ClinicianSim.ExampleModelInteractive.RESISTANT;
-import static Framework.Util.*;
+import static HAL.Util.*;
 
 public class ExampleModelInteractive extends AgentGrid2D<ExampleCellInteractive> implements TreatableTumor{
     //model constants

@@ -1,12 +1,12 @@
 package LEARN_HERE.Agents;
 
-import Framework.GridsAndAgents.AgentSQ2Dunstackable;
-import Framework.Gui.GridWindow;
-import Framework.GridsAndAgents.AgentGrid2D;
-import Framework.Rand;
-import Framework.Util;
+import HAL.GridsAndAgents.AgentSQ2Dunstackable;
+import HAL.Gui.GridWindow;
+import HAL.GridsAndAgents.AgentGrid2D;
+import HAL.Rand;
+import HAL.Util;
 
-import static Framework.Util.*;
+import static HAL.Util.*;
 
 /**
  * Created by Rafael on 9/5/2017.

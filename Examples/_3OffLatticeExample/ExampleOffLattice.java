@@ -1,15 +1,15 @@
 package Examples._3OffLatticeExample;
 
-import Framework.GridsAndAgents.SphericalAgent2D;
-import Framework.GridsAndAgents.AgentGrid2D;
-import Framework.Gui.OpenGL2DWindow;
-import Framework.Tools.FileIO;
-import Framework.Tools.Internal.Gaussian;
-import Framework.Rand;
+import HAL.GridsAndAgents.SphericalAgent2D;
+import HAL.GridsAndAgents.AgentGrid2D;
+import HAL.Gui.OpenGL2DWindow;
+import HAL.Tools.FileIO;
+import HAL.Tools.Internal.Gaussian;
+import HAL.Rand;
 
 import java.util.ArrayList;
 
-import static Framework.Util.RGB256;
+import static HAL.Util.RGB256;
 
 class CellOL extends SphericalAgent2D<CellOL,ExampleOffLattice>{
     int type;

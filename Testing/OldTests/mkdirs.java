@@ -1,6 +1,6 @@
 package Testing.OldTests;
 
-import static Framework.Util.MakeDirs;
+import static HAL.Util.MakeDirs;
 
 /**
  * Created by Rafael on 9/19/2017.

@@ -1,6 +1,0 @@
-package Framework.Interfaces;
-
-@FunctionalInterface
-public interface IndexIntAction {
-    void Action(int i, int val);
-}

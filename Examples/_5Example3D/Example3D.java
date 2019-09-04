@@ -1,14 +1,14 @@
 package Examples._5Example3D;
-import Framework.GridsAndAgents.*;
-import Framework.Gui.OpenGL3DWindow;
-import Framework.Interfaces.DoubleToInt;
-import Framework.Rand;
-import Framework.Util;
+import HAL.GridsAndAgents.*;
+import HAL.Gui.OpenGL3DWindow;
+import HAL.Interfaces.DoubleToInt;
+import HAL.Rand;
+import HAL.Util;
 
 import java.util.LinkedList;
 
 import static Examples._5Example3D.Example3D.*;
-import static Framework.Util.*;
+import static HAL.Util.*;
 
 class ExCell3D extends AgentSQ3D<Example3D>{
     int type;

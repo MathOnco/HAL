@@ -1,9 +1,9 @@
 package LEARN_HERE.Agents;
 
 
-import Framework.Tools.MultiWellExperiment.MultiWellExperiment;
+import HAL.Tools.MultiWellExperiment.MultiWellExperiment;
 
-import static Framework.Util.*;
+import static HAL.Util.*;
 
 public class MultiwellExample{
     public static void StepModel(BirthDeath model,int iWell){

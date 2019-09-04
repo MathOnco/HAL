@@ -1,7 +1,7 @@
 package Examples.Lesson;
 
-import Framework.Gui.GridWindow;
-import Framework.Util;
+import HAL.Gui.GridWindow;
+import HAL.Util;
 
 public class Part1Visualization {
     public static void main(String[] args) {

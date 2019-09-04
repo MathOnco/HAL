@@ -1,17 +1,15 @@
 package Examples._1DivisionDeathMutation;
 
-import Framework.GridsAndAgents.AgentGrid2D;
-import Framework.GridsAndAgents.AgentSQ2Dunstackable;
-import Framework.Gui.GridWindow;
-import Framework.Gui.UIGrid;
-import Framework.Tools.FileIO;
-import Framework.Rand;
-import Framework.Util;
+import HAL.GridsAndAgents.AgentGrid2D;
+import HAL.GridsAndAgents.AgentSQ2Dunstackable;
+import HAL.Gui.GridWindow;
+import HAL.Gui.UIGrid;
+import HAL.Tools.FileIO;
+import HAL.Rand;
+import HAL.Util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-
-import static Framework.Util.WHITE;
 
 //cells grow and mutate
 class CellEx extends AgentSQ2Dunstackable<DivisionDeathMutation>{

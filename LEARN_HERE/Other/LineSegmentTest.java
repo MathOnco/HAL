@@ -1,8 +1,8 @@
 package LEARN_HERE.Other;
 
-import Framework.Gui.OpenGL3DWindow;
+import HAL.Gui.OpenGL3DWindow;
 
-import static Framework.Util.RGB;
+import static HAL.Util.RGB;
 
 public class LineSegmentTest {
     public static void main(String[] args) {

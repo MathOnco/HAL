@@ -1,10 +1,10 @@
 package LEARN_HERE.Other;
 
-import Framework.Gui.GridWindow;
-import Framework.Gui.UIGrid;
+import HAL.Gui.GridWindow;
+import HAL.Gui.UIGrid;
 
-import static Framework.Util.Interpolate2D;
-import static Framework.Util.RGB256;
+import static HAL.Util.Interpolate2D;
+import static HAL.Util.RGB256;
 
 public class ColorInterpolation {
     static double[]c1=new double[]{0,113.9850,188.9550};

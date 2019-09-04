@@ -1,14 +1,9 @@
 package Testing;
 
 
-import Framework.GridsAndAgents.*;
-import Framework.Gui.PlotLine;
-import Framework.Gui.PlotWindow;
-import Framework.Gui.UIPlot;
-import Framework.Gui.UIWindow;
-import Framework.Rand;
-import Framework.Tools.MultinomialCalc;
-import Framework.Util;
+import HAL.GridsAndAgents.*;
+import HAL.Rand;
+import HAL.Tools.MultinomialCalc;
 
 //class TestAgent1D extends AgentSQ1D<TestGrid1D> {}
 //

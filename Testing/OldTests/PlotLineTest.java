@@ -1,8 +1,8 @@
 package Testing.OldTests;
 
-import Framework.Gui.PlotLine;
-import Framework.Gui.PlotWindow;
-import Framework.Util;
+import HAL.Gui.PlotLine;
+import HAL.Gui.PlotWindow;
+import HAL.Util;
 
 public class PlotLineTest {
     public static void main(String[] args) {

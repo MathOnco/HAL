@@ -1,7 +1,7 @@
 package LEARN_HERE.Diffusbiles;
 
-import Framework.GridsAndAgents.Grid3Ddouble;
-import Framework.Gui.UIGrid;
+import HAL.GridsAndAgents.Grid3Ddouble;
+import HAL.Gui.UIGrid;
 
 /**
  * Created by Rafael on 10/29/2017.

@@ -1,9 +1,9 @@
 package Testing.OldTests;
 
-import Framework.GridsAndAgents.AgentGrid2D;
-import Framework.GridsAndAgents.AgentList;
-import Framework.GridsAndAgents.AgentSQ2D;
-import Framework.Rand;
+import HAL.GridsAndAgents.AgentGrid2D;
+import HAL.GridsAndAgents.AgentList;
+import HAL.GridsAndAgents.AgentSQ2D;
+import HAL.Rand;
 
 class Cell2 extends AgentSQ2D<AgentGrid2D> {
 

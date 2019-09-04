@@ -1,8 +1,8 @@
 package Testing.OldTests;
 
-import Framework.GridsAndAgents.PDEGrid3D;
-import Framework.Gui.GridWindow;
-import Framework.Util;
+import HAL.GridsAndAgents.PDEGrid3D;
+import HAL.Gui.GridWindow;
+import HAL.Util;
 
 public class DiffTest3D {
     public static void main(String[] args) {

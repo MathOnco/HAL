@@ -1,12 +1,12 @@
 package Testing.OldTests;
 
-import Framework.Gui.PlotLine;
-import Framework.Gui.PlotWindow;
-import Framework.Tools.ODESolver.ODESolver;
+import HAL.Gui.PlotLine;
+import HAL.Gui.PlotWindow;
+import HAL.Tools.ODESolver.ODESolver;
 
 import java.util.ArrayList;
 
-import static Framework.Util.RED;
+import static HAL.Util.RED;
 
 public class ODEtest {
 

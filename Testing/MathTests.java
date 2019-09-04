@@ -1,12 +1,12 @@
 package Testing;
 
-import Framework.Interfaces.OdeSolution;
-import Framework.Rand;
-import Framework.Tools.ODESolver.Derivative;
-import Framework.Tools.ODESolver.ODESolver;
-import Framework.Util;
+import HAL.Interfaces.OdeSolution;
+import HAL.Rand;
+import HAL.Tools.ODESolver.Derivative;
+import HAL.Tools.ODESolver.ODESolver;
+import HAL.Util;
 
-import static Framework.Util.*;
+import static HAL.Util.*;
 
 import static Testing.UnitTester.*;
 

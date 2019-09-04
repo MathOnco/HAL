@@ -1,12 +1,12 @@
 package LEARN_HERE.Tutorials.PDEexample;
 
-import Framework.GridsAndAgents.AgentGrid2D;
-import Framework.GridsAndAgents.AgentPT2D;
-import Framework.GridsAndAgents.PDEGrid2D;
-import Framework.Gui.GridWindow;
-import Framework.Gui.OpenGL2DWindow;
-import Framework.Rand;
-import Framework.Util;
+import HAL.GridsAndAgents.AgentGrid2D;
+import HAL.GridsAndAgents.AgentPT2D;
+import HAL.GridsAndAgents.PDEGrid2D;
+import HAL.Gui.GridWindow;
+import HAL.Gui.OpenGL2DWindow;
+import HAL.Rand;
+import HAL.Util;
 
 class ExampleCell extends AgentPT2D<ExampleGrid> {
     int color;

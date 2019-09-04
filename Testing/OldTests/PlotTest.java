@@ -1,7 +1,7 @@
 package Testing.OldTests;
 
-import Framework.Gui.PlotWindow;
-import Framework.Util;
+import HAL.Gui.PlotWindow;
+import HAL.Util;
 
 public class PlotTest {
     public static void main(String[] args) {

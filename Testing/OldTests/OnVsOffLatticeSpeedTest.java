@@ -1,14 +1,14 @@
 package Testing.OldTests;
 
-import Framework.GridsAndAgents.SphericalAgent2D;
-import Framework.GridsAndAgents.AgentGrid2D;
-import Framework.GridsAndAgents.AgentSQ2Dunstackable;
-import Framework.Rand;
+import HAL.GridsAndAgents.SphericalAgent2D;
+import HAL.GridsAndAgents.AgentGrid2D;
+import HAL.GridsAndAgents.AgentSQ2Dunstackable;
+import HAL.Rand;
 
 import java.util.ArrayList;
 import java.util.Random;
 
-import static Framework.Util.*;
+import static HAL.Util.*;
 
 /**
  * Created by Rafael on 8/2/2017.

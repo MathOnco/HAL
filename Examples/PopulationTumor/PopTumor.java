@@ -1,13 +1,13 @@
 package Examples.PopulationTumor;
 
-import Framework.GridsAndAgents.PopulationGrid2D;
-import Framework.Gui.GridWindow;
-import Framework.Interfaces.DoubleToInt;
-import Framework.Rand;
-import Framework.Util;
-import Framework.Tools.MultinomialCalc;
+import HAL.GridsAndAgents.PopulationGrid2D;
+import HAL.Gui.GridWindow;
+import HAL.Interfaces.DoubleToInt;
+import HAL.Rand;
+import HAL.Util;
+import HAL.Tools.MultinomialCalc;
 
-import static Framework.Util.RGB;
+import static HAL.Util.RGB;
 
 public class PopTumor {
     public final static int TUMOR = 0, M1 = 1, M2 = 2, MBOTH = 3, N_TYPES = 4;

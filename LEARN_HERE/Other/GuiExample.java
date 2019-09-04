@@ -1,8 +1,8 @@
 package LEARN_HERE.Other;
 
-import Framework.Gui.*;
+import HAL.Gui.*;
 
-import static Framework.Util.RGB;
+import static HAL.Util.RGB;
 
 /**
  * Created by Rafael on 10/30/2017.

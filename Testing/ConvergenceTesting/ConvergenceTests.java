@@ -1,26 +1,21 @@
 package Testing.ConvergenceTesting;
 
 // txt reading/writing
-import java.io.IOException;
 import java.io.PrintWriter;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.List;
-import java.util.ListIterator;
 import java.io.File;
 
-import Framework.GridsAndAgents.PDEGrid1D;
-import Framework.GridsAndAgents.PDEGrid2D;
-import Framework.GridsAndAgents.PDEGrid3D;
-import Framework.Gui.GridWindow;
-import Framework.Gui.PlotLine;
-import Framework.Gui.PlotWindow;
-import Framework.Gui.UIGrid;
-import Framework.Interfaces.DoubleArrayToDouble;
-import Framework.Interfaces.DoubleToColor;
-import Framework.Util;
+import HAL.GridsAndAgents.PDEGrid1D;
+import HAL.GridsAndAgents.PDEGrid2D;
+import HAL.GridsAndAgents.PDEGrid3D;
+import HAL.Gui.GridWindow;
+import HAL.Gui.PlotLine;
+import HAL.Gui.PlotWindow;
+import HAL.Gui.UIGrid;
+import HAL.Interfaces.DoubleArrayToDouble;
+import HAL.Interfaces.DoubleToColor;
+import HAL.Util;
 
-import static Framework.Util.RED;
+import static HAL.Util.RED;
 
 
 public class ConvergenceTests {

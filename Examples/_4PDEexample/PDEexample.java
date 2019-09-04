@@ -1,15 +1,15 @@
 package Examples._4PDEexample;
 
-import Framework.GridsAndAgents.AgentGrid2D;
-import Framework.GridsAndAgents.AgentSQ2Dunstackable;
-import Framework.GridsAndAgents.PDEGrid2D;
-import Framework.Gui.GridWindow;
-import Framework.Gui.UIGrid;
-import Framework.Rand;
-import Framework.Util;
+import HAL.GridsAndAgents.AgentGrid2D;
+import HAL.GridsAndAgents.AgentSQ2Dunstackable;
+import HAL.GridsAndAgents.PDEGrid2D;
+import HAL.Gui.GridWindow;
+import HAL.Gui.UIGrid;
+import HAL.Rand;
+import HAL.Util;
 
-import static Framework.Util.HeatMapRGB;
-import static Framework.Util.RGB;
+import static HAL.Util.HeatMapRGB;
+import static HAL.Util.RGB;
 
 
 class SrcOrSink extends AgentSQ2Dunstackable<PDEexample>{

@@ -1,9 +1,9 @@
 package Testing.OldTests;
 
-import Framework.GridsAndAgents.Grid2Ddouble;
-import Framework.GridsAndAgents.PDEGrid2D;
-import Framework.Gui.GridWindow;
-import Framework.Util;
+import HAL.GridsAndAgents.Grid2Ddouble;
+import HAL.GridsAndAgents.PDEGrid2D;
+import HAL.Gui.GridWindow;
+import HAL.Util;
 
 public class ZeroDiffusionTest {
     public static void main(String[] args) {

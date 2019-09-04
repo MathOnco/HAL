@@ -1,6 +1,6 @@
 package Testing.OldTests;
 
-import Framework.Util;
+import HAL.Util;
 
 public class PMFtests {
     static void NormalVsBinomial(int n,double p,int k){

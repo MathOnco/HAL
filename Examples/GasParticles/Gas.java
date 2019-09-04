@@ -1,12 +1,12 @@
 package Examples.GasParticles;
 
 
-import Framework.GridsAndAgents.AgentGrid2D;
-import Framework.GridsAndAgents.AgentPT2D;
-import Framework.Gui.GridWindow;
-import Framework.Rand;
+import HAL.GridsAndAgents.AgentGrid2D;
+import HAL.GridsAndAgents.AgentPT2D;
+import HAL.Gui.GridWindow;
+import HAL.Rand;
 
-import static Framework.Util.HeatMapRGB;
+import static HAL.Util.HeatMapRGB;
 
 class Particle extends AgentPT2D<Gas> {
     public void BrownianMotion(){

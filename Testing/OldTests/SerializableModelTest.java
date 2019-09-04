@@ -1,10 +1,10 @@
 package Testing.OldTests;
 
-import Framework.GridsAndAgents.AgentGrid2D;
-import Framework.GridsAndAgents.AgentSQ2D;
-import Framework.Gui.GridWindow;
-import Framework.Interfaces.SerializableModel;
-import Framework.Util;
+import HAL.GridsAndAgents.AgentGrid2D;
+import HAL.GridsAndAgents.AgentSQ2D;
+import HAL.Gui.GridWindow;
+import HAL.Interfaces.SerializableModel;
+import HAL.Util;
 
 class Cell extends AgentSQ2D<SerializableModelTest> {
 }

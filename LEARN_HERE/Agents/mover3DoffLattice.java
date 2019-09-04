@@ -1,13 +1,13 @@
 package LEARN_HERE.Agents;
 
-import Framework.GridsAndAgents.AgentGrid3D;
-import Framework.GridsAndAgents.AgentPT3D;
-import Framework.Gui.GridWindow;
-import Framework.Gui.OpenGL3DWindow;
-import Framework.Rand;
-import Framework.Util;
+import HAL.GridsAndAgents.AgentGrid3D;
+import HAL.GridsAndAgents.AgentPT3D;
+import HAL.Gui.GridWindow;
+import HAL.Gui.OpenGL3DWindow;
+import HAL.Rand;
+import HAL.Util;
 
-import static Framework.Util.RGB;
+import static HAL.Util.RGB;
 
 /**
  * Created by Rafael on 10/29/2017.

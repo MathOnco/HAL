@@ -1,5 +1,5 @@
 package Testing.OldTests;
-import static Framework.Util.*;
+import static HAL.Util.*;
 /**
  * Created by Rafael on 10/25/2017.
  */

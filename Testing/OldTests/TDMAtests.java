@@ -1,8 +1,8 @@
 package Testing.OldTests;
 
-import Framework.GridsAndAgents.PDEGrid1D;
-import Framework.Gui.OpenGL2DWindow;
-import Framework.Util;
+import HAL.GridsAndAgents.PDEGrid1D;
+import HAL.Gui.OpenGL2DWindow;
+import HAL.Util;
 
 public class TDMAtests {
     public static void main(String[] args) {

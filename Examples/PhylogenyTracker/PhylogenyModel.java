@@ -1,14 +1,15 @@
 package Examples.PhylogenyTracker;
 
-import Framework.Gui.UIGrid;
+import HAL.Gui.GifMaker;
+import HAL.Gui.UIGrid;
 
-import Framework.GridsAndAgents.AgentGrid2D;
-import Framework.GridsAndAgents.AgentSQ2Dunstackable;
-import Framework.Gui.GridWindow;
-import Framework.Tools.FileIO;
-import Framework.Rand;
-import Framework.Tools.PhylogenyTracker.Genome;
-import Framework.Util;
+import HAL.GridsAndAgents.AgentGrid2D;
+import HAL.GridsAndAgents.AgentSQ2Dunstackable;
+import HAL.Gui.GridWindow;
+import HAL.Tools.FileIO;
+import HAL.Rand;
+import HAL.Tools.PhylogenyTracker.Genome;
+import HAL.Util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,7 +22,7 @@ class CellGenome extends Genome<CellGenome>{
         if(parent!=null) {
             this.nMutations = parent.nMutations + 1;
             this.color=parent.color;
-            this.MutateColor(rn,20);
+            this.MutateColor(rn,40);
         }else{
             this.nMutations=0;
             this.color=Util.RGB256(128,128,128);
@@ -72,24 +73,19 @@ class CellEx extends AgentSQ2Dunstackable<PhylogenyModel>{
 public class PhylogenyModel extends AgentGrid2D<CellEx> {
     final static int BLACK= Util.RGB(0,0,0);
     double DIV_PROB =0.2;
-    double MUT_PROB =0.003;
+    double MUT_PROB =0.001;
     double DIE_PROB =0.1;
     double MUT_ADVANTAGE =1.08;
     int MAX_MUTATIONS =19;
     int[]mutCounts=new int[MAX_MUTATIONS+1];//+1 to count for un-mutated type
     int[]hood=Util.GenHood2D(new int[]{1,0,-1,0,0,1,0,-1}); //equivalent to int[]hood=Util.VonNeumannHood(false);
-    Rand rn=new Rand(1);
+    Rand rn=new Rand();
     UIGrid vis;
     FileIO outputFile;
     CellGenome seed=new CellGenome(null,rn);
     public PhylogenyModel(int x, int y, UIGrid vis) {
         super(x, y, CellEx.class);
         this.vis=vis;
-    }
-    public PhylogenyModel(int x, int y, UIGrid vis, String outputFileName) {
-        super(x, y, CellEx.class);
-        this.vis=vis;
-        outputFile=new FileIO(outputFileName,"w");
     }
     public void InitTumor(double radius){
         //places tumor cells in a circle
@@ -108,7 +104,7 @@ public class PhylogenyModel extends AgentGrid2D<CellEx> {
 //            c.Draw();
 //        }
     }
-    public void StepCells(){
+    public void StepCells(int tick){
         Arrays.fill(mutCounts,0);//clear the mutation counts
         for (CellEx c : this) {//iterate over all cells in the grid
             if(rn.Double()< DIE_PROB){
@@ -120,26 +116,28 @@ public class PhylogenyModel extends AgentGrid2D<CellEx> {
                 c.Divide();
             }
         }
-        if(outputFile!=null){
-            for (CellGenome cellGenome : seed) {
-                mutCounts[cellGenome.nMutations]+=cellGenome.Pop();
-            }
-            outputFile.Write(Util.ArrToString(mutCounts,",")+"\n");//write populations every timestep
-        }
         ShuffleAgents(rn);//shuffles order of for loop iteration
 //        IncTick();//increments timestep, including newly generated cells in the next round of iteration
     }
 
     public static void main(String[]args){
         ArrayList<Double[]>out=new ArrayList<>();
+        GifMaker gif=new GifMaker("clones.gif",0,true);
         //int x=500,y=500,scaleFactor=2;
         int x=1000,y=1000,scaleFactor=1;
         GridWindow vis=new GridWindow(x,y,scaleFactor);//used for visualization
-        PhylogenyModel grid=new PhylogenyModel(x,y,vis,"phylodata.csv");
+        PhylogenyModel grid=new PhylogenyModel(x,y,vis);
         grid.InitTumor(5);
-        for (int tick = 0; tick < 10000000; tick++) {
+        for (int tick = 0; tick < 1000; tick++) {
             vis.TickPause(0);//set to nonzero value to cap tick rate.
-            grid.StepCells();
+            grid.StepCells(tick);
+            if(tick%100==0) {
+                grid.seed.RecordClones(tick);
+                gif.AddFrame(grid.vis);
+            }
         }
+        grid.seed.OutputClonesToCSV("clones.csv",new String[]{"R","G","B"},(CellGenome g)->Util.GetRed256(g.color)+","+Util.GetGreen256(g.color)+","+Util.GetBlue256(g.color),100);
+        gif.Close();
+        vis.Close();
     }
 }

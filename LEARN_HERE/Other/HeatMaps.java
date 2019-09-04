@@ -1,8 +1,8 @@
 package LEARN_HERE.Other;
 
-import Framework.Gui.GridWindow;
+import HAL.Gui.GridWindow;
 
-import static Framework.Util.*;
+import static HAL.Util.*;
 
 /**
  * Created by Rafael on 10/13/2017.

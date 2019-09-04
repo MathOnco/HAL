@@ -1,11 +1,11 @@
-*
+#*
 # only allow scource files
-!Framework/**
-!LEARN_HERE/**
-!Testing/**
-!Examples/**
-!.gitignore
-!HalColorSchemes.jar
-!manual.pdf
-!FrameworkPresentation.pdf
+#!HAL/**
+#!LEARN_HERE/**
+#!Testing/**
+#!Examples/**
+#!.gitignore
+#!HalColorSchemes.jar
+#!manual.pdf
+#!FrameworkPresentation.pdf
 .DS_Store

@@ -1,6 +1,6 @@
 package LEARN_HERE.Other;
 
-import static Framework.Util.*;
+import static HAL.Util.*;
 
 /**
  * Created by rafael on 7/4/17.

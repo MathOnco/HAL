@@ -1,10 +1,10 @@
 package Testing.OldTests;
 
-import Framework.GridsAndAgents.AgentGrid2D;
-import Framework.Gui.GridWindow;
-import Framework.GridsAndAgents.SphericalAgent2D;
-import Framework.Gui.UIGrid;
-import Framework.Util;
+import HAL.GridsAndAgents.AgentGrid2D;
+import HAL.Gui.GridWindow;
+import HAL.GridsAndAgents.SphericalAgent2D;
+import HAL.Gui.UIGrid;
+import HAL.Util;
 
 import java.util.Random;
 

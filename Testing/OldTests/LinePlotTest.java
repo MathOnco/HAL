@@ -1,8 +1,8 @@
 package Testing.OldTests;
 
-import Framework.Gui.GridWindow;
+import HAL.Gui.GridWindow;
 
-import static Framework.Util.RGB;
+import static HAL.Util.RGB;
 
 /**
  * Created by Rafael on 10/28/2017.

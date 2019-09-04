@@ -1,12 +1,10 @@
 package Testing.OldTests;
 
-import Framework.GridsAndAgents.Grid2Ddouble;
-import Framework.GridsAndAgents.PDEGrid2D;
-import Framework.Gui.GridWindow;
+import HAL.GridsAndAgents.Grid2Ddouble;
+import HAL.GridsAndAgents.PDEGrid2D;
+import HAL.Gui.GridWindow;
 
-import java.util.Arrays;
-
-import static Framework.Util.*;
+import static HAL.Util.*;
 
 /**
  * Created by Rafael on 10/19/2017.

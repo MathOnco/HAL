@@ -1,13 +1,9 @@
 package Testing.OldTests;
 
-import Framework.Gui.UILabel;
-import Framework.Gui.UIWindow;
+import HAL.Gui.UILabel;
+import HAL.Gui.UIWindow;
 
-import java.awt.*;
 import javax.swing.*;
-import java.io.*;
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 
 public class GuiPrintTest extends JPanel {
     public static void main(String[] args) {

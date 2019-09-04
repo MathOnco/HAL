@@ -1,7 +1,7 @@
 package Testing.ConvergenceTesting;
 
 
-import Framework.GridsAndAgents.PDEGrid3D;
+import HAL.GridsAndAgents.PDEGrid3D;
 
 @FunctionalInterface
 public interface ConvergenceDiffusionAdvection3D {

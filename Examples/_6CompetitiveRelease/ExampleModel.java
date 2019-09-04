@@ -1,12 +1,12 @@
 package Examples._6CompetitiveRelease;
-import Framework.GridsAndAgents.AgentGrid2D;
-import Framework.GridsAndAgents.PDEGrid2D;
-import Framework.Gui.GridWindow;
-import Framework.GridsAndAgents.AgentSQ2Dunstackable;
-import Framework.Tools.FileIO;
-import Framework.Rand;
+import HAL.GridsAndAgents.AgentGrid2D;
+import HAL.GridsAndAgents.PDEGrid2D;
+import HAL.Gui.GridWindow;
+import HAL.GridsAndAgents.AgentSQ2Dunstackable;
+import HAL.Tools.FileIO;
+import HAL.Rand;
 import static Examples._6CompetitiveRelease.ExampleModel.*;
-import static Framework.Util.*;
+import static HAL.Util.*;
 
 public class ExampleModel extends AgentGrid2D<ExampleCell> {
     //model constants

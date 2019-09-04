@@ -1,8 +1,8 @@
 package LEARN_HERE.Diffusbiles;
 
-import Framework.GridsAndAgents.PDEGrid3D;
-import Framework.Gui.GridWindow;
-import Framework.Util;
+import HAL.GridsAndAgents.PDEGrid3D;
+import HAL.Gui.GridWindow;
+import HAL.Util;
 
 /**
  * Created by Rafael on 10/28/2017.

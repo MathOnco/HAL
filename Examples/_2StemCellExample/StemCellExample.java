@@ -1,14 +1,14 @@
 package Examples._2StemCellExample;
-import Framework.GridsAndAgents.AgentSQ2Dunstackable;
-import Framework.GridsAndAgents.AgentGrid2D;
-import Framework.Gui.*;
-import Framework.Tools.FileIO;
-import Framework.Rand;
-import Framework.Util;
+import HAL.GridsAndAgents.AgentSQ2Dunstackable;
+import HAL.GridsAndAgents.AgentGrid2D;
+import HAL.Gui.*;
+import HAL.Tools.FileIO;
+import HAL.Rand;
+import HAL.Util;
 
 import java.util.Arrays;
 
-import static Framework.Util.RGB;
+import static HAL.Util.RGB;
 
 class CACell extends AgentSQ2Dunstackable<StemCellCA> {
     int divs;

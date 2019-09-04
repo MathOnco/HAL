@@ -1,11 +1,11 @@
 package Testing.OldTests;
 
-import Framework.GridsAndAgents.PDEGrid2D;
-import Framework.Gui.UIGrid;
-import Framework.Gui.UILabel;
-import Framework.Gui.UIWindow;
-import Framework.Gui.TickTimer;
-import Framework.Util;
+import HAL.GridsAndAgents.PDEGrid2D;
+import HAL.Gui.UIGrid;
+import HAL.Gui.UILabel;
+import HAL.Gui.UIWindow;
+import HAL.Gui.TickTimer;
+import HAL.Util;
 
 public class ConvectionTest2 {
     static int sideLen=1000;

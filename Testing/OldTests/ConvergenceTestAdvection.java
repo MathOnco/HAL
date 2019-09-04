@@ -1,10 +1,10 @@
 package Testing.OldTests;
 
-import Framework.GridsAndAgents.PDEGrid2D;
-import Framework.Gui.GridWindow;
+import HAL.GridsAndAgents.PDEGrid2D;
+import HAL.Gui.GridWindow;
 
-import static Framework.Util.CircleHood;
-import static Framework.Util.HeatMapBRG;
+import static HAL.Util.CircleHood;
+import static HAL.Util.HeatMapBRG;
 
 /**
 * Created by Rafael on 10/19/2017.

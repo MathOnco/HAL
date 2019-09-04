@@ -1,10 +1,10 @@
 package Testing.OldTests;
 
-import Framework.GridsAndAgents.PDEGrid2D;
-import Framework.Gui.UIGrid;
-import Framework.Gui.UIWindow;
-import Framework.Gui.TickTimer;
-import Framework.Util;
+import HAL.GridsAndAgents.PDEGrid2D;
+import HAL.Gui.UIGrid;
+import HAL.Gui.UIWindow;
+import HAL.Gui.TickTimer;
+import HAL.Util;
 
 /**
  * Created by bravorr on 7/21/17.

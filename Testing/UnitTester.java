@@ -1,7 +1,7 @@
 package Testing;
 
-import Framework.Interfaces.VoidFunction;
-import Framework.Util;
+import HAL.Interfaces.VoidFunction;
+import HAL.Util;
 
 import java.util.ArrayList;
 

@@ -1,13 +1,13 @@
 package Examples.ODEmodel;
 
-import Framework.Gui.PlotLine;
-import Framework.Gui.PlotWindow;
-import Framework.Tools.ODESolver.ODESolver;
+import HAL.Gui.PlotLine;
+import HAL.Gui.PlotWindow;
+import HAL.Tools.ODESolver.ODESolver;
 
 import java.util.ArrayList;
 
-import static Framework.Util.BLUE;
-import static Framework.Util.GREEN;
+import static HAL.Util.BLUE;
+import static HAL.Util.GREEN;
 
 public class TumorGrowth {
     public final double tumorGrowthRate;

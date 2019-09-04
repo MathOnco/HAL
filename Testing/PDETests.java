@@ -1,9 +1,9 @@
 package Testing;
 
-import Framework.GridsAndAgents.PDEGrid1D;
-import Framework.GridsAndAgents.PDEGrid2D;
-import Framework.GridsAndAgents.PDEGrid3D;
-import Framework.Interfaces.*;
+import HAL.GridsAndAgents.PDEGrid1D;
+import HAL.GridsAndAgents.PDEGrid2D;
+import HAL.GridsAndAgents.PDEGrid3D;
+import HAL.Interfaces.*;
 
 import static Testing.UnitTester.*;
 

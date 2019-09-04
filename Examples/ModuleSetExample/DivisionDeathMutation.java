@@ -1,15 +1,15 @@
 package Examples.ModuleSetExample;
 
-import Framework.Tools.Modularity.VarSet;
-import Framework.Tools.Modularity.VarSetManager;
-import Framework.GridsAndAgents.AgentGrid2D;
-import Framework.GridsAndAgents.AgentSQ2Dunstackable;
-import Framework.Gui.GridWindow;
-import Framework.Rand;
-import Framework.Tools.Modularity.ModuleSetManager;
-import Framework.Util;
+import HAL.Tools.Modularity.VarSet;
+import HAL.Tools.Modularity.VarSetManager;
+import HAL.GridsAndAgents.AgentGrid2D;
+import HAL.GridsAndAgents.AgentSQ2Dunstackable;
+import HAL.Gui.GridWindow;
+import HAL.Rand;
+import HAL.Tools.Modularity.ModuleSetManager;
+import HAL.Util;
 
-import static Framework.Util.BLACK;
+import static HAL.Util.BLACK;
 
 class DivDeathModule{
     final DivisionDeathMutation G;
