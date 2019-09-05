@@ -73,6 +73,7 @@ class CellEx extends AgentSQ2Dunstackable<PhylogenyModel>{
 public class PhylogenyModel extends AgentGrid2D<CellEx> {
     final static int BLACK= Util.RGB(0,0,0);
     double DIV_PROB =0.2;
+    //double DIV_PROB =0.5;
     double MUT_PROB =0.001;
     double DIE_PROB =0.1;
     double MUT_ADVANTAGE =1.08;
@@ -128,7 +129,7 @@ public class PhylogenyModel extends AgentGrid2D<CellEx> {
         GridWindow vis=new GridWindow(x,y,scaleFactor);//used for visualization
         PhylogenyModel grid=new PhylogenyModel(x,y,vis);
         grid.InitTumor(5);
-        for (int tick = 0; tick < 1000; tick++) {
+        for (int tick = 0; tick < 3000; tick++) {
             vis.TickPause(0);//set to nonzero value to cap tick rate.
             grid.StepCells(tick);
             if(tick%100==0) {
@@ -136,7 +137,7 @@ public class PhylogenyModel extends AgentGrid2D<CellEx> {
                 gif.AddFrame(grid.vis);
             }
         }
-        grid.seed.OutputClonesToCSV("clones.csv",new String[]{"R","G","B"},(CellGenome g)->Util.GetRed256(g.color)+","+Util.GetGreen256(g.color)+","+Util.GetBlue256(g.color),100);
+        grid.seed.OutputClonesToCSV("clones.csv",new String[]{"R","G","B"},(CellGenome g)->Util.GetRed256(g.color)+","+Util.GetGreen256(g.color)+","+Util.GetBlue256(g.color),500);
         gif.Close();
         vis.Close();
     }

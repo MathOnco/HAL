@@ -107,7 +107,7 @@ class PhylogenyTrackerInternal<T extends Genome> implements Iterable<T> {
             System.arraycopy(popRecords.get(i),0,ret[i],0,ret[i].length);
         }
         for (long[] pops : ret) {
-            for (int i = pops.length - 1; i >= 0; i--) {
+            for (int i = pops.length - 1; i > 0; i--) {
                 pops[parentIDs[i]] +=pops[i];
             }
         }
