@@ -9,7 +9,6 @@ import HAL.Gui.UIGrid;
 public class Gradient2D {
     public static void main(String[] args) {
         int xD=10,yD=10;
-        UIGrid vis=new UIGrid(xD,yD,10);
         PDEGrid2D diff=new PDEGrid2D(xD,yD);
             for (int y = 0; y < diff.yDim; y++) {
                 double setVal=y*1.0/diff.xDim;
@@ -17,6 +16,7 @@ public class Gradient2D {
                     diff.Set(x, y, setVal);
                 }
             }
+            diff.Update();
         System.out.println("y gradient:"+diff.GradientY(5,5));
         System.out.println("x gradient:"+diff.GradientX(5,5));
     }

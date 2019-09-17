@@ -190,7 +190,7 @@ public class UIPlot implements GuiComp,Serializable{
     public PlotLine AddLine(int color,double[]xs,double[]ys){
         PlotLine ret=new PlotLine(this,color);
         for (int i = 0; i < xs.length; i++) {
-            ret.AddSegment(xs[i],xs[i],color);
+            ret.AddSegment(xs[i],ys[i],color);
         }
         return ret;
     }

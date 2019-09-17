@@ -54,8 +54,8 @@ public class PDEequations {
                 double centerVal = field[i];
                 double deltaSum = DeltaX2D(field, centerVal, x + 1, y, xDim, yDim, wrapX, BC)*DisplacedX2D(diffRates,x+1,y,xDim,yDim,wrapX,DiffRateBC);
                 deltaSum += DeltaX2D(field, centerVal, x - 1, y, xDim, yDim, wrapX, BC)*DisplacedX2D(diffRates,x-1,y,xDim,yDim,wrapX,DiffRateBC);
-                deltaSum += DeltaY2D(field, centerVal, x, y + 1, xDim, yDim, wrapY, BC)*DisplacedY2D(diffRates,x,y+1,xDim,yDim,wrapX,DiffRateBC);
-                deltaSum += DeltaY2D(field, centerVal, x, y - 1, xDim, yDim, wrapY, BC)*DisplacedY2D(diffRates,x,y-1,xDim,yDim,wrapX,DiffRateBC);
+                deltaSum += DeltaY2D(field, centerVal, x, y + 1, xDim, yDim, wrapY, BC)*DisplacedY2D(diffRates,x,y+1,xDim,yDim,wrapY,DiffRateBC);
+                deltaSum += DeltaY2D(field, centerVal, x, y - 1, xDim, yDim, wrapY, BC)*DisplacedY2D(diffRates,x,y-1,xDim,yDim,wrapY,DiffRateBC);
                 deltas[i] += deltaSum;
             }
         }

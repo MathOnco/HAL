@@ -1,10 +1,11 @@
-package Examples.CompetitiveReleasePerformanceTest;
+package Examples.CompetitiveReleasePerformanceTestOffLattice;
 
 import HAL.GridsAndAgents.AgentGrid2D;
 import HAL.GridsAndAgents.AgentSQ2Dunstackable;
 import HAL.GridsAndAgents.PDEGrid2D;
 import HAL.GridsAndAgents.SphericalAgent2D;
 import HAL.Gui.GridWindow;
+import HAL.Gui.OpenGL2DWindow;
 import HAL.Rand;
 
 import static Examples._6CompetitiveRelease.ExampleModel.RESISTANT;
@@ -25,11 +26,15 @@ public class ExampleModel extends AgentGrid2D<ExampleCell> {
     public double DRUG_UPTAKE = -0.03 *TIMESTEP;
     public double DRUG_DEATH = ProbScale(0.8,TIMESTEP);
     public double DRUG_BOUNDARY_VAL = 1.0;
+
+    double FORCE_EXPONENT=2;//these constants have been found to be rather stable, but tweak them and see what happens!
+    double FORCE_SCALER=0.7;
+
     //public double DRUG_UPTAKE = 0;
     //internal model objects
     public PDEGrid2D drug;
     public Rand rn;
-    public int[] divHood = MooreHood(false);
+    public double[]scratch=new double[2];
 
     public ExampleModel(int xDim, int yDim, Rand rn) {
         super(xDim, yDim, ExampleCell.class);
@@ -42,29 +47,45 @@ public class ExampleModel extends AgentGrid2D<ExampleCell> {
         void Run(ExampleModel m,int tick);
     }
 
-    public static void RunModel(int sideLen,ModelStep Step){
+    public static void RunModel(int sideLen,ModelStep Step,boolean draw){
         int x = sideLen, y = sideLen;
         ExampleModel m=new ExampleModel(x,y,new Rand(0));
+        OpenGL2DWindow win =null;
+        if(draw) {
+            win = new OpenGL2DWindow(500, 500, m.xDim, m.yDim);
+        }
         m.DRUG_START=0;
         m.DRUG_DURATION=m.DRUG_PERIOD;
         m.InitTumor();
-        for (int tick = 0; tick < 100000; tick++) {
+        for (int tick = 0; tick < 10000; tick++) {
             Step.Run(m,tick);
+            if(draw) {
+                win.Clear(BLACK);
+                for (ExampleCell cell : m) {
+                    win.Circle(cell.Xpt(), cell.Ypt(), cell.radius, HeatMapGRB(m.drug.Get(cell.Isq())));
+                }
+                win.Update();
+            }
+        }
+        if(draw) {
+            win.Close();
         }
     }
 
     public static void main(String[] args) {
         AwaitInput();
-        RunModel(60, ExampleModel::ModelStep60);
-        RunModel(90, ExampleModel::ModelStep90);
-        RunModel(120, ExampleModel::ModelStep120);
-        RunModel(150, ExampleModel::ModelStep150);
-        RunModel(180, ExampleModel::ModelStep180);
+        RunModel(60, ExampleModel::ModelStep60,false);
+        RunModel(90, ExampleModel::ModelStep90,false);
+        RunModel(120, ExampleModel::ModelStep120,false);
+        RunModel(150, ExampleModel::ModelStep150,false);
+        RunModel(180, ExampleModel::ModelStep180,false);
     }
 
     public void InitTumor() {
         for (int i = 0; i < length; i++) {
-            NewAgentSQ(i).type=RESISTANT;
+            ExampleCell c=NewAgentPT(rn.Double()*xDim,rn.Double()*yDim);
+            c.type=RESISTANT;
+            c.radius=0.5;
         }
     }
 
@@ -77,9 +98,11 @@ public class ExampleModel extends AgentGrid2D<ExampleCell> {
         drug.Update();
     }
     public void StepAllCells(int tick){
-        ShuffleAgents(rn);
         for (ExampleCell cell : this) {
             cell.CellStep();
+        }
+        for (ExampleCell cell : this) {
+            cell.CellStep2();
         }
     }
 
@@ -114,7 +137,7 @@ public class ExampleModel extends AgentGrid2D<ExampleCell> {
     }
 }
 
-class ExampleCell extends AgentSQ2Dunstackable<ExampleModel> {
+class ExampleCell extends SphericalAgent2D<ExampleCell,ExampleModel> {
     public int type;
 
     public void CellStep() {
@@ -125,13 +148,18 @@ class ExampleCell extends AgentSQ2Dunstackable<ExampleModel> {
             Dispose();
             return;
         }
-        //Chance of Division, depends on resistance
-        else if (G.rn.Double() < (type == RESISTANT ? G.DIV_PROB_RES : G.DIV_PROB_SEN)) {
-            int options=MapEmptyHood(G.divHood);
-            if(options>0){
-                G.NewAgentSQ(G.divHood[G.rn.Int(options)]).type=this.type;
-            }
+        double pressure=SumForces(1,(overlap, other) -> Math.pow(overlap,G.FORCE_EXPONENT)*G.FORCE_SCALER);
+        if (G.rn.Double()*pressure*2000 < (type == RESISTANT ? G.DIV_PROB_RES : G.DIV_PROB_SEN)) {
+           ExampleCell c=Divide(radius*2.0/3,G.scratch,G.rn);
+           c.radius=radius;
+           c.xVel=0;
+           c.yVel=0;
         }
+
+    }
+    public void CellStep2() {
+        ForceMove();
+        ApplyFriction(0);
     }
 }
 

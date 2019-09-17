@@ -1,6 +1,7 @@
 package HAL.GridsAndAgents;
 import HAL.Interfaces.Coords3DDouble;
 import HAL.Interfaces.Grid3D;
+import HAL.Tools.Internal.PDEequations;
 import HAL.Tools.TdmaSolver;
 import HAL.Util;
 //import AgentFramework.Util;
@@ -372,6 +373,64 @@ public class PDEGrid3D implements Grid3D,Serializable {
             Mul(i, val);
         }
     }
+
+    /**
+     * returns the gradient of the diffusible in the X direction at the coordinates specified
+     */
+    public double GradientX(int x, int y,int z) {
+        double left = PDEequations.DisplacedX3D(field,x-1,y,z, xDim, yDim,zDim, wrapX,(X, Y, Z)->Get(X+1,Y,Z));
+        double right = PDEequations.DisplacedX3D(field,x + 1, y,z, xDim, yDim,zDim,wrapX,(X,Y,Z)->Get(X-1,Y,Z));
+        return right - left;
+    }
+
+    /**
+     * returns the gradient of the diffusible in the Y direction at the coordinates specified
+     */
+    public double GradientY(int x, int y,int z) {
+        double down = PDEequations.DisplacedY3D(field,x,y-1,z, xDim, yDim,zDim, wrapY,(X,Y,Z)->Get(X,Y+1,Z));
+        double up = PDEequations.DisplacedY3D(field,x, y+1,z, xDim, yDim,zDim,wrapY,(X,Y,Z)->Get(X,Y-1,Z));
+        return up - down;
+    }
+    /**
+     * returns the gradient of the diffusible in the Z direction at the coordinates specified
+     */
+    public double GradientZ(int x, int y,int z) {
+        double down = PDEequations.DisplacedY3D(field,x,y,z-1, xDim, yDim,zDim, wrapZ,(X,Y,Z)->Get(X,Y,Z+1));
+        double up = PDEequations.DisplacedY3D(field,x, y,z+1, xDim, yDim,zDim,wrapZ,(X,Y,Z)->Get(X,Y,Z-1));
+        return up - down;
+    }
+
+    /**
+     * returns the gradient of the diffusible in the X direction at the coordinates specified, will use the boundary
+     * condition value if computing the gradient next to the boundary
+     */
+    public double GradientX(int x, int y,int z,double boundaryCond) {
+        double left = PDEequations.DisplacedX3D(field,x-1,y,z, xDim, yDim,zDim, wrapX,(X, Y,Z)->boundaryCond);
+        double right = PDEequations.DisplacedX3D(field,x + 1, y,z, xDim, yDim,zDim,wrapX,(X,Y,Z)->boundaryCond);
+        return right - left;
+    }
+
+    /**
+     * returns the gradient of the diffusible in the Y direction at the coordinates specified, will use the boundary
+     * condition value if computing the gradient next to the boundary
+     */
+    public double GradientY(int x, int y,int z,double boundaryCond) {
+        double down = PDEequations.DisplacedY3D(field,x,y-1,z, xDim, yDim,zDim, wrapY,(X,Y,Z)->boundaryCond);
+        double up = PDEequations.DisplacedY3D(field,x, y+1,z, xDim, yDim,zDim,wrapY,(X,Y,Z)->boundaryCond);
+        return up - down;
+    }
+
+    /**
+     * returns the gradient of the diffusible in the Z direction at the coordinates specified, will use the boundary
+     * condition value if computing the gradient next to the boundary
+     */
+    public double GradientZ(int x, int y,int z,double boundaryCond) {
+        double down = PDEequations.DisplacedY3D(field,x,y,z-1, xDim, yDim,zDim, wrapZ,(X,Y,Z)->boundaryCond);
+        double up = PDEequations.DisplacedY3D(field,x, y,z+1, xDim, yDim,zDim,wrapZ,(X,Y,Z)->boundaryCond);
+        return up - down;
+    }
+
+
     @Override
     public int Xdim() {
         return xDim;
