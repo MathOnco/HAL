@@ -138,7 +138,7 @@ public class PhylogenyModel extends AgentGrid2D<CellEx> {
                 //gif.AddFrame(grid.vis);
             //}
         }
-        grid.seed.OutputClonesToCSV("clones.csv",new String[]{"RGB"},(CellGenome g)->Util.GetRed256(g.color)+" "+Util.GetGreen256(g.color)+" "+Util.GetBlue256(g.color),0);
+        grid.seed.OutputClonesToCSV("clones.csv",new String[]{"RGB"},(CellGenome g)->Util.GetRed256(g.color)+" "+Util.GetGreen256(g.color)+" "+Util.GetBlue256(g.color),500);
         gif.Close();
         //vis.Close();
     }

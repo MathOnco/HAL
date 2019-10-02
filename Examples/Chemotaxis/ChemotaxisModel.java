@@ -36,7 +36,7 @@ public class ChemotaxisModel extends AgentGrid2D<SphericalCow> {
     double FORCE_EXPONENT=2;//these constants have been found to be rather stable, but tweak them and see what happens!
     double FORCE_SCALER=0.7;
     double FRICTION=0.5;
-    double GROW_RATE=0.01;
+    double GROW_RATE=0.1;
     double EAT_RATE=1;
     double CHEMOTAX_RATE=0.1;
     double RANDOM_MOVE_RATE=0.1;
@@ -75,8 +75,8 @@ public class ChemotaxisModel extends AgentGrid2D<SphericalCow> {
     }
 
     public static void main(String[] args) {
-        ChemotaxisModel m=new ChemotaxisModel(200,200);
-        for (int i = 0; i < 500; i++) {
+        ChemotaxisModel m=new ChemotaxisModel(20,20);
+        for (int i = 0; i < 20; i++) {
             m.NewAgentSQ(m.rng.Int(m.length)).radius=m.COW_RAD;
         }
         while(!m.win.IsClosed()){
@@ -85,7 +85,7 @@ public class ChemotaxisModel extends AgentGrid2D<SphericalCow> {
             }
             m.GrowGrass();
             m.Draw();
-            m.win.TickPause(0);
+            m.win.TickPause(100);
         }
         m.win.Close();
     }
