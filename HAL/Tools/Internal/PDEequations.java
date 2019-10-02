@@ -25,11 +25,21 @@ public class PDEequations {
             deltas[x] += valSum * diffRate;
         }
     }
+//    public static void Diffusion1(double[]field,double[]deltas,double[] diffRates,int xDim,boolean wrapX,Coords1DDouble BC,Coords1DDouble DiffRateBC) {
+//        for (int x = 0; x < xDim; x++) {
+//            double centerVal = field[x];
+//            double valSum = Delta1D(field, centerVal, x + 1, xDim, wrapX, BC)*Displaced1D(diffRates,x+1,xDim,wrapX,DiffRateBC);
+//            valSum += Delta1D(field, centerVal, x - 1, xDim, wrapX, BC)*Displaced1D(diffRates,x-1,xDim,wrapX,DiffRateBC);
+//            deltas[x] += valSum;
+//        }
+//    }
     public static void Diffusion1(double[]field,double[]deltas,double[] diffRates,int xDim,boolean wrapX,Coords1DDouble BC,Coords1DDouble DiffRateBC) {
         for (int x = 0; x < xDim; x++) {
             double centerVal = field[x];
-            double valSum = Delta1D(field, centerVal, x + 1, xDim, wrapX, BC)*Displaced1D(diffRates,x+1,xDim,wrapX,DiffRateBC);
-            valSum += Delta1D(field, centerVal, x - 1, xDim, wrapX, BC)*Displaced1D(diffRates,x-1,xDim,wrapX,DiffRateBC);
+            double dp1x=(x==xDim-1&&!wrapX)?Displaced1D(diffRates,x+1,xDim,wrapX,DiffRateBC):diffRates[x];
+            double dm1x=Displaced1D(diffRates,x-1,xDim,wrapX,DiffRateBC);
+            double valSum = Delta1D(field, centerVal, x + 1, xDim, wrapX, BC)*dp1x;
+            valSum += Delta1D(field, centerVal, x - 1, xDim, wrapX, BC)*dm1x;
             deltas[x] += valSum;
         }
     }
@@ -47,15 +57,32 @@ public class PDEequations {
             }
         }
     }
-    public static void Diffusion2(double[]field,double[]deltas,double[] diffRates,int xDim,int yDim,boolean wrapX,boolean wrapY,Coords2DDouble BC,Coords2DDouble DiffRateBC) {
+//    public static void Diffusion2(double[]field,double[]deltas,double[] diffRates,int xDim,int yDim,boolean wrapX,boolean wrapY,Coords2DDouble BC,Coords2DDouble DiffRateBC) {
+//        for (int x = 0; x < xDim; x++) {
+//            for (int y = 0; y < yDim; y++) {
+//                int i = x * yDim + y;
+//                double centerVal = field[i];
+//                double deltaSum = DeltaX2D(field, centerVal, x + 1, y, xDim, yDim, wrapX, BC)*DisplacedX2D(diffRates,x+1,y,xDim,yDim,wrapX,DiffRateBC);
+//                deltaSum += DeltaX2D(field, centerVal, x - 1, y, xDim, yDim, wrapX, BC)*DisplacedX2D(diffRates,x-1,y,xDim,yDim,wrapX,DiffRateBC);
+//                deltaSum += DeltaY2D(field, centerVal, x, y + 1, xDim, yDim, wrapY, BC)*DisplacedY2D(diffRates,x,y+1,xDim,yDim,wrapY,DiffRateBC);
+//                deltaSum += DeltaY2D(field, centerVal, x, y - 1, xDim, yDim, wrapY, BC)*DisplacedY2D(diffRates,x,y-1,xDim,yDim,wrapY,DiffRateBC);
+//                deltas[i] += deltaSum;
+//            }
+//        }
+//    }
+    public static void Diffusion2(double[]field,double[]deltas,double[] diffRatesX,double[]diffRatesY,int xDim,int yDim,boolean wrapX,boolean wrapY,Coords2DDouble BC,Coords2DDouble DiffRateXBC,Coords2DDouble DiffRateYBC) {
         for (int x = 0; x < xDim; x++) {
             for (int y = 0; y < yDim; y++) {
                 int i = x * yDim + y;
                 double centerVal = field[i];
-                double deltaSum = DeltaX2D(field, centerVal, x + 1, y, xDim, yDim, wrapX, BC)*DisplacedX2D(diffRates,x+1,y,xDim,yDim,wrapX,DiffRateBC);
-                deltaSum += DeltaX2D(field, centerVal, x - 1, y, xDim, yDim, wrapX, BC)*DisplacedX2D(diffRates,x-1,y,xDim,yDim,wrapX,DiffRateBC);
-                deltaSum += DeltaY2D(field, centerVal, x, y + 1, xDim, yDim, wrapY, BC)*DisplacedY2D(diffRates,x,y+1,xDim,yDim,wrapX,DiffRateBC);
-                deltaSum += DeltaY2D(field, centerVal, x, y - 1, xDim, yDim, wrapY, BC)*DisplacedY2D(diffRates,x,y-1,xDim,yDim,wrapX,DiffRateBC);
+                double dp1x=(x==xDim-1&&!wrapX)?DisplacedX2D(diffRatesX,x+1,y,xDim,yDim,wrapX,DiffRateXBC):diffRatesX[i];
+                double dm1x=DisplacedX2D(diffRatesX,x-1,y,xDim,yDim,wrapX,DiffRateXBC);
+                double dp1y=(y==yDim-1&&!wrapY)?DisplacedY2D(diffRatesY,x,y+1,xDim,yDim,wrapY,DiffRateYBC):diffRatesY[i];
+                double dm1y=DisplacedY2D(diffRatesY,x,y-1,xDim,yDim,wrapY,DiffRateYBC);
+                double deltaSum = DeltaX2D(field, centerVal, x + 1, y, xDim, yDim, wrapX, BC)*dp1x;
+                deltaSum += DeltaX2D(field, centerVal, x - 1, y, xDim, yDim, wrapX, BC)*dm1x;
+                deltaSum += DeltaY2D(field, centerVal, x, y + 1, xDim, yDim, wrapY, BC)*dp1y;
+                deltaSum += DeltaY2D(field, centerVal, x, y - 1, xDim, yDim, wrapY, BC)*dm1y;
                 deltas[i] += deltaSum;
             }
         }
@@ -77,18 +104,41 @@ public class PDEequations {
             }
         }
     }
-    public static void Diffusion3(double[]field,double[]deltas,double[] diffRates,int xDim,int yDim,int zDim,boolean wrapX,boolean wrapY,boolean wrapZ,Coords3DDouble BC,Coords3DDouble DiffRateBC){
+//    public static void Diffusion3(double[]field,double[]deltas,double[] diffRates,int xDim,int yDim,int zDim,boolean wrapX,boolean wrapY,boolean wrapZ,Coords3DDouble BC,Coords3DDouble DiffRateBC){
+//        for (int x = 0; x < xDim; x++) {
+//            for (int y = 0; y < yDim; y++) {
+//                for (int z = 0; z < zDim; z++) {
+//                    int i = x * yDim * zDim + y * zDim + z;
+//                    double centerVal=field[i];
+//                    double deltaSum=DeltaX3D(field,centerVal,x+1,y,z,xDim,yDim,zDim,wrapX,BC)*DisplacedX3D(diffRates,x+1,y,z,xDim,yDim,zDim,wrapX,DiffRateBC);
+//                    deltaSum+=DeltaX3D(field,centerVal,x-1,y,z,xDim,yDim,zDim,wrapX,BC)*DisplacedX3D(diffRates,x-1,y,z,xDim,yDim,zDim,wrapX,DiffRateBC);
+//                    deltaSum+=DeltaY3D(field,centerVal,x,y+1,z,xDim,yDim,zDim,wrapY,BC)*DisplacedY3D(diffRates,x,y+1,z,xDim,yDim,zDim,wrapY,DiffRateBC);
+//                    deltaSum+=DeltaY3D(field,centerVal,x,y-1,z,xDim,yDim,zDim,wrapY,BC)*DisplacedY3D(diffRates,x,y-1,z,xDim,yDim,zDim,wrapY,DiffRateBC);
+//                    deltaSum+=DeltaZ3D(field,centerVal,x,y,z+1,xDim,yDim,zDim,wrapZ,BC)*DisplacedZ3D(diffRates,x,y,z+1,xDim,yDim,zDim,wrapZ,DiffRateBC);
+//                    deltaSum+=DeltaZ3D(field,centerVal,x,y,z-1,xDim,yDim,zDim,wrapZ,BC)*DisplacedZ3D(diffRates,x,y,z-1,xDim,yDim,zDim,wrapZ,DiffRateBC);
+//                    deltas[i]+=deltaSum;
+//                }
+//            }
+//        }
+//    }
+    public static void Diffusion3(double[]field,double[]deltas,double[] diffRatesX,double[]diffRatesY,double[]diffRatesZ,int xDim,int yDim,int zDim,boolean wrapX,boolean wrapY,boolean wrapZ,Coords3DDouble BC,Coords3DDouble DiffRateXBC,Coords3DDouble DiffRateYBC,Coords3DDouble DiffRateZBC){
         for (int x = 0; x < xDim; x++) {
             for (int y = 0; y < yDim; y++) {
                 for (int z = 0; z < zDim; z++) {
                     int i = x * yDim * zDim + y * zDim + z;
                     double centerVal=field[i];
-                    double deltaSum=DeltaX3D(field,centerVal,x+1,y,z,xDim,yDim,zDim,wrapX,BC)*DisplacedX3D(diffRates,x+1,y,z,xDim,yDim,zDim,wrapX,DiffRateBC);
-                    deltaSum+=DeltaX3D(field,centerVal,x-1,y,z,xDim,yDim,zDim,wrapX,BC)*DisplacedX3D(diffRates,x-1,y,z,xDim,yDim,zDim,wrapX,DiffRateBC);
-                    deltaSum+=DeltaY3D(field,centerVal,x,y+1,z,xDim,yDim,zDim,wrapY,BC)*DisplacedY3D(diffRates,x,y+1,z,xDim,yDim,zDim,wrapY,DiffRateBC);
-                    deltaSum+=DeltaY3D(field,centerVal,x,y-1,z,xDim,yDim,zDim,wrapY,BC)*DisplacedY3D(diffRates,x,y-1,z,xDim,yDim,zDim,wrapY,DiffRateBC);
-                    deltaSum+=DeltaZ3D(field,centerVal,x,y,z+1,xDim,yDim,zDim,wrapZ,BC)*DisplacedZ3D(diffRates,x,y,z+1,xDim,yDim,zDim,wrapZ,DiffRateBC);
-                    deltaSum+=DeltaZ3D(field,centerVal,x,y,z-1,xDim,yDim,zDim,wrapZ,BC)*DisplacedZ3D(diffRates,x,y,z-1,xDim,yDim,zDim,wrapZ,DiffRateBC);
+                    double dp1x=(x==xDim-1&&!wrapX)?DisplacedX3D(diffRatesX,x+1,y,z,xDim,yDim,zDim,wrapX,DiffRateXBC):diffRatesX[i];
+                    double dm1x=DisplacedX3D(diffRatesX,x-1,y,z,xDim,yDim,zDim,wrapX,DiffRateXBC);
+                    double dp1y=(y==yDim-1&&!wrapY)?DisplacedY3D(diffRatesY,x,y+1,z,xDim,yDim,zDim,wrapY,DiffRateYBC):diffRatesY[i];
+                    double dm1y=DisplacedY3D(diffRatesY,x,y-1,z,xDim,yDim,zDim,wrapY,DiffRateYBC);
+                    double dp1z=(z==zDim-1&&!wrapZ)?DisplacedZ3D(diffRatesZ,x,y,z+1,xDim,yDim,zDim,wrapZ,DiffRateZBC):diffRatesZ[i];
+                    double dm1z=DisplacedZ3D(diffRatesZ,x,y,z-1,xDim,yDim,zDim,wrapZ,DiffRateZBC);
+                    double deltaSum=DeltaX3D(field,centerVal,x+1,y,z,xDim,yDim,zDim,wrapX,BC)*dp1x;
+                    deltaSum+=DeltaX3D(field,centerVal,x-1,y,z,xDim,yDim,zDim,wrapX,BC)*dm1x;
+                    deltaSum+=DeltaY3D(field,centerVal,x,y+1,z,xDim,yDim,zDim,wrapY,BC)*dp1y;
+                    deltaSum+=DeltaY3D(field,centerVal,x,y-1,z,xDim,yDim,zDim,wrapY,BC)*dm1y;
+                    deltaSum+=DeltaZ3D(field,centerVal,x,y,z+1,xDim,yDim,zDim,wrapZ,BC)*dp1z;
+                    deltaSum+=DeltaZ3D(field,centerVal,x,y,z-1,xDim,yDim,zDim,wrapZ,BC)*dm1z;
                     deltas[i]+=deltaSum;
                 }
             }

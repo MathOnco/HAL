@@ -127,18 +127,19 @@ public class PhylogenyModel extends AgentGrid2D<CellEx> {
         //int x=500,y=500,scaleFactor=2;
         int x=1000,y=1000,scaleFactor=1;
         GridWindow vis=new GridWindow(x,y,scaleFactor);//used for visualization
+        vis.Clear(Util.BLACK);
         PhylogenyModel grid=new PhylogenyModel(x,y,vis);
         grid.InitTumor(5);
-        for (int tick = 0; tick < 3000; tick++) {
-            vis.TickPause(0);//set to nonzero value to cap tick rate.
+        for (int tick = 0; tick < 100; tick++) {
+            vis.TickPause(10);//set to nonzero value to cap tick rate.
             grid.StepCells(tick);
-            if(tick%100==0) {
+            //if(tick%10==0) {
                 grid.seed.RecordClones(tick);
-                gif.AddFrame(grid.vis);
-            }
+                //gif.AddFrame(grid.vis);
+            //}
         }
-        grid.seed.OutputClonesToCSV("clones.csv",new String[]{"R","G","B"},(CellGenome g)->Util.GetRed256(g.color)+","+Util.GetGreen256(g.color)+","+Util.GetBlue256(g.color),500);
+        grid.seed.OutputClonesToCSV("clones.csv",new String[]{"RGB"},(CellGenome g)->Util.GetRed256(g.color)+" "+Util.GetGreen256(g.color)+" "+Util.GetBlue256(g.color),0);
         gif.Close();
-        vis.Close();
+        //vis.Close();
     }
 }

@@ -44,6 +44,9 @@ public class ExampleGrid extends AgentGrid2D<ExampleCell> {
     }
 
     public void DrawModel(OpenGL2DWindow win) {
+        if(win.IsClosed()){
+            System.exit(0);//Stops the program when the close button is clicked
+        }
         win.Clear(Util.BLACK);
         for (ExampleCell cell : this) {
             win.Circle(cell.Xpt(), cell.Ypt(), 0.5, cell.color);

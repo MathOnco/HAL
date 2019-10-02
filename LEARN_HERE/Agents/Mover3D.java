@@ -8,6 +8,8 @@ import HAL.Util;
 
 import java.util.Random;
 
+import static HAL.Util.BLUE;
+
 /**
  * Created by Rafael on 10/29/2017.
  */
@@ -21,8 +23,6 @@ public class Mover3D extends AgentGrid3D<MoveAgent> {
     }
 
     public static void main(String[] args) {
-        int BLACK= Util.RGB(0,0,0);
-        int WHITE= Util.RGB(1,1,1);
 
         Mover3D test=new Mover3D(10,10,10);
         OpenGL3DWindow win3D=new OpenGL3DWindow("3D",500,500,test.xDim,test.yDim,test.zDim);
@@ -34,11 +34,11 @@ public class Mover3D extends AgentGrid3D<MoveAgent> {
             win2D.TickPause(10);
             ourHero.MoveSafeSQ(ourHero.Xsq()+(rn.nextInt(3)-1),ourHero.Ysq()+(rn.nextInt(3)-1),ourHero.Zsq()+(rn.nextInt(3)-1));//random movement
 
-            win2D.Clear(BLACK);
+            win2D.Clear(Util.BLACK);
             win2D.SetPix(ourHero.Xsq(),ourHero.Ysq(), Util.HeatMapRGB(ourHero.Zsq(),0,test.zDim));//draw 2d
 
-            win3D.Clear(BLACK);
-            win3D.Circle(ourHero.Xsq(),ourHero.Ysq(),ourHero.Zsq(),0.5,WHITE);//draw 3d
+            win3D.ClearBox(Util.MAGENTA,Util.BLACK);
+            win3D.Circle(ourHero.Xsq(),ourHero.Ysq(),ourHero.Zsq(),0.5,Util.GREEN);//draw 3d
             win3D.Update();
             if(win3D.IsClosed()){//quit if close button is clicked
                 break;

@@ -5,7 +5,7 @@ import HAL.Interfaces.SerializableModel;
 import static HAL.Util.*;
 
 public class SaveLoadModel extends BirthDeath implements SerializableModel{
-    //you can just add implements SerializableModel to a model, you don't have to extend it as shown here!
+    //you can just add implements SerializableModel to a model
     static byte[]state;
     public SaveLoadModel(int x, int y) {
         super(x, y,RED);

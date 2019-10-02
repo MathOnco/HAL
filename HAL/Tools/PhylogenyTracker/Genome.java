@@ -257,8 +257,8 @@ public class Genome<T extends Genome> implements Iterable<T>{
         myTracker.RecordClones(timepointLabel);
     }
 
-    public void OutputClonesToCSV(String path, String[]AttrHeaders, GetGenomeAttrs<T> GetAttrs, int includePopCutoff){
-        myTracker.OutputClonesToCSV(path, AttrHeaders, GetAttrs,includePopCutoff);
+    public void OutputClonesToCSV(String path, String[]AttrHeaders, GetGenomeAttrs<T> GetAttrs, int excludePopCutoff){
+        myTracker.OutputClonesToCSV(path, AttrHeaders, GetAttrs,excludePopCutoff);
     }
 
 

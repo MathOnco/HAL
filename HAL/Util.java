@@ -1561,7 +1561,7 @@ public final class Util {
         return Factorial(n)/((Factorial(k)*Factorial(n-k)));
     }
 
-    public static double BinomialDistPMF(long n,double p,long k){
+    public static double BinomialDistPDF(long n, double p, long k){
         return NchooseK(n,k)*Math.pow(p,k)*Math.pow(1-p,n-k);
     }
 
@@ -1583,10 +1583,12 @@ public final class Util {
         return Math.pow(Math.E, -avg) * Math.pow(avg, sampleSize) / Factorial(sampleSize);
     }
 
-    //to get distribution of agents, use std dev: n*0.125*mean_move_dist
-    public static double NormalDistPMF(double mean,double std,double pos){
-        double meanDist=mean-pos;
-        return 1/(Math.sqrt(2*Math.PI*std*std))*Math.exp(-(meanDist*meanDist)/(2*std*std));
+    public static double GaussianPDF(double pos){
+        return Math.exp(-pos*pos / 2) / Math.sqrt(2 * Math.PI);
+    }
+
+    public static double GaussianPDF(double mean, double std, double pos){
+        return GaussianPDF((pos-mean)/std)/std;
     }
 
 //    public static double BinomialDistPDF(long n,double p, long pos){
@@ -1675,6 +1677,8 @@ public final class Util {
         }
         return false;
     }
+
+//    public static double Gaussian()
 
     /**
      * uses the Michaelis Menten equation to compute the reaction rate for a given substrate concentration
@@ -2459,6 +2463,7 @@ public final class Util {
         }
         return null;
     }
+
 
 
 //    static public int[] RingHood(double innerRadius,double outerRadius) {

@@ -1,11 +1,12 @@
 package HAL.GridsAndAgents;
 
 import HAL.Interfaces.Grid3D;
-import HAL.Tools.MultinomialCalc;
+import HAL.Tools.MultinomialCalcLong;
 
-import static HAL.Tools.Internal.PopulationGridPDEequations.Diffusion3;
+import static HAL.Tools.Internal.PopulationGridPDEequations.Diffusion3L;
 
-public class PopulationGrid3D extends PopulationGridBase implements Grid3D {
+
+public class PopulationGrid3DLong extends PopulationGridLongBase implements Grid3D {
     public final int xDim;
     public final int yDim;
     public final int zDim;
@@ -13,7 +14,7 @@ public class PopulationGrid3D extends PopulationGridBase implements Grid3D {
     public boolean wrapY;
     public boolean wrapZ;
 
-    public PopulationGrid3D(int xDim, int yDim, int zDim, boolean wrapX, boolean wrapY, boolean wrapZ) {
+    public PopulationGrid3DLong(int xDim, int yDim, int zDim, boolean wrapX, boolean wrapY, boolean wrapZ) {
         super(xDim*yDim*zDim);
         this.xDim=xDim;
         this.yDim=yDim;
@@ -22,11 +23,11 @@ public class PopulationGrid3D extends PopulationGridBase implements Grid3D {
         this.wrapY=wrapY;
         this.wrapZ=wrapZ;
     }
-    public PopulationGrid3D(int xDim, int yDim, int zDim) {
+    public PopulationGrid3DLong(int xDim, int yDim, int zDim) {
         this(xDim,yDim,zDim,false,false,false);
     }
 
-    public int Get(int x,int y,int z){
+    public long Get(int x,int y,int z){
         return Get(I(x,y,z));
     }
 
@@ -73,9 +74,9 @@ public class PopulationGrid3D extends PopulationGridBase implements Grid3D {
         return wrapZ;
     }
 
-    public void Diffusion(double diffRate,MultinomialCalc mn){
+    public void Diffusion(double diffRate, MultinomialCalcLong mn){
         ApplyOccupied((i,ct)->{
-            Diffusion3(ct,ItoX(i),ItoY(i),ItoZ(i),i,this,diffRate,xDim,yDim,zDim,wrapX,wrapY,wrapZ,null,mn);
+            Diffusion3L(ct,ItoX(i),ItoY(i),ItoZ(i),i,this,diffRate,xDim,yDim,zDim,wrapX,wrapY,wrapZ,null,mn);
         });
     }
 }

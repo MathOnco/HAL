@@ -282,8 +282,8 @@ public class MathTests {
             tester.AssertEqual("12 Factorial",479001600L,Factorial(12));
         });
         tester.AddTest("Binomial PMF Test",()->{
-            tester.AssertEqual("BinomialPMFTest, 4 choose 0", 1.0/Math.pow(2,4),Util.BinomialDistPMF(4,0.5,0),0.00001);
-            tester.AssertEqual("BinomialPMFTest, 4 choose 2", 6.0/Math.pow(2,4),Util.BinomialDistPMF(4,0.5,2),0.00001);
+            tester.AssertEqual("BinomialPMFTest, 4 choose 0", 1.0/Math.pow(2,4),Util.BinomialDistPDF(4,0.5,0),0.00001);
+            tester.AssertEqual("BinomialPMFTest, 4 choose 2", 6.0/Math.pow(2,4),Util.BinomialDistPDF(4,0.5,2),0.00001);
         });
 
         tester.AddTest("Multinomial Test 1",()->{

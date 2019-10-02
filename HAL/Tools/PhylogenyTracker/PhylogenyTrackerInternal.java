@@ -183,14 +183,15 @@ class PhylogenyTrackerInternal<T extends Genome> implements Iterable<T> {
         return maxpops;
     }
 
-    public void OutputClonesToCSV(String path, String[]attrHeaders, GetGenomeAttrs<T> GetAttrs, int includePopCutoff){
+    public void OutputClonesToCSV(String path, String[]attrHeaders, GetGenomeAttrs<T> GetAttrs, int excludePopCutoff){
+        if(excludePopCutoff<0){
+            throw new IllegalArgumentException("pop cutoff must be >= 0");
+        }
         int[]parentIDs=GenParentIDs();
         long[][]pops=SumPops(parentIDs);
         long[]maxpops=null;
-        if(includePopCutoff>0) {
-            maxpops=ThreshPops(pops, parentIDs, includePopCutoff);
-        }
-        WriteOutPops(path,attrHeaders,GetAttrs,pops,parentIDs,maxpops,includePopCutoff);
+        maxpops=ThreshPops(pops, parentIDs, excludePopCutoff);
+        WriteOutPops(path,attrHeaders,GetAttrs,pops,parentIDs,maxpops,excludePopCutoff);
     }
 
 //    public void PopRecordToCSV(String path, String[]AttrHeaders, GetGenomeAttrs<T> GetAttrs,int includePopCutoff){

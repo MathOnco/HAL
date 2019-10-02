@@ -18,6 +18,7 @@ class Cell extends AgentSQ2Dunstackable<BirthDeath> {
     public void Step() {
         if (G.rn.Double() < G.DEATH_PROB) {
             Dispose();
+            return;
         }
         if (G.rn.Double() < G.BIRTH_PROB) {
             int nOptions = G.MapEmptyHood(G.mooreHood, Xsq(), Ysq());

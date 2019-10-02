@@ -1,4 +1,4 @@
-package Examples.CompetitiveReleasePerformanceTest;
+package Testing.PerformanceTestModels.PerformanceTestOnLattice;
 
 import HAL.GridsAndAgents.AgentGrid2D;
 import HAL.GridsAndAgents.AgentSQ2Dunstackable;
@@ -133,3 +133,4 @@ class ExampleCell extends AgentSQ2Dunstackable<ExampleModel> {
         }
     }
 }
+

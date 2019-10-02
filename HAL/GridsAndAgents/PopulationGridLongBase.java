@@ -1,6 +1,6 @@
 package HAL.GridsAndAgents;
 
-import HAL.Interfaces.IndexIntAction;
+import HAL.Interfaces.IndexLongAction;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -9,12 +9,12 @@ import java.util.Iterator;
 
 //need to
 
-public class PopulationGridBase implements Iterable<Integer>{
+public class PopulationGridLongBase implements Iterable<Integer>{
     //use live indices to iterate over agents when the number is low
-    protected int[]agents;
-    protected int[]deltas;
+    protected long[]agents;
+    protected long[]deltas;
     protected int occupiedArea;
-    protected long pop;
+    protected double pop;
     protected int updateCt;
     public final int length;
 
@@ -29,12 +29,12 @@ public class PopulationGridBase implements Iterable<Integer>{
     protected final static int START_ITER =-3;
     private ArrayList<OccupiedIterator> usedIters=new ArrayList<>();
 
-    public PopulationGridBase(int length) {
-        this.agents=new int[length];
-        this.deltas=new int[length];
+    public PopulationGridLongBase(int length) {
+        this.agents=new long[length];
+        this.deltas=new long[length];
         this.length=length;
     }
-    public void Add(int i,int val){
+    public void Add(int i,long val){
         if(val!=0) {
             deltas[i] += val;
             if (usingSparseIndices && nextLiveDelta[i] == UNLINKED) {
@@ -51,12 +51,12 @@ public class PopulationGridBase implements Iterable<Integer>{
     public void Set(int i,int val){
         Add(i,val-agents[i]);
     }
-    public void SetAll(int val){
+    public void SetAll(long val){
         for (int i = 0; i < length; i++) {
             Add(i,val-agents[i]);
         }
     }
-    public long Pop(){
+    public double Pop(){
         return pop;
     }
     public int OccupiedArea(){
@@ -65,10 +65,10 @@ public class PopulationGridBase implements Iterable<Integer>{
     public int UpdateCt(){
         return updateCt;
     }
-    public int Get(int i){
+    public long Get(int i){
         return agents[i];
     }
-    public void ApplyOccupied(IndexIntAction Action){
+    public void ApplyOccupied(IndexLongAction Action){
         int updateID=updateCt;
         if(usingSparseIndices){
             int i=firstLiveIndex;
@@ -95,7 +95,7 @@ public class PopulationGridBase implements Iterable<Integer>{
             int i= firstLiveDelta;
             firstLiveDelta=UNLINKED;
             while(i>=0) {
-                int prev = agents[i];
+                long prev = agents[i];
                 agents[i] += deltas[i];
                 pop+=deltas[i];
                 deltas[i]=0;
@@ -122,7 +122,7 @@ public class PopulationGridBase implements Iterable<Integer>{
                     }
                 }
                 if (agents[i] < 0) {
-                    throw new IllegalStateException("number of agents is below zero, could be overflow or underflow! index:" + i + " val:" + agents[i]+"consider using the PopulationGridLong if this is due to population overflow");
+                    throw new IllegalStateException("number of agents is below zero, could be overflow or underflow! index:" + i + " val:" + agents[i]);
                 }
                 int j=nextLiveDelta[i];
                 nextLiveDelta[i]=UNLINKED;
@@ -131,10 +131,10 @@ public class PopulationGridBase implements Iterable<Integer>{
         }
 
         else {
+            pop=0;
             for (int i = 0; i < agents.length; i++) {
-                int prev = agents[i];
+                long prev = agents[i];
                 agents[i] += deltas[i];
-                pop+=deltas[i];
                 deltas[i]=0;
                 if (prev == 0 && agents[i] != 0) {
                     occupiedArea++;
@@ -144,6 +144,7 @@ public class PopulationGridBase implements Iterable<Integer>{
                 if (agents[i] < 0) {
                     throw new IllegalStateException("number of agents is below zero, could be overflow or underflow! index:" + i + " val:" + agents[i]);
                 }
+                pop+=agents[i];
             }
         }
         if(!usingSparseIndices && occupiedArea<=length*0.001){

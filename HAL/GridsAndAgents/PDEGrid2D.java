@@ -355,30 +355,57 @@ public class PDEGrid2D implements Grid2D,Serializable {
     /**
      * runs diffusion with discontinuous diffusion rates
      */
-    public void Diffusion(double[] diffRates){
-        Diffusion2(field,deltas,diffRates,xDim,yDim,wrapX,wrapY,null,null);
+    public void Diffusion(double[] diffRatesX,double[]diffRatesY){
+        Diffusion2(field,deltas,diffRatesX,diffRatesY,xDim,yDim,wrapX,wrapY,null,null,null);
     }
 
     /**
      * runs diffusion with discontinuous diffusion rates
      */
-    public void Diffusion(Grid2Ddouble diffRates){
-        Diffusion2(field,deltas,diffRates.field,xDim,yDim,wrapX,wrapY,null,null);
+    public void Diffusion(Grid2Ddouble diffRatesX,Grid2Ddouble diffRatesY){
+        Diffusion2(field,deltas,diffRatesX.field,diffRatesY.field,xDim,yDim,wrapX,wrapY,null,null,null);
     }
 
     /**
      * runs diffusion with discontinuous diffusion rates
      */
-    public void Diffusion(double[] diffRates, Coords2DDouble BoundaryConditionFn, Coords2DDouble BoundaryDiffusionRateFn){
-        Diffusion2(field,deltas,diffRates,xDim,yDim,wrapX,wrapY,BoundaryConditionFn,BoundaryDiffusionRateFn);
+    public void Diffusion(double[] diffRatesX,double[]diffRatesY, Coords2DDouble BoundaryConditionFn, Coords2DDouble BoundaryDiffusionRatesX,Coords2DDouble BoundaryDiffusionRatesY){
+        Diffusion2(field,deltas,diffRatesX,diffRatesY,xDim,yDim,wrapX,wrapY,BoundaryConditionFn,BoundaryDiffusionRatesX,BoundaryDiffusionRatesY);
     }
 
     /**
      * runs diffusion with discontinuous diffusion rates
      */
-    public void Diffusion(Grid2Ddouble diffRates, Coords2DDouble BoundaryConditionFn, Coords2DDouble BoundaryDiffusionRateFn){
-        Diffusion2(field,deltas,diffRates.field,xDim,yDim,wrapX,wrapY,BoundaryConditionFn,BoundaryDiffusionRateFn);
+    public void Diffusion(Grid2Ddouble diffRatesX,Grid2Ddouble diffRatesY, Coords2DDouble BoundaryConditionFn, Coords2DDouble BoundaryDiffusionRatesX,Coords2DDouble BoundaryDiffusionRatesY){
+        Diffusion2(field,deltas,diffRatesX.field,diffRatesY.field,xDim,yDim,wrapX,wrapY,BoundaryConditionFn,BoundaryDiffusionRatesX,BoundaryDiffusionRatesY);
     }
+//    /**
+//     * runs diffusion with discontinuous diffusion rates
+//     */
+//    public void Diffusion(double[] diffRates){
+//        Diffusion2(field,deltas,diffRates,xDim,yDim,wrapX,wrapY,null,null);
+//    }
+
+//    /**
+//     * runs diffusion with discontinuous diffusion rates
+//     */
+//    public void Diffusion(Grid2Ddouble diffRates){
+//        Diffusion2(field,deltas,diffRates.field,xDim,yDim,wrapX,wrapY,null,null);
+//    }
+
+//    /**
+//     * runs diffusion with discontinuous diffusion rates
+//     */
+//    public void Diffusion(double[] diffRates, Coords2DDouble BoundaryConditionFn, Coords2DDouble BoundaryDiffusionRateFn){
+//        Diffusion2(field,deltas,diffRates,xDim,yDim,wrapX,wrapY,BoundaryConditionFn,BoundaryDiffusionRateFn);
+//    }
+
+//    /**
+//     * runs diffusion with discontinuous diffusion rates
+//     */
+//    public void Diffusion(Grid2Ddouble diffRates, Coords2DDouble BoundaryConditionFn, Coords2DDouble BoundaryDiffusionRateFn){
+//        Diffusion2(field,deltas,diffRates.field,xDim,yDim,wrapX,wrapY,BoundaryConditionFn,BoundaryDiffusionRateFn);
+//    }
 
     /**
      * sets all squares in the delta field to the specified value

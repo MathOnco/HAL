@@ -851,6 +851,20 @@ public class UIGrid implements Grid2D,GuiComp {
         }
     }
 
+    public void SetString(String s, int xLeft, int yTop, int color, int bkColor, int charsPerLine,int maxLines) {
+        for (int i = 0;; i++) {
+            int start=i*charsPerLine;
+            if(start>s.length()||i==maxLines){ break; }
+            int end=i*charsPerLine+charsPerLine;
+            if(end>s.length()){ end=s.length(); }
+            SetString(s.substring(start,end),xLeft,yTop-i*6,color,bkColor);
+        }
+    }
+
+    public void SetString(String s, int xLeft, int yTop, int color, int bkColor, int charsPerLine) {
+        SetString(s,xLeft,yTop,color,bkColor,charsPerLine,-1);
+    }
+
     public void SetPixRect(int color,int xLeft,int xRight,int yBottom,int yTop){
         for (int x = xLeft; x < xRight; x++) {
             for (int y = yBottom; y < yTop; y++) {

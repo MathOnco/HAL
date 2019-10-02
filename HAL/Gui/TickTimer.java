@@ -13,7 +13,7 @@ public class TickTimer {
      * pauses execution so that the amount of time between calls to TickPause is equal to millis
      * @param millis wait duration
      */
-    public void TickPause(long millis){
+    public void TickPause(int millis){
         if (lastSleepTime == 0) {
             lastSleepTime = System.currentTimeMillis();
             return;

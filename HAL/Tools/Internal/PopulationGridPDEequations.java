@@ -1,11 +1,10 @@
 package HAL.Tools.Internal;
 
-import HAL.GridsAndAgents.PopulationGrid1D;
-import HAL.GridsAndAgents.PopulationGrid2D;
-import HAL.GridsAndAgents.PopulationGrid3D;
+import HAL.GridsAndAgents.*;
 import HAL.Interfaces.*;
 import HAL.Interfaces.Coords3DInt;
 import HAL.Tools.MultinomialCalc;
+import HAL.Tools.MultinomialCalcLong;
 
 import static HAL.Util.InDim;
 import static HAL.Util.Wrap;
@@ -166,6 +165,173 @@ public class PopulationGridPDEequations {
         }
         //location is zero-flux boundary, and movement does not need to happen
     }
+
+    public static void Diffusion1L(long pop, int x, PopulationGrid1DLong grid, double prob, int xDim, boolean wrapX, Coords1DInt AgentBC, MultinomialCalcLong mn) {
+        mn.Setup(pop);
+        Diffusion1DL(grid, x + 1,x, xDim, mn, AgentBC, (xBC) -> prob, wrapX, prob);
+        Diffusion1DL(grid, x - 1,x, xDim, mn, AgentBC, (xBC) -> prob, wrapX, prob);
+    }
+    public static void Diffusion2L(long pop, int x, int y, int i, PopulationGrid2DLong grid, double prob, int xDim, int yDim, boolean wrapX, boolean wrapY, Coords2DInt AgentBC, MultinomialCalcLong mn){
+        mn.Setup(pop);
+        DiffusionX2DL(grid, x + 1, y, i, xDim, yDim, mn, AgentBC, (xBC, yBC) -> prob, wrapX, prob);
+        DiffusionX2DL(grid, x - 1, y, i, xDim, yDim, mn, AgentBC, (xBC, yBC) -> prob, wrapX, prob);
+        DiffusionY2DL(grid, x, y + 1, i, xDim, yDim, mn, AgentBC, (xBC, yBC) -> prob, wrapY, prob);
+        DiffusionY2DL(grid, x, y - 1, i, xDim, yDim, mn, AgentBC, (xBC, yBC) -> prob, wrapY, prob);
+    }
+    public static void Diffusion3L(long pop, int x, int y, int z, int i, PopulationGrid3DLong grid, double prob, int xDim, int yDim, int zDim, boolean wrapX, boolean wrapY, boolean wrapZ, Coords3DInt AgentBC, MultinomialCalcLong mn){
+        mn.Setup(pop);
+        DiffusionX3DL(grid, x + 1, y,z, i, xDim, yDim,zDim, mn, AgentBC, (xBC, yBC, zBC) -> prob, wrapX, prob);
+        DiffusionX3DL(grid, x - 1, y,z, i, xDim, yDim,zDim, mn, AgentBC, (xBC, yBC, zBC) -> prob, wrapX, prob);
+        DiffusionY3DL(grid, x, y + 1,z, i, xDim, yDim,zDim, mn, AgentBC, (xBC, yBC, zBC) -> prob, wrapY, prob);
+        DiffusionY3DL(grid, x, y - 1,z, i, xDim, yDim,zDim, mn, AgentBC, (xBC, yBC, zBC) -> prob, wrapY, prob);
+        DiffusionZ3DL(grid, x, y,z+1, i, xDim, yDim,zDim, mn, AgentBC, (xBC, yBC, zBC) -> prob, wrapZ, prob);
+        DiffusionZ3DL(grid, x, y,z-1, i, xDim, yDim,zDim, mn, AgentBC, (xBC, yBC, zBC) -> prob, wrapZ, prob);
+    }
+    public static void Diffusion1DL(PopulationGrid1DLong grid, int x, int centerX, int xDim, MultinomialCalcLong mn, Coords1DInt AgentBC, Coords1DDouble ProbBC, boolean WrapX, double prob){
+        //3 possibilities:
+        //location exists and should be moved onto (or wrap)
+        if(InDim(x,xDim)){
+            long ct=mn.Sample(prob);
+            grid.Add(centerX,-ct);
+            grid.Add(x,ct);
+        }
+        else if(WrapX){
+            x=Wrap(x,xDim);
+            long ct=mn.Sample(prob);
+            grid.Add(centerX,-ct);
+            grid.Add(x,ct);
+        }
+        //location is BC, and value should be subtracted and added using binomial
+        else if(AgentBC!=null){
+            long ct=mn.Sample(prob);
+            ct-=mn.Binomial(AgentBC.GenInt(x),ProbBC.GenDouble(x));
+            grid.Add(centerX,-ct);
+        }
+        //location is zero-flux boundary, and movement does not need to happen
+    }
+    public static void DiffusionX2DL(PopulationGrid2DLong grid, int x, int y, int centerI, int xDim, int yDim, MultinomialCalcLong mn, Coords2DInt AgentBC, Coords2DDouble ProbBC, boolean WrapX, double prob){
+        //3 possibilities:
+        //location exists and should be moved onto (or wrap)
+        if(InDim(x,xDim)){
+            long ct=mn.Sample(prob);
+            grid.Add(centerI,-ct);
+            grid.Add(x*yDim+y,ct);
+        }
+        else if(WrapX){
+            x=Wrap(x,xDim);
+            long ct=mn.Sample(prob);
+            grid.Add(centerI,-ct);
+            grid.Add(x*yDim+y,ct);
+        }
+        //location is BC, and value should be subtracted and added using binomial
+        else if(AgentBC!=null){
+            long ct=mn.Sample(prob);
+            ct-=mn.Binomial(AgentBC.GenInt(x,y),ProbBC.GenDouble(x,y));
+            grid.Add(centerI,-ct);
+        }
+        //location is zero-flux boundary, and movement does not need to happen
+    }
+    public static void DiffusionY2DL(PopulationGrid2DLong grid, int x, int y, int centerI, int xDim, int yDim, MultinomialCalcLong mn, Coords2DInt AgentBC, Coords2DDouble ProbBC, boolean WrapY, double prob){
+        //3 possibilities:
+        //location exists and should be moved onto (or wrap)
+        if(InDim(y,yDim)){
+            long ct=mn.Sample(prob);
+            grid.Add(centerI,-ct);
+            grid.Add(x*yDim+y,ct);
+        }
+        else if(WrapY){
+            y=Wrap(y,yDim);
+            long ct=mn.Sample(prob);
+            grid.Add(centerI,-ct);
+            grid.Add(x*yDim+y,ct);
+        }
+        //location is BC, and value should be subtracted and added using binomial
+        if(AgentBC!=null){
+            long ct=mn.Sample(prob);
+            ct-=mn.Binomial(AgentBC.GenInt(x,y),ProbBC.GenDouble(x,y));
+            grid.Add(centerI,-ct);
+        }
+        //location is zero-flux boundary, and movement does not need to happen
+    }
+    public static void DiffusionX3DL(PopulationGrid3DLong grid, int x, int y, int z, int centerI, int xDim, int yDim, int zDim, MultinomialCalcLong mn, Coords3DInt AgentBC, Coords3DDouble ProbBC, boolean WrapX, double prob){
+        //3 possibilities:
+        //location exists and should be moved onto (or wrap)
+        if(InDim(x,xDim)){
+            long ct=mn.Sample(prob);
+            grid.Add(centerI,-ct);
+            grid.Add(x*yDim*zDim+y*zDim+z,ct);
+        }
+        else if(WrapX){
+            x=Wrap(x,xDim);
+            long ct=mn.Sample(prob);
+            grid.Add(centerI,-ct);
+            grid.Add(x*yDim*zDim+y*zDim+z,ct);
+        }
+        //location is BC, and value should be subtracted and added using binomial
+        else if(AgentBC!=null){
+            long ct=mn.Sample(prob);
+            ct-=mn.Binomial(AgentBC.GenInt(x,y,z),ProbBC.GenDouble(x,y,z));
+            grid.Add(centerI,-ct);
+        }
+        //location is zero-flux boundary, and movement does not need to happen
+    }
+    public static void DiffusionY3DL(PopulationGrid3DLong grid, int x, int y, int z, int centerI, int xDim, int yDim, int zDim, MultinomialCalcLong mn, Coords3DInt AgentBC, Coords3DDouble ProbBC, boolean WrapY, double prob){
+        //3 possibilities:
+        //location exists and should be moved onto (or wrap)
+        if(InDim(y,yDim)){
+            long ct=mn.Sample(prob);
+            grid.Add(centerI,-ct);
+            grid.Add(x*yDim*zDim+y*zDim+z,ct);
+        }
+        else if(WrapY){
+            x=Wrap(y,yDim);
+            long ct=mn.Sample(prob);
+            grid.Add(centerI,-ct);
+            grid.Add(x*yDim*zDim+y*zDim+z,ct);
+        }
+        //location is BC, and value should be subtracted and added using binomial
+        else if(AgentBC!=null){
+            long ct=mn.Sample(prob);
+            ct-=mn.Binomial(AgentBC.GenInt(x,y,z),ProbBC.GenDouble(x,y,z));
+            grid.Add(centerI,-ct);
+        }
+        //location is zero-flux boundary, and movement does not need to happen
+    }
+    public static void DiffusionZ3DL(PopulationGrid3DLong grid, int x, int y, int z, int centerI, int xDim, int yDim, int zDim, MultinomialCalcLong mn, Coords3DInt AgentBC, Coords3DDouble ProbBC, boolean WrapZ, double prob){
+        //3 possibilities:
+        //location exists and should be moved onto (or wrap)
+        if(InDim(z,zDim)){
+            long ct=mn.Sample(prob);
+            grid.Add(centerI,-ct);
+            grid.Add(x*yDim*zDim+y*zDim+z,ct);
+        }
+        else if(WrapZ){
+            x=Wrap(z,zDim);
+            long ct=mn.Sample(prob);
+            grid.Add(centerI,-ct);
+            grid.Add(x*yDim*zDim+y*zDim+z,ct);
+        }
+        //location is BC, and value should be subtracted and added using binomial
+        else if(AgentBC!=null){
+            long ct=mn.Sample(prob);
+            ct-=mn.Binomial(AgentBC.GenInt(x,y,z),ProbBC.GenDouble(x,y,z));
+            grid.Add(centerI,-ct);
+        }
+        //location is zero-flux boundary, and movement does not need to happen
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
     public static void DiffusionOperator2D(int[]field,int[]deltas,int centerX,int centerY,double prob,int xDim,int yDim,MultinomialCalc MN,Coords2DInt AgentBC){
         int centerI=centerX*yDim+centerY;
         int centerPop=field[centerI];

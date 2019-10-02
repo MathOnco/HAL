@@ -18,7 +18,7 @@ public class ZeroDiffusionTest {
         }
         for (int i = 0; i < 100000; i++) {
             testGrid.Set(50,92,1);
-            testGrid.Diffusion(rates);
+            testGrid.Diffusion(rates,rates);
             testGrid.Update();
             testWin.TickPause(0);
             testWin.DrawPDEGrid(testGrid, Util::HeatMapRGB);
