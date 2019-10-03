@@ -1,7 +1,6 @@
-package Examples.CompetitiveReleasePerformanceTestOffLattice;
+package Testing.PerformanceTestModels.Spherical2;
 
 import HAL.GridsAndAgents.AgentGrid2D;
-import HAL.GridsAndAgents.AgentSQ2Dunstackable;
 import HAL.GridsAndAgents.PDEGrid2D;
 import HAL.GridsAndAgents.SphericalAgent2D;
 import HAL.Gui.GridWindow;
@@ -26,9 +25,11 @@ public class ExampleModel extends AgentGrid2D<ExampleCell> {
     public double DRUG_UPTAKE = -0.03 *TIMESTEP;
     public double DRUG_DEATH = ProbScale(0.8,TIMESTEP);
     public double DRUG_BOUNDARY_VAL = 1.0;
+    public long popTotal;
 
     double FORCE_EXPONENT=2;//these constants have been found to be rather stable, but tweak them and see what happens!
-    double FORCE_SCALER=0.7;
+    //double FORCE_SCALER=0.7;
+    double FORCE_SCALER=0.5;
 
     //public double DRUG_UPTAKE = 0;
     //internal model objects
@@ -37,14 +38,14 @@ public class ExampleModel extends AgentGrid2D<ExampleCell> {
     public double[]scratch=new double[2];
 
     public ExampleModel(int xDim, int yDim, Rand rn) {
-        super(xDim, yDim, ExampleCell.class);
+        super(xDim/2, yDim/2, ExampleCell.class);
         this.rn = rn;
         drug = new PDEGrid2D(xDim, yDim);
     }
 
     @FunctionalInterface
     interface ModelStep{
-        void Run(ExampleModel m,int tick);
+        void Run(ExampleModel m, int tick);
     }
 
     public static void RunModel(int sideLen,ModelStep Step,boolean draw){
@@ -52,7 +53,7 @@ public class ExampleModel extends AgentGrid2D<ExampleCell> {
         ExampleModel m=new ExampleModel(x,y,new Rand(0));
         OpenGL2DWindow win =null;
         if(draw) {
-            win = new OpenGL2DWindow(500, 500, m.xDim, m.yDim);
+            win = new OpenGL2DWindow(1000, 1000, m.xDim, m.yDim);
         }
         m.DRUG_START=0;
         m.DRUG_DURATION=m.DRUG_PERIOD;
@@ -62,11 +63,12 @@ public class ExampleModel extends AgentGrid2D<ExampleCell> {
             if(draw) {
                 win.Clear(BLACK);
                 for (ExampleCell cell : m) {
-                    win.Circle(cell.Xpt(), cell.Ypt(), cell.radius, HeatMapGRB(m.drug.Get(cell.Isq())));
+                    win.Circle(cell.Xpt(), cell.Ypt(), cell.radius/3, HeatMapGRB(m.drug.Get((int)(cell.Xpt()*2),(int)(cell.Ypt()*2))*0.8+0.2));
                 }
                 win.Update();
             }
         }
+        System.out.println("sideLen:"+sideLen+" AvgPop:"+m.popTotal*1.0/10000);
         if(draw) {
             win.Close();
         }
@@ -82,10 +84,10 @@ public class ExampleModel extends AgentGrid2D<ExampleCell> {
     }
 
     public void InitTumor() {
-        for (int i = 0; i < length; i++) {
+        for (int i = 0; i < drug.length; i++) {
             ExampleCell c=NewAgentPT(rn.Double()*xDim,rn.Double()*yDim);
             c.type=RESISTANT;
-            c.radius=0.5;
+            c.radius=0.25;
         }
     }
 
@@ -99,57 +101,56 @@ public class ExampleModel extends AgentGrid2D<ExampleCell> {
     }
     public void StepAllCells(int tick){
         for (ExampleCell cell : this) {
-            cell.CellStep();
+            cell.BirthDeath();
         }
         for (ExampleCell cell : this) {
-            cell.CellStep2();
+            cell.Movement();
         }
     }
 
-    public static void ModelStep60(ExampleModel m,int tick) {
+
+    public static void ModelStep60(ExampleModel m, int tick) {
         m.StepAllCells(tick);
         m.DiffusionStep(tick);
+        m.popTotal+=m.Pop();
     }
-    public static void ModelStep90(ExampleModel m,int tick) {
+    public static void ModelStep90(ExampleModel m, int tick) {
         m.StepAllCells(tick);
         m.DiffusionStep(tick);
+        m.popTotal+=m.Pop();
     }
-    public static void ModelStep120(ExampleModel m,int tick) {
+    public static void ModelStep120(ExampleModel m, int tick) {
         m.StepAllCells(tick);
         m.DiffusionStep(tick);
+        m.popTotal+=m.Pop();
     }
-    public static void ModelStep150(ExampleModel m,int tick) {
+    public static void ModelStep150(ExampleModel m, int tick) {
         m.StepAllCells(tick);
         m.DiffusionStep(tick);
+        m.popTotal+=m.Pop();
     }
-    public static void ModelStep180(ExampleModel m,int tick) {
+    public static void ModelStep180(ExampleModel m, int tick) {
         m.StepAllCells(tick);
         m.DiffusionStep(tick);
+        m.popTotal+=m.Pop();
     }
 
-    public void DrawModel(GridWindow vis, int iModel) {
-        for (int i = 0; i < length; i++) {
-            ExampleCell drawMe = GetAgent(i);
-            //if the cell does not exist, draw the drug concentration
-            vis.SetPix(ItoX(i)+iModel*xDim,ItoY(i), drawMe == null ? HeatMapRGB(drug.Get(i)) : drawMe.type);
-            //vis.SetPix(i,HeatMapRGB(drug.Get(i)));
-        }
-    }
 }
 
-class ExampleCell extends SphericalAgent2D<ExampleCell,ExampleModel> {
+class ExampleCell extends SphericalAgent2D<ExampleCell, ExampleModel> {
     public int type;
 
-    public void CellStep() {
+    public void BirthDeath() {
         //Consumption of Drug
-        G.drug.Mul(Isq(), G.DRUG_UPTAKE);
+        G.drug.Mul((int)(Xpt()*2),(int)(Ypt()*2), G.DRUG_UPTAKE);
         //Chance of Death, depends on resistance and drug concentration
-        if (G.rn.Double() < G.DEATH_PROB + (type == RESISTANT ? 0 : G.drug.Get(Isq()) * G.DRUG_DEATH)) {
+        if (G.rn.Double() < G.DEATH_PROB + (type == RESISTANT ? 0 : G.drug.Get((int)(Xpt()*2),(int)(Ypt()*2)) * G.DRUG_DEATH)) {
             Dispose();
             return;
         }
-        double pressure=SumForces(1,(overlap, other) -> Math.pow(overlap,G.FORCE_EXPONENT)*G.FORCE_SCALER);
-        if (G.rn.Double()*pressure*2000 < (type == RESISTANT ? G.DIV_PROB_RES : G.DIV_PROB_SEN)) {
+        double pressure=SumForces(0.5,(overlap, other) -> overlap*G.FORCE_SCALER);
+        //contact inhibition and division probability influence division event
+        if (G.rn.Double()*pressure*1000 < (type == RESISTANT ? G.DIV_PROB_RES : G.DIV_PROB_SEN)) {
            ExampleCell c=Divide(radius*2.0/3,G.scratch,G.rn);
            c.radius=radius;
            c.xVel=0;
@@ -157,7 +158,7 @@ class ExampleCell extends SphericalAgent2D<ExampleCell,ExampleModel> {
         }
 
     }
-    public void CellStep2() {
+    public void Movement() {
         ForceMove();
         ApplyFriction(0);
     }

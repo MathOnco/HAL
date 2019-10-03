@@ -199,7 +199,7 @@ public class PopTumor {
     }
 
     public static void main(String[] args) {
-        PopTumor ft = new PopTumor(150, 0.02, 0.001, 0.002, 100000, 2e-6, 2e-6, 0, 2, 100);
+        PopTumor ft = new PopTumor(150, 0.02, 0.001, 0.003, 100000, 2e-6, 2e-6, 0, 2, 100);
         ft.Init(100);
         int idraw = -1;
         for (int i = 0; i < 4001; i++) {

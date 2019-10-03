@@ -57,7 +57,7 @@ public class UIGrid implements Grid2D,GuiComp {
             panel = new PaintPanel(buff, xDim, yDim, scaleFactor, scaleFactor);
             data = ((DataBufferInt) buff.getRaster().getDataBuffer()).getData();
             for (int i = 0; i < length; i++) {
-                SetPix(i, Util.RGB((double) 0, (double) 0, (double) 0));
+                SetPix(i, Util.BLACK);
             }
         } else {
             panel = null;

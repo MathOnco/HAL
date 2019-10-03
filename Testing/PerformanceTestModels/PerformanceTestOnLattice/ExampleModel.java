@@ -3,7 +3,6 @@ package Testing.PerformanceTestModels.PerformanceTestOnLattice;
 import HAL.GridsAndAgents.AgentGrid2D;
 import HAL.GridsAndAgents.AgentSQ2Dunstackable;
 import HAL.GridsAndAgents.PDEGrid2D;
-import HAL.GridsAndAgents.SphericalAgent2D;
 import HAL.Gui.GridWindow;
 import HAL.Rand;
 

@@ -1,6 +1,0 @@
-Version: 1.0.0
-
-Version numbering follows the semantic MAJOR.MINOR.PATCH convention
-MAJOR: API changes that cause the version to be incompatible with previous versions
-MINOR: backwards compatible new features or feature improvements
-PATCH: backwards compatible bug fixes

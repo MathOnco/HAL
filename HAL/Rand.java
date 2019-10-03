@@ -288,6 +288,9 @@ public class Rand implements Serializable {
             arr[i] = swap;
         }
     }
+    public void Shuffle(int[] arr,int numberOfShuffles) {
+        Shuffle(arr,arr.length,numberOfShuffles);
+    }
 
     /**
      * Shuffles an array of doubles
@@ -304,8 +307,11 @@ public class Rand implements Serializable {
             arr[i] = swap;
         }
     }
+    public void Shuffle(double[] arr,int numberOfShuffles) {
+        Shuffle(arr,arr.length,numberOfShuffles);
+    }
 
-    public void Shuffle(double[] arr, Rand rn) {
+    public void Shuffle(double[] arr) {
         for (int i = 0; i < arr.length; i++) {
             int iSwap = rn.Int(arr.length - i) + i;
             double swap = arr[iSwap];
