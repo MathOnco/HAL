@@ -5,7 +5,7 @@ Hybrid Automata Library (HAL) is a Java library that facilitates hybrid modeling
 
 HAL was originally developed to support mathematical oncology modeling efforts at the H. Lee Moffitt Cancer Center and Research Institute. To view several examples of projects built in HAL, since its inception in 2017, we direct the reader to the following website: [halloworld.org](http://halloworld.org/). More details on the philosophy and technical details behind HAL can be found in the preprint on [BioRxiv](https://www.biorxiv.org/content/early/2018/09/10/411538).
 
-![What is Hybrid Modeling](https://raw.githubusercontent.com/torococo/AgentFramework/master/manual/HAL_intro.png?token=AAIPMRJDN34L64FJBOADVH25RZ2NC)
+![What is Hybrid Modeling](https://github.com/torococo/AgentFramework/blob/master/manual/HAL_intro.png)
 
 ### What is hybrid modeling?
 Hybrid Modeling is the integration of Agent-Based modeling and partial differential equation (PDE) modeling. It is commonly used in mathematical oncology to mechanistically model interactions between microen- vironmental diffusibles (e.g drugs or resources) and agents (tumor cells). Tissue is represented using agent-based modeling, where each agent acts as a single cell in two- or three-dimensional space. As seen in figure 1, agents may be stackable, unstackable, off-lattice, on-lattice, and two- or three-dimensional types. Agents are contained in grids. A single model may have multiple overlapping and interacting grids, representing moving and interacting cells, alongside diffusing drug and resources. Diffusibles that interact with the tissue are represented using partial differential equations (PDEs).
