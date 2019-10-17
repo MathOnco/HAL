@@ -772,6 +772,13 @@ public final class Util {
         return out;
     }
 
+    public static double InterpolateLinear(double x, double startX, double endX, double startY, double endY){
+        if(x>endX||x<startX){
+            throw new IllegalArgumentException("x:"+x+" must be between startX:"+startX+" and endX:"+endX);
+        }
+        return (startY*(endX-x)+endY*(x-startX))/(endX-startX);
+    }
+
     /**
      * interpolates value from 0 to 1 to be between min and max
      */

@@ -52,6 +52,9 @@ public class PDEGrid1D implements Grid1D,Serializable {
     public double Get(int x) {
         return field[x];
     }
+    public double Get(double x) {
+        return Get((int)x);
+    }
 
     /**
      * sets the prev field value at the specified coordinates
@@ -59,6 +62,10 @@ public class PDEGrid1D implements Grid1D,Serializable {
     public void Set(int x, double val) {
         deltas[x] = val-field[x];
     }
+    public void Set(double x, double val) {
+        Set((int)x,val);
+    }
+
 
     /**
      * adds to the prev field value at the specified index
@@ -66,12 +73,18 @@ public class PDEGrid1D implements Grid1D,Serializable {
     public void Add(int x, double val) {
         deltas[x] += val;
     }
+    public void Add(double x, double val) {
+        Add((int)x,val);
+    }
 
     /**
      * multiplies a value in the “current field” and adds the change to the “delta field”
      */
     public void Mul(int x, double val) {
         deltas[x] += field[x] * val;
+    }
+    public void Mul(double x, double val) {
+        Mul((int)x,val);
     }
 
     /**

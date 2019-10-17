@@ -1,4 +1,4 @@
-package Testing.PerformanceTestModels.PerformanceTestSpherical;
+package Testing.PerformanceTestModels.PerformanceTestOld;
 
 import HAL.GridsAndAgents.AgentGrid2D;
 import HAL.GridsAndAgents.PDEGrid2D;
@@ -35,7 +35,7 @@ public class ExampleModel extends AgentGrid2D<ExampleCell> {
     public double[]scratch=new double[2];
 
     public ExampleModel(int xDim, int yDim, Rand rn) {
-        super(xDim/2, yDim/2, ExampleCell.class);
+        super(xDim, yDim, ExampleCell.class);
         this.rn = rn;
         drug = new PDEGrid2D(xDim, yDim);
     }
@@ -60,7 +60,7 @@ public class ExampleModel extends AgentGrid2D<ExampleCell> {
             if(draw) {
                 win.Clear(BLACK);
                 for (ExampleCell cell : m) {
-                    win.Circle(cell.Xpt(), cell.Ypt(), cell.radius/3, HeatMapGRB(m.drug.Get((int)(cell.Xpt()*2),(int)(cell.Ypt()*2))*0.8+0.2));
+                    win.Circle(cell.Xpt(), cell.Ypt(), cell.radius/3, HeatMapGRB(m.drug.Get(cell.Xpt(),cell.Ypt())*0.8+0.2));
                 }
                 win.Update();
             }
@@ -72,8 +72,8 @@ public class ExampleModel extends AgentGrid2D<ExampleCell> {
     }
 
     public static void main(String[] args) {
-        long start=System.currentTimeMillis();
 //        AwaitInput();
+        long start=System.currentTimeMillis();
         RunModel(60, ExampleModel::ModelStep60,false);
         RunModel(90, ExampleModel::ModelStep90,false);
         RunModel(120, ExampleModel::ModelStep120,false);
@@ -86,7 +86,7 @@ public class ExampleModel extends AgentGrid2D<ExampleCell> {
         for (int i = 0; i < drug.length; i++) {
             ExampleCell c=NewAgentPT(rn.Double()*xDim,rn.Double()*yDim);
             c.type=RESISTANT;
-            c.radius=0.25;
+            c.radius=0.5;
         }
     }
 
@@ -141,13 +141,13 @@ class ExampleCell extends SphericalAgent2D<ExampleCell, ExampleModel> {
 
     public void BirthDeath() {
         //Consumption of Drug
-        G.drug.Mul((int)(Xpt()*2),(int)(Ypt()*2), G.DRUG_UPTAKE);
+        G.drug.Mul(Xpt(),Ypt(), G.DRUG_UPTAKE);
         //Chance of Death, depends on resistance and drug concentration
-        if (G.rn.Double() < G.DEATH_PROB + (type == RESISTANT ? 0 : G.drug.Get((int)(Xpt()*2),(int)(Ypt()*2)) * G.DRUG_DEATH)) {
+        if (G.rn.Double() < G.DEATH_PROB + (type == RESISTANT ? 0 : G.drug.Get(Xpt(),Ypt()) * G.DRUG_DEATH)) {
             Dispose();
             return;
         }
-        double pressure=SumForces(0.5,(overlap, other) -> overlap*G.FORCE_SCALER);
+        double pressure=SumForces(1,(overlap, other) -> overlap*G.FORCE_SCALER);
         //contact inhibition and division probability influence division event
         if (G.rn.Double()*pressure*1000 < (type == RESISTANT ? G.DIV_PROB_RES : G.DIV_PROB_SEN)) {
            ExampleCell c=Divide(radius*1.0/3,G.scratch,G.rn);

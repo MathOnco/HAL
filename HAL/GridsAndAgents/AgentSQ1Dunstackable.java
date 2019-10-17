@@ -120,6 +120,26 @@ public class AgentSQ1Dunstackable<T extends AgentGrid1D> extends Agent1DBase<T> 
         iSq=i;
         AddSQ(i);
     }
+    /**
+     * swaps the positions of two agents. useful for the AgentSQunstackable classes,
+     * which don't allow stacking of agents, making this maneuver otherwise impossible.
+     */
+    public void SwapPosition(AgentSQ1Dunstackable<T> other) {
+        if (!alive || !other.alive) {
+            throw new RuntimeException("attempting to move dead agent");
+        }
+        if (other.G != G) {
+            throw new IllegalStateException("can't swap positions between agents on different grids!");
+        }
+        other.RemSQ();
+        this.RemSQ();
+        int iThis = this.iSq;
+        this.iSq = other.iSq;
+        other.iSq=iThis;
+        other.AddSQ(other.iSq);
+        this.AddSQ(this.iSq);
+    }
+
 
     @Override
     void Setup(int x, int y) {

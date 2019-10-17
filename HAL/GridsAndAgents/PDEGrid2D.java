@@ -176,7 +176,9 @@ public class PDEGrid2D implements Grid2D,Serializable {
     public double Get(int x, int y) {
         return field[x * yDim + y];
     }
-
+    public double Get(double x, double y) {
+        return Get((int)x,(int)y);
+    }
     /**
      * gets the prev field value at the specified index
      */
@@ -189,6 +191,9 @@ public class PDEGrid2D implements Grid2D,Serializable {
      */
     public void Set(int x, int y, double val) {
         deltas[x * yDim + y] = val - field[x * yDim + y];
+    }
+    public void Set(double x, double y, double val) {
+        Set((int)x,(int)y,val);
     }
 
     /**
@@ -204,6 +209,9 @@ public class PDEGrid2D implements Grid2D,Serializable {
     public void Add(int x, int y, double val) {
         deltas[x * yDim + y] += val;
     }
+    public void Add(double x, double y, double val) {
+        Add((int)x,(int)y,val);
+    }
 
     /**
      * adds to the prev field value at the specified index
@@ -217,6 +225,9 @@ public class PDEGrid2D implements Grid2D,Serializable {
      */
     public void Mul(int x, int y, double val) {
         deltas[x * yDim + y] += field[x * yDim + y] * val;
+    }
+    public void Mul(double x, double y, double val) {
+        Mul((int)x,(int)y,val);
     }
 
     /**
@@ -488,6 +499,9 @@ public class PDEGrid2D implements Grid2D,Serializable {
         double right = PDEequations.DisplacedX2D(field,x + 1, y, xDim, yDim,wrapX,(X,Y)->Get(X-1,Y));
         return right - left;
     }
+    public double GradientX(double x, double y) {
+        return GradientX((int)x,(int)y);
+    }
 
     /**
      * returns the gradient of the diffusible in the Y direction at the coordinates specified
@@ -496,6 +510,9 @@ public class PDEGrid2D implements Grid2D,Serializable {
         double down = PDEequations.DisplacedY2D(field,x,y-1, xDim, yDim, wrapX,(X,Y)->Get(X,Y+1));
         double up = PDEequations.DisplacedY2D(field,x, y+1, xDim, yDim,wrapX,(X,Y)->Get(X,Y-1));
         return up - down;
+    }
+    public double GradientY(double x, double y) {
+        return GradientY((int)x,(int)y);
     }
 
     /**
@@ -507,6 +524,9 @@ public class PDEGrid2D implements Grid2D,Serializable {
         double right = PDEequations.DisplacedX2D(field,x + 1, y, xDim, yDim,wrapX,(X,Y)->boundaryCond);
         return right - left;
     }
+    public double GradientX(double x, double y, double boundaryCond) {
+        return GradientX((int)x,(int)y,boundaryCond);
+    }
 
     /**
      * returns the gradient of the diffusible in the Y direction at the coordinates specified, will use the boundary
@@ -516,6 +536,9 @@ public class PDEGrid2D implements Grid2D,Serializable {
         double down = PDEequations.DisplacedY2D(field,x,y-1, xDim, yDim, wrapX,(X,Y)->boundaryCond);
         double up = PDEequations.DisplacedY2D(field,x, y+1, xDim, yDim,wrapX,(X,Y)->boundaryCond);
         return up - down;
+    }
+    public double GradientY(double x, double y, double boundaryCond) {
+        return GradientY((int)x,(int)y,boundaryCond);
     }
 
     /**
