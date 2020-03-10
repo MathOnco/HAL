@@ -138,5 +138,6 @@ public abstract class Agent2DBase<T extends AgentGrid2D> extends AgentBaseSpatia
         double dy = DispY(y);
         return NormSquared(dx,dy);
     }
+
 }
 

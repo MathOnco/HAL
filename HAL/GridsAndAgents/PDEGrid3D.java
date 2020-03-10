@@ -64,6 +64,9 @@ public class PDEGrid3D implements Grid3D,Serializable {
     public double Get(int x, int y, int z) {
         return field[x * yDim * zDim + y * zDim + z];
     }
+    public double Get(double x, double y, double z) {
+        return Get((int)x,(int)y,(int)z);
+    }
 
     /**
      * gets the delta field value at the specified index
@@ -77,6 +80,9 @@ public class PDEGrid3D implements Grid3D,Serializable {
      */
     public void Set(int x, int y, int z, double val) {
         deltas[x * yDim * zDim + y * zDim + z] = val - field[x * yDim * zDim + y * zDim + z];
+    }
+    public void Set(double x, double y, double z, double val) {
+        Set((int)x,(int)y,(int)z,val);
     }
 
     /**
@@ -92,6 +98,9 @@ public class PDEGrid3D implements Grid3D,Serializable {
      */
     public void Add(int x, int y, int z, double val) {
         deltas[x * yDim * zDim + y * zDim + z] += val;
+    }
+    public void Add(double x, double y, double z, double val) {
+        Add((int)x,(int)y,(int)z,val);
     }
 
     /**
@@ -112,7 +121,11 @@ public class PDEGrid3D implements Grid3D,Serializable {
      * multiplies a value in the “current field” and adds the change to the “delta field”
      */
     public void Mul(int x, int y, int z, double val) {
-        deltas[x * yDim * zDim + y * zDim + z] += field[x * yDim * zDim + y * zDim + z] * val;
+        int i = x * yDim * zDim + y * zDim + z;
+        deltas[i] += field[i] * val;
+    }
+    public void Mul(double x, double y, double z, double val) {
+        Mul((int)x,(int)y,(int)z,val);
     }
 
     /**
@@ -409,6 +422,9 @@ public class PDEGrid3D implements Grid3D,Serializable {
         double right = PDEequations.DisplacedX3D(field,x + 1, y,z, xDim, yDim,zDim,wrapX,(X,Y,Z)->Get(X-1,Y,Z));
         return right - left;
     }
+    public double GradientX(double x, double y,double z) {
+        return GradientX((int)x,(int)y,(int)z);
+    }
 
     /**
      * returns the gradient of the diffusible in the Y direction at the coordinates specified
@@ -418,6 +434,9 @@ public class PDEGrid3D implements Grid3D,Serializable {
         double up = PDEequations.DisplacedY3D(field,x, y+1,z, xDim, yDim,zDim,wrapY,(X,Y,Z)->Get(X,Y-1,Z));
         return up - down;
     }
+    public double GradientY(double x, double y,double z) {
+        return GradientY((int)x,(int)y,(int)z);
+    }
     /**
      * returns the gradient of the diffusible in the Z direction at the coordinates specified
      */
@@ -425,6 +444,9 @@ public class PDEGrid3D implements Grid3D,Serializable {
         double down = PDEequations.DisplacedY3D(field,x,y,z-1, xDim, yDim,zDim, wrapZ,(X,Y,Z)->Get(X,Y,Z+1));
         double up = PDEequations.DisplacedY3D(field,x, y,z+1, xDim, yDim,zDim,wrapZ,(X,Y,Z)->Get(X,Y,Z-1));
         return up - down;
+    }
+    public double GradientZ(double x, double y,double z) {
+        return GradientZ((int)x,(int)y,(int)z);
     }
 
     /**
@@ -436,6 +458,9 @@ public class PDEGrid3D implements Grid3D,Serializable {
         double right = PDEequations.DisplacedX3D(field,x + 1, y,z, xDim, yDim,zDim,wrapX,(X,Y,Z)->boundaryCond);
         return right - left;
     }
+    public double GradientX(double x, double y,double z,double boundaryCond) {
+        return GradientX((int)x,(int)y,(int)z,boundaryCond);
+    }
 
     /**
      * returns the gradient of the diffusible in the Y direction at the coordinates specified, will use the boundary
@@ -446,6 +471,9 @@ public class PDEGrid3D implements Grid3D,Serializable {
         double up = PDEequations.DisplacedY3D(field,x, y+1,z, xDim, yDim,zDim,wrapY,(X,Y,Z)->boundaryCond);
         return up - down;
     }
+    public double GradientY(double x, double y,double z,double boundaryCond) {
+        return GradientY((int)x,(int)y,(int)z,boundaryCond);
+    }
 
     /**
      * returns the gradient of the diffusible in the Z direction at the coordinates specified, will use the boundary
@@ -455,6 +483,9 @@ public class PDEGrid3D implements Grid3D,Serializable {
         double down = PDEequations.DisplacedY3D(field,x,y,z-1, xDim, yDim,zDim, wrapZ,(X,Y,Z)->boundaryCond);
         double up = PDEequations.DisplacedY3D(field,x, y,z+1, xDim, yDim,zDim,wrapZ,(X,Y,Z)->boundaryCond);
         return up - down;
+    }
+    public double GradientZ(double x, double y,double z,double boundaryCond) {
+        return GradientZ((int)x,(int)y,(int)z,boundaryCond);
     }
 
 

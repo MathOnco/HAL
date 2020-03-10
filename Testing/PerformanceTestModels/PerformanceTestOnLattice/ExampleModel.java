@@ -53,12 +53,15 @@ public class ExampleModel extends AgentGrid2D<ExampleCell> {
     }
 
     public static void main(String[] args) {
-        AwaitInput();
+        long start=System.currentTimeMillis();
         RunModel(60, ExampleModel::ModelStep60);
         RunModel(90, ExampleModel::ModelStep90);
         RunModel(120, ExampleModel::ModelStep120);
         RunModel(150, ExampleModel::ModelStep150);
         RunModel(180, ExampleModel::ModelStep180);
+        System.out.println(System.currentTimeMillis()-start);
+
+
     }
 
     public void InitTumor() {

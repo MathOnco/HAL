@@ -19,25 +19,6 @@ public abstract class AgentBaseSpatial<T> extends AgentBase<T> implements Serial
     }
 
     /**
-     * swaps the positions of two agents. useful mostly for the AgentSQ2unstackable and AgentSQ3unstackable classes,
-     * which don't allow stacking of agents, making this maneuver otherwise difficult.
-     */
-    public void SwapPosition(AgentBaseSpatial other) {
-        if (!alive || !other.alive) {
-            throw new RuntimeException("attempting to move dead agent");
-        }
-        if (other.G != G) {
-            throw new IllegalStateException("can't swap positions between agents on different grids!");
-        }
-        int iOther = other.Isq();
-        int iThis = Isq();
-        other.RemSQ();
-        this.RemSQ();
-        other.MoveSQ(iThis);
-        this.MoveSQ(iOther);
-    }
-
-    /**
      * moves the agent to the middle of the square at the indices/index specified
      */
     abstract public void MoveSQ(int iNext);

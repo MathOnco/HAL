@@ -11,58 +11,108 @@ import java.util.List;
 public class FileIO {
     public final String fileName;
     public final char ReadWriteAppend;
-    public final boolean binary;
+    public final char mode;
     public final BufferedReader reader;
     public final BufferedWriter writer;
+    //binary reader and writer
     public final DataOutputStream writerBin;
     public final DataInputStream readerBin;
+    //object reader and writer
+    public final FileInputStream serialfileReader;
+    public final ObjectInputStream serialobjectReader;
+    public final FileOutputStream serialfileWriter;
+    public final ObjectOutputStream serialobjectWriter;
     boolean isClosed = false;
 
     /**
      * @param fileName name of the file to read from or write to
-     * @param mode     should be either "r":read, "w":write, "rb":readBinary, "wb":writeBinary
+     * @param mode     should be either "r":read, "w":write, "rb":readBinary, "wb":writeBinary, "rs": readSerialization, "ws": writeSerialization
      */
     public FileIO(String fileName, String mode) {
         char[] modeChars = mode.toCharArray();
-        if (modeChars.length > 2 || (modeChars.length > 1 && modeChars[1] != 'b') || (modeChars[0] != 'w' && modeChars[0] != 'r' && modeChars[0] != 'a')) {
-            throw new IllegalArgumentException("inccorect mode argument! mode should be 'r' for read, 'w' for write, or 'a' for append, followed by optional 'b' for binary");
-        }
-        this.fileName = fileName;
-        this.ReadWriteAppend = modeChars[0];
-        this.binary = modeChars.length > 1;
-        boolean appendOut = false;
-        if (ReadWriteAppend == 'a') {
-            appendOut = true;
-        }
-
-        BufferedReader reader = null;
-        BufferedWriter writer = null;
-        DataOutputStream writerBin = null;
-        DataInputStream readerBin = null;
-        try {
-            if (ReadWriteAppend == 'r') {
-                if (this.binary) {
-                    readerBin = new DataInputStream(new BufferedInputStream(new FileInputStream(fileName)));
-
-                } else {
-                    reader = new BufferedReader(new FileReader(fileName));
+        if(modeChars.length==2&&modeChars[1]=='s' && (modeChars[0]=='r'||modeChars[0]=='w')) {
+            reader=null;
+            writer=null;
+            writerBin=null;
+            readerBin=null;
+            this.fileName=fileName;
+            this.ReadWriteAppend=modeChars[0];
+            this.mode='s';
+            ObjectOutputStream serialobjectWriter=null;
+            FileOutputStream serialfileWriter=null;
+            ObjectInputStream serialobjectReader=null;
+            FileInputStream serialfileReader=null;
+            if (modeChars[0] == 'r') {
+                //setup serialization reader
+                serialobjectWriter=null;
+                serialfileWriter=null;
+                try {
+                    serialfileReader=new FileInputStream(fileName);
+                    serialobjectReader=new ObjectInputStream(serialfileReader);
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            } else if (ReadWriteAppend == 'w' || ReadWriteAppend == 'a') {
-                if (this.binary) {
-                    writerBin = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(fileName, appendOut)));
-                } else {
-                    writer = new BufferedWriter(new FileWriter(fileName, appendOut));
+            }else {
+                //setup serialization writer
+                serialobjectReader=null;
+                serialfileReader=null;
+                try {
+                    serialfileWriter=new FileOutputStream(fileName);
+                    serialobjectWriter=new ObjectOutputStream(serialfileWriter);
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            } else {
-                throw new IllegalArgumentException("rwa character must be one of r(read) w(write) or a(append)");
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+            this.serialfileReader=serialfileReader;
+            this.serialobjectReader=serialobjectReader;
+            this.serialfileWriter=serialfileWriter;
+            this.serialobjectWriter=serialobjectWriter;
         }
-        this.reader = reader;
-        this.writer = writer;
-        this.writerBin = writerBin;
-        this.readerBin = readerBin;
+        else {
+            if (modeChars.length > 2 || (modeChars.length > 1 && modeChars[1] != 'b') || (modeChars[0] != 'w' && modeChars[0] != 'r' && modeChars[0] != 'a')) {
+                throw new IllegalArgumentException("inccorect mode argument! mode should be 'r' for read, 'w' for write, or 'a' for append, followed by optional 'b' for binary or 's' for serialization");
+            }
+            this.fileName = fileName;
+            this.ReadWriteAppend = modeChars[0];
+            this.mode = modeChars.length > 1?'s':'n';
+            boolean appendOut = false;
+            if (ReadWriteAppend == 'a') {
+                appendOut = true;
+            }
+
+            BufferedReader reader = null;
+            BufferedWriter writer = null;
+            DataOutputStream writerBin = null;
+            DataInputStream readerBin = null;
+            try {
+                if (ReadWriteAppend == 'r') {
+                    if (this.mode=='b') {
+                        readerBin = new DataInputStream(new BufferedInputStream(new FileInputStream(fileName)));
+
+                    } else {
+                        reader = new BufferedReader(new FileReader(fileName));
+                    }
+                } else if (ReadWriteAppend == 'w' || ReadWriteAppend == 'a') {
+                    if (this.mode=='b') {
+                        writerBin = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(fileName, appendOut)));
+                    } else {
+                        writer = new BufferedWriter(new FileWriter(fileName, appendOut));
+                    }
+                } else {
+                    throw new IllegalArgumentException("rwa character must be one of r(read) w(write) or a(append)");
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            this.reader = reader;
+            this.writer = writer;
+            this.writerBin = writerBin;
+            this.readerBin = readerBin;
+            this.serialfileReader=null;
+            this.serialfileWriter=null;
+            this.serialobjectReader=null;
+            this.serialobjectWriter=null;
+        }
     }
 
     /**
@@ -86,7 +136,7 @@ public class FileIO {
         String[] read = null;
         try {
             String line = reader.readLine();
-            if (line != null) {
+            if (line != null && !line.equals("")) {
                 read = line.split(delimiter);
             }
         } catch (IOException e) {
@@ -253,6 +303,8 @@ public class FileIO {
         }
         return ret;
     }
+
+
     //WRITE FUNCTIONS
 
     /**
@@ -572,6 +624,24 @@ public class FileIO {
             putHere[i] = ReadBinBool();
         }
     }
+    //SERIALIZATON FUNCTIONS
+    public Object ReadObject(){
+        try {
+            return serialobjectReader.readObject();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    public void WriteObject(Object toSave){
+        try {
+            serialobjectWriter.writeObject(toSave);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * returns the length of the file, or 0 if the file does not exist
@@ -590,14 +660,20 @@ public class FileIO {
         try {
             this.isClosed = true;
             if (ReadWriteAppend == 'r') {
-                if (binary) {
+                if (this.mode == 'b') {
                     readerBin.close();
+                } else if (this.mode == 's') {
+                    serialfileReader.close();
+                    serialobjectReader.close();
                 } else {
                     reader.close();
                 }
             } else if (ReadWriteAppend == 'w' || ReadWriteAppend == 'a') {
-                if (binary) {
+                if (this.mode == 'b') {
                     writerBin.close();
+                } else if (this.mode == 's') {
+                    serialfileWriter.close();
+                    serialobjectWriter.close();
                 } else {
                     writer.close();
                 }

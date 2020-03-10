@@ -55,6 +55,9 @@ public class Rand implements Serializable {
     public double Double(double bound) {
         return rn.Double(bound);
     }
+    public double Double(int bound) {
+        return rn.Double(bound);
+    }
 
     /**
      * returns a random double from 0 to 1
