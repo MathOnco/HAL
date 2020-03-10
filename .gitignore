@@ -1,11 +1,16 @@
-#*
-# only allow scource files
+*
+!/**/
+!*.*
+*.*
+!*.java
+## only allow scource files
 #!HAL/**
 #!LEARN_HERE/**
 #!Testing/**
 #!Examples/**
-#!.gitignore
+##!.gitignore
 #!HalColorSchemes.jar
 #!manual.pdf
 #!FrameworkPresentation.pdf
-.DS_Store
+#.DS_Store
+#out/production/HAL/LICENSE
