@@ -6,7 +6,7 @@ import HAL.Tools.MultinomialCalcLong;
 import static HAL.Tools.Internal.PopulationGridPDEequations.Diffusion2L;
 
 
-public class PopulationGrid2DLong extends PopulationGridLongBase implements Grid2D {
+public class PopulationGrid2DLong extends PopulationGridLongBase implements Grid2D{
     public final int xDim;
     public final int yDim;
     public boolean wrapX;
@@ -32,6 +32,12 @@ public class PopulationGrid2DLong extends PopulationGridLongBase implements Grid
     }
     public void Add(int x,int y,long val){
         Add(I(x,y),val);
+    }
+    public void Move(int xFrom,int yFrom,int xTo,int yTo,long val){
+        Move(I(xFrom,yFrom),I(xTo,yTo),val);
+    }
+    public <T extends PopulationGrid3DLong> void Move(int xFrom,int yFrom,int xTo,int yTo,T gridTo,int val){
+        Move(I(xFrom,yFrom),I(xTo,yTo),gridTo,val);
     }
 
     @Override

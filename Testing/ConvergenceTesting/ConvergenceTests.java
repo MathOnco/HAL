@@ -171,8 +171,43 @@ public class ConvergenceTests {
     }
 
     public static void Diffusion2DBC(PDEGrid2D grid, double[] consts) {
-        grid.DiffusionADI(consts[0],0);
+        grid.Diffusion(consts[0],0);
     }
+    static double[]CONSTS=new double[]{0};
+    static double[]CONSTS2=new double[]{0};
+    static double[] CONSTS3=new double[]{0};
+
+    public static void Diffusion2DInh(PDEGrid2D grid, double[] consts) {
+
+        if(CONSTS.length!=grid.length){
+            CONSTS=new double[grid.length];
+            CONSTS2=new double[grid.length];
+        }
+//        if(CONSTS[0]!=consts[0]){
+            for (int i = 0; i < CONSTS.length; i++) {
+//
+                    CONSTS[i]=consts[0]+0.1*consts[0]*grid.ItoX(i)*1.0/grid.xDim;
+                    CONSTS2[i]=consts[0];
+//
+
+
+
+//                CONSTS[i]=consts[0]+consts[0]*Math.sin(2*Math.PI*(grid.ItoX(i)+0.5)/(grid.xDim)); // Centered sinus function as initial condition
+//                CONSTS2[i]=consts[0];
+
+//                if(i>grid.xDim/2.0) {
+//                    CONSTS[i] = consts[0] + consts[0] * ((grid.xDim-1)-grid.ItoX(i)) * 1.0 / grid.xDim;
+//                }
+//                else{
+//                    CONSTS[i]=consts[0]+consts[0]*grid.ItoX(i)*1.0/grid.xDim;
+//                }
+
+
+            }
+
+        grid.Diffusion(CONSTS,CONSTS2);
+    }
+
     public static double NoRxn3D(double x,double y,double z, int t, double v, double dx) {
         return v;
     }
@@ -180,6 +215,42 @@ public class ConvergenceTests {
     public static void Diffusion3DBC(PDEGrid3D grid, double[] consts) {
         grid.DiffusionADI(consts[0],0);
     }
+
+
+    public static void Diffusion3DInh(PDEGrid3D grid, double[] consts) {
+
+        if(CONSTS.length!=grid.length){
+            CONSTS=new double[grid.length];
+            CONSTS2=new double[grid.length];
+            CONSTS3=new double[grid.length];
+        }
+//        if(CONSTS[0]!=consts[0]){
+        for (int i = 0; i < CONSTS.length; i++) {
+//
+            CONSTS[i]=consts[0]+0.1*consts[0]*grid.ItoX(i)*1.0/grid.xDim;
+            CONSTS2[i]=consts[0];
+            CONSTS3[i]=consts[0];
+//
+
+
+
+//                CONSTS[i]=consts[0]+consts[0]*Math.sin(2*Math.PI*(grid.ItoX(i)+0.5)/(grid.xDim)); // Centered sinus function as initial condition
+//                CONSTS2[i]=consts[0];
+
+//                if(i>grid.xDim/2.0) {
+//                    CONSTS[i] = consts[0] + consts[0] * ((grid.xDim-1)-grid.ItoX(i)) * 1.0 / grid.xDim;
+//                }
+//                else{
+//                    CONSTS[i]=consts[0]+consts[0]*grid.ItoX(i)*1.0/grid.xDim;
+//                }
+
+
+        }
+
+        grid.Diffusion(CONSTS,CONSTS2,CONSTS3);
+    }
+
+
 
     public static void Advection3DBC(PDEGrid3D grid, double[] consts) {
         grid.Advection(consts[0],0,0,1);
@@ -200,18 +271,19 @@ public class ConvergenceTests {
     }
 
     public static  void ConvergenceEx2D(){
-        double[][] errors = ConvergenceTest2D(ConvergenceTests::NoRxn2D, ConvergenceTests::Diffusion2DBC, ConvergenceTests::Linfinity, 10,10,true,true, 20, new double[]{0.05}, 3, 1, new double[]{9}, new int[]{0,1,2, 3}, new GridWindow(500, 500, 1), 0, Util::HeatMapRGB);
+
+        double[][] errors = ConvergenceTest2D(ConvergenceTests::NoRxn2D, ConvergenceTests::Diffusion2DInh, ConvergenceTests::L2, 20,20,false,false, 500, new double[]{0.0001}, 3, 1, new double[]{9}, new int[]{0,1,2,3}, new GridWindow(500, 500, 1), 0, Util::HeatMapRGB);
 
         PlotWindow plot = new PlotWindow(500, 500);
         PlotLine line = new PlotLine(plot, RED);
         for (int j = 0; j < errors[ERROR].length; j++) {
             line.AddSegment(Math.log(errors[SPACE_FACTOR][j]), Math.log(errors[ERROR][j]));
         }
-        writeResults("./Testing/ConvergenceTesting/Linf.txt",errors[ERROR]);
+        writeResults("./Testing/ConvergenceTesting/L2.txt",errors[ERROR]);
         writeResults("./Testing/ConvergenceTesting/Dx.txt",errors[SPACE_FACTOR]);
     }
     public static  void ConvergenceEx3D(){
-        double[][] errors = ConvergenceTest3D(ConvergenceTests::NoRxn3D, ConvergenceTests::Advection3DBC, ConvergenceTests::Linfinity, 10,10,10,true,true,true, 10, new double[]{0.3}, 3, 3, new double[]{1}, new int[]{1,2,3,4}, new GridWindow(500, 500, 1), 0, Util::HeatMapRGB);
+        double[][] errors = ConvergenceTest3D(ConvergenceTests::NoRxn3D, ConvergenceTests::Diffusion3DInh, ConvergenceTests::Linfinity, 10,10,10,false,false,false, 10, new double[]{0.001}, 3, 1, new double[]{9}, new int[]{0,1,2,3}, new GridWindow(500, 500, 1), 0, Util::HeatMapRGB);
 
         PlotWindow plot = new PlotWindow(500, 500);
         PlotLine line = new PlotLine(plot, RED);
@@ -539,6 +611,6 @@ public class ConvergenceTests {
     }
 
     public static void main(String[] args) {
-        ConvergenceEx1D();
+        ConvergenceEx3D();
     }
 }

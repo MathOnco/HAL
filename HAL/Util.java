@@ -1408,7 +1408,7 @@ public final class Util {
         }
         for (int x = min; x <= max; x++) {
             for (int y = min; y <= max; y++) {
-                if (Util.DistSquared(0, 0, x, y) <= distSq) {
+                if (x*x+y*y <= distSq) {
                     if (x == 0 && y == 0) {
                         continue;
                     }
@@ -1420,6 +1420,41 @@ public final class Util {
         }
         int[] ret = new int[ct * 3];
         System.arraycopy(retLong, 0, ret, ct, ct * 2);
+        return ret;
+    }
+
+    /**
+     * generates a spherical neighborhood with the set of all coordinates in the sphere with center 0,0,0 and the given radius
+     */
+    static public int[]SphereHood(boolean includeOrigin, double radius) {
+        double distSq = radius * radius;
+        int min = (int) Math.floor(-radius);
+        int max = (int) Math.ceil(radius);
+        int[] retLong = new int[((max + 1 - min) * (max + 1 - min) * (max + 1 - min)) * 3];
+        int ct = 0;
+        if (includeOrigin) {
+            ct++;
+            retLong[0] = 0;
+            retLong[1] = 0;
+            retLong[2] = 0;
+        }
+        for (int x = min; x <= max; x++) {
+            for (int y = min; y <= max; y++) {
+                for (int z = min; z <= max; z++) {
+                    if (x * x + y * y + z * z < distSq) {
+                        if (x == 0 && y == 0 && z == 0) {
+                            continue;
+                        }
+                        retLong[ct * 3] = x;
+                        retLong[ct * 3 + 1] = y;
+                        retLong[ct * 3 + 2] = z;
+                        ct++;
+                    }
+                }
+            }
+        }
+        int[] ret = new int[ct * 4];
+        System.arraycopy(retLong, 0, ret, ct, ct * 3);
         return ret;
     }
 
@@ -2327,57 +2362,57 @@ public final class Util {
     }
     static public byte[] Py4jDoublesOut(double[][]doubles){
         int maxLen=0;
-        for (int i = 0; i < doubles.length; i++) {
+        for(int i=0;i<doubles.length;i++){
             maxLen=Math.max(doubles[i].length,maxLen);
         }
-        ByteBuffer out= ByteBuffer.allocate(Double.BYTES*doubles.length*maxLen);
+        ByteBuffer out=ByteBuffer.allocate(Double.BYTES*doubles.length*maxLen);
         out.order(ByteOrder.LITTLE_ENDIAN);
-        for (int j = 0; j < doubles.length; j++) {
+        for(int j=0;j<doubles.length;j++){
             double[] row=doubles[j];
-        for (int i = 0; i < maxLen; i++) {
-            if(row.length>i) {
-                out.putDouble(row[i]);
-            }else{
-                out.putDouble(0);
-            }
-        }
-        }
-        return out.array();
-    }
-    static public byte[] Py4jDoublesOut(ArrayList<double[]> doubles){
-        int maxLen=0;
-        for (int i = 0; i < doubles.size(); i++) {
-            maxLen=Math.max(doubles.get(i).length,maxLen);
-        }
-        ByteBuffer out= ByteBuffer.allocate(Double.BYTES* doubles.size() *maxLen);
-        out.order(ByteOrder.LITTLE_ENDIAN);
-        for (int j = 0; j < doubles.size(); j++) {
-            double[] row= doubles.get(j);
-            for (int i = 0; i < maxLen; i++) {
-                if(row.length>i) {
+            for(int i=0;i<maxLen;i++){
+                if(row.length>i){
                     out.putDouble(row[i]);
                 }else{
-                    out.putDouble(0);
+                    out.putDouble(0);//pad missing entries
                 }
             }
         }
         return out.array();
     }
+//    static public byte[] Py4jDoublesOut(ArrayList<double[]> doubles){
+//        int maxLen=0;
+//        for (int i = 0; i < doubles.size(); i++) {
+//            maxLen=Math.max(doubles.get(i).length,maxLen);
+//        }
+//        ByteBuffer out= ByteBuffer.allocate(Double.BYTES* doubles.size() *maxLen);
+//        out.order(ByteOrder.LITTLE_ENDIAN);
+//        for (int j = 0; j < doubles.size(); j++) {
+//            double[] row= doubles.get(j);
+//            for (int i = 0; i < maxLen; i++) {
+//                if(row.length>i) {
+//                    out.putDouble(row[i]);
+//                }else{
+//                    out.putDouble(0);
+//                }
+//            }
+//        }
+//        return out.array();
+//    }
 
-    static public ArrayList<double[]> Py4jDoublesInAsArrayList(byte[] in,int nRows) {
-        int length = in.length / Double.BYTES;
-        ArrayList<double[]> out = new ArrayList<>(nRows);
-        ByteBuffer buf = ByteBuffer.wrap(in);
-        buf.order(ByteOrder.LITTLE_ENDIAN);
-        for (int i = 0; i < nRows; i++) {
-            out.add(new double[length/nRows]);
-            double[] row = out.get(out.size()-1);
-            for (int j = 0; j < row.length; j++) {
-                row[j] = buf.getDouble();
-            }
-        }
-        return out;
-    }
+//    static public ArrayList<double[]> Py4jDoublesInAsArrayList(byte[] in,int nRows) {
+//        int length = in.length / Double.BYTES;
+//        ArrayList<double[]> out = new ArrayList<>(nRows);
+//        ByteBuffer buf = ByteBuffer.wrap(in);
+//        buf.order(ByteOrder.LITTLE_ENDIAN);
+//        for (int i = 0; i < nRows; i++) {
+//            out.add(new double[length/nRows]);
+//            double[] row = out.get(out.size()-1);
+//            for (int j = 0; j < row.length; j++) {
+//                row[j] = buf.getDouble();
+//            }
+//        }
+//        return out;
+//    }
     static public double[][] Py4jDoublesIn(byte[] in,int nRows) {
         int length = in.length / Double.BYTES;
         double[][] out = new double[nRows][length / nRows];
@@ -2402,6 +2437,21 @@ public final class Util {
         return out;
     }
 
+    static public void DoublesToCSV(String path,double[][]data,String[]headers){
+        FileIO out=new FileIO(path,"w");
+        out.Write(ArrToString(headers,",")+"\n");
+        for(double[] d: data){
+            out.Write(ArrToString(d,",")+"\n");
+        }
+        out.Close();
+    }
+    static public void DoublesToCSV(String path,double[][]data){
+        FileIO out=new FileIO(path,"w");
+        for(double[] d: data){
+            out.Write(ArrToString(d,",")+"\n");
+        }
+        out.Close();
+    }
 
     static int InterpComp(double val, int minComp, int maxComp) {
         return (int) ((maxComp - minComp) * val) + minComp;
@@ -2469,6 +2519,26 @@ public final class Util {
             e.printStackTrace();
         }
         return null;
+    }
+
+    static double[][]ReadCSVDoubles(String filename){
+        FileIO io=new FileIO(filename,"r");
+        ArrayList<double[]> data=io.ReadDoubles(",");
+        double[][]out=new double[data.size()][];
+        for(int i=0;i<out.length;i++){
+            out[i]=data.get(i);
+        }
+        return out;
+    }
+
+    static int[][]ReadCSVInts(String filename){
+        FileIO io=new FileIO(filename,"r");
+        ArrayList<int[]> data=io.ReadInts(",");
+        int[][]out=new int[data.size()][];
+        for(int i=0;i<out.length;i++){
+            out[i]=data.get(i);
+        }
+        return out;
     }
 
 

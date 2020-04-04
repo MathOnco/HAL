@@ -191,7 +191,7 @@ public class FileIO {
         }
         double[] ret = new double[raw.length];
         for (int i = 0; i < raw.length; i++) {
-            ret[i] = Double.parseDouble(raw[i]);
+            ret[i] = Double.parseDouble(raw[i].trim());
         }
         return ret;
     }

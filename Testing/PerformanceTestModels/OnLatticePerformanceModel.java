@@ -1,15 +1,16 @@
-package Testing.PerformanceTestModels.PerformanceTestOnLattice;
+package Testing.PerformanceTestModels;
 
 import HAL.GridsAndAgents.AgentGrid2D;
 import HAL.GridsAndAgents.AgentSQ2Dunstackable;
 import HAL.GridsAndAgents.PDEGrid2D;
-import HAL.Gui.GridWindow;
+import HAL.Gui.OpenGL2DWindow;
 import HAL.Rand;
+
 
 import static Examples._6CompetitiveRelease.ExampleModel.RESISTANT;
 import static HAL.Util.*;
 
-public class ExampleModel extends AgentGrid2D<ExampleCell> {
+public class OnLatticePerformanceModel extends AgentGrid2D<ExampleCell> {
     //model constants
     public final static int RESISTANT = RGB(0, 1, 0), SENSITIVE = RGB(0, 0, 1);
     public double TIMESTEP=2.0/24;//2 hours per timestep
@@ -24,13 +25,15 @@ public class ExampleModel extends AgentGrid2D<ExampleCell> {
     public double DRUG_UPTAKE = -0.03 *TIMESTEP;
     public double DRUG_DEATH = ProbScale(0.8,TIMESTEP);
     public double DRUG_BOUNDARY_VAL = 1.0;
+    public long popTotal;
     //public double DRUG_UPTAKE = 0;
     //internal model objects
     public PDEGrid2D drug;
     public Rand rn;
     public int[] divHood = MooreHood(false);
+    OpenGL2DWindow win;
 
-    public ExampleModel(int xDim, int yDim, Rand rn) {
+    public OnLatticePerformanceModel(int xDim, int yDim, Rand rn) {
         super(xDim, yDim, ExampleCell.class);
         this.rn = rn;
         drug = new PDEGrid2D(xDim, yDim);
@@ -38,30 +41,36 @@ public class ExampleModel extends AgentGrid2D<ExampleCell> {
 
     @FunctionalInterface
     interface ModelStep{
-        void Run(ExampleModel m,int tick);
+        void Run(long[]acc, OnLatticePerformanceModel m, int tick);
     }
 
-    public static void RunModel(int sideLen,ModelStep Step){
-        int x = sideLen, y = sideLen;
-        ExampleModel m=new ExampleModel(x,y,new Rand(0));
+    public static double[] RunPerformanceTestOnL(int sideLen, boolean draw){
+        int x = sideLen, y = sideLen,ticks=100;
+        OnLatticePerformanceModel m=new OnLatticePerformanceModel(x,y,new Rand(0));
+        if(draw) {
+            m.win = new OpenGL2DWindow(1000, 1000, m.xDim, m.yDim);
+        }
         m.DRUG_START=0;
         m.DRUG_DURATION=m.DRUG_PERIOD;
         m.InitTumor();
-        for (int tick = 0; tick < 100000; tick++) {
-            Step.Run(m,tick);
+        long[]acc=new long[2];
+        for (int tick = 0; tick < ticks; tick++) {
+            long startCells=System.nanoTime();
+            m.StepAllCells(tick);
+            long endCells=System.nanoTime();
+            m.DiffusionStep(tick);
+            acc[0]+=endCells-startCells;
+            acc[1]+=System.nanoTime()-endCells;
+            m.popTotal+=m.Pop();
+            if(draw){
+                m.DrawModel(m.win);
+            }
         }
-    }
-
-    public static void main(String[] args) {
-        long start=System.currentTimeMillis();
-        RunModel(60, ExampleModel::ModelStep60);
-        RunModel(90, ExampleModel::ModelStep90);
-        RunModel(120, ExampleModel::ModelStep120);
-        RunModel(150, ExampleModel::ModelStep150);
-        RunModel(180, ExampleModel::ModelStep180);
-        System.out.println(System.currentTimeMillis()-start);
-
-
+        if(draw){
+            m.win.Close();
+        }
+        //Diffusion Points, On Lattice StepCells,Total Population, On Lattice DiffusionStep
+        return new double[]{sideLen*sideLen,acc[0]*1.0/ticks,m.popTotal*1.0/ticks,acc[1]*1.0/ticks};
     }
 
     public void InitTumor() {
@@ -85,38 +94,20 @@ public class ExampleModel extends AgentGrid2D<ExampleCell> {
         }
     }
 
-    public static void ModelStep60(ExampleModel m,int tick) {
-        m.StepAllCells(tick);
-        m.DiffusionStep(tick);
-    }
-    public static void ModelStep90(ExampleModel m,int tick) {
-        m.StepAllCells(tick);
-        m.DiffusionStep(tick);
-    }
-    public static void ModelStep120(ExampleModel m,int tick) {
-        m.StepAllCells(tick);
-        m.DiffusionStep(tick);
-    }
-    public static void ModelStep150(ExampleModel m,int tick) {
-        m.StepAllCells(tick);
-        m.DiffusionStep(tick);
-    }
-    public static void ModelStep180(ExampleModel m,int tick) {
-        m.StepAllCells(tick);
-        m.DiffusionStep(tick);
-    }
 
-    public void DrawModel(GridWindow vis, int iModel) {
+    public void DrawModel(OpenGL2DWindow vis) {
+        vis.Clear(BLACK);
         for (int i = 0; i < length; i++) {
             ExampleCell drawMe = GetAgent(i);
             //if the cell does not exist, draw the drug concentration
-            vis.SetPix(ItoX(i)+iModel*xDim,ItoY(i), drawMe == null ? HeatMapRGB(drug.Get(i)) : drawMe.type);
+            vis.SetPix(ItoX(i),ItoY(i), drawMe == null ? HeatMapRGB(drug.Get(i)) : drawMe.type);
             //vis.SetPix(i,HeatMapRGB(drug.Get(i)));
         }
+        vis.Update();
     }
 }
 
-class ExampleCell extends AgentSQ2Dunstackable<ExampleModel> {
+class ExampleCell extends AgentSQ2Dunstackable<OnLatticePerformanceModel> {
     public int type;
 
     public void CellStep() {

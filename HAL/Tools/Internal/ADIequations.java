@@ -13,7 +13,7 @@ public class ADIequations {
     scale lapacian by D/3 rather than D/2
     keep multiplying extra boundary term by 2
     */
-    public static void Diffusion3DADI(double[]field, double[]scratch1,double[]scratch2,double[]deltas, double diffRate, int xDim,int yDim,int zDim, boolean wrapX,boolean wrapY,boolean wrapZ, Coords3DDouble BC, TdmaSolver tdma){
+    public static void Diffusion3DADI(double[]field, double[]scratch1, double[]scratch2, double[]deltas, double diffRate, int xDim, int yDim, int zDim, boolean wrapX, boolean wrapY, boolean wrapZ, Coords3DDouble BC, TdmaSolver tdma){
         for (int y = 0; y < yDim; y++) {//do the x rows
             for (int z = 0; z < zDim; z++) {
                 int finalY = y;
@@ -46,7 +46,7 @@ public class ADIequations {
         }
     }
 
-    public static void ADISolveRow(int lenToSolve,double diffRate,double diffScaleFactor,boolean wrapDim,boolean BC,TdmaSolver tdma, IntToDouble GetIn, IntDoubleToVoid SetOut){
+    public static void ADISolveRow(int lenToSolve, double diffRate, double diffScaleFactor, boolean wrapDim, boolean BC, TdmaSolver tdma, IntToDouble GetIn, IntDoubleToVoid SetOut){
         if(wrapDim){//wrap around
             tdma.TDMAperiodic(lenToSolve,
                     GetIn,
@@ -80,7 +80,7 @@ public class ADIequations {
                     (i) -> -diffRate / diffScaleFactor);
         }
     }
-    public static double DeltaX3DADI(double[]vals,double centerVal,int x,int y,int z,int xDim,int yDim,int zDim,boolean wrapX,Coords3DDouble BoundaryCond){
+    public static double DeltaX3DADI(double[]vals, double centerVal, int x, int y, int z, int xDim, int yDim, int zDim, boolean wrapX, Coords3DDouble BoundaryCond){
         if(InDim(x, xDim)){
             return vals[x*yDim*zDim+y*zDim+z]-centerVal;
         }
@@ -93,7 +93,7 @@ public class ADIequations {
         }
         return 0;//Zero flux
     }
-    public static double DeltaY3DADI(double[]vals,double centerVal,int x,int y,int z,int xDim,int yDim,int zDim,boolean wrapY,Coords3DDouble BoundaryCond){
+    public static double DeltaY3DADI(double[]vals, double centerVal, int x, int y, int z, int xDim, int yDim, int zDim, boolean wrapY, Coords3DDouble BoundaryCond){
         if(InDim(y, yDim)){
             return vals[x*yDim*zDim+y*zDim+z]-centerVal;
         }
@@ -106,7 +106,7 @@ public class ADIequations {
         }
         return 0;//Zero flux
     }
-    public static double DeltaZ3DADI(double[]vals,double centerVal,int x,int y,int z,int xDim,int yDim,int zDim,boolean wrapZ,Coords3DDouble BoundaryCond){
+    public static double DeltaZ3DADI(double[]vals, double centerVal, int x, int y, int z, int xDim, int yDim, int zDim, boolean wrapZ, Coords3DDouble BoundaryCond){
         if(InDim(z, zDim)){
             return vals[x*yDim*zDim+y*zDim+z]-centerVal;
         }
@@ -121,7 +121,7 @@ public class ADIequations {
     }
 
    //2D ADI
-    public static void Diffusion2DADI(double[]field, double[]scratch,double[]deltas, double diffRate, int xDim,int yDim, boolean wrapX,boolean wrapY, Coords2DDouble BC, TdmaSolver tdma){
+    public static void Diffusion2DADI(double[]field, double[]scratch, double[]deltas, double diffRate, int xDim, int yDim, boolean wrapX, boolean wrapY, Coords2DDouble BC, TdmaSolver tdma){
         for (int y = 0; y < yDim; y++) {//do the x rows
             int finalY = y;
             ADISolveRow(xDim,diffRate,2,wrapX,BC!=null,tdma,
@@ -180,7 +180,7 @@ public class ADIequations {
         return centerVal +(deltaSum * diffRate)/2;
     }
 
-    public static double DeltaX2DADI(double[]vals,double centerVal,int x,int y,int xDim,int yDim,boolean wrapX,Coords2DDouble BoundaryCond){
+    public static double DeltaX2DADI(double[]vals, double centerVal, int x, int y, int xDim, int yDim, boolean wrapX, Coords2DDouble BoundaryCond){
         if(InDim(x, xDim)){
             return vals[x*yDim+y]-centerVal;
         }
@@ -193,7 +193,7 @@ public class ADIequations {
         }
         return 0;//Zero flux
     }
-    public static double DeltaY2DADI(double[]vals,double centerVal,int x,int y,int xDim,int yDim,boolean wrapY,Coords2DDouble BoundaryCond){
+    public static double DeltaY2DADI(double[]vals, double centerVal, int x, int y, int xDim, int yDim, boolean wrapY, Coords2DDouble BoundaryCond){
         if(InDim(y, yDim)){
             return vals[x*yDim+y]-centerVal;
         }

@@ -5,6 +5,25 @@ import java.util.ArrayList;
 
 import static HAL.Util.Norm;
 
+
+/*
+
+dy/dx(y=x^n)=nx^(n-1)
+
+taylor series starts around 0, take derivatives centered around 0
+
+dy/dx=f(x,y) y(0)=y0
+yi+1 = yi + (A1 K1 + A2 K2) h
+A1 + A2 = 1
+A2 K1 = 1/2
+A2 Q2 = 1/2
+K1 = F(Xi,Yi)
+K2 = F(Xi,P1 H1 Y1 + Q2 K1 H)
+
+
+ */
+
+
 /**
  * use this class to solve any ODE system. the integrator and state array size can be changed at any time
  * currently Euler and Runge-Kutta 4 can be used as fixed-step-size integrators
@@ -295,7 +314,7 @@ public class ODESolver implements Serializable{
     }
 
 
-    double Runge45internal(Derivative Derivative,double[]state,double t,double dt,double tol){
+    public double Runge45internal(Derivative Derivative,double[]state,double t,double dt,double tol){
         SetupScratch(state.length,9);
         SetDy1(Derivative,state,t,dt);
         System.arraycopy(state,0, s0,0,state.length);
@@ -329,6 +348,7 @@ public class ODESolver implements Serializable{
             //RK5
             s7[i] = 16.0 / 135 * s1[i] + 6656.0 / 12825 * s3[i] + 28561.0 / 56430 * s4[i] - 9.0 / 50 * s5[i] + 2.0 / 55 * s6[i];
         }
+        System.out.println(s0[0]);
         for (int i = 0; i < state.length; i++) {
             s8[i]= (s7[i]+state[i])- s0[i];
         }

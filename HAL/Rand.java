@@ -95,7 +95,7 @@ public class Rand implements Serializable {
     }
 
     /**
-     * returns a random number from the binomial distribution (number of heads from n weighted coin flips with probability p of heads)
+     * returns a random number from the gaussian distribution
      */
     public double Gaussian(double mean, double stdDev) {
         return gn.Sample(mean, stdDev, this);
@@ -271,7 +271,7 @@ public class Rand implements Serializable {
      * Shuffles an array of integers
      *
      * @param arr              array to be shuffled
-     * @param sampleSize       number of elements from array that shuffling can deltas
+     * @param sampleSize       number of elements from array that shuffling can pull from
      * @param numberOfShuffles number of elements that will be shuffled, should not exceed lenToShuffle
      */
     public void Shuffle(int[] arr, int sampleSize, int numberOfShuffles) {

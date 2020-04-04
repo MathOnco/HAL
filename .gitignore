@@ -1,11 +1,18 @@
-#*
+*
+!*/
+!*/*/
+!*/*/*/
+!*/*/*/*/
+!*/*/*/*/*/
+!*.java
+!HAL/lib
 # only allow scource files
-#!HAL/**
-#!LEARN_HERE/**
-#!Testing/**
+#!HAL/**.java
+#!LEARN_HERE/**.java
+#!Testing/**.java
 #!Examples/**
 #!.gitignore
-#!HalColorSchemes.jar
-#!manual.pdf
-#!FrameworkPresentation.pdf
-.DS_Store
+!HalColorSchemes.jar
+!manual.pdf
+!FrameworkPresentation.pdf
+#.DS_Store

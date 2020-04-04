@@ -43,7 +43,7 @@ public class MultiWellExperiment <T> {
             throw new IllegalArgumentException("model models passed than can be displayed, max: " + numWellsX * numWellsY + " passed: " + models.length);
         }
         SetWellStarts();
-        win = new GridWindow("MultiWell", visXdim * numWellsX + numWellsX - 1, visYdim * numWellsY + numWellsY - 1, scaleFactor, false);
+        win = new GridWindow("MultiWell", visXdim * numWellsX + numWellsX - 1, visYdim * numWellsY + numWellsY - 1, scaleFactor);
         win.Clear(borderColor);
     }
 

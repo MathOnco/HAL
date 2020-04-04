@@ -1,4 +1,5 @@
 package HAL.GridsAndAgents;
+
 import HAL.Interfaces.Coords2DDouble;
 import HAL.Interfaces.DoubleArrayToVoid;
 import HAL.Interfaces.Grid2D;
@@ -9,7 +10,8 @@ import java.io.Serializable;
 import java.util.Arrays;
 
 import static HAL.Tools.Internal.ADIequations.*;
-import static HAL.Tools.Internal.PDEequations.*;
+import static HAL.Tools.Internal.PDEequations.Advection2;
+import static HAL.Tools.Internal.PDEequations.Diffusion2;
 
 
 /**
@@ -93,6 +95,15 @@ public class PDEGrid2D implements Grid2D,Serializable {
         }
         Diffusion2DADI(field,scratch,deltas,diffCoef,xDim,yDim,wrapX,wrapY,(x,y)->boundaryCond,tdma);
     }
+    public void DiffusionADI(double diffCoef, Coords2DDouble BC){
+        if(scratch==null){
+            scratch=new double[length];
+        }
+        if(tdma==null){
+            tdma=new TdmaSolver(Math.max(xDim,yDim));
+        }
+        Diffusion2DADI(field,scratch,deltas,diffCoef,xDim,yDim,wrapX,wrapY,BC,tdma);
+    }
     public void DiffusionADI(double diffCoef,double boundaryCond, DoubleArrayToVoid BetweenAction) {
         if(scratch==null){
             scratch=new double[length];
@@ -102,7 +113,7 @@ public class PDEGrid2D implements Grid2D,Serializable {
         }
         Diffusion2DADIBetweenAction(field,scratch,deltas,diffCoef,xDim,yDim,wrapX,wrapY,(x,y)->boundaryCond,tdma,BetweenAction);
     }
-    public static void Diffusion2DADIBetweenAction(double[]field, double[]scratch,double[]deltas, double diffRate, int xDim,int yDim, boolean wrapX,boolean wrapY, Coords2DDouble BC, TdmaSolver tdma,DoubleArrayToVoid BetweenAction){
+    public static void Diffusion2DADIBetweenAction(double[]field, double[]scratch, double[]deltas, double diffRate, int xDim, int yDim, boolean wrapX, boolean wrapY, Coords2DDouble BC, TdmaSolver tdma, DoubleArrayToVoid BetweenAction){
         for (int y = 0; y < yDim; y++) {//do the x rows
             int finalY = y;
             ADISolveRow(xDim,diffRate,2,wrapX,BC!=null,tdma,
@@ -236,6 +247,18 @@ public class PDEGrid2D implements Grid2D,Serializable {
     public void Mul(int i,double val){
         deltas[i] += field[i] * val;
     }
+    /**
+     * scales the value by the input upon update
+     */
+    public void Scale(int x, int y, double val) {
+        deltas[x * yDim + y] += field[x * yDim + y] * (val-1);
+    }
+    public void Scale(double x, double y, double val) {
+        Mul((int)x,(int)y,(val-1));
+    }
+    public void Scale(int i,double val){
+        deltas[i] += field[i] * (val-1);
+    }
 
 
     /**
@@ -310,19 +333,19 @@ public class PDEGrid2D implements Grid2D,Serializable {
     /**
      * runs discontinuous advection
      */
-    public void Advection(Grid2Ddouble xVels,Grid2Ddouble yVels){
+    public void Advection(Grid2Ddouble xVels, Grid2Ddouble yVels){
         Advection2(field,deltas,xVels.field,yVels.field,xDim,yDim,wrapX,wrapY,null,null,null);
     }
     /**
      * runs discontinuous advection
      */
-    public void Advection(double[]xVels,double[]yVels,Coords2DDouble BoundaryyConditionFn, Coords2DDouble BoundaryXvels,Coords2DDouble BoundaryYvels) {
+    public void Advection(double[]xVels, double[]yVels, Coords2DDouble BoundaryyConditionFn, Coords2DDouble BoundaryXvels, Coords2DDouble BoundaryYvels) {
         Advection2(field, deltas, xVels, yVels, xDim, yDim, wrapX, wrapY, BoundaryyConditionFn, BoundaryXvels, BoundaryYvels);
     }
     /**
      * runs discontinuous advection
      */
-    public void Advection(Grid2Ddouble xVels,Grid2Ddouble yVels,Coords2DDouble BoundaryyConditionFn, Coords2DDouble BoundaryXvels,Coords2DDouble BoundaryYvels){
+    public void Advection(Grid2Ddouble xVels, Grid2Ddouble yVels, Coords2DDouble BoundaryyConditionFn, Coords2DDouble BoundaryXvels, Coords2DDouble BoundaryYvels){
         Advection2(field,deltas,xVels.field,yVels.field,xDim,yDim,wrapX,wrapY,BoundaryyConditionFn, BoundaryXvels, BoundaryYvels);
     }
 
@@ -373,21 +396,21 @@ public class PDEGrid2D implements Grid2D,Serializable {
     /**
      * runs diffusion with discontinuous diffusion rates
      */
-    public void Diffusion(Grid2Ddouble diffRatesX,Grid2Ddouble diffRatesY){
+    public void Diffusion(Grid2Ddouble diffRatesX, Grid2Ddouble diffRatesY){
         Diffusion2(field,deltas,diffRatesX.field,diffRatesY.field,xDim,yDim,wrapX,wrapY,null,null,null);
     }
 
     /**
      * runs diffusion with discontinuous diffusion rates
      */
-    public void Diffusion(double[] diffRatesX,double[]diffRatesY, Coords2DDouble BoundaryConditionFn, Coords2DDouble BoundaryDiffusionRatesX,Coords2DDouble BoundaryDiffusionRatesY){
+    public void Diffusion(double[] diffRatesX, double[]diffRatesY, Coords2DDouble BoundaryConditionFn, Coords2DDouble BoundaryDiffusionRatesX, Coords2DDouble BoundaryDiffusionRatesY){
         Diffusion2(field,deltas,diffRatesX,diffRatesY,xDim,yDim,wrapX,wrapY,BoundaryConditionFn,BoundaryDiffusionRatesX,BoundaryDiffusionRatesY);
     }
 
     /**
      * runs diffusion with discontinuous diffusion rates
      */
-    public void Diffusion(Grid2Ddouble diffRatesX,Grid2Ddouble diffRatesY, Coords2DDouble BoundaryConditionFn, Coords2DDouble BoundaryDiffusionRatesX,Coords2DDouble BoundaryDiffusionRatesY){
+    public void Diffusion(Grid2Ddouble diffRatesX, Grid2Ddouble diffRatesY, Coords2DDouble BoundaryConditionFn, Coords2DDouble BoundaryDiffusionRatesX, Coords2DDouble BoundaryDiffusionRatesY){
         Diffusion2(field,deltas,diffRatesX.field,diffRatesY.field,xDim,yDim,wrapX,wrapY,BoundaryConditionFn,BoundaryDiffusionRatesX,BoundaryDiffusionRatesY);
     }
 //    /**
@@ -495,8 +518,8 @@ public class PDEGrid2D implements Grid2D,Serializable {
      * returns the gradient of the diffusible in the X direction at the coordinates specified
      */
     public double GradientX(int x, int y) {
-        double left = PDEequations.DisplacedX2D(field,x-1,y, xDim, yDim, wrapX,(X,Y)->Get(X+1,Y));
-        double right = PDEequations.DisplacedX2D(field,x + 1, y, xDim, yDim,wrapX,(X,Y)->Get(X-1,Y));
+        double left = PDEequations.DisplacedX2D(field,x-1,y, xDim, yDim, wrapX,(X, Y)->Get(X+1,Y));
+        double right = PDEequations.DisplacedX2D(field,x + 1, y, xDim, yDim,wrapX,(X, Y)->Get(X-1,Y));
         return right - left;
     }
     public double GradientX(double x, double y) {
@@ -507,8 +530,8 @@ public class PDEGrid2D implements Grid2D,Serializable {
      * returns the gradient of the diffusible in the Y direction at the coordinates specified
      */
     public double GradientY(int x, int y) {
-        double down = PDEequations.DisplacedY2D(field,x,y-1, xDim, yDim, wrapX,(X,Y)->Get(X,Y+1));
-        double up = PDEequations.DisplacedY2D(field,x, y+1, xDim, yDim,wrapX,(X,Y)->Get(X,Y-1));
+        double down = PDEequations.DisplacedY2D(field,x,y-1, xDim, yDim, wrapX,(X, Y)->Get(X,Y+1));
+        double up = PDEequations.DisplacedY2D(field,x, y+1, xDim, yDim,wrapX,(X, Y)->Get(X,Y-1));
         return up - down;
     }
     public double GradientY(double x, double y) {
@@ -520,8 +543,8 @@ public class PDEGrid2D implements Grid2D,Serializable {
      * condition value if computing the gradient next to the boundary
      */
     public double GradientX(int x, int y, double boundaryCond) {
-        double left = PDEequations.DisplacedX2D(field,x-1,y, xDim, yDim, wrapX,(X,Y)->boundaryCond);
-        double right = PDEequations.DisplacedX2D(field,x + 1, y, xDim, yDim,wrapX,(X,Y)->boundaryCond);
+        double left = PDEequations.DisplacedX2D(field,x-1,y, xDim, yDim, wrapX,(X, Y)->boundaryCond);
+        double right = PDEequations.DisplacedX2D(field,x + 1, y, xDim, yDim,wrapX,(X, Y)->boundaryCond);
         return right - left;
     }
     public double GradientX(double x, double y, double boundaryCond) {
@@ -533,8 +556,8 @@ public class PDEGrid2D implements Grid2D,Serializable {
      * condition value if computing the gradient next to the boundary
      */
     public double GradientY(int x, int y, double boundaryCond) {
-        double down = PDEequations.DisplacedY2D(field,x,y-1, xDim, yDim, wrapX,(X,Y)->boundaryCond);
-        double up = PDEequations.DisplacedY2D(field,x, y+1, xDim, yDim,wrapX,(X,Y)->boundaryCond);
+        double down = PDEequations.DisplacedY2D(field,x,y-1, xDim, yDim, wrapX,(X, Y)->boundaryCond);
+        double up = PDEequations.DisplacedY2D(field,x, y+1, xDim, yDim,wrapX,(X, Y)->boundaryCond);
         return up - down;
     }
     public double GradientY(double x, double y, double boundaryCond) {

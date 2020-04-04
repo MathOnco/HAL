@@ -7,7 +7,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 
-//need to
+/*
+TODO:
+ 1) Extend move functions to other grid types
+ */
 
 public class PopulationGridBase implements Iterable<Integer>{
     //use live indices to iterate over agents when the number is low
@@ -67,6 +70,14 @@ public class PopulationGridBase implements Iterable<Integer>{
     }
     public int Get(int i){
         return agents[i];
+    }
+    public void Move(int iFrom,int iTo,int val){
+        Add(iFrom,-val);
+        Add(iTo,val);
+    }
+    public <T extends PopulationGridBase> void Move(int iFrom,int iTo,T gridTo,int val){
+        Add(iFrom,-val);
+        gridTo.Add(iTo,val);
     }
     public void ApplyOccupied(IndexIntAction Action){
         int updateID=updateCt;

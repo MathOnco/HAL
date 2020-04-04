@@ -5,7 +5,7 @@ import HAL.Tools.MultinomialCalc;
 
 import static HAL.Tools.Internal.PopulationGridPDEequations.Diffusion3;
 
-public class PopulationGrid3D extends PopulationGridBase implements Grid3D {
+public class PopulationGrid3D extends PopulationGridBase implements Grid3D{
     public final int xDim;
     public final int yDim;
     public final int zDim;
@@ -36,6 +36,12 @@ public class PopulationGrid3D extends PopulationGridBase implements Grid3D {
     public void Set(int x,int y,int z,int val){
         int i=I(x,y,z);
         Add(i,val-agents[i]);
+    }
+    public void Move(int xFrom,int yFrom,int zFrom,int xTo,int yTo,int zTo,int val){
+        Move(I(xFrom,yFrom,zFrom),I(xTo,yTo,zTo),val);
+    }
+    public <T extends PopulationGrid3D> void Move(int xFrom,int yFrom,int zFrom,int xTo,int yTo,int zTo,T gridTo,int val){
+        Move(I(xFrom,yFrom,zFrom),I(xTo,yTo,zTo),gridTo,val);
     }
 
     @Override

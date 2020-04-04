@@ -129,8 +129,8 @@ public class PhylogenyModel extends AgentGrid2D<CellEx> {
         GridWindow vis=new GridWindow(x,y,scaleFactor);//used for visualization
         vis.Clear(Util.BLACK);
         PhylogenyModel grid=new PhylogenyModel(x,y,vis);
-        grid.InitTumor(5);
-        for (int tick = 0; tick < 100; tick++) {
+        grid.InitTumor(10);
+        for (int tick = 0; tick < 1000; tick++) {
             vis.TickPause(10);//set to nonzero value to cap tick rate.
             grid.StepCells(tick);
             //if(tick%10==0) {

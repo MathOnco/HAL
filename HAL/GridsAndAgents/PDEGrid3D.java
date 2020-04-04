@@ -129,6 +129,21 @@ public class PDEGrid3D implements Grid3D,Serializable {
     }
 
     /**
+     * scales the value by the input upon update
+     */
+    public void Scale(int i, double val) {
+        deltas[i] += field[i] * (val-1);
+    }
+
+    public void Scale(int x, int y, int z, double val) {
+        int i = x * yDim * zDim + y * zDim + z;
+        deltas[i] += field[i] * (val-1);
+    }
+    public void Scale(double x, double y, double z, double val) {
+        Mul((int)x,(int)y,(int)z,(val-1));
+    }
+
+    /**
      * adds the delta field into the current field, also increments the tick.
      */
     public void Update() {
@@ -364,6 +379,18 @@ public class PDEGrid3D implements Grid3D,Serializable {
             tdma=new TdmaSolver(Math.max(Math.max(xDim,yDim),zDim));
         }
         Diffusion3DADI(field,scratch,scratch2,deltas,diffRate,xDim,yDim,zDim,wrapX,wrapY,wrapZ,(x,y,z)->boundaryValue,tdma);
+    }
+    public void DiffusionADI(double diffRate,Coords3DDouble BC){
+        if(scratch==null){
+            scratch=new double[length];
+        }
+        if(scratch2==null){
+            scratch2=new double[length];
+        }
+        if(tdma==null){
+            tdma=new TdmaSolver(Math.max(Math.max(xDim,yDim),zDim));
+        }
+        Diffusion3DADI(field,scratch,scratch2,deltas,diffRate,xDim,yDim,zDim,wrapX,wrapY,wrapZ,BC,tdma);
     }
 
     /**

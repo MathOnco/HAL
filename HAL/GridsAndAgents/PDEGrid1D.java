@@ -57,7 +57,7 @@ public class PDEGrid1D implements Grid1D,Serializable {
     }
 
     /**
-     * sets the prev field value at the specified coordinates
+     * sets the delta field value at the specified coordinates
      */
     public void Set(int x, double val) {
         deltas[x] = val-field[x];
@@ -68,7 +68,7 @@ public class PDEGrid1D implements Grid1D,Serializable {
 
 
     /**
-     * adds to the prev field value at the specified index
+     * adds to the delta field value at the specified index
      */
     public void Add(int x, double val) {
         deltas[x] += val;
@@ -85,6 +85,15 @@ public class PDEGrid1D implements Grid1D,Serializable {
     }
     public void Mul(double x, double val) {
         Mul((int)x,val);
+    }
+    /**
+     * scales the value by the input upon update
+     */
+    public void Scale(int x, double val) {
+        deltas[x] += field[x] * (val-1);
+    }
+    public void Scale(double x, double val) {
+        Mul((int)x,(val-1));
     }
 
     /**

@@ -53,7 +53,7 @@ public class PopTumor {
         this.fuseProb = fuseProb;
         this.drawPauseMS = drawPauseMS;
         //this.win=new GridWindow((sideLen+1)*(N_TYPES+1),sideLen,3);
-        this.win = new GridWindow((sideLen + 1) * 5, sideLen, 2);
+        this.win = new GridWindow((sideLen + 1) * 4, sideLen, 2);
         win.Clear(Util.WHITE);
 
         for (int i = 0; i < cells.length; i++) {
@@ -193,17 +193,17 @@ public class PopTumor {
         }
 
         if (drawPauseMS >= 0) {
-            if(idraw<5)
+            if(idraw<4)
             Draw2(colorFns, idraw);
         }
     }
 
     public static void main(String[] args) {
-        PopTumor ft = new PopTumor(150, 0.015, 0.001, 0.004, 100000, 2e-6, 2e-6, 0, 2, 100);
-        ft.Init(100);
+        PopTumor ft = new PopTumor(150, 0.010, 0.001, 0.008, 100000, 2e-6, 2e-6, 0, 2, 0);
+        ft.Init(1000);
         int idraw = -1;
         for (int i = 0; i < 4001; i++) {
-            if (i % 800 == 0) {
+            if (i % 1000 == 0) {
                 idraw++;
                 int pop=0;
                 for (PopulationGrid2D g : ft.cells) {

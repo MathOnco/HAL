@@ -48,7 +48,17 @@ public class PopulationGridLongBase implements Iterable<Integer>{
             }
         }
     }
-    public void Set(int i,int val){
+    public void Move(int iFrom,int iTo,long val){
+        Add(iFrom,-val);
+        Add(iTo,val);
+    }
+    public <T extends PopulationGridLongBase> void Move(int iFrom,int iTo,T gridTo,int val){
+        Add(iFrom,-val);
+        gridTo.Add(iTo,val);
+    }
+
+
+    public void Set(int i,long val){
         Add(i,val-agents[i]);
     }
     public void SetAll(long val){

@@ -206,7 +206,7 @@ public class Example3D extends AgentGrid3D<ExCell3D> {
             //visResource.DrawPDEGridXZ(ex.oxygen, (val)->HeatMapBRG(Math.pow(val,0.5)));
             ex.CleanAgents();//Equivalent to calling CleanAgents, ShuffleAgents, and IncTick grid functions
             ex.ShuffleAgents(ex.rn);//Equivalent to calling CleanAgents, ShuffleAgents, and IncTick grid functions
-            vis.TickPause(100);
+            //vis.TickPause(100);
         }
         vis.Close();
         //visResource.Close();
