@@ -3,7 +3,7 @@
 
 Hybrid Automata Library (HAL) is a Java library that facilitates hybrid modeling: spatial models with interacting agent-based and partial-differential equation components. HAL’s components can be broadly classified into: agent containers (on and off-lattice), finite difference diffusion fields, graphical user interface (GUI) components, and additional tools or utilities for computation and data manipulation. These components have a standardized interface that expedites the construction, analysis, and visualization of complex models.
 
-HAL was originally developed to support mathematical oncology modeling efforts at the H. Lee Moffitt Cancer Center and Research Institute. To view several examples of projects built in HAL, since its inception in 2017, we direct the reader to the following website: [halloworld.org](http://halloworld.org/). More details on the philosophy and technical details behind HAL can be found in the preprint on [BioRxiv](https://www.biorxiv.org/content/early/2018/09/10/411538).
+HAL was originally developed to support mathematical oncology modeling efforts at the H. Lee Moffitt Cancer Center and Research Institute. To view several examples of projects built in HAL, since its inception in 2017, we direct the reader to the following website: [halloworld.org](http://halloworld.org/). More details on the philosophy and technical details behind HAL can be found in the preprint on [BioRxiv](https://www.biorxiv.org/content/10.1101/411538v4).
 
 ![What is Hybrid Modeling](https://github.com/torococo/AgentFramework/blob/master/manual/HAL_intro.png)
 
