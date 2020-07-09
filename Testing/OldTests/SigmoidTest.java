@@ -34,8 +34,8 @@ public class SigmoidTest {
     public static void main(String[] args) {
         GridWindow win=new GridWindow(1000,1000,1);
         win.Clear(Util.BLACK);
-        for (int i = 0; i < 20; i++) {
-            ContactSigmoid(win,1,i*1.0/19,8,Util.CategorialColor(i));
-        }
+//        for (int i = 0; i < 20; i++) {
+//            ContactSigmoid(win,1,i*1.0/19,8,Util.CategorialColor(i));
+//        }
     }
 }

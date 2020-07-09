@@ -74,7 +74,7 @@ public class FileIO {
             }
             this.fileName = fileName;
             this.ReadWriteAppend = modeChars[0];
-            this.mode = modeChars.length > 1?'s':'n';
+            this.mode = modeChars.length > 1?'b':'n';
             boolean appendOut = false;
             if (ReadWriteAppend == 'a') {
                 appendOut = true;

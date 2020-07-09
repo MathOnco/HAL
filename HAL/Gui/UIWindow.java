@@ -367,6 +367,15 @@ public class UIWindow {
     }
 
     /**
+     * shortcut function creates a UILabel with the text argument, adds it to the column, then returns the created UILabel
+     */
+    public UILabel AddCol(int col,String text){
+        UILabel ret=new UILabel(text);
+        AddCol(col,ret);
+        return ret;
+    }
+
+    /**
      * destroys the gui with the window closing event
      */
     public void Close(){

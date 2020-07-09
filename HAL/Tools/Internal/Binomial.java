@@ -88,6 +88,15 @@ public class Binomial implements Serializable {
         }
         return total;
     }
+    public long BinomialProbSample(long n,double p,Rand rng){
+        int total=0;
+        for (int i = 0; i < n; i++) {
+            if (rng.Double() < p) {
+                total++;
+            }
+        }
+        return total;
+    }
     private static double stirlingCorrection(int k) {
         final double C1 =  8.33333333333333333e-02;     //  +1/12
         final double C3 = -2.77777777777777778e-03;     //  -1/360
@@ -505,6 +514,9 @@ public class Binomial implements Serializable {
         }
     }
     public int SampleIntFast(int n,double p,Rand rn){
+        if(p>1||p<0||Double.isNaN(p)){
+            throw new IllegalArgumentException("Probability Argument Cannot be > 1 or < 0: "+p);
+        }
         if(p==1){
             return n;
         }
@@ -542,6 +554,32 @@ public class Binomial implements Serializable {
         }
         else{
             return ColtInt(n,p,rn);
+        }
+    }
+    public long SampleLongFast(long n,double p,Rand rn){
+        if(p>1||p<0||Double.isNaN(p)){
+            throw new IllegalArgumentException("Probability Argument Cannot be > 1 or < 0: "+p);
+        }
+        if(p==1){
+            return n;
+        }
+        if(p==0||n==0){
+            return 0;
+        }
+        if(n<10){
+            return BinomialProbSample(n,p,rn);
+        }
+//        if(n<=8||(p<0.5&&n<=64*p+8)||(p>=0.5&&n<=64*(1-p)+8)){
+//            return BinomialProbSample(n,p,rn);
+//        }
+        if(p<0.5&&n*p<30){
+            return rk_binomial_inversion(n,p,rn);
+        }
+        if(p>=0.5&&n*(1-p)<30){
+            return n-rk_binomial_inversion(n,(1-p),rn);
+        }
+        else{
+            return ColtLong(n,p,rn);
         }
     }
     public long SampleLong(long n, double p, Rand rn){

@@ -202,7 +202,7 @@ public class OpenGL3DWindow implements Grid3D {
             //draw circle
             FanShape(xf, yf, zf, radf * 0.9f, circlPtsDefault, RGB(rf, gf, bf));
             //add cool specular lighting dot
-            FanShape(xf, yf, zf, radf * 0.2f, circlPtsDefault, RGB((float) 1, (float) 1, (float) 1), 1.4f, 1.4f, 0.1f);
+            FanShape(xf, yf, zf, radf * 0.2f, circlPtsDefault, RGB( rf+0.3f, gf+0.3f, bf+0.3f), 1.4f, 1.4f, 0.1f);
         }
     }
 

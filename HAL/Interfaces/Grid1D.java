@@ -73,6 +73,9 @@ public interface Grid1D {
         return Math.abs(DispX(x1, x2));
     }
 
+    default public double Dist(int x1, int x2){
+        return Math.abs(DispX(x1,x2));
+    }
     /**
      * gets the distance between two positions squared with or without grid wrap around
      */

@@ -140,7 +140,6 @@ public class PopulationGridBase implements Iterable<Integer>{
                 i=j;
             }
         }
-
         else {
             for (int i = 0; i < agents.length; i++) {
                 int prev = agents[i];

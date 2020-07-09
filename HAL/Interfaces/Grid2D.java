@@ -456,6 +456,15 @@ public abstract interface Grid2D {
         return Norm(dx, dy);
     }
 
+
+    default public double Dist(int i1, int i2) {
+        int x1=ItoX(i1);
+        int y1=ItoY(i1);
+        int x2=ItoX(i2);
+        int y2=ItoY(i2);
+        return Dist(x1,y1,x2,y2);
+    }
+
     /**
      * gets the distance squared between two positions with or without grid wrap around (if wraparound is enabled, the
      * shortest distance taking this into account will be returned) more efficient than the Dist function above as it

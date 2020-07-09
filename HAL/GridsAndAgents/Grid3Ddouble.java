@@ -140,6 +140,27 @@ public class Grid3Ddouble implements Grid3D,Serializable{
         }
         return tot/length;
     }
+    /**
+     * returns the max value in the grid
+     */
+    public double GetMax() {
+        double max = Double.MIN_VALUE;
+        for (int i = 0; i < length; i++) {
+            max = Math.max(Get(i), max);
+        }
+        return max;
+    }
+
+    /**
+     * returns the min value in the grid
+     */
+    public double GetMin() {
+        double min = Double.MAX_VALUE;
+        for (int i = 0; i < length; i++) {
+            min = Math.min(Get(i), min);
+        }
+        return min;
+    }
 
     /**
      * returns the gradient of the field in the X direction at the coordinates specified

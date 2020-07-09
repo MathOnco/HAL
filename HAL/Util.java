@@ -1,5 +1,6 @@
 package HAL;
 
+import HAL.Gui.UIGrid;
 import HAL.Interfaces.*;
 import HAL.Interfaces.SerializableModel;
 import HAL.Tools.FileIO;
@@ -14,6 +15,7 @@ import java.nio.ByteOrder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
@@ -191,6 +193,13 @@ public final class Util {
     public static int SetAlpha256(int color, int a) {
         a = Bound(a, 0, 255);
         return color & 0x00ffffff | (a << 24);
+    }
+
+    /**
+     * returns the inverse of the input color
+     */
+    public static int InvertColor(int color){
+        return RGB256(255-GetRed256(color),255-GetGreen256(color),255-GetBlue256(color));
     }
 
     //a set of default colors
@@ -393,7 +402,7 @@ public final class Util {
         double c1 = val * 4;
         double c2 = (val - 0.25) * 2;
         double c3 = (val - 0.75) * 4;
-        return RGB(c2, c3, c1);
+        return RGB(c3, c2, c1);
     }
 
     public static int HeatMapJet(double val) {
@@ -529,6 +538,18 @@ public final class Util {
             }break;
         }
         return RGB256((int)r,(int)g,(int)b);
+    }
+
+    public static int GreyScale(double val,double min, double max){
+        double colorVal=(val-min)/(max-min);
+        return RGB(colorVal,colorVal,colorVal);
+    }
+
+    /**
+     * generates a greyscale color, val is assumed to be in the range 0 to 1
+     */
+    public static int GreyScale(double val){
+        return RGB(val,val,val);
     }
 
     /**
@@ -1156,6 +1177,52 @@ public final class Util {
                     1, 0, 0, -1, 0, 0, 0, 1, 0, 0, -1, 0, 0, 0, 1, 0, 0, -1};
         }
     }
+    public static int[] SemiMooreHood3D(boolean includeOrigin){
+        if(includeOrigin){
+            return new int[]{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+                    0,0,0,
+                    0,0,1,
+                    0,0,-1,
+                    0,1,0,
+                    0,-1,0,
+                    1,0,0,
+                    -1,0,0,
+                    1,0,1,
+                    1,0,-1,
+                    1,1,0,
+                    0,1,1,
+                    0,1,-1,
+                    -1,0,1,
+                    -1,0,-1,
+                    -1,1,0,
+                    -1,-1,0,
+                    0,-1,1,
+                    0,-1,-1,
+                    1,-1,0,
+            };
+        }else{
+            return new int[]{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+                    0,0,1,
+                    0,0,-1,
+                    0,1,0,
+                    0,-1,0,
+                    1,0,0,
+                    -1,0,0,
+                    1,0,1,
+                    1,0,-1,
+                    1,1,0,
+                    0,1,1,
+                    0,1,-1,
+                    -1,0,1,
+                    -1,0,-1,
+                    -1,1,0,
+                    -1,-1,0,
+                    0,-1,1,
+                    0,-1,-1,
+                    1,-1,0,
+            };
+        }
+    }
 
     public static int[] MooreHood3D(boolean includeOrigin) {
         if (includeOrigin) {
@@ -1163,28 +1230,28 @@ public final class Util {
                     0, 0, 0,
                     0, 0, 1,
                     0, 0, -1,
+                    0, 1, 0,
+                    0, -1, 0,
                     1, 0, 0,
+                    -1, 0, 0,
                     1, 0, 1,
                     1, 0, -1,
                     1, 1, 0,
-                    1, 1, 1,
-                    1, 1, -1,
-                    0, 1, 0,
                     0, 1, 1,
                     0, 1, -1,
-                    -1, 0, 0,
                     -1, 0, 1,
                     -1, 0, -1,
                     -1, 1, 0,
-                    -1, 1, 1,
-                    -1, 1, -1,
                     -1, -1, 0,
-                    -1, -1, 1,
-                    -1, -1, -1,
-                    0, -1, 0,
                     0, -1, 1,
                     0, -1, -1,
                     1, -1, 0,
+                    1, 1, 1,
+                    1, 1, -1,
+                    -1, 1, 1,
+                    -1, 1, -1,
+                    -1, -1, 1,
+                    -1, -1, -1,
                     1, -1, 1,
                     1, -1, -1,
             };
@@ -1192,30 +1259,107 @@ public final class Util {
             return new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                     0, 0, 1,
                     0, 0, -1,
+                    0, 1, 0,
+                    0, -1, 0,
                     1, 0, 0,
+                    -1, 0, 0,
                     1, 0, 1,
                     1, 0, -1,
                     1, 1, 0,
-                    1, 1, 1,
-                    1, 1, -1,
-                    0, 1, 0,
                     0, 1, 1,
                     0, 1, -1,
-                    -1, 0, 0,
                     -1, 0, 1,
                     -1, 0, -1,
                     -1, 1, 0,
-                    -1, 1, 1,
-                    -1, 1, -1,
                     -1, -1, 0,
-                    -1, -1, 1,
-                    -1, -1, -1,
-                    0, -1, 0,
                     0, -1, 1,
                     0, -1, -1,
                     1, -1, 0,
+                    1, 1, 1,
+                    1, 1, -1,
+                    -1, 1, 1,
+                    -1, 1, -1,
+                    -1, -1, 1,
+                    -1, -1, -1,
                     1, -1, 1,
                     1, -1, -1,
+            };
+        }
+    }
+
+    public static int[]CubicHoneyHood3DevenZ(boolean includeOrigin){
+        if(includeOrigin){
+            return new int[]{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+                    0,0,0,
+                    0,0,2,
+                    0,0,-2,
+                    1,0,0,
+                    -1,0,0,
+                    0,1,0,
+                    0,-1,0,
+                    0,0,1,
+                    -1,0,1,
+                    -1,-1,1,
+                    0,-1,1,
+                    0,0,-1,
+                    -1,0,-1,
+                    -1,-1,-1,
+                    0,-1,-1,
+            };
+        }else{
+            return new int[]{0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+                    0,0,2,
+                    0,0,-2,
+                    1,0,0,
+                    -1,0,0,
+                    0,1,0,
+                    0,-1,0,
+                    0,0,1,
+                    -1,0,1,
+                    -1,-1,1,
+                    0,-1,1,
+                    0,0,-1,
+                    -1,0,-1,
+                    -1,-1,-1,
+                    0,-1,-1,
+            };
+        }
+    }
+    public static int[]CubicHoneyHood3DoddZ(boolean includeOrigin){
+        if(includeOrigin){
+            return new int[]{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+                    0,0,0,
+                    0,0,2,
+                    0,0,-2,
+                    1,0,0,
+                    -1,0,0,
+                    0,1,0,
+                    0,-1,0,
+                    0,0,1,
+                    1,0,1,
+                    1,1,1,
+                    0,1,1,
+                    0,0,-1,
+                    1,0,-1,
+                    1,1,-1,
+                    0,1,-1,
+            };
+        }else{
+            return new int[]{0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+                    0,0,2,
+                    0,0,-2,
+                    1,0,0,
+                    -1,0,0,
+                    0,1,0,
+                    0,-1,0,
+                    0,0,1,
+                    1,0,1,
+                    1,1,1,
+                    0,1,1,
+                    0,0,-1,
+                    1,0,-1,
+                    1,1,-1,
+                    0,1,-1,
             };
         }
     }
@@ -1654,7 +1798,7 @@ public final class Util {
      * transforms val with a sigmoid curve with a minCap of 0, a maxCap of 1, and an inflectionX value of 0
      *
      * @param val     the input value
-     * @param stretch linearly scales the sigmoid curve in the x dimension, the default is 1
+     * @param stretch linearly scales the sigmoid curve in the x dimension, the default is 1 (gets close to y=1 at around x=4)
      */
     public static double Sigmoid(double val, double stretch) {
         return 1 / (1.0 + Math.exp(-val / stretch));
@@ -2020,19 +2164,24 @@ public final class Util {
     public static double Rescale(double val, double oldMin, double oldMax, double newMin, double newMax) {
         return ScaleMinToMax(Scale0to1(val, oldMin, oldMax), newMin, newMax);
     }
+    public static double RescaleBounded(double val, double oldMin, double oldMax, double newMin, double newMax) {
+        return Bound(ScaleMinToMax(Scale0to1(val, oldMin, oldMax), newMin, newMax),newMin,newMax);
+    }
 
     /**
      * returns value with wraparound between 0 and max
      */
     public static int Wrap(int val, int max) {
-        return val < 0 ? max + val % max : val % max;
+        int mod=val%max;
+        return mod<0?max+mod:mod;
     }
 
     /**
      * returns value with wraparound between 0 and max
      */
     public static double Wrap(double val, double max) {
-        return val < 0 ? max + val % max : val % max;
+        double mod=val%max;
+        return mod<0?max+mod:mod;
     }
 
     /**
@@ -2541,6 +2690,35 @@ public final class Util {
         return out;
     }
 
+    /**
+     * draws a colorbar on a UIGrid
+     * @param barHere colorbar will be drawn on this UIGrid. Leave 34 pixels of clearance on the right of the bar to ensure that all text will fit.
+     * @param xBottomLeft x position of bottom left corner of bar
+     * @param yBottomLeft y position of bottom left corner of bar
+     * @param barWidth width of bar in pixels
+     * @param barHeight height of bar in pixels (bar will actually be barHeight-4 pixels tall, to make room for tick labels)
+     * @param min min value to display on bar
+     * @param max max value to display on bar
+     * @param ticks number of tick labels to display on bar
+     * @param Color color function that generates bar colors
+     */
+    public static void DrawColorBar(UIGrid barHere,int xBottomLeft,int yBottomLeft,int barWidth,int barHeight,double min,double max,int ticks,DoubleToColor Color){
+        double colorstep=(max-min)/(barHeight-4);
+        for(int y=0;y<barHeight-4;y++){
+            int color=Color.GenColor(y*colorstep+min);
+            for(int x=0;x<barWidth;x++){
+                barHere.SetPix(x+xBottomLeft,y+2+yBottomLeft,color);
+            }
+        }
+        DecimalFormat fmt=new DecimalFormat("0.#E0#");
+        double tickStep=(max-min)/(ticks-1);
+        double tickPix=(barHeight-5)*1.0/(ticks-1);
+        for(int i=0;i<ticks;i++){
+            barHere.SetPix(barWidth+xBottomLeft,(int)(i*tickPix)+2+yBottomLeft,RED);
+            barHere.SetPix(barWidth+1+xBottomLeft,(int)(i*tickPix)+2+yBottomLeft,RED);
+            barHere.SetString(fmt.format(min+tickStep*i),barWidth+2+xBottomLeft,(int)(i*tickPix)+5+yBottomLeft,WHITE,BLACK);
+        }
+    }
 
 
 //    static public int[] RingHood(double innerRadius,double outerRadius) {

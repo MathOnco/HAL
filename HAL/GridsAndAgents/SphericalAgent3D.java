@@ -54,9 +54,9 @@ public class SphericalAgent3D<A extends SphericalAgent3D,G extends AgentGrid3D<A
                 if(dist<interactionRad) {
                     double touchDist = (radius + a.radius) - dist;
                     double force=OverlapFun.CalcForce(touchDist,a);
-                    xVel+=(xComp/dist)*force;
-                    yVel+=(yComp/dist)*force;
-                    zVel+=(zComp/dist)*force;
+                    xVel-=(xComp/dist)*force;
+                    yVel-=(yComp/dist)*force;
+                    zVel-=(zComp/dist)*force;
                     if(force>0){
                         sum+=Math.abs(force);
                     }
@@ -83,9 +83,9 @@ public class SphericalAgent3D<A extends SphericalAgent3D,G extends AgentGrid3D<A
                 if(dist<interactionRad) {
                     double touchDist = (radius + a.radius) - dist;
                     double force=OverlapFun.CalcForce(touchDist,a);
-                    xVel+=(xComp/dist)*force;
-                    yVel+=(yComp/dist)*force;
-                    zVel+=(zComp/dist)*force;
+                    xVel-=(xComp/dist)*force;
+                    yVel-=(yComp/dist)*force;
+                    zVel-=(zComp/dist)*force;
                     if(force>0){
                         sum+=Math.abs(force);
                     }
@@ -105,9 +105,9 @@ public class SphericalAgent3D<A extends SphericalAgent3D,G extends AgentGrid3D<A
             double zComp = info[3];
             double touchDist = (radius + a.radius) - dist;
             double force = OverlapFun.CalcForce(touchDist, a);
-            xVel+=(xComp/dist)*force;
-            yVel+=(yComp/dist)*force;
-            zVel+=(zComp/dist)*force;
+            xVel-=(xComp/dist)*force;
+            yVel-=(yComp/dist)*force;
+            zVel-=(zComp/dist)*force;
             if (force > 0) {
                 sum += Math.abs(force);
             }

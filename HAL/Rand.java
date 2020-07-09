@@ -84,7 +84,7 @@ public class Rand implements Serializable {
      * returns a random number from the binomial distribution
      */
     public long Binomial(long n, double p) {
-        return bn.SampleLong(n, p, this);
+        return bn.SampleLongFast(n, p, this);
     }
 
     /**
@@ -101,45 +101,75 @@ public class Rand implements Serializable {
         return gn.Sample(mean, stdDev, this);
     }
 
+    //public void Multinomial(double[] probabilities, int n, int[] ret) {
+    //    double pSum = 1;
+    //    for (int i = 0; i < probabilities.length; i++) {
+    //        if (probabilities[i] != 0) {
+    //            if(probabilities[i]-pSum==0){
+    //                ret[i]=n;
+    //                for (; i < probabilities.length; i++) {
+    //                    ret[i]=0;
+    //                }
+    //                return;
+    //            }
+    //            int ni = bn.SampleInt(n, probabilities[i] / pSum, this);
+    //            ret[i] = ni;
+    //            n -= ni;
+    //            pSum -= probabilities[i];
+    //        }
+    //        else{
+    //            ret[i]=0;
+    //        }
+    //    }
+    //}
+
+    /**
+     * evaluates the mulitnomial on the input list of probabilities and puts the resulting number of individuals from n into the ret array, the sum of the probabilities array must be <=1
+     */
     public void Multinomial(double[] probabilities, int n, int[] ret) {
-        double pSum = 1;
+        double probRemaining = 1;
         for (int i = 0; i < probabilities.length; i++) {
-            if (probabilities[i] != 0) {
-                if(probabilities[i]-pSum==0){
-                    ret[i]=n;
-                    for (; i < probabilities.length; i++) {
-                        ret[i]=0;
-                    }
-                    return;
-                }
-                int ni = bn.SampleInt(n, probabilities[i] / pSum, this);
-                ret[i] = ni;
-                n -= ni;
-                pSum -= probabilities[i];
-            }
-            else{
+            double prob=probabilities[i];
+            if(n==0||prob==0){
                 ret[i]=0;
+                return;
             }
+            if(probRemaining-prob<=0){
+                if(probRemaining-prob <-Util.DOUBLE_EPSILON){
+                    throw new IllegalStateException("total probability sum for MultinomialCalc < 0! prob:"+prob+" probRemaining:"+ probRemaining);
+                }
+                ret[i]=n;
+                return;
+            }
+            int popSelected=Binomial(n,prob/ probRemaining);
+            probRemaining -=prob;
+            n-=popSelected;
+            ret[i]=popSelected;
         }
     }
 
+    /**
+     * evaluates the mulitnomial on the input list of probabilities and puts the resulting number of individuals from n into the ret array, the sum of the probabilities array must be <=1
+     */
     public void Multinomial(double[] probabilities, long n, long[] ret) {
-        double pSum = 1;
-        if (probabilities.length == 1) {
-            ret[0] = n;
-            return;
-        }
+        double probRemaining = 1;
         for (int i = 0; i < probabilities.length; i++) {
-            if (probabilities[i] == 1) {
-                ret[i] = n;
+            double prob=probabilities[i];
+            if(n==0||prob==0){
+                ret[i]=0;
                 return;
             }
-            if (probabilities[i] != 0) {
-                long ni = bn.SampleLong(n, probabilities[i] / pSum, this);
-                ret[i] = ni;
-                n -= ni;
-                pSum -= probabilities[i];
+            if(probRemaining-prob==0){
+                ret[i]=n;
+                return;
             }
+            long popSelected=Binomial(n,prob/ probRemaining);
+            probRemaining -=prob;
+            if(probRemaining <0){
+                throw new IllegalStateException("total probability sum for MultinomialCalc < 0! prob:"+prob+" probRemaining:"+ probRemaining);
+            }
+            n-=popSelected;
+            ret[i]=popSelected;
         }
     }
 
