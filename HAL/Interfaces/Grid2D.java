@@ -403,8 +403,8 @@ public abstract interface Grid2D {
      */
     public default int GetHoodI(int[]hood,int centerX,int centerY,int entryIndex){
         int i=entryIndex*2+hood.length/3;
-        int x=hood[i*2]+centerX;
-        int y=hood[i*2+1]+centerY;
+        int x=hood[i]+centerX;
+        int y=hood[i+1]+centerY;
         if (!Util.InDim(x, Xdim())) {
             if (IsWrapX()) {
                 x = Util.Wrap(x, Xdim());
