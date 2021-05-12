@@ -14,7 +14,7 @@ public class Grid2Dobject<T> implements Grid2D,Serializable{
     final public int length;
     public boolean wrapX;
     public boolean wrapY;
-    T[] field;
+    final public T[] field;
 
     /**
      * creates a new Grid2Dobject of dimensions xDim by yDim without wraparound

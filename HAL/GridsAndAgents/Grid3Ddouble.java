@@ -18,7 +18,7 @@ public class Grid3Ddouble implements Grid3D,Serializable{
     public boolean wrapX;
     public boolean wrapY;
     public boolean wrapZ;
-    double[] field;
+    public final double[] field;
 
     /**
      * creates a new Grid3Ddouble of dimensions xDim by yDim by zDim without wraparound

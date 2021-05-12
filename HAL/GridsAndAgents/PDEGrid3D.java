@@ -12,6 +12,8 @@ import java.util.Arrays;
 
 import static HAL.Tools.Internal.ADIequations.Diffusion3DADI;
 import static HAL.Tools.Internal.PDEequations.*;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
 
 /**
  * PDEGrid3D class facilitates 3D diffusion with two arrays of doubles called fields
@@ -143,6 +145,11 @@ public class PDEGrid3D implements Grid3D,Serializable {
         Mul((int)x,(int)y,(int)z,(val-1));
     }
 
+    public void ScaleAll(double val) {
+        for (int i = 0; i < length; i++) {
+            Mul(i, (val - 1));
+        }
+    }
     /**
      * adds the delta field into the current field, also increments the tick.
      */
@@ -272,9 +279,24 @@ public class PDEGrid3D implements Grid3D,Serializable {
     public double MaxDelta() {
         double maxDif = 0;
         for (int i = 0; i < field.length; i++) {
-            maxDif = Math.max(maxDif, Math.abs((deltas[i])));
+            maxDif = max(maxDif, Math.abs((deltas[i])));
         }
         return maxDif;
+    }
+
+    public double MaxValue(){
+        double max=-Double.MAX_VALUE;
+        for (int i = 0; i < field.length; i++) {
+            max=max(Get(i),max);
+        }
+        return max;
+    }
+    public double MinValue(){
+        double min=Double.MAX_VALUE;
+        for (int i = 0; i < field.length; i++) {
+            min=min(Get(i),min);
+        }
+        return min;
     }
 
     /**
@@ -284,7 +306,7 @@ public class PDEGrid3D implements Grid3D,Serializable {
     public double MaxDeltaScaled(double denomOffset) {
         double maxDif = 0;
         for (int i = 0; i < field.length; i++) {
-            maxDif = Math.max(maxDif, Math.abs(deltas[i] / (Math.abs(field[i]) + denomOffset)));
+            maxDif = max(maxDif, Math.abs(deltas[i] / (Math.abs(field[i]) + denomOffset)));
         }
         return maxDif;
     }
@@ -364,7 +386,7 @@ public class PDEGrid3D implements Grid3D,Serializable {
             scratch2=new double[length];
         }
         if(tdma==null){
-            tdma=new TdmaSolver(Math.max(Math.max(xDim,yDim),zDim));
+            tdma=new TdmaSolver(max(max(xDim,yDim),zDim));
         }
         Diffusion3DADI(field,scratch,scratch2,deltas,diffRate,xDim,yDim,zDim,wrapX,wrapY,wrapZ,null,tdma);
     }
@@ -376,7 +398,7 @@ public class PDEGrid3D implements Grid3D,Serializable {
             scratch2=new double[length];
         }
         if(tdma==null){
-            tdma=new TdmaSolver(Math.max(Math.max(xDim,yDim),zDim));
+            tdma=new TdmaSolver(max(max(xDim,yDim),zDim));
         }
         Diffusion3DADI(field,scratch,scratch2,deltas,diffRate,xDim,yDim,zDim,wrapX,wrapY,wrapZ,(x,y,z)->boundaryValue,tdma);
     }
@@ -388,7 +410,7 @@ public class PDEGrid3D implements Grid3D,Serializable {
             scratch2=new double[length];
         }
         if(tdma==null){
-            tdma=new TdmaSolver(Math.max(Math.max(xDim,yDim),zDim));
+            tdma=new TdmaSolver(max(max(xDim,yDim),zDim));
         }
         Diffusion3DADI(field,scratch,scratch2,deltas,diffRate,xDim,yDim,zDim,wrapX,wrapY,wrapZ,BC,tdma);
     }

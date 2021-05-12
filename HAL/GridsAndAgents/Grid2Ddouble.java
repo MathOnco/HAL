@@ -16,7 +16,7 @@ public class Grid2Ddouble implements Grid2D,Serializable {
     final public int length;
     public boolean wrapX;
     public boolean wrapY;
-    double[] field;
+    final public double[] field;
 
     /**
      * creates a new Grid2Ddouble of length xDim without wraparound

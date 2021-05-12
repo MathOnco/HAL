@@ -27,7 +27,7 @@ public class PopulationGrid2D extends PopulationGridBase implements Grid2D{
     }
     public void Set(int x,int y,int val){
         int i=I(x,y);
-        Add(i,val-agents[i]);
+        Add(i,val-Get(i));
     }
     public void Add(int x,int y,int val){
         Add(I(x,y),val);

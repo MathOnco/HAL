@@ -21,11 +21,11 @@ public class SphericalAgent3D<A extends SphericalAgent3D,G extends AgentGrid3D<A
     public double yVel;
     public double zVel;
     private static ThreadLocal<double[]>scratchCoordDefault=new ThreadLocal<>();
-    public void Init(double radius){
+    public void DefaultInit(double radius){
         this.radius=radius;
-        this.xVel=xVel;
-        this.yVel=yVel;
-        this.zVel=zVel;
+        this.xVel=0;
+        this.yVel=0;
+        this.zVel=0;
     }
 
     /**

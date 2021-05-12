@@ -15,7 +15,7 @@ public class Grid2Dint implements Grid2D,Serializable {
     final public int length;
     public boolean wrapX;
     public boolean wrapY;
-    int[] field;
+    final public int[] field;
 
     /**
      * creates a new Grid2Dint of dimensions xDim by yDim without wraparound

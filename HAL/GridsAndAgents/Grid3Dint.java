@@ -17,7 +17,7 @@ public class Grid3Dint implements Grid3D,Serializable {
     public boolean wrapX;
     public boolean wrapY;
     public boolean wrapZ;
-    int[] field;
+    final public int[] field;
 
     /**
      * creates a new Grid3Dint of dimensions xDim by yDim by zDim without wraparound
@@ -147,6 +147,22 @@ public class Grid3Dint implements Grid3D,Serializable {
             tot += field[i];
         }
         return tot / length;
+    }
+
+    public int GetMin(){
+        int min= Integer.MAX_VALUE;
+        for (int i = 0; i < length; i++) {
+            min=Math.min(min,field[i]);
+        }
+        return min;
+    }
+
+    public int GetMax(){
+        int max= Integer.MIN_VALUE;
+        for (int i = 0; i < length; i++) {
+            max=Math.max(max,field[i]);
+        }
+        return max;
     }
 
     @Override

@@ -14,22 +14,22 @@ TODO:
 
 public class PopulationGridBase implements Iterable<Integer>{
     //use live indices to iterate over agents when the number is low
-    protected int[]agents;
-    protected int[]deltas;
-    protected int occupiedArea;
-    protected long pop;
-    protected int updateCt;
+    private final int[]agents;
+    private final int[]deltas;
+    private int occupiedArea;
+    private long pop;
+    private int updateCt;
     public final int length;
 
     public boolean usingSparseIndices;
-    protected int firstLiveIndex;
-    protected int[]nextLiveIndex;
-    protected int[]prevLiveIndex;
-    protected int[] nextLiveDelta;
-    protected int firstLiveDelta;
-    protected final static int UNLINKED =-1;
-    protected final static int LINKED_TO =-2;
-    protected final static int START_ITER =-3;
+    private int firstLiveIndex;
+    private int[]nextLiveIndex;
+    private int[]prevLiveIndex;
+    private int[] nextLiveDelta;
+    private int firstLiveDelta;
+    private final static int UNLINKED =-1;
+    private final static int LINKED_TO =-2;
+    private final static int START_ITER =-3;
     private ArrayList<OccupiedIterator> usedIters=new ArrayList<>();
 
     public PopulationGridBase(int length) {
@@ -100,6 +100,32 @@ public class PopulationGridBase implements Iterable<Integer>{
         }
     }
 
+    private void AddPopIndex(int i){
+        occupiedArea++;
+        if(firstLiveIndex!=UNLINKED){
+            prevLiveIndex[firstLiveIndex]=i;
+            nextLiveIndex[i]=firstLiveIndex;
+        }
+        firstLiveIndex=i;
+    }
+
+    private void RemovePopIndex(int i){
+        occupiedArea--;
+        //pop live index
+        if(firstLiveIndex==i){
+            //need to reassign firstLiveIndex
+            firstLiveIndex=nextLiveIndex[i];
+        }
+        if(prevLiveIndex[i]>=0){
+            nextLiveIndex[prevLiveIndex[i]]=nextLiveIndex[i];
+        }
+        if(nextLiveIndex[i]>=0){
+            prevLiveIndex[nextLiveIndex[i]]=prevLiveIndex[i];
+        }
+        prevLiveIndex[i]=UNLINKED;
+        nextLiveIndex[i]=UNLINKED;
+    }
+
     public void Update(){
         updateCt++;
         if(usingSparseIndices){
@@ -111,26 +137,9 @@ public class PopulationGridBase implements Iterable<Integer>{
                 pop+=deltas[i];
                 deltas[i]=0;
                 if (prev == 0 && agents[i] != 0) {
-                    occupiedArea++;
-                    //push new live index
-                    if(firstLiveIndex!=UNLINKED){
-                        prevLiveIndex[firstLiveIndex]=i;
-                        nextLiveIndex[i]=firstLiveIndex;
-                    }
-                    firstLiveIndex=i;
+                    AddPopIndex(i);
                 } else if (prev != 0 && agents[i] == 0) {
-                    occupiedArea--;
-                    //pop live index
-                    if(firstLiveIndex==i){
-                        //need to reassign firstLiveIndex
-                        firstLiveIndex=nextLiveIndex[i];
-                    }
-                    else if(prevLiveIndex[i]>=0){
-                        nextLiveIndex[prevLiveIndex[i]]=nextLiveIndex[i];
-                    }
-                    if(nextLiveIndex[i]>=0){
-                        prevLiveIndex[nextLiveIndex[i]]=prevLiveIndex[i];
-                    }
+                    RemovePopIndex(i);
                 }
                 if (agents[i] < 0) {
                     throw new IllegalStateException("number of agents is below zero, could be overflow or underflow! index:" + i + " val:" + agents[i]+"consider using the PopulationGridLong if this is due to population overflow");
@@ -184,11 +193,7 @@ public class PopulationGridBase implements Iterable<Integer>{
         //link indices
         for (int i = 0; i < length; i++) {
             if(agents[i]>0){
-                if(firstLiveIndex!=UNLINKED){
-                    prevLiveIndex[firstLiveIndex]=i;
-                    nextLiveIndex[i]=firstLiveIndex;
-                }
-                firstLiveIndex=i;
+                AddPopIndex(i);
             }
         }
     }
@@ -221,10 +226,6 @@ public class PopulationGridBase implements Iterable<Integer>{
 
     public void CopyTo(int[] dest){
         System.arraycopy(agents,0,dest,0,length);
-    }
-
-    public void CopyTo(Grid2Dint dest){
-        CopyTo(dest.GetField());
     }
 
     private class OccupiedIterator implements Iterator<Integer>, Iterable<Integer>, Serializable {

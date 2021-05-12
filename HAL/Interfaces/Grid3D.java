@@ -582,6 +582,37 @@ public interface Grid3D{
         }
     }
 
+    default public void ForEdge(IndexCoords3DAction Action){
+        int xDim=Xdim();
+        int yDim=Ydim();
+        int zDim=Zdim();
+        for (int x = 0; x < xDim; x++) {
+            for (int y = 0; y < yDim; y++) {
+                int z=0;
+                Action.Action(I(x,y,z),x,y,z);
+                z=zDim-1;
+                Action.Action(I(x,y,z),x,y,z);
+            }
+        }
+        for (int x = 0; x < xDim; x++) {
+            for (int z = 1; z < zDim-1; z++) {
+                int y=0;
+                Action.Action(I(x,y,z),x,y,z);
+                y=yDim-1;
+                Action.Action(I(x,y,z),x,y,z);
+            }
+        }
+        for (int y = 1; y < yDim-1; y++) {
+            for (int z = 1; z < zDim-1; z++) {
+                int x=0;
+                Action.Action(I(x,y,z),x,y,z);
+                x=xDim-1;
+                Action.Action(I(x,y,z),x,y,z);
+            }
+        }
+    }
+
+
     public int Xdim();
 
     public int Ydim();

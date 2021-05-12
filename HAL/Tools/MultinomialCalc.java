@@ -20,9 +20,6 @@ public class MultinomialCalc extends Rand implements Serializable{
             return 0;
         }
         if(probRemaining-prob<=0){
-            if(probRemaining-prob <-Util.DOUBLE_EPSILON){
-                throw new IllegalStateException("total probability sum for MultinomialCalc < 0! prob:"+prob+" probRemaining:"+ probRemaining);
-            }
             int ret=popRemaining;
             popRemaining=0;
             probRemaining-=prob;

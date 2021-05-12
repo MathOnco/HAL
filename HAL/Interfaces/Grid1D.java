@@ -240,6 +240,10 @@ public interface Grid1D {
         return x * other.Xdim() / Xdim();
     }
 
+    default public void ForEdge(IntToVoid Action){
+        Action.Eval(0);
+        Action.Eval(Length()-1);
+    }
 
 //    /**
 //     * gets the indices of the squares that lie within a given radius of a position

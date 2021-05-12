@@ -76,10 +76,10 @@ public class AgentGrid0D<T extends Agent0D> implements Iterable<T>,Serializable 
      */
     public T RandomAgent(Rand rn) {
         CleanAgents();
-        if (GetPop() == 0) {
+        if (Pop() == 0) {
             return null;
         }
-        return agents.agents.get(rn.Int(GetPop()));
+        return agents.agents.get(rn.Int(Pop()));
     }
 
     public int GetTick() {
@@ -97,7 +97,7 @@ public class AgentGrid0D<T extends Agent0D> implements Iterable<T>,Serializable 
     /**
      * returns the number of agents that are alive in the typeGrid
      */
-    public int GetPop() {
+    public int Pop() {
         //gets population
         return agents.pop;
     }

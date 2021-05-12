@@ -31,6 +31,7 @@ public class GifMaker {
     protected File file;
     protected BufferedImage scaledBuff;
     protected Graphics2D g;
+    protected FileImageOutputStream outStream;
 
     /**
      * Creates a new GifMaker
@@ -108,7 +109,8 @@ public class GifMaker {
         file=new File(outputPath);
 
         try {
-            gifWriter.setOutput(new FileImageOutputStream(new File(outputPath)));
+            outStream=new FileImageOutputStream(new File(outputPath));
+            gifWriter.setOutput(outStream);
         }
         catch (Exception e){
             System.err.println("unable to write gif output");
@@ -175,6 +177,7 @@ public class GifMaker {
     public void Close() {
         try {
             gifWriter.endWriteSequence();
+            outStream.close();
         }
         catch (Exception e){
             System.err.println("unable to end gif sequence");

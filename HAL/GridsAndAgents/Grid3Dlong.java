@@ -17,7 +17,7 @@ public class Grid3Dlong implements Grid3D,Serializable {
     public boolean wrapX;
     public boolean wrapY;
     public boolean wrapZ;
-    long[] field;
+    final public long[] field;
 
     /**
      * creates a new Grid3Dlong of dimensions xDim by yDim by zDim without wraparound

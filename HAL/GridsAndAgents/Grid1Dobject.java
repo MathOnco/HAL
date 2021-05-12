@@ -12,7 +12,7 @@ public class Grid1Dobject<T> implements Grid1D,Serializable {
     final public int xDim;
     final public int length;
     public boolean wrapX;
-    T[] field;
+    final public T[] field;
 
     /**
      * creates a new Grid1Dobject of length xDim wtihout wraparound

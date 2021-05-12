@@ -43,9 +43,6 @@ public class SphericalAgent2D<A extends SphericalAgent2D,G extends AgentGrid2D<A
      * interactionRad.
      */
     public double SumForces(double interactionRad, OverlapForceResponse2D<A> OverlapFun) {
-        return SumForces(interactionRad,OverlapFun,null);
-    }
-    public double SumForces(double interactionRad, OverlapForceResponse2D<A> OverlapFun,Rand resolvePerfectOverlap) {
         ArrayList<A> scratchAgentList = G.GetFreshAgentSearchArr();
         scratchAgentList.clear();
         double sum = 0;
@@ -54,16 +51,6 @@ public class SphericalAgent2D<A extends SphericalAgent2D,G extends AgentGrid2D<A
             if (a != this) {
                 double xComp = DispX(a.Xpt());
                 double yComp = DispY(a.Ypt());
-                if (xComp == 0 && yComp == 0) {
-                    if(resolvePerfectOverlap==null) {
-                        xComp = Math.random() - 0.5;
-                        yComp = Math.random() - 0.5;
-                    }
-                    else{
-                        xComp=resolvePerfectOverlap.Double()-0.5;
-                        yComp=resolvePerfectOverlap.Double()-0.5;
-                    }
-                }
                 double dist = Norm(xComp, yComp);
                 if (dist < interactionRad) {
                     double touchDist = (radius + a.radius) - dist;
@@ -99,14 +86,11 @@ public class SphericalAgent2D<A extends SphericalAgent2D,G extends AgentGrid2D<A
         }
         return sum;
     }
-    public <T extends SphericalAgent2D> double SumForces(double interactionRad, AgentGrid2D<T> otherGrid, OverlapForceResponse2D<T> OverlapFun) {
-        return SumForces(interactionRad, otherGrid, OverlapFun, null);
-    }
 
     /**
      * similar to the SumForces function above, but it can be used with other AgentGrids
      */
-    public <T extends SphericalAgent2D> double SumForces(double interactionRad, AgentGrid2D<T> otherGrid, OverlapForceResponse2D<T> OverlapFun, Rand resolvePerfectOverlap) {
+    public <T extends SphericalAgent2D> double SumForces(double interactionRad, AgentGrid2D<T> otherGrid, OverlapForceResponse2D<T> OverlapFun) {
         ArrayList<T> scratchAgentList = otherGrid.GetFreshAgentSearchArr();
         scratchAgentList.clear();
         double sum = 0;
@@ -115,16 +99,6 @@ public class SphericalAgent2D<A extends SphericalAgent2D,G extends AgentGrid2D<A
             if (a != this) {
                 double xComp = DispX(a.Xpt());
                 double yComp = DispY(a.Ypt());
-                if (xComp == 0 && yComp == 0) {
-                    if(resolvePerfectOverlap==null) {
-                        xComp = Math.random() - 0.5;
-                        yComp = Math.random() - 0.5;
-                    }
-                    else{
-                        xComp=resolvePerfectOverlap.Double()-0.5;
-                        yComp=resolvePerfectOverlap.Double()-0.5;
-                    }
-                }
                 double dist = Norm(xComp, yComp);
                 if (dist < interactionRad) {
                     double touchDist = (radius + a.radius) - dist;

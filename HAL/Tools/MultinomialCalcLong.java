@@ -18,7 +18,7 @@ public class MultinomialCalcLong extends Rand implements Serializable{
         if(popRemaining==0||prob==0){
             return 0;
         }
-        if(probRemaining-prob==0){
+        if(probRemaining-prob<=0){
             long ret=popRemaining;
             popRemaining=0;
             probRemaining-=prob;
@@ -26,9 +26,6 @@ public class MultinomialCalcLong extends Rand implements Serializable{
         }
         long popSelected=Binomial(popRemaining,prob/ probRemaining);
         probRemaining -=prob;
-        if(probRemaining <0){
-            throw new IllegalStateException("total probability sum for MultinomialCalc < 0! prob:"+prob+" probRemaining:"+ probRemaining);
-        }
         popRemaining-=popSelected;
         return popSelected;
     }

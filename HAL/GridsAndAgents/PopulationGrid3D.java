@@ -35,7 +35,7 @@ public class PopulationGrid3D extends PopulationGridBase implements Grid3D{
     }
     public void Set(int x,int y,int z,int val){
         int i=I(x,y,z);
-        Add(i,val-agents[i]);
+        Add(i,val-Get(i));
     }
     public void Move(int xFrom,int yFrom,int zFrom,int xTo,int yTo,int zTo,int val){
         Move(I(xFrom,yFrom,zFrom),I(xTo,yTo,zTo),val);

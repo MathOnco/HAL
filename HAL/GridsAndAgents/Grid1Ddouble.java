@@ -14,7 +14,7 @@ public class Grid1Ddouble implements Grid1D,Serializable {
     final public int xDim;
     final public int length;
     boolean wrapX;
-    double[] field;
+    final public double[] field;
 
     /**
      * creates a new Grid1Ddouble of length xDim without wraparound

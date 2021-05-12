@@ -130,14 +130,7 @@ public class Rand implements Serializable {
         double probRemaining = 1;
         for (int i = 0; i < probabilities.length; i++) {
             double prob=probabilities[i];
-            if(n==0||prob==0){
-                ret[i]=0;
-                return;
-            }
             if(probRemaining-prob<=0){
-                if(probRemaining-prob <-Util.DOUBLE_EPSILON){
-                    throw new IllegalStateException("total probability sum for MultinomialCalc < 0! prob:"+prob+" probRemaining:"+ probRemaining);
-                }
                 ret[i]=n;
                 return;
             }
@@ -155,19 +148,12 @@ public class Rand implements Serializable {
         double probRemaining = 1;
         for (int i = 0; i < probabilities.length; i++) {
             double prob=probabilities[i];
-            if(n==0||prob==0){
-                ret[i]=0;
-                return;
-            }
-            if(probRemaining-prob==0){
+            if(probRemaining-prob<=0){
                 ret[i]=n;
                 return;
             }
             long popSelected=Binomial(n,prob/ probRemaining);
             probRemaining -=prob;
-            if(probRemaining <0){
-                throw new IllegalStateException("total probability sum for MultinomialCalc < 0! prob:"+prob+" probRemaining:"+ probRemaining);
-            }
             n-=popSelected;
             ret[i]=popSelected;
         }
@@ -190,9 +176,9 @@ public class Rand implements Serializable {
 
     public void RandomPointInSphere(double radius, double[] ret) {
         do {
-            ret[0] = rn.Double();
-            ret[1] = rn.Double();
-            ret[2] = rn.Double();
+            ret[0] = Double();
+            ret[1] = Double();
+            ret[2] = Double();
         } while (DistSquared(ret[0], ret[1], ret[2], 0.5, 0.5, 0.5) > 0.25);
         double retScale = radius * 2;
         ret[0] = (ret[0] - 0.5) * retScale;
@@ -213,8 +199,8 @@ public class Rand implements Serializable {
     }
 
     public void RandomPointInCircle(double radius, double[] ret) {
-        double r = Math.sqrt(rn.Double()) * radius;
-        double a = rn.Double() * Math.PI * 2;
+        double r = Math.sqrt(Double()) * radius;
+        double a = Double() * Math.PI * 2;
         ret[0] = r * Math.cos(a);
         ret[1] = r * Math.sin(a);
     }
@@ -232,7 +218,7 @@ public class Rand implements Serializable {
      * @return the index of the probability bin that was sampled
      */
     public int RandomVariable(double[] probs) {
-        double rand = rn.Double();
+        double rand = Double();
         for (int i = 0; i < probs.length; i++) {
             rand -= probs[i];
             if (rand <= 0) {
@@ -243,7 +229,7 @@ public class Rand implements Serializable {
     }
 
     public int RandomVariable(double[] probs, int start, int end) {
-        double rand = rn.Double();
+        double rand = Double();
         for (int i = start; i < end; i++) {
             rand -= probs[i];
             if (rand <= 0) {
@@ -271,7 +257,7 @@ public class Rand implements Serializable {
      */
     public void RandomDS(double[] out, double min, double max) {
         for (int i = 0; i < out.length; i++) {
-            out[i] = rn.Double() * (max - min) + min;
+            out[i] = Double() * (max - min) + min;
         }
     }
 
@@ -283,7 +269,7 @@ public class Rand implements Serializable {
      */
     public void RandomIS(int[] out, int min, int max) {
         for (int i = 0; i < out.length; i++) {
-            out[i] = rn.Int(max - min) + min;
+            out[i] = Int(max - min) + min;
         }
     }
 
@@ -296,6 +282,14 @@ public class Rand implements Serializable {
         return -Math.log(Double())/rate;
     }
 
+    /**
+     * Samples a Weibull distribution with parameters @param shape, and @param scale.
+     * This conversion is done using the inverse cumulative function of the Weibull distribution.
+     * Coded by Rebecca Bekker
+     * */
+    public double WeibullDist(double shape, double scale){
+        return scale * Math.pow(-Math.log(1-Double()),(1/shape));
+    }
 
     /**
      * Shuffles an array of integers
@@ -306,7 +300,7 @@ public class Rand implements Serializable {
      */
     public void Shuffle(int[] arr, int sampleSize, int numberOfShuffles) {
         for (int i = 0; i < numberOfShuffles; i++) {
-            int iSwap = rn.Int(sampleSize - i) + i;
+            int iSwap = Int(sampleSize - i) + i;
             int swap = arr[iSwap];
             arr[iSwap] = arr[i];
             arr[i] = swap;
@@ -315,7 +309,7 @@ public class Rand implements Serializable {
 
     public void Shuffle(int[] arr) {
         for (int i = 0; i < arr.length; i++) {
-            int iSwap = rn.Int(arr.length - i) + i;
+            int iSwap = Int(arr.length - i) + i;
             int swap = arr[iSwap];
             arr[iSwap] = arr[i];
             arr[i] = swap;
@@ -334,7 +328,7 @@ public class Rand implements Serializable {
      */
     public void Shuffle(double[] arr, int sampleSize, int numberOfShuffles) {
         for (int i = 0; i < numberOfShuffles; i++) {
-            int iSwap = rn.Int(sampleSize - i) + i;
+            int iSwap = Int(sampleSize - i) + i;
             double swap = arr[iSwap];
             arr[iSwap] = arr[i];
             arr[i] = swap;
@@ -346,7 +340,7 @@ public class Rand implements Serializable {
 
     public void Shuffle(double[] arr) {
         for (int i = 0; i < arr.length; i++) {
-            int iSwap = rn.Int(arr.length - i) + i;
+            int iSwap = Int(arr.length - i) + i;
             double swap = arr[iSwap];
             arr[iSwap] = arr[i];
             arr[i] = swap;
@@ -362,7 +356,7 @@ public class Rand implements Serializable {
      */
     public void Shuffle(Object[] arr, int sampleSize, int numberOfShuffles) {
         for (int i = 0; i < numberOfShuffles; i++) {
-            int iSwap = rn.Int(sampleSize - i) + i;
+            int iSwap = Int(sampleSize - i) + i;
             Object swap = arr[iSwap];
             arr[iSwap] = arr[i];
             arr[i] = swap;
@@ -371,7 +365,7 @@ public class Rand implements Serializable {
 
     public void Shuffle(Object[] arr) {
         for (int i = 0; i < arr.length; i++) {
-            int iSwap = rn.Int(arr.length - i) + i;
+            int iSwap = Int(arr.length - i) + i;
             Object swap = arr[iSwap];
             arr[iSwap] = arr[i];
             arr[i] = swap;

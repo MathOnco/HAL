@@ -13,7 +13,7 @@ public class Grid1Dlong implements Grid1D,Serializable {
     final public int xDim;
     final public int length;
     public boolean wrapX;
-    long[] field;
+    final public long[] field;
 
     /**
      * creates a new Grid1Dlong of length xDim without wraparound

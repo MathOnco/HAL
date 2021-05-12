@@ -2,6 +2,7 @@ package HAL.Gui;
 
 import HAL.Interfaces.ColorIntGenerator;
 import HAL.Interfaces.Grid3D;
+import HAL.Interfaces.ICoords3DAction;
 import HAL.Util;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
@@ -15,6 +16,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.Comparator;
+import java.util.PriorityQueue;
 
 import static HAL.Util.*;
 import static org.lwjgl.opengl.GL11.*;
@@ -39,7 +42,13 @@ public class OpenGL3DWindow implements Grid3D {
     TickTimer tt = new TickTimer();
     Camera camera;
 
-    /**
+    private int[] drawInds=null;
+    double[] cameraPos =null;
+    private PriorityQueue<double[]> heap = null;
+
+
+
+        /**
      *
      * creates a new OpenGL2DWindow
      * @param title the title that will appear at the top of the window (default "")
@@ -85,6 +94,7 @@ public class OpenGL3DWindow implements Grid3D {
             //glTranslatef(transXY, transXY, transZ);
         }
     }
+
 
     /**
      * the below constructors are variants of the above constructor with default values for some of the arguments
@@ -340,6 +350,81 @@ public class OpenGL3DWindow implements Grid3D {
             glEnd();
         }
     }
+    public void Cube(double x1, double x2, double y1,double y2, double z1,double z2, int color){
+        if(active){
+            float x1f=(float)x1+trans; float x2f=(float)x2+trans; float y1f=(float)y1+trans;  float y2f=(float)y2+trans; float z1f=(float)z1-trans; float z2f=(float)z2-trans;
+            glColor4f((float) GetRed(color), (float) GetGreen(color), (float) GetBlue(color), (float) GetAlpha(color));
+            glBegin(GL_TRIANGLE_STRIP);
+            glVertex3f(x1f,y1f,-z1f);
+            glVertex3f(x2f,y1f,-z1f);
+            glVertex3f(x1f,y2f,-z1f);
+            glVertex3f(x2f,y2f,-z1f);
+            glVertex3f(x2f,y2f,-z2f);
+            glVertex3f(x2f,y1f,-z1f);
+            glVertex3f(x2f,y1f,-z2f);
+            glVertex3f(x1f,y1f,-z1f);
+            glVertex3f(x1f,y1f,-z2f);
+            glVertex3f(x1f,y2f,-z1f);
+            glVertex3f(x1f,y2f,-z2f);
+            glVertex3f(x2f,y2f,-z2f);
+            glVertex3f(x1f,y1f,-z2f);
+            glVertex3f(x2f,y1f,-z2f);
+            glEnd();
+        }
+
+    }
+
+//    public void Cube(double x1, double x2, double y1,double y2, double z1,double z2, int color){
+//        if(active){
+//            float x1f=(float)x1; float x2f=(float)x2; float y1f=(float)y1;  float y2f=(float)y2; float z1f=(float)z1; float z2f=(float)z2;
+//            glBegin(GL_QUADS);
+//            glColor4f((float) GetRed(color), (float) GetGreen(color), (float) GetBlue(color), (float) GetAlpha(color));
+//            glVertex3f( x1f+trans, y1f+trans,-z2f+trans);
+//            glVertex3f(x2f+trans, y1f+trans,-z2f+trans);
+//            glVertex3f(x2f+trans, y1f+trans, -z1f+trans);
+//            glVertex3f( x1f+trans, y1f+trans, -z1f+trans);
+//            glVertex3f( x1f+trans,y2f+trans, -z1f+trans);
+//            glVertex3f(x2f+trans,y2f+trans, -z1f+trans);
+//            glVertex3f(x2f+trans,y2f+trans,-z2f+trans);
+//            glVertex3f( x1f+trans,y2f+trans,-z2f+trans);
+//            glVertex3f( x1f+trans, y1f+trans, -z1f+trans);
+//            glVertex3f(x2f+trans, y1f+trans, -z1f+trans);
+//            glVertex3f(x2f+trans,y2f+trans, -z1f+trans);
+//            glVertex3f( x1f+trans,y2f+trans, -z1f+trans);
+//            glVertex3f( x1f+trans,y2f+trans,-z2f+trans);
+//            glVertex3f(x2f+trans,y2f+trans,-z2f+trans);
+//            glVertex3f(x2f+trans, y1f+trans,-z2f+trans);
+//            glVertex3f( x1f+trans, y1f+trans,-z2f+trans);
+//            glVertex3f(x2f+trans, y1f+trans, -z1f+trans);
+//            glVertex3f(x2f+trans, y1f+trans,-z2f+trans);
+//            glVertex3f(x2f+trans,y2f+trans,-z2f+trans);
+//            glVertex3f(x2f+trans,y2f+trans, -z1f+trans);
+//            glVertex3f( x1f+trans, y1f+trans,-z2f+trans);
+//            glVertex3f( x1f+trans, y1f+trans, -z1f+trans);
+//            glVertex3f( x1f+trans,y2f+trans, -z1f+trans);
+//            glVertex3f( x1f+trans,y2f+trans,-z2f+trans);
+//            glEnd();
+//        }
+//    }
+
+    public void Voxel(int i,int color){
+        int x=ItoX(i);
+        int y=ItoY(i);
+        int z=ItoZ(i);
+        Cube(x,x+1,y,y+1,z,z+1,color);
+    }
+    public void Voxel(int i,double radius,int color){
+        int x=ItoX(i);
+        int y=ItoY(i);
+        int z=ItoZ(i);
+        Cube(x+0.5-radius,x+0.5+radius,y+0.5-radius,y+0.5+radius,z+0.5-radius,z+0.5+radius,color);
+    }
+    public void Voxel(int x,int y, int z,int color){
+        Cube(x,x+1,y,y+1,z,z+1,color);
+    }
+    public void Voxel(int x,int y, int z,double radius,int color){
+        Cube(x+0.5-radius,x+0.5+radius,y+0.5-radius,y+0.5+radius,z+0.5-radius,z+0.5+radius,color);
+    }
 
     /**
      * draws a series of lines between all x,y,z triplets
@@ -453,6 +538,68 @@ public class OpenGL3DWindow implements Grid3D {
     public boolean IsWrapZ() {
         return false;
     }
+    private void EnableAlpha() {
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        drawInds = new int[length];
+        drawInds[0]=-1;
+        cameraPos= new double[3];
+        SetCameraPos();
+        heap=new PriorityQueue<>((o1, o2) -> {
+            if (o1[0] < o2[0]) {
+                return 1;
+            }else if(o1[0]==o2[0]) {
+                return 0;
+            }else{
+                return -1;
+            }
+        });
+    }
+
+    private double CameraDist(int x, int y, int z) {
+        double xcomp = cameraPos[0] - (x + 0.5);
+        double ycomp = cameraPos[1] - (y + 0.5);
+        double zcomp = cameraPos[2] - (z + 0.5);
+        return xcomp * xcomp + ycomp * ycomp + zcomp * zcomp;
+    }
+
+    private void SetCameraPos() {
+        cameraPos[0] = Camera.pos[0] - trans;
+        cameraPos[1] = Camera.pos[1] - trans;
+        cameraPos[2] = -Camera.pos[2] + trans;
+    }
+
+    private boolean IsCameraStill() {
+        return cameraPos[0] == Camera.pos[0] - trans && cameraPos[1] == Camera.pos[1] - trans && cameraPos[2] == -Camera.pos[2] + trans;
+    }
+
+    public void PushHeap(int i) {
+        heap.add(new double[]{CameraDist(ItoX(i), ItoY(i), ItoZ(i)), i});
+    }
+
+    /**
+     * call this function to draw transparent objects correctly, either also draw opaque objects with this function or draw them before calling this function.
+     */
+    public void DrawAlpha(ICoords3DAction DrawFn) {
+        if(heap==null){
+            EnableAlpha();
+        }
+        if (drawInds[0]==-1||!IsCameraStill()) {
+            SetCameraPos();
+            //setup drawing
+            for (int i = 0; i < length; i++) {
+                PushHeap(i);
+            }
+            for (int i = 0; i < length; i++) {
+                drawInds[i] = (int) heap.poll()[1];
+            }
+        }
+        //draw
+        for (int i : drawInds) {
+            DrawFn.Action(i, ItoX(i), ItoY(i), ItoZ(i));
+        }
+    }
+
 }
 
 

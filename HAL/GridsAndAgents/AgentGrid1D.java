@@ -658,7 +658,7 @@ public class AgentGrid1D<T extends AgentBaseSpatial> implements Grid1D,Iterable<
         if (agents.size() > 0) {
             ret = agents.get(rn.Int(ct));
         }
-        usedAgentSearches.add(agents);
+        ReturnAgentSearchArr(agents);
         return ret;
     }
 
@@ -673,7 +673,7 @@ public class AgentGrid1D<T extends AgentBaseSpatial> implements Grid1D,Iterable<
         if (agents.size() > 0) {
             ret = agents.get(rn.Int(ct));
         }
-        usedAgentSearches.add(agents);
+        ReturnAgentSearchArr(agents);
         return ret;
     }
 
@@ -688,7 +688,7 @@ public class AgentGrid1D<T extends AgentBaseSpatial> implements Grid1D,Iterable<
         if (ct > 0) {
             ret = agents.get(rn.Int(ct));
         }
-        usedAgentSearches.add(agents);
+        ReturnAgentSearchArr(agents);
         return ret;
     }
 
@@ -703,7 +703,7 @@ public class AgentGrid1D<T extends AgentBaseSpatial> implements Grid1D,Iterable<
         if (ct > 0) {
             ret = agents.get(rn.Int(ct));
         }
-        usedAgentSearches.add(agents);
+        ReturnAgentSearchArr(agents);
         return ret;
     }
 
@@ -718,7 +718,7 @@ public class AgentGrid1D<T extends AgentBaseSpatial> implements Grid1D,Iterable<
         if (ct > 0) {
             ret = agents.get(rn.Int(ct));
         }
-        usedAgentSearches.add(agents);
+        ReturnAgentSearchArr(agents);
         return ret;
     }
 
@@ -734,7 +734,7 @@ public class AgentGrid1D<T extends AgentBaseSpatial> implements Grid1D,Iterable<
         if (ct > 0) {
             ret = agents.get(rn.Int(ct));
         }
-        usedAgentSearches.add(agents);
+        ReturnAgentSearchArr(agents);
         return ret;
     }
 
@@ -749,7 +749,7 @@ public class AgentGrid1D<T extends AgentBaseSpatial> implements Grid1D,Iterable<
         if (ct > 0) {
             ret = agents.get(rn.Int(ct));
         }
-        usedAgentSearches.add(agents);
+        ReturnAgentSearchArr(agents);
         return ret;
     }
 
@@ -765,7 +765,7 @@ public class AgentGrid1D<T extends AgentBaseSpatial> implements Grid1D,Iterable<
         if (ct > 0) {
             ret = agents.get(rn.Int(ct));
         }
-        usedAgentSearches.add(agents);
+        ReturnAgentSearchArr(agents);
         return ret;
     }
 
@@ -780,7 +780,7 @@ public class AgentGrid1D<T extends AgentBaseSpatial> implements Grid1D,Iterable<
         if (ct > 0) {
             ret = agents.get(rn.Int(ct));
         }
-        usedAgentSearches.add(agents);
+        ReturnAgentSearchArr(agents);
         return ret;
     }
 
@@ -796,7 +796,7 @@ public class AgentGrid1D<T extends AgentBaseSpatial> implements Grid1D,Iterable<
         if (ct > 0) {
             ret = agents.get(rn.Int(ct));
         }
-        usedAgentSearches.add(agents);
+        ReturnAgentSearchArr(agents);
         return ret;
     }
 
@@ -812,7 +812,7 @@ public class AgentGrid1D<T extends AgentBaseSpatial> implements Grid1D,Iterable<
         if (ct > 0) {
             ret = agents.get(rn.Int(ct));
         }
-        usedAgentSearches.add(agents);
+        ReturnAgentSearchArr(agents);
         return ret;
     }
 
@@ -828,7 +828,7 @@ public class AgentGrid1D<T extends AgentBaseSpatial> implements Grid1D,Iterable<
         if (ct > 0) {
             ret = agents.get(rn.Int(ct));
         }
-        usedAgentSearches.add(agents);
+        ReturnAgentSearchArr(agents);
         return ret;
     }
 
@@ -857,6 +857,18 @@ public class AgentGrid1D<T extends AgentBaseSpatial> implements Grid1D,Iterable<
         }
         return new ArrayList<T>();
     }
+
+    private void ReturnAgentSearchArr(ArrayList<T> arr){
+        if(usedAgentSearches.size()<=5){
+            usedAgentSearches.add(arr);
+        }
+    }
+    private void ReturnAgentsIterator(AgentsIterator1D ret){
+        if(usedIterIs.size()<=5){
+            usedIterIs.add(ret);
+        }
+    }
+
 
 
     T GetNewAgent() {
@@ -897,8 +909,8 @@ public class AgentGrid1D<T extends AgentBaseSpatial> implements Grid1D,Iterable<
         @Override
         public boolean hasNext() {
             if (iCount == numAgents) {
-                myGrid.usedAgentSearches.add(myAgents);
-                myGrid.usedIterIs.add(this);
+                ReturnAgentSearchArr(myAgents);
+                ReturnAgentsIterator(this);
                 return false;
             }
             return true;

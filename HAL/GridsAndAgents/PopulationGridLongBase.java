@@ -11,22 +11,22 @@ import java.util.Iterator;
 
 public class PopulationGridLongBase implements Iterable<Integer>{
     //use live indices to iterate over agents when the number is low
-    protected long[]agents;
-    protected long[]deltas;
-    protected int occupiedArea;
-    protected double pop;
-    protected int updateCt;
+    private final long[]agents;
+    private final long[]deltas;
+    private int occupiedArea;
+    private double pop;
+    private int updateCt;
     public final int length;
 
     public boolean usingSparseIndices;
-    protected int firstLiveIndex;
-    protected int[]nextLiveIndex;
-    protected int[]prevLiveIndex;
-    protected int[] nextLiveDelta;
-    protected int firstLiveDelta;
-    protected final static int UNLINKED =-1;
-    protected final static int LINKED_TO =-2;
-    protected final static int START_ITER =-3;
+    private int firstLiveIndex;
+    private int[]nextLiveIndex;
+    private int[]prevLiveIndex;
+    private int[] nextLiveDelta;
+    private int firstLiveDelta;
+    private final static int UNLINKED =-1;
+    private final static int LINKED_TO =-2;
+    private final static int START_ITER =-3;
     private ArrayList<OccupiedIterator> usedIters=new ArrayList<>();
 
     public PopulationGridLongBase(int length) {
@@ -122,6 +122,8 @@ public class PopulationGridLongBase implements Iterable<Integer>{
                     //pop live index
                     if(firstLiveIndex==i){
                         //need to reassign firstLiveIndex
+                        prevLiveIndex[nextLiveIndex[i]]=UNLINKED;
+                        nextLiveIndex[firstLiveIndex]=UNLINKED;
                         firstLiveIndex=nextLiveIndex[i];
                     }
                     else if(prevLiveIndex[i]>=0){
@@ -222,10 +224,6 @@ public class PopulationGridLongBase implements Iterable<Integer>{
 
     public void CopyTo(int[] dest){
         System.arraycopy(agents,0,dest,0,length);
-    }
-
-    public void CopyTo(Grid2Dint dest){
-        CopyTo(dest.GetField());
     }
 
     private class OccupiedIterator implements Iterator<Integer>, Iterable<Integer>, Serializable {

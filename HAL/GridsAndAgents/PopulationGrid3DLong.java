@@ -36,7 +36,7 @@ public class PopulationGrid3DLong extends PopulationGridLongBase implements Grid
     }
     public void Set(int x,int y,int z,long val){
         int i=I(x,y,z);
-        Add(i,val-agents[i]);
+        Add(i,val-Get(i));
     }
 
     public void Move(int xFrom,int yFrom,int zFrom,int xTo,int yTo,int zTo,long val){

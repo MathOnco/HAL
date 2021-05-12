@@ -135,6 +135,13 @@ class InternalGridAgentList<T extends AgentBase> implements Iterable<T>,Serializ
         }
         return ret;
     }
+
+    private void ReturnIter(AgentListIterator iter){
+        if(usedIters.size()<=5){
+            usedIters.add(iter);
+        }
+    }
+
     private class AgentListIterator implements Iterator<T>,Serializable{
         long stateID;
         InternalGridAgentList<T> myList;
@@ -158,7 +165,7 @@ class InternalGridAgentList<T extends AgentBase> implements Iterable<T>,Serializ
                 }
             }
             ret=null;
-            usedIters.add(this);
+            ReturnIter(this);
             if(outerIter==this){
                 outerIter=null;
             }

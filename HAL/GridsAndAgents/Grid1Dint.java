@@ -13,7 +13,7 @@ public class Grid1Dint implements Grid1D,Serializable {
     final public int xDim;
     final public int length;
     public boolean wrapX;
-    int[] field;
+    final public int[] field;
 
     /**
      * creates a new Grid1Dint of length xDim without wraparound

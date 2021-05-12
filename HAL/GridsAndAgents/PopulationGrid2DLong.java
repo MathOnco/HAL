@@ -28,7 +28,7 @@ public class PopulationGrid2DLong extends PopulationGridLongBase implements Grid
     }
     public void Set(int x,int y,long val){
         int i=I(x,y);
-        Add(i,val-agents[i]);
+        Add(i,val-Get(i));
     }
     public void Add(int x,int y,long val){
         Add(I(x,y),val);

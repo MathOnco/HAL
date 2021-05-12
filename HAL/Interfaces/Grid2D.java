@@ -477,6 +477,22 @@ public abstract interface Grid2D {
 
     }
 
+    default public void ForEdge(IndexCoords2DAction Action){
+        int xDim=Xdim();
+        int yDim=Ydim();
+        for (int x = 0; x < xDim; x++) {
+            int y=0;
+            Action.Action(I(x,y),x,y);
+            y=yDim-1;
+            Action.Action(I(x,y),x,y);
+        }
+        for (int y = 1; y < yDim-1; y++) {
+            int x=0;
+            Action.Action(I(x,y),x,y);
+            x=xDim-1;
+            Action.Action(I(x,y),x,y);
+        }
+    }
 
     public int Xdim();
 

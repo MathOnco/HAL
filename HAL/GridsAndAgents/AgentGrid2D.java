@@ -755,7 +755,7 @@ public class AgentGrid2D<T extends AgentBaseSpatial> implements Grid2D,Iterable<
                 agents.clear();
             }
         }
-        usedAgentSearches.add(agents);
+        ReturnAgentSearchArr(agents);
         return nAgents;
     }
 
@@ -887,7 +887,7 @@ public class AgentGrid2D<T extends AgentBaseSpatial> implements Grid2D,Iterable<
         if (agents.size() > 0) {
             ret = agents.get(rn.Int(ct));
         }
-        usedAgentSearches.add(agents);
+        ReturnAgentSearchArr(agents);
         return ret;
     }
 
@@ -902,7 +902,7 @@ public class AgentGrid2D<T extends AgentBaseSpatial> implements Grid2D,Iterable<
         if (ct > 0) {
             ret = agents.get(rn.Int(ct));
         }
-        usedAgentSearches.add(agents);
+        ReturnAgentSearchArr(agents);
         return ret;
     }
 
@@ -923,7 +923,7 @@ public class AgentGrid2D<T extends AgentBaseSpatial> implements Grid2D,Iterable<
         if (ct > 0) {
             ret = agents.get(rn.Int(ct));
         }
-        usedAgentSearches.add(agents);
+        ReturnAgentSearchArr(agents);
         return ret;
     }
 
@@ -939,7 +939,7 @@ public class AgentGrid2D<T extends AgentBaseSpatial> implements Grid2D,Iterable<
         if (ct > 0) {
             ret = agents.get(rn.Int(ct));
         }
-        usedAgentSearches.add(agents);
+        ReturnAgentSearchArr(agents);
         return ret;
     }
 
@@ -961,7 +961,7 @@ public class AgentGrid2D<T extends AgentBaseSpatial> implements Grid2D,Iterable<
         if (ct > 0) {
             ret = agents.get(rn.Int(ct));
         }
-        usedAgentSearches.add(agents);
+        ReturnAgentSearchArr(agents);
         return ret;
     }
 
@@ -977,7 +977,7 @@ public class AgentGrid2D<T extends AgentBaseSpatial> implements Grid2D,Iterable<
         if (ct > 0) {
             ret = agents.get(rn.Int(ct));
         }
-        usedAgentSearches.add(agents);
+        ReturnAgentSearchArr(agents);
         return ret;
     }
 
@@ -992,7 +992,7 @@ public class AgentGrid2D<T extends AgentBaseSpatial> implements Grid2D,Iterable<
         if (ct > 0) {
             ret = agents.get(rn.Int(ct));
         }
-        usedAgentSearches.add(agents);
+        ReturnAgentSearchArr(agents);
         return ret;
     }
 
@@ -1008,7 +1008,7 @@ public class AgentGrid2D<T extends AgentBaseSpatial> implements Grid2D,Iterable<
         if (ct > 0) {
             ret = agents.get(rn.Int(ct));
         }
-        usedAgentSearches.add(agents);
+        ReturnAgentSearchArr(agents);
         return ret;
     }
 
@@ -1023,7 +1023,7 @@ public class AgentGrid2D<T extends AgentBaseSpatial> implements Grid2D,Iterable<
         if (ct > 0) {
             ret = agents.get(rn.Int(ct));
         }
-        usedAgentSearches.add(agents);
+        ReturnAgentSearchArr(agents);
         return ret;
     }
 
@@ -1039,7 +1039,7 @@ public class AgentGrid2D<T extends AgentBaseSpatial> implements Grid2D,Iterable<
         if (ct > 0) {
             ret = agents.get(rn.Int(ct));
         }
-        usedAgentSearches.add(agents);
+        ReturnAgentSearchArr(agents);
         return ret;
     }
 
@@ -1055,7 +1055,7 @@ public class AgentGrid2D<T extends AgentBaseSpatial> implements Grid2D,Iterable<
         if (ct > 0) {
             ret = agents.get(rn.Int(ct));
         }
-        usedAgentSearches.add(agents);
+        ReturnAgentSearchArr(agents);
         return ret;
     }
 
@@ -1071,7 +1071,7 @@ public class AgentGrid2D<T extends AgentBaseSpatial> implements Grid2D,Iterable<
         if (ct > 0) {
             ret = agents.get(rn.Int(ct));
         }
-        usedAgentSearches.add(agents);
+        ReturnAgentSearchArr(agents);
         return ret;
     }
 
@@ -1099,6 +1099,17 @@ public class AgentGrid2D<T extends AgentBaseSpatial> implements Grid2D,Iterable<
         }
         return new ArrayList<T>();
     }
+    private void ReturnAgentSearchArr(ArrayList<T> arr){
+        if(usedAgentSearches.size()<=5){
+            usedAgentSearches.add(arr);
+        }
+    }
+    private void ReturnAgentsIterator(AgentsIterator2D ret){
+        if(usedIterIs.size()<=5){
+            usedIterIs.add(ret);
+        }
+    }
+
 
     T GetNewAgent() {
         return agents.GetNewAgent(tick);
@@ -1149,8 +1160,8 @@ public class AgentGrid2D<T extends AgentBaseSpatial> implements Grid2D,Iterable<
         @Override
         public boolean hasNext() {
             if (iCount == numAgents) {
-                myGrid.usedAgentSearches.add(myAgents);
-                myGrid.usedIterIs.add(this);
+                ReturnAgentSearchArr(myAgents);
+                ReturnAgentsIterator(this);
                 return false;
             }
             return true;

@@ -29,6 +29,7 @@ public final class Util {
 
     public static final double DOUBLE_EPSILON = 2.22E-16;
     private static Scanner inputReader=null;
+    private static DecimalFormat fmt=new DecimalFormat("0.#E0#");
 
     /**
      * returns a color integer based on the RGB components passed in. color values should be scaled from 0 to 1
@@ -339,10 +340,7 @@ public final class Util {
      */
     public static int HeatMapRGB(double val, double min, double max) {
         val = Scale0to1(val, min, max);
-        double c1 = val * 4;
-        double c2 = (val - 0.25) * 2;
-        double c3 = (val - 0.75) * 4;
-        return RGB(c1, c2, c3);
+        return HeatMapRGB(val);
     }
 
     /**
@@ -351,10 +349,7 @@ public final class Util {
      */
     public static int HeatMapRBG(double val, double min, double max) {
         val = Scale0to1(val, min, max);
-        double c1 = val * 4;
-        double c2 = (val - 0.25) * 2;
-        double c3 = (val - 0.75) * 4;
-        return RGB(c1, c3, c2);
+        return HeatMapBGR(val);
     }
 
     /**
@@ -363,10 +358,7 @@ public final class Util {
      */
     public static int HeatMapGRB(double val, double min, double max) {
         val = Scale0to1(val, min, max);
-        double c1 = val * 4;
-        double c2 = (val - 0.25) * 2;
-        double c3 = (val - 0.75) * 4;
-        return RGB(c2, c1, c3);
+        return HeatMapGRB(val);
     }
 
     /**
@@ -375,10 +367,7 @@ public final class Util {
      */
     public static int HeatMapGBR(double val, double min, double max) {
         val = Scale0to1(val, min, max);
-        double c1 = val * 4;
-        double c2 = (val - 0.25) * 2;
-        double c3 = (val - 0.75) * 4;
-        return RGB(c3, c1, c2);
+        return HeatMapGBR(val);
     }
 
     /**
@@ -387,10 +376,7 @@ public final class Util {
      */
     public static int HeatMapBRG(double val, double min, double max) {
         val = Scale0to1(val, min, max);
-        double c1 = val * 4;
-        double c2 = (val - 0.25) * 2;
-        double c3 = (val - 0.75) * 4;
-        return RGB(c2, c3, c1);
+        return HeatMapBRG(val);
     }
 
     /**
@@ -399,19 +385,10 @@ public final class Util {
      */
     public static int HeatMapBGR(double val, double min, double max) {
         val = Scale0to1(val, min, max);
-        double c1 = val * 4;
-        double c2 = (val - 0.25) * 2;
-        double c3 = (val - 0.75) * 4;
-        return RGB(c3, c2, c1);
+        return HeatMapBGR(val);
     }
 
     public static int HeatMapJet(double val) {
-        return HeatMapJet(val,0,1);
-    }
-
-
-    public static int HeatMapJet(double val,double min,double max){
-        val=Scale0to1(val,min,max);
         if(val<=0){
             return RGB(0,0,0.5);
         }
@@ -422,6 +399,29 @@ public final class Util {
         double c2=1.5-Math.abs(0.5-val)*4;
         double c3=1.5-Math.abs(0.25-val)*4;
         return RGB(c1,c2,c3);
+    }
+
+
+    public static int HeatMapJet(double val,double min,double max){
+        val=Scale0to1(val,min,max);
+        return HeatMapJet(val);
+    }
+    public static int HeatMapParula(double val){
+        if(val<=0){
+            return RGB(0.2,0.2,0.5);
+        }
+        if(val>=1){
+            return RGB(1.0,1.0,0.0);
+        }
+        if(val<0.125){
+            return RGB(0.2-val*1.6,0.2+val*0.8,0.5+val*2);
+        }
+        return RGB((val-0.375)*2,0.2+val*0.8,0.9-val*1.143);
+    }
+
+    public static int HeatMapParula(double val, double min, double max){
+        val=Scale0to1(val,min,max);
+        return HeatMapParula(val);
     }
 
     /**
@@ -1181,45 +1181,45 @@ public final class Util {
         if(includeOrigin){
             return new int[]{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
                     0,0,0,
-                    0,0,1,
-                    0,0,-1,
-                    0,1,0,
-                    0,-1,0,
                     1,0,0,
                     -1,0,0,
+                    0,1,0,
+                    0,-1,0,
+                    0,0,1,
+                    0,0,-1,
+                    1,1,0,
+                    1,-1,0,
                     1,0,1,
                     1,0,-1,
-                    1,1,0,
-                    0,1,1,
-                    0,1,-1,
-                    -1,0,1,
-                    -1,0,-1,
                     -1,1,0,
                     -1,-1,0,
+                    -1,0,1,
+                    -1,0,-1,
+                    0,1,1,
+                    0,1,-1,
                     0,-1,1,
                     0,-1,-1,
-                    1,-1,0,
             };
         }else{
             return new int[]{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-                    0,0,1,
-                    0,0,-1,
-                    0,1,0,
-                    0,-1,0,
                     1,0,0,
                     -1,0,0,
+                    0,1,0,
+                    0,-1,0,
+                    0,0,1,
+                    0,0,-1,
+                    1,1,0,
+                    1,-1,0,
                     1,0,1,
                     1,0,-1,
-                    1,1,0,
-                    0,1,1,
-                    0,1,-1,
-                    -1,0,1,
-                    -1,0,-1,
                     -1,1,0,
                     -1,-1,0,
+                    -1,0,1,
+                    -1,0,-1,
+                    0,1,1,
+                    0,1,-1,
                     0,-1,1,
                     0,-1,-1,
-                    1,-1,0,
             };
         }
     }
@@ -1759,7 +1759,7 @@ public final class Util {
     }
 
     /**
-     * Samples a Poisson distribution
+     * Computes the probability of a specific average from a poisson distribution
      *
      * @param sampleSize How many times the event happens
      * @param avg        The average number of times the event happens
@@ -2710,7 +2710,6 @@ public final class Util {
                 barHere.SetPix(x+xBottomLeft,y+2+yBottomLeft,color);
             }
         }
-        DecimalFormat fmt=new DecimalFormat("0.#E0#");
         double tickStep=(max-min)/(ticks-1);
         double tickPix=(barHeight-5)*1.0/(ticks-1);
         for(int i=0;i<ticks;i++){
@@ -2719,6 +2718,17 @@ public final class Util {
             barHere.SetString(fmt.format(min+tickStep*i),barWidth+2+xBottomLeft,(int)(i*tickPix)+5+yBottomLeft,WHITE,BLACK);
         }
     }
+    public static void ChangeColorBarMinMax(UIGrid barHere,int xBottomLeft,int yBottomLeft,int barWidth,int barHeight,double min,double max,int ticks){
+        double tickStep=(max-min)/(ticks-1);
+        double tickPix=(barHeight-5)*1.0/(ticks-1);
+        for(int i=0;i<ticks;i++){
+            barHere.SetPix(barWidth+xBottomLeft,(int)(i*tickPix)+2+yBottomLeft,RED);
+            barHere.SetPix(barWidth+1+xBottomLeft,(int)(i*tickPix)+2+yBottomLeft,RED);
+            barHere.SetString(String.format("%-8s",fmt.format(min+tickStep*i)),barWidth+2+xBottomLeft,(int)(i*tickPix)+5+yBottomLeft,WHITE,BLACK);
+        }
+
+    }
+
 
 
 //    static public int[] RingHood(double innerRadius,double outerRadius) {

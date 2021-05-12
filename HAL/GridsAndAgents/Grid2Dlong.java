@@ -15,7 +15,7 @@ public class Grid2Dlong implements Grid2D,Serializable {
     final public int length;
     public boolean wrapX;
     public boolean wrapY;
-    long[] field;
+    final public long[] field;
 
     /**
      * creates a new Grid2Dlong of dimensions xDim by yDim without wraparound

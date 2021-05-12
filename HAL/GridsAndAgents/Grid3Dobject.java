@@ -16,7 +16,7 @@ public class Grid3Dobject<T> implements Grid3D,Serializable {
     public boolean wrapX;
     public boolean wrapY;
     public boolean wrapZ;
-    T[] field;
+    final public T[] field;
 
     /**
      * creates a new Grid3Dobject of dimensions xDim by yDim by zDim without wraparound

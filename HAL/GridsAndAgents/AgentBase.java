@@ -1,5 +1,7 @@
 package HAL.GridsAndAgents;
 
+import HAL.GridsAndAgents.AgentListNode;
+
 import java.io.Serializable;
 
 /**
