@@ -3,13 +3,13 @@ package HAL.Gui;
 
 import HAL.Interfaces.Grid2D;
 
-public class GridView implements Grid2D {
+public class UIGridView implements Grid2D {
     UIGrid parent;
     int xDim;
     int yDim;
     int xStart;
     int yStart;
-    public GridView(UIGrid parent,int xDim,int yDim,int xStart,int yStart){
+    public UIGridView(UIGrid parent, int xDim, int yDim, int xStart, int yStart){
         this.parent=parent;
         this.xDim=xDim;
         this.yDim=yDim;
