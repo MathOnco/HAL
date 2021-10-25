@@ -1,12 +1,15 @@
 package HAL;
 
+import HAL.GridsAndAgents.Grid2Dint;
 import HAL.Gui.UIGrid;
 import HAL.Interfaces.*;
 import HAL.Interfaces.SerializableModel;
 import HAL.Tools.FileIO;
 import HAL.Tools.Internal.SweepRun;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
@@ -2727,6 +2730,22 @@ public final class Util {
             barHere.SetString(String.format("%-8s",fmt.format(min+tickStep*i)),barWidth+2+xBottomLeft,(int)(i*tickPix)+5+yBottomLeft,WHITE,BLACK);
         }
 
+    }
+
+    public static Grid2Dint PNGtoGrid(String filename) throws IOException {
+        // set up Grid2dint to store RGB values from PNG:
+        BufferedImage image = ImageIO.read(new FileInputStream(filename));
+        Grid2Dint RGBgrid = new Grid2Dint(image.getWidth(),image.getHeight());
+
+        // loop through all pixels:
+        for (int xPixel = 0; xPixel < image.getWidth(); xPixel++) {
+            for (int yPixel = 0; yPixel < image.getHeight(); yPixel++) {
+                // subtract from yDim so picture is right-side-up:
+                RGBgrid.Set(xPixel,RGBgrid.yDim-yPixel-1,image.getRGB(xPixel, yPixel));
+            }
+        }
+
+        return RGBgrid;
     }
 
 
