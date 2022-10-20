@@ -451,8 +451,8 @@ public abstract interface Grid2D {
      * distance taking this into account will be returned)
      */
     default public double Dist(double x1, double y1, double x2, double y2) {
-        double dx = DispX(x1, y1);
-        double dy = DispY(x2, y2);
+        double dx = DispX(x1, x2);
+        double dy = DispY(y1, y2);
         return Norm(dx, dy);
     }
 
