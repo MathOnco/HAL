@@ -5,7 +5,7 @@
 !*/*/*/*/
 !*/*/*/*/*/
 !*.java
-!HAL/lib
+!HAL/lib/*
 # only allow scource files
 #!HAL/**.java
 #!LEARN_HERE/**.java

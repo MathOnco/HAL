@@ -5,28 +5,39 @@ import HAL.Interfaces.Grid3D;
 import HAL.Interfaces.ICoords3DAction;
 import HAL.Util;
 import org.lwjgl.BufferUtils;
-import org.lwjgl.LWJGLException;
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.DisplayMode;
+import org.lwjgl.glfw.GLFWErrorCallback;
+import org.lwjgl.glfw.GLFWVidMode;
+import org.lwjgl.opengl.GL;
+import org.lwjgl.system.MemoryStack;
+//import org.lwjgl.LWJGLException;
+//import org.lwjgl.input.Keyboard;
+//import org.lwjgl.input.Mouse;
+//import org.lwjgl.opengl.Display;
+//import org.lwjgl.opengl.DisplayMode;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.Comparator;
+import java.nio.DoubleBuffer;
+import java.nio.IntBuffer;
 import java.util.PriorityQueue;
 
 import static HAL.Util.*;
+import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
+import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.glfw.GLFW.glfwShowWindow;
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.system.MemoryStack.stackPush;
+import static org.lwjgl.system.MemoryUtil.NULL;
 
 /**
  * Created by rafael on 5/28/17.
  */
 public class OpenGL3DWindow implements Grid3D {
     final boolean active;
+    protected long window;
     public final int xDim;
     public final int yDim;
     public final int zDim;
@@ -50,7 +61,7 @@ public class OpenGL3DWindow implements Grid3D {
 
         /**
      *
-     * creates a new OpenGL2DWindow
+     * creates a new OpenGL3DWindow
      * @param title the title that will appear at the top of the window (default "")
      * @param xPix the length of the window in screen pixels
      * @param yPix the height of the window in screen pixels
@@ -74,15 +85,67 @@ public class OpenGL3DWindow implements Grid3D {
         //transZ = (float) (-zDim * 0.6);
 
         if (active) {
-            camera = new Camera();
-            try {
-                Display.setDisplayMode(new DisplayMode(xPix, yPix));
-                Display.setTitle(title);
-                Display.create();
-            } catch (LWJGLException e) {
-                e.printStackTrace();
-                System.err.println("unable to create Vis3D display");
+            camera = new Camera(this);
+            // Setup an error callback. The default implementation
+            // will print the error message in System.err.
+            GLFWErrorCallback.createPrint(System.err).set();
+
+            // Initialize GLFW. Most GLFW functions will not work before doing this.
+            if (!glfwInit()) {
+                throw new IllegalStateException("Unable to initialize GLFW");
             }
+
+            // Configure GLFW
+            glfwDefaultWindowHints(); // optional, the current window hints are already the default
+            glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE); // the window will stay hidden after creation
+            glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE); // the window will be resizable
+
+            // Create the window
+            window = glfwCreateWindow(xPix, yPix, title, NULL, NULL);
+            if (window == NULL) {
+                throw new RuntimeException("Failed to create the GLFW window");
+            }
+            // Setup a key callback. It will be called every time a key is pressed, repeated or released.
+//            glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
+//                if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE) {
+//                    glfwSetWindowShouldClose(window, true); // We will detect this in the rendering loop
+//                }
+//            });
+
+            // Get the thread stack and push a new frame
+            try ( MemoryStack stack = stackPush() ) {
+                IntBuffer pWidth = stack.mallocInt(1); // int*
+                IntBuffer pHeight = stack.mallocInt(1); // int*
+
+                // Get the window size passed to glfwCreateWindow
+                glfwGetWindowSize(window, pWidth, pHeight);
+
+                // Get the resolution of the primary monitor
+                GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+
+                // Center the window
+                glfwSetWindowPos(
+                        window,
+                        (vidmode.width() - pWidth.get(0)) / 2,
+                        (vidmode.height() - pHeight.get(0)) / 2
+                );
+            } // the stack frame is popped automatically
+
+            // Make the OpenGL context current
+            glfwMakeContextCurrent(window);
+            // Enable v-sync
+            glfwSwapInterval(1);
+
+            // Make the window visible
+            glfwShowWindow(window);
+
+            // This line is critical for LWJGL's interoperation with GLFW's
+            // OpenGL context, or any context that is managed externally.
+            // LWJGL detects the context that is current in the current thread,
+            // creates the GLCapabilities instance and makes the OpenGL
+            // bindings available for use.
+            GL.createCapabilities();
+
             glEnable(GL_DEPTH_TEST);
             glMatrixMode(GL_PROJECTION);
             glLoadIdentity();
@@ -171,7 +234,12 @@ public class OpenGL3DWindow implements Grid3D {
             camera.acceptInputGrab();
             camera.acceptInputMove(GetDelta() / 10.0f);
             camera.apply();
-            Display.update();
+            glfwSwapBuffers(window);
+            // Poll for window events. The key callback above will only be
+            // invoked during this call.
+            glfwPollEvents();
+
+//            Display.update();
         }
     }
 
@@ -180,7 +248,7 @@ public class OpenGL3DWindow implements Grid3D {
      */
     public boolean IsClosed() {
         if (active) {
-            return Display.isCloseRequested();
+            return glfwWindowShouldClose(window);
         }
         return true;
     }
@@ -190,7 +258,13 @@ public class OpenGL3DWindow implements Grid3D {
      */
     public void Close() {
         if (active) {
-            Display.destroy();
+            // Free the window callbacks and destroy the window
+            glfwFreeCallbacks(window);
+            glfwDestroyWindow(window);
+
+            // Terminate GLFW and free the error callback
+            glfwTerminate();
+            glfwSetErrorCallback(null).free();
         }
     }
 
@@ -479,8 +553,8 @@ public class OpenGL3DWindow implements Grid3D {
         if (active) {
             File out = new File(path);
             glReadBuffer(GL_FRONT);
-            int width = Display.getDisplayMode().getWidth();
-            int height = Display.getDisplayMode().getHeight();
+            int width =5;// Display.getDisplayMode().getWidth();
+            int height = 5;//Display.getDisplayMode().getHeight();
             int bpp = 4; // Assuming a 32-bit display with a byte each for red, green, blue, and alpha.
             ByteBuffer buffer = BufferUtils.createByteBuffer(width * height * bpp);
             glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
@@ -604,6 +678,11 @@ public class OpenGL3DWindow implements Grid3D {
 
 
 class Camera {
+    static DoubleBuffer xBuffer = BufferUtils.createDoubleBuffer(1);
+    static DoubleBuffer yBuffer = BufferUtils.createDoubleBuffer(1);
+    static OpenGL3DWindow win;
+    static double prevX=-1;
+    static double prevY=-1;
     public static float moveSpeed = 0.5f;
 
     private static float maxLook = 85;
@@ -612,6 +691,9 @@ class Camera {
 
     static float[] pos = new float[3];
     static float[] rotation = new float[3];
+    public Camera(OpenGL3DWindow win){
+        this.win=win;
+    }
 
     public static void apply() {
         if (rotation[1] / 360 > 1) {
@@ -633,35 +715,68 @@ class Camera {
     }
 
     public static void acceptInputRotate(float delta) {
-        if (Mouse.isGrabbed()) {
-            float mouseDX = Mouse.getDX();
-            float mouseDY = -Mouse.getDY();
+        if(glfwGetWindowAttrib(win.window,GLFW_FOCUSED)==0||glfwGetMouseButton(win.window,GLFW_MOUSE_BUTTON_LEFT)!=1){
+            prevX=-1;
+            prevY=-1;
+            return;
+        }
+        glfwGetCursorPos(win.window, xBuffer, yBuffer);
+        double x = xBuffer.get(0);
+        double y = yBuffer.get(0);
+        if(prevX!=-1){
+            float mouseDX = (float)(x-prevX);
+            float mouseDY = (float)(y-prevY);
             rotation[1] += mouseDX * mouseSensitivity * delta;
             rotation[0] += mouseDY * mouseSensitivity * delta;
             rotation[0] = Math.max(-maxLook, Math.min(maxLook, rotation[0]));
         }
+        prevX=x;
+        prevY=y;
+//        if (Mouse.isGrabbed()) {
+//            float mouseDX = Mouse.getDX();
+//            float mouseDY = -Mouse.getDY();
+//            rotation[1] += mouseDX * mouseSensitivity * delta;
+//            rotation[0] += mouseDY * mouseSensitivity * delta;
+//            rotation[0] = Math.max(-maxLook, Math.min(maxLook, rotation[0]));
+//        }
     }
 
     public static void acceptInputGrab() {
-        if (Mouse.isInsideWindow() && Mouse.isButtonDown(0)) {
-            Mouse.setGrabbed(true);
+//        if (Mouse.isInsideWindow() && Mouse.isButtonDown(0)) {
+//            Mouse.setGrabbed(true);
+//        }
+//        if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {
+//            Mouse.setGrabbed(false);
+//        }
+    }
+
+    public static boolean IsKeyDown(int key){
+        if(glfwGetKey(win.window,key)==1){
+            return true;
         }
-        if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {
-            Mouse.setGrabbed(false);
-        }
+        return false;
     }
 
     public static void acceptInputMove(float delta) {
-        boolean keyUp = Keyboard.isKeyDown(Keyboard.KEY_W);
-        boolean keyDown = Keyboard.isKeyDown(Keyboard.KEY_S);
-        boolean keyRight = Keyboard.isKeyDown(Keyboard.KEY_D);
-        boolean keyLeft = Keyboard.isKeyDown(Keyboard.KEY_A);
-        boolean keyFast = Keyboard.isKeyDown(Keyboard.KEY_Q);
-        boolean keySlow = Keyboard.isKeyDown(Keyboard.KEY_E);
-        boolean keyFlyUp = Keyboard.isKeyDown(Keyboard.KEY_SPACE);
-        boolean keyFlyDown = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT);
-        boolean keyReset = Keyboard.isKeyDown(Keyboard.KEY_R);
+//        boolean keyUp = Keyboard.isKeyDown(Keyboard.KEY_W);
+//        boolean keyDown = Keyboard.isKeyDown(Keyboard.KEY_S);
+//        boolean keyRight = Keyboard.isKeyDown(Keyboard.KEY_D);
+//        boolean keyLeft = Keyboard.isKeyDown(Keyboard.KEY_A);
+//        boolean keyFast = Keyboard.isKeyDown(Keyboard.KEY_Q);
+//        boolean keySlow = Keyboard.isKeyDown(Keyboard.KEY_E);
+//        boolean keyFlyUp = Keyboard.isKeyDown(Keyboard.KEY_SPACE);
+//        boolean keyFlyDown = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT);
+//        boolean keyReset = Keyboard.isKeyDown(Keyboard.KEY_R);
 
+        boolean keyUp = IsKeyDown(GLFW_KEY_W);
+        boolean keyDown = IsKeyDown(GLFW_KEY_S);
+        boolean keyRight = IsKeyDown(GLFW_KEY_D);
+        boolean keyLeft = IsKeyDown(GLFW_KEY_A);
+        boolean keyFast = IsKeyDown(GLFW_KEY_Q);
+        boolean keySlow = IsKeyDown(GLFW_KEY_E);
+        boolean keyFlyUp = IsKeyDown(GLFW_KEY_SPACE);
+        boolean keyFlyDown = IsKeyDown(GLFW_KEY_LEFT_SHIFT);
+        boolean keyReset = IsKeyDown(GLFW_KEY_R);
 
         float speed;
 
