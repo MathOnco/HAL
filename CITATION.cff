@@ -1,0 +1,43 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: Hybrid Automata Library
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Rafael
+    family-names: Bravo
+  - given-names: Etienne
+    family-names: Baratchart
+  - given-names: Jeffrey
+    family-names: West
+  - given-names: Ryan
+    family-names: Schenck
+  - given-names: Anna
+    family-names: Miller
+  - given-names: Jill
+    family-names: Gallaher
+  - given-names: Chandler
+    family-names: Gatenbee
+  - given-names: David
+    family-names: Basanta
+  - given-names: Mark
+    family-names: Robertson-Tessi
+  - given-names: Alexander
+    family-names: Anderson
+repository-code: 'https://github.com/mathonco/hal'
+url: 'https://halloworld.org/'
+abstract: >-
+  Hybrid Automata Library (HAL) is a Java library that
+  facilitates hybrid modeling: spatial models with
+  interacting agent-based and partial-differential equation
+  components. HAL’s components can be broadly classified
+  into: agent containers (on and off-lattice), finite
+  difference diffusion fields, graphical user interface
+  (GUI) components, and additional tools or utilities for
+  computation and data manipulation. These components have a
+  standardized interface that expedites the construction,
+  analysis, and visualization of complex models.
