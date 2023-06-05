@@ -8,8 +8,6 @@ import HAL.Util;
 
 import java.util.Random;
 
-import static HAL.Util.BLUE;
-
 /**
  * Created by Rafael on 10/29/2017.
  */

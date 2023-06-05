@@ -1,11 +1,11 @@
 package HAL;
 
-import HAL.GridsAndAgents.Grid2Dint;
 import HAL.Gui.UIGrid;
 import HAL.Interfaces.*;
 import HAL.Interfaces.SerializableModel;
 import HAL.Tools.FileIO;
 import HAL.Tools.Internal.SweepRun;
+import HAL.GridsAndAgents.Grid2Dint;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -1091,10 +1091,25 @@ public final class Util {
     public static int[] MooreHood(boolean includeOrigin) {
         if (includeOrigin) {
             return new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0,
-                    0, 0, 1, 1, 1, 0, 1, -1, 0, -1, -1, -1, -1, 0, -1, 1, 0, 1};
+                    0, 0,
+                    1, 0,
+                    -1, 0,
+                    0, 1,
+                    0, -1,
+                    1, 1,
+                    1, -1,
+                    -1, 1,
+                    -1, -1};
         } else {
             return new int[]{0, 0, 0, 0, 0, 0, 0, 0,
-                    1, 1, 1, 0, 1, -1, 0, -1, -1, -1, -1, 0, -1, 1, 0, 1};
+                    1, 0,
+                    -1, 0,
+                    0, 1,
+                    0, -1,
+                    1, 1,
+                    1, -1,
+                    -1, 1,
+                    -1, -1};
         }
     }
 
@@ -1230,62 +1245,62 @@ public final class Util {
     public static int[] MooreHood3D(boolean includeOrigin) {
         if (includeOrigin) {
             return new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                    0, 0, 0,
-                    0, 0, 1,
-                    0, 0, -1,
-                    0, 1, 0,
-                    0, -1, 0,
-                    1, 0, 0,
-                    -1, 0, 0,
-                    1, 0, 1,
-                    1, 0, -1,
-                    1, 1, 0,
-                    0, 1, 1,
-                    0, 1, -1,
-                    -1, 0, 1,
-                    -1, 0, -1,
-                    -1, 1, 0,
-                    -1, -1, 0,
-                    0, -1, 1,
-                    0, -1, -1,
-                    1, -1, 0,
-                    1, 1, 1,
-                    1, 1, -1,
-                    -1, 1, 1,
-                    -1, 1, -1,
-                    -1, -1, 1,
-                    -1, -1, -1,
-                    1, -1, 1,
-                    1, -1, -1,
+                    0,0,0,
+                    1,0,0,
+                    -1,0,0,
+                    0,1,0,
+                    0,-1,0,
+                    0,0,1,
+                    0,0,-1,
+                    1,1,0,
+                    1,-1,0,
+                    1,0,1,
+                    1,0,-1,
+                    -1,1,0,
+                    -1,-1,0,
+                    -1,0,1,
+                    -1,0,-1,
+                    0,1,1,
+                    0,1,-1,
+                    0,-1,1,
+                    0,-1,-1,
+                    1,1,1,
+                    1,1,-1,
+                    1,-1,1,
+                    1,-1,-1,
+                    -1,1,1,
+                    -1,1,-1,
+                    -1,-1,1,
+                    -1,-1,-1
             };
         } else {
             return new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                    0, 0, 1,
-                    0, 0, -1,
-                    0, 1, 0,
-                    0, -1, 0,
-                    1, 0, 0,
-                    -1, 0, 0,
-                    1, 0, 1,
-                    1, 0, -1,
-                    1, 1, 0,
-                    0, 1, 1,
-                    0, 1, -1,
-                    -1, 0, 1,
-                    -1, 0, -1,
-                    -1, 1, 0,
-                    -1, -1, 0,
-                    0, -1, 1,
-                    0, -1, -1,
-                    1, -1, 0,
-                    1, 1, 1,
-                    1, 1, -1,
-                    -1, 1, 1,
-                    -1, 1, -1,
-                    -1, -1, 1,
-                    -1, -1, -1,
-                    1, -1, 1,
-                    1, -1, -1,
+                    1,0,0,
+                    -1,0,0,
+                    0,1,0,
+                    0,-1,0,
+                    0,0,1,
+                    0,0,-1,
+                    1,1,0,
+                    1,-1,0,
+                    1,0,1,
+                    1,0,-1,
+                    -1,1,0,
+                    -1,-1,0,
+                    -1,0,1,
+                    -1,0,-1,
+                    0,1,1,
+                    0,1,-1,
+                    0,-1,1,
+                    0,-1,-1,
+                    1,1,1,
+                    1,1,-1,
+                    1,-1,1,
+                    1,-1,-1,
+                    -1,1,1,
+                    -1,1,-1,
+                    -1,-1,1,
+                    -1,-1,-1
             };
         }
     }
@@ -1363,6 +1378,33 @@ public final class Util {
                     1,0,-1,
                     1,1,-1,
                     0,1,-1,
+            };
+        }
+    }
+    public static int[]DiagonalHood3D(boolean includeOrigin){
+        if(includeOrigin) {
+            return new int[]{0,0,0,0,0,0,0,0,0,
+                    0,0,0,
+                    1,1,1,
+                    1,1,-1,
+                    1,-1,1,
+                    1,-1,-1,
+                    -1,1,1,
+                    -1,1,-1,
+                    -1,-1,1,
+                    -1,-1,-1,
+            };
+        }
+        else{
+            return new int[]{0,0,0,0,0,0,0,0,
+                    1,1,1,
+                    1,1,-1,
+                    1,-1,1,
+                    1,-1,-1,
+                    -1,1,1,
+                    -1,1,-1,
+                    -1,-1,1,
+                    -1,-1,-1,
             };
         }
     }
@@ -1588,7 +1630,7 @@ public final class Util {
         for (int x = min; x <= max; x++) {
             for (int y = min; y <= max; y++) {
                 for (int z = min; z <= max; z++) {
-                    if (x * x + y * y + z * z < distSq) {
+                    if (x * x + y * y + z * z <= distSq) {
                         if (x == 0 && y == 0 && z == 0) {
                             continue;
                         }
@@ -1865,6 +1907,16 @@ public final class Util {
             return true;
         }
         return false;
+    }
+
+    public static String[] ListDir(String path){
+        File f=new File(path);
+        File[] files=f.listFiles();
+        String[] out=new String[files.length];
+        for (int i = 0; i < files.length; i++) {
+            out[i]=files[i].getName();
+        }
+        return out;
     }
 
 //    public static double Gaussian()
@@ -2673,6 +2725,21 @@ public final class Util {
         return null;
     }
 
+    public static Grid2Dint PNGtoGrid(String filename) throws IOException {
+        // set up Grid2dint to store RGB values from PNG:
+        BufferedImage image = ImageIO.read(new FileInputStream(filename));
+        Grid2Dint RGBgrid = new Grid2Dint(image.getWidth(),image.getHeight());
+
+        // loop through all pixels:
+        for (int xPixel = 0; xPixel < image.getWidth(); xPixel++) {
+            for (int yPixel = 0; yPixel < image.getHeight(); yPixel++) {
+                // subtract from yDim so picture is right-side-up:
+                RGBgrid.Set(xPixel,RGBgrid.yDim-yPixel-1,image.getRGB(xPixel, yPixel));
+            }
+        }
+
+        return RGBgrid;
+    }
     static double[][]ReadCSVDoubles(String filename){
         FileIO io=new FileIO(filename,"r");
         ArrayList<double[]> data=io.ReadDoubles(",");
@@ -2730,22 +2797,6 @@ public final class Util {
             barHere.SetString(String.format("%-8s",fmt.format(min+tickStep*i)),barWidth+2+xBottomLeft,(int)(i*tickPix)+5+yBottomLeft,WHITE,BLACK);
         }
 
-    }
-
-    public static Grid2Dint PNGtoGrid(String filename) throws IOException {
-        // set up Grid2dint to store RGB values from PNG:
-        BufferedImage image = ImageIO.read(new FileInputStream(filename));
-        Grid2Dint RGBgrid = new Grid2Dint(image.getWidth(),image.getHeight());
-
-        // loop through all pixels:
-        for (int xPixel = 0; xPixel < image.getWidth(); xPixel++) {
-            for (int yPixel = 0; yPixel < image.getHeight(); yPixel++) {
-                // subtract from yDim so picture is right-side-up:
-                RGBgrid.Set(xPixel,RGBgrid.yDim-yPixel-1,image.getRGB(xPixel, yPixel));
-            }
-        }
-
-        return RGBgrid;
     }
 
 

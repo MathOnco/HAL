@@ -514,9 +514,9 @@ public class Binomial implements Serializable {
         }
     }
     public int SampleIntFast(int n,double p,Rand rn){
-        if(p>1||p<0||Double.isNaN(p)){
-            throw new IllegalArgumentException("Probability Argument Cannot be > 1 or < 0: "+p);
-        }
+//        if(p>1||p<0||Double.isNaN(p)){
+//            throw new IllegalArgumentException("Probability Argument Cannot be > 1 or < 0: "+p);
+//        }
         if(p==1){
             return n;
         }

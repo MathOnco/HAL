@@ -16,7 +16,7 @@ public class BasicCellularAutomata extends AgentGrid2D<BasicCell> {
         BasicCellularAutomata grid=new BasicCellularAutomata();
         grid.Draw();
 
-        GifMaker gif = new GifMaker("Examples/BasicCellularAutomata/rule"+Integer.toString(RULE)+".gif",10,true);
+        GifMaker gif = new GifMaker("rule" +Integer.toString(RULE)+".gif",10,true);
         gif.AddFrame(grid.vis);
 
         for (int tick = 2; tick <= grid.yDim; tick++) {

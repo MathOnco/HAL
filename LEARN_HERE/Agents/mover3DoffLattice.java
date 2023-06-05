@@ -7,8 +7,6 @@ import HAL.Gui.OpenGL3DWindow;
 import HAL.Rand;
 import HAL.Util;
 
-import static HAL.Util.RGB;
-
 /**
  * Created by Rafael on 10/29/2017.
  */

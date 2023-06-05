@@ -1,10 +1,7 @@
 package LEARN_HERE.Other;
 
-import HAL.Gui.GridWindow;
 import HAL.Gui.PlotWindow;
 import HAL.Util;
-
-import static HAL.Util.RGB;
 
 public class PlotExample {
     public static void main(String[] args) {

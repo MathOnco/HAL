@@ -370,6 +370,49 @@ public interface Grid3D{
     }
 
     /**
+     * applies the action function to all positions in the neighborhood, includes the index in the neighborhood
+     */
+    default int ApplyHoodWithIndex(int[] hood,int centerX,int centerY,int centerZ,ICoords3DAction Action){
+        int ptCt=0;
+        int iStart=hood.length/4;
+        for(int i=iStart;i<hood.length;i+=3){
+            int x=hood[i]+centerX;
+            int y=hood[i+1]+centerY;
+            int z=hood[i+2]+centerZ;
+            if(!Util.InDim(x,Xdim())){
+                if(IsWrapX()){
+                    x=Util.Wrap(x,Xdim());
+                }else{
+                    continue;
+                }
+            }
+            if(!Util.InDim(y,Ydim())){
+                if(IsWrapY()){
+                    y=Util.Wrap(y,Ydim());
+                }else{
+                    continue;
+                }
+            }
+            if(!Util.InDim(z,Zdim())){
+                if(IsWrapZ()){
+                    z=Util.Wrap(z,Zdim());
+                }else{
+                    continue;
+                }
+            }
+            Action.Action((i-iStart)/3,x,y,z);
+        }
+        return ptCt;
+    }
+
+    /**
+     * applies the action function to all positions in the neighborhood, includes the index in the neighborhood
+     */
+    default int ApplyHoodWithIndex(int[] hood,int centerI,ICoords3DAction Action){
+        return ApplyHoodWithIndex(hood,ItoX(centerI),ItoY(centerI),ItoZ(centerI),Action);
+    }
+
+    /**
      * applies the action function to all positions in the neighborhood up to validCount, assumes the neighborhood is
      * already mapped
      */

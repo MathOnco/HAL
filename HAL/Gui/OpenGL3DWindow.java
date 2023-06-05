@@ -3,17 +3,20 @@ package HAL.Gui;
 import HAL.Interfaces.ColorIntGenerator;
 import HAL.Interfaces.Grid3D;
 import HAL.Interfaces.ICoords3DAction;
+import HAL.Rand;
 import HAL.Util;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryStack;
+
 //import org.lwjgl.LWJGLException;
 //import org.lwjgl.input.Keyboard;
 //import org.lwjgl.input.Mouse;
 //import org.lwjgl.opengl.Display;
 //import org.lwjgl.opengl.DisplayMode;
+//import org.lwjgl.opengl.GL11;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -21,7 +24,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
+import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.Comparator;
 import java.util.PriorityQueue;
 
 import static HAL.Util.*;
@@ -49,6 +54,8 @@ public class OpenGL3DWindow implements Grid3D {
     //final float transZ;
     public final int xPix;
     public final int yPix;
+    private int widthPix;
+    private int heightPix;
     long lastFrameTime = -1;
     TickTimer tt = new TickTimer();
     Camera camera;
@@ -61,7 +68,7 @@ public class OpenGL3DWindow implements Grid3D {
 
         /**
      *
-     * creates a new OpenGL3DWindow
+     * creates a new OpenGL2DWindow
      * @param title the title that will appear at the top of the window (default "")
      * @param xPix the length of the window in screen pixels
      * @param yPix the height of the window in screen pixels
@@ -122,12 +129,14 @@ public class OpenGL3DWindow implements Grid3D {
 
                 // Get the resolution of the primary monitor
                 GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+                widthPix =pWidth.get(0);
+                heightPix =pHeight.get(0);
 
                 // Center the window
                 glfwSetWindowPos(
                         window,
-                        (vidmode.width() - pWidth.get(0)) / 2,
-                        (vidmode.height() - pHeight.get(0)) / 2
+                        (vidmode.width() - widthPix) / 2,
+                        (vidmode.height() - heightPix) / 2
                 );
             } // the stack frame is popped automatically
 
@@ -146,8 +155,11 @@ public class OpenGL3DWindow implements Grid3D {
             // bindings available for use.
             GL.createCapabilities();
 
+
             glEnable(GL_DEPTH_TEST);
             glMatrixMode(GL_PROJECTION);
+            glEnable(GL_CULL_FACE);
+            glCullFace(GL_BACK);
             glLoadIdentity();
             glFrustum(-1, 1, -1, 1, 1, 1000);
             //glFrustum(0,maxDim,0,maxDim,maxDim,maxDim+zDim);
@@ -191,6 +203,28 @@ public class OpenGL3DWindow implements Grid3D {
     public void TickPause(int millis) {
         if (active) {
             tt.TickPause(millis);
+        }
+    }
+
+    public void AddLight(int ambientColor,int diffuseColor,double x,double y, double z){
+        glDisable(GL_CULL_FACE);
+        glEnable(GL_LIGHTING);
+        glEnable(GL_LIGHT0);
+        glEnable(GL_COLOR_MATERIAL);
+        glColorMaterial(GL_FRONT_AND_BACK,GL_AMBIENT_AND_DIFFUSE);
+//        glLightModel(GL_LIGHT_MODEL_AMBIENT,genFloatBuffer((float)GetRed(ambientColor),(float)GetGreen(ambientColor),(float)GetBlue(ambientColor),(float)GetAlpha(ambientColor)));
+//        glLight(GL_LIGHT0,GL_DIFFUSE,genFloatBuffer((float)GetRed(diffuseColor),(float)GetGreen(diffuseColor),(float)GetBlue(diffuseColor),(float)GetAlpha(diffuseColor)));
+//        glLight(GL_LIGHT0, GL_POSITION, genFloatBuffer((float)(x) + trans, (float)(y) + trans,(float)(-z) + trans,1f));
+//        glLight(GL_LIGHT0,GL_SPECULAR,genFloatBuffer((float)GetRed(specularColor),(float)GetGreen(specularColor),(float)GetBlue(specularColor),(float)GetAlpha(specularColor)));
+    }
+
+    public void ShineLight(double x,double y,double z){
+        if(active) {
+            glPushMatrix();
+//            glLight(GL_LIGHT0, GL_POSITION, genFloatBuffer((float)(x) + trans, (float)(y) + trans,(float)(-z) + trans,1f));
+//            Rand rng=new Rand();
+//            glLight(GL_LIGHT0, GL_SPOT_CUTOFF, genFloatBuffer((float)90, (float)90,(float)90,(float)90));
+//            glLight(GL_LIGHT0, GL_SPOT_DIRECTION, genFloatBuffer((float)rng.Double(10), (float)rng.Double(10),(float)rng.Double(10),(float)rng.Double(10)));
         }
     }
 
@@ -447,6 +481,71 @@ public class OpenGL3DWindow implements Grid3D {
         }
 
     }
+    public void CubeLighting(double x1, double x2, double y1,double y2, double z1,double z2, int color){
+        if(active){
+            float x1f=(float)x1+trans; float x2f=(float)x2+trans; float y1f=(float)y1+trans;  float y2f=(float)y2+trans; float z1f=(float)z1-trans; float z2f=(float)z2-trans;
+            glColor4f((float) GetRed(color), (float) GetGreen(color), (float) GetBlue(color), (float) GetAlpha(color));
+            glBegin(GL_QUADS);
+
+            //X DIMENSION
+            glNormal3f(-1,0,0);
+            glVertex3f(x1f,y1f,-z1f);
+            glNormal3f(-1,0,0);
+            glVertex3f(x1f,y1f,-z2f);
+            glNormal3f(-1,0,0);
+            glVertex3f(x1f,y2f,-z2f);
+            glNormal3f(-1,0,0);
+            glVertex3f(x1f,y2f,-z1f);
+
+            glNormal3f(1,0,0);
+            glVertex3f(x2f,y1f,-z1f);
+            glNormal3f(1,0,0);
+            glVertex3f(x2f,y1f,-z2f);
+            glNormal3f(1,0,0);
+            glVertex3f(x2f,y2f,-z2f);
+            glNormal3f(1,0,0);
+            glVertex3f(x2f,y2f,-z1f);
+
+            //Y DIMENSION
+            glNormal3f(0,-1,0);
+            glVertex3f(x1f,y1f,-z1f);
+            glNormal3f(0,-1,0);
+            glVertex3f(x2f,y1f,-z1f);
+            glNormal3f(0,-1,0);
+            glVertex3f(x2f,y1f,-z2f);
+            glNormal3f(0,-1,0);
+            glVertex3f(x1f,y1f,-z2f);
+
+            glNormal3f(0,1,0);
+            glVertex3f(x1f,y2f,-z1f);
+            glNormal3f(0,1,0);
+            glVertex3f(x2f,y2f,-z1f);
+            glNormal3f(0,1,0);
+            glVertex3f(x2f,y2f,-z2f);
+            glNormal3f(0,1,0);
+            glVertex3f(x1f,y2f,-z2f);
+//
+            //Z DIMENSION
+            glNormal3f(0,0,1);
+            glVertex3f(x1f,y1f,-z1f);
+            glNormal3f(0,0,1);
+            glVertex3f(x2f,y1f,-z1f);
+            glNormal3f(0,0,1);
+            glVertex3f(x2f,y2f,-z1f);
+            glNormal3f(0,0,1);
+            glVertex3f(x1f,y2f,-z1f);
+            glNormal3f(0,0,-1);
+            glVertex3f(x1f,y1f,-z2f);
+            glNormal3f(0,0,-1);
+            glVertex3f(x2f,y1f,-z2f);
+            glNormal3f(0,0,-1);
+            glVertex3f(x2f,y2f,-z2f);
+            glNormal3f(0,0,-1);
+            glVertex3f(x1f,y2f,-z2f);
+            glEnd();
+        }
+
+    }
 
 //    public void Cube(double x1, double x2, double y1,double y2, double z1,double z2, int color){
 //        if(active){
@@ -497,8 +596,27 @@ public class OpenGL3DWindow implements Grid3D {
         Cube(x,x+1,y,y+1,z,z+1,color);
     }
     public void Voxel(int x,int y, int z,double radius,int color){
-        Cube(x+0.5-radius,x+0.5+radius,y+0.5-radius,y+0.5+radius,z+0.5-radius,z+0.5+radius,color);
+        CubeLighting(x+0.5-radius,x+0.5+radius,y+0.5-radius,y+0.5+radius,z+0.5-radius,z+0.5+radius,color);
     }
+    public void VoxelLight(int i,int color){
+        int x=ItoX(i);
+        int y=ItoY(i);
+        int z=ItoZ(i);
+        CubeLighting(x,x+1,y,y+1,z,z+1,color);
+    }
+    public void VoxelLight(int i,double radius,int color){
+        int x=ItoX(i);
+        int y=ItoY(i);
+        int z=ItoZ(i);
+        CubeLighting(x+0.5-radius,x+0.5+radius,y+0.5-radius,y+0.5+radius,z+0.5-radius,z+0.5+radius,color);
+    }
+    public void VoxelLight(int x,int y, int z,int color){
+        Cube(x,x+1,y,y+1,z,z+1,color);
+    }
+    public void VoxelLight(int x,int y, int z,double radius,int color){
+        CubeLighting(x+0.5-radius,x+0.5+radius,y+0.5-radius,y+0.5+radius,z+0.5-radius,z+0.5+radius,color);
+    }
+
 
     /**
      * draws a series of lines between all x,y,z triplets
@@ -553,20 +671,18 @@ public class OpenGL3DWindow implements Grid3D {
         if (active) {
             File out = new File(path);
             glReadBuffer(GL_FRONT);
-            int width =5;// Display.getDisplayMode().getWidth();
-            int height = 5;//Display.getDisplayMode().getHeight();
             int bpp = 4; // Assuming a 32-bit display with a byte each for red, green, blue, and alpha.
-            ByteBuffer buffer = BufferUtils.createByteBuffer(width * height * bpp);
-            glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-            BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+            ByteBuffer buffer = BufferUtils.createByteBuffer(widthPix * heightPix * bpp);
+            glReadPixels(0, 0, widthPix, heightPix, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+            BufferedImage image = new BufferedImage(widthPix, heightPix, BufferedImage.TYPE_INT_RGB);
 
-            for (int x = 0; x < width; x++) {
-                for (int y = 0; y < height; y++) {
-                    int i = (x + (width * y)) * bpp;
+            for (int x = 0; x < widthPix; x++) {
+                for (int y = 0; y < heightPix; y++) {
+                    int i = (x + (widthPix * y)) * bpp;
                     int r = buffer.get(i) & 0xFF;
                     int g = buffer.get(i + 1) & 0xFF;
                     int b = buffer.get(i + 2) & 0xFF;
-                    image.setRGB(x, height - (y + 1), (0xFF << 24) | (r << 16) | (g << 8) | b);
+                    image.setRGB(x, heightPix - (y + 1), (0xFF << 24) | (r << 16) | (g << 8) | b);
                 }
             }
             try {
@@ -673,7 +789,12 @@ public class OpenGL3DWindow implements Grid3D {
             DrawFn.Action(i, ItoX(i), ItoY(i), ItoZ(i));
         }
     }
-
+    private static FloatBuffer genFloatBuffer(float... values){
+        FloatBuffer buff=BufferUtils.createFloatBuffer(values.length);
+        buff.put(values);
+        buff.flip();
+        return buff;
+    }
 }
 
 
@@ -683,6 +804,7 @@ class Camera {
     static OpenGL3DWindow win;
     static double prevX=-1;
     static double prevY=-1;
+
     public static float moveSpeed = 0.5f;
 
     private static float maxLook = 85;
@@ -691,10 +813,10 @@ class Camera {
 
     static float[] pos = new float[3];
     static float[] rotation = new float[3];
+
     public Camera(OpenGL3DWindow win){
         this.win=win;
     }
-
     public static void apply() {
         if (rotation[1] / 360 > 1) {
             rotation[1] -= 360;
@@ -732,6 +854,7 @@ class Camera {
         }
         prevX=x;
         prevY=y;
+
 //        if (Mouse.isGrabbed()) {
 //            float mouseDX = Mouse.getDX();
 //            float mouseDY = -Mouse.getDY();
@@ -749,7 +872,6 @@ class Camera {
 //            Mouse.setGrabbed(false);
 //        }
     }
-
     public static boolean IsKeyDown(int key){
         if(glfwGetKey(win.window,key)==1){
             return true;
@@ -767,7 +889,7 @@ class Camera {
 //        boolean keyFlyUp = Keyboard.isKeyDown(Keyboard.KEY_SPACE);
 //        boolean keyFlyDown = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT);
 //        boolean keyReset = Keyboard.isKeyDown(Keyboard.KEY_R);
-
+//        boolean keyPos2=Keyboard.isKeyDown(Keyboard.KEY_T);
         boolean keyUp = IsKeyDown(GLFW_KEY_W);
         boolean keyDown = IsKeyDown(GLFW_KEY_S);
         boolean keyRight = IsKeyDown(GLFW_KEY_D);
@@ -777,6 +899,7 @@ class Camera {
         boolean keyFlyUp = IsKeyDown(GLFW_KEY_SPACE);
         boolean keyFlyDown = IsKeyDown(GLFW_KEY_LEFT_SHIFT);
         boolean keyReset = IsKeyDown(GLFW_KEY_R);
+
 
         float speed;
 

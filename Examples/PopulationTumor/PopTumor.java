@@ -97,50 +97,6 @@ public class PopTumor {
         cells[TUMOR].Update();
     }
 
-    public void BirthDeathMutStep(int type, double divProb, double deathProb, double mutProb1, double mutProb2, double mutBothProb) {
-        PopulationGrid2D grid = cells[type];
-        grid.ApplyOccupied((i, ct) -> {
-            cellMn.Setup(ct);
-            int ctDiv = cellMn.Sample(divProb * (1.0 - sums[i] * 1.0 / latticeCap));
-            int ctMuts = 0;
-            //mutation
-            if (mutProb1 > 0 || mutProb2 > 0 || mutBothProb > 0) {
-                int ctM1 = 0, ctM2 = 0, ctMboth = 0;
-                divMn.Setup(ctDiv);
-                if (mutProb1 > 0) {
-                    ctM1 = divMn.Sample(mutProb1);
-                    ctMuts += ctM1;
-                    if (ctM1 > 0) {
-                        cells[M1].Add(i, ctM1);
-                    }
-                }
-                if (mutProb2 > 0) {
-                    ctM2 = divMn.Sample(mutProb2);
-                    ctMuts += ctM2;
-                    if (ctM2 > 0) {
-                        cells[M2].Add(i, ctM2);
-                    }
-                }
-                if (mutBothProb > 0) {
-                    ctMboth = divMn.Sample(mutBothProb);
-                    ctMuts += ctMboth;
-                    if (ctMboth > 0) {
-                        cells[MBOTH].Add(i, ctMboth);
-                    }
-                }
-            }
-            int ctDead = cellMn.Sample(deathProb);
-            grid.Add(i, ctDiv - (ctMuts + ctDead));
-        });
-    }
-
-    public void MoveStep(int type, double migrationRate) {
-        PopulationGrid2D grid = cells[type];
-        grid.ApplyOccupied((i, ct) -> {
-
-        });
-    }
-
     public void Step(int idraw) {
         for (int j = 0; j < N_TYPES; j++) {
             int type = j;

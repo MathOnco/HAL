@@ -51,15 +51,15 @@ class ExCell3D extends AgentSQ3D<Example3D>{
                     G.NewAgentSQ(G.vnHood[G.rn.Int(nDivOpts)]).InitTumor();
                 }
             }
-            if(Metastasis()){//choose random vessel location to metastasize to
-                Dispose();//kill cell that has entered the vessel
-                int whichVessel= G.rn.Int(G.vessels.size());//get a random vessel position
-                ExCell3D vessel= G.vessels.get(whichVessel);
-                int nMetOpts= G.MapEmptyHood(G.vnHood,vessel.Xsq(),vessel.Ysq(),vessel.Zsq());//get any open positions around a particular vessel location
-                if(nMetOpts>1){
-                    G.NewAgentSQ(G.vnHood[G.rn.Int(nMetOpts)]).InitTumor();//create and initialize a new cell to model successful metastasis
-                }
-            }
+//            if(Metastasis()){//choose random vessel location to metastasize to
+//                Dispose();//kill cell that has entered the vessel
+//                int whichVessel= G.rn.Int(G.vessels.size());//get a random vessel position
+//                ExCell3D vessel= G.vessels.get(whichVessel);
+//                int nMetOpts= G.MapEmptyHood(G.vnHood,vessel.Xsq(),vessel.Ysq(),vessel.Zsq());//get any open positions around a particular vessel location
+//                if(nMetOpts>1){
+//                    G.NewAgentSQ(G.vnHood[G.rn.Int(nMetOpts)]).InitTumor();//create and initialize a new cell to model successful metastasis
+//                }
+//            }
         }
     }
 }
@@ -200,6 +200,7 @@ public class Example3D extends AgentGrid3D<ExCell3D> {
         }
         //GridWindow visResource=new GridWindow(x,y,5);
         OpenGL3DWindow vis=new OpenGL3DWindow("TumorVis", 1000,1000,x,z,y);
+        int i=0;
         while (!vis.IsClosed()){
             ex.StepAll();
             ex.DrawCells(vis, Util::HeatMapRGB);
@@ -207,6 +208,7 @@ public class Example3D extends AgentGrid3D<ExCell3D> {
             ex.CleanAgents();//Equivalent to calling CleanAgents, ShuffleAgents, and IncTick grid functions
             ex.ShuffleAgents(ex.rn);//Equivalent to calling CleanAgents, ShuffleAgents, and IncTick grid functions
             //vis.TickPause(100);
+            i++;
         }
         vis.Close();
         //visResource.Close();

@@ -4,8 +4,6 @@ import HAL.GridsAndAgents.AgentGrid2D;
 import HAL.GridsAndAgents.AgentSQ2Dunstackable;
 import HAL.Gui.GifMaker;
 import HAL.Gui.GridWindow;
-import HAL.Gui.UIGrid;
-import HAL.Rand;
 import HAL.Util;
 
 //cells grow and mutate
@@ -72,7 +70,7 @@ public class PersianCarpets extends AgentGrid2D<CellEx> {
     public double[] payoff = new double[]{1,0,b,0};
     int[] hood = Util.MooreHood(false);
     public GridWindow vis = new GridWindow(DIMENSION,DIMENSION,SCALE_FACTOR);//used for visualization;
-    public GifMaker gifMaker = (SAVE_GIF) ? new GifMaker("Examples/PersianModel/persian_carpet.gif",100,true) : null;//used for visualization;
+    public GifMaker gifMaker = (SAVE_GIF) ? new GifMaker("persian_carpet.gif",100,true) : null;//used for visualization;
 
     /*
         Persian Carpet CONSTRUCTOR

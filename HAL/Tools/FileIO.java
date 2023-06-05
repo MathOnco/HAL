@@ -644,11 +644,11 @@ public class FileIO {
     }
 
     /**
-     * returns the length of the file, or 0 if the file does not exist
+     * returns the length of the file, or -1 if the file does not exist
      */
     public double length() {
         File file = new File(fileName);
-        return file.exists() ? file.length() : 0;
+        return file.exists() ? file.length() : -1;
     }
 
     //CLOSE

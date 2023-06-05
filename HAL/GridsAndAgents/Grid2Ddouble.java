@@ -141,6 +141,14 @@ public class Grid2Ddouble implements Grid2D,Serializable {
         System.arraycopy(vals, 0, field, 0, length);
     }
 
+    public double GetSum(){
+        double tot = 0;
+        for (int i = 0; i < length; i++) {
+            tot += field[i];
+        }
+        return tot;
+    }
+
     /**
      * gets the average value of all squares in the current field
      */
@@ -156,7 +164,7 @@ public class Grid2Ddouble implements Grid2D,Serializable {
      * returns the max value in the grid
      */
     public double GetMax() {
-        double max = Double.MIN_VALUE;
+        double max = -Double.MAX_VALUE;
         for (int i = 0; i < length; i++) {
             max = Math.max(Get(i), max);
         }

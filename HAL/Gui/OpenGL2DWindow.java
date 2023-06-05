@@ -20,6 +20,7 @@ import java.nio.IntBuffer;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.glfw.GLFW.glfwSetWindowPos;
 import static org.lwjgl.opengl.GL11.*;
 import static HAL.Util.*;
 import static org.lwjgl.system.MemoryStack.stackPush;
@@ -36,6 +37,8 @@ public class OpenGL2DWindow implements Grid2D {
     final public int xDim;
     final public int yDim;
     final public int length;
+    private int widthPix;
+    private int heightPix;
     public boolean wrapX=false;
     public boolean wrapY=false;
     TickTimer tt = new TickTimer();
@@ -94,12 +97,14 @@ public class OpenGL2DWindow implements Grid2D {
 
                 // Get the resolution of the primary monitor
                 GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+                widthPix =pWidth.get(0);
+                heightPix =pHeight.get(0);
 
                 // Center the window
                 glfwSetWindowPos(
                         window,
-                        (vidmode.width() - pWidth.get(0)) / 2,
-                        (vidmode.height() - pHeight.get(0)) / 2
+                        (vidmode.width() - widthPix) / 2,
+                        (vidmode.height() - heightPix) / 2
                 );
             } // the stack frame is popped automatically
 
@@ -164,11 +169,8 @@ public class OpenGL2DWindow implements Grid2D {
     public void Update() {
         if (active) {
             glfwSwapBuffers(window);
+            glfwPollEvents();
         }
-        // Poll for window events. The key callback above will only be
-        // invoked during this call.
-        glfwPollEvents();
-
     }
 
     /**
@@ -241,7 +243,7 @@ public class OpenGL2DWindow implements Grid2D {
     public void RectangleAtPoint(double x, double y, double width, double height, int color) {
         double wRad=width/2.0;
         double hRad=height/2.0;
-        Rectangle(x-wRad,y-hRad,x+wRad,y+hRad,color);
+         Rectangle(x-wRad,y-hRad,x+wRad,y+hRad,color);
     }
     public void Square(double x, double y, double rad, int color) {
         Rectangle(x-rad,y-rad,x+rad,y+rad,color);
@@ -352,25 +354,27 @@ public class OpenGL2DWindow implements Grid2D {
         SaveImg(path, "gif");
     }
 
+    //int width = Display.getDisplayMode().getWidth();
+    //int height = Display.getDisplayMode().getHeight();
     void SaveImg(String path, String mode) {
         if (active) {
             File out = new File(path);
             glReadBuffer(GL_FRONT);
-            int width = 5;
+//            int width = 5;
 //            int width = Display.getDisplayMode().getWidth();
-            int height = 5;
+//            int height = 5;
             int bpp = 4; // Assuming a 32-bit display with a byte each for red, green, blue, and alpha.
-            ByteBuffer buffer = BufferUtils.createByteBuffer(width * height * bpp);
-            glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-            BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+            ByteBuffer buffer = BufferUtils.createByteBuffer(widthPix * heightPix * bpp);
+            glReadPixels(0, 0, widthPix, heightPix, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+            BufferedImage image = new BufferedImage(widthPix, heightPix, BufferedImage.TYPE_INT_RGB);
 
-            for (int x = 0; x < width; x++) {
-                for (int y = 0; y < height; y++) {
-                    int i = (x + (width * y)) * bpp;
+            for (int x = 0; x < widthPix; x++) {
+                for (int y = 0; y < heightPix; y++) {
+                    int i = (x + (widthPix * y)) * bpp;
                     int r = buffer.get(i) & 0xFF;
                     int g = buffer.get(i + 1) & 0xFF;
                     int b = buffer.get(i + 2) & 0xFF;
-                    image.setRGB(x, height - (y + 1), (0xFF << 24) | (r << 16) | (g << 8) | b);
+                    image.setRGB(x, heightPix - (y + 1), (0xFF << 24) | (r << 16) | (g << 8) | b);
                 }
             }
             try {

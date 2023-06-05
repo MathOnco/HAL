@@ -118,6 +118,26 @@ public interface Grid1D {
     }
 
     /**
+     * applies the action function to all positions in the neighborhood, includes the index in the neighborhood
+     */
+    default int ApplyHoodWithIndex(int[] hood, int centerX, Coords2DAction Action) {
+        int ptCt = 0;
+        int iStart = hood.length / 2;
+        for (int i = iStart; i < hood.length; i++) {
+            int x = hood[i] + centerX;
+            if (!Util.InDim(x, Xdim())) {
+                if (IsWrapX()) {
+                    x = Util.Wrap(x, Xdim());
+                } else {
+                    continue;
+                }
+            }
+            Action.Action(i,x);
+        }
+        return ptCt;
+    }
+
+    /**
      * applies the action function to all positions in the neighborhood up to validCount, assumes the neighborhood is
      * already mapped
      */

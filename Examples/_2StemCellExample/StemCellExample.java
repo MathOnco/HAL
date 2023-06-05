@@ -17,23 +17,6 @@ class CACell extends AgentSQ2Dunstackable<StemCellCA> {
         //win agent properties
         this.divs=divs;
         this.stem=stem;
-
-        //draw agent on vis if it exists
-        if(G.vis!=null) {
-            if (stem) {
-                G.vis.SetPix(Xsq(), Ysq(), StemCellCA.RED);
-            }
-            else{
-                G.vis.SetPix(Xsq(), Ysq(), RGB(0,0,(divs+1.0)/(G.MAX_DIVS)));
-            }
-        }
-    }
-    void Die(){
-        //win visActions square to black if visActions exists
-        if(G.vis!=null) {
-            G.vis.SetPix(Xsq(), Ysq(), StemCellCA.BLACK);
-        }
-        Dispose();
     }
     //requires location to place the child into
     void Divide(int iChildLoc) {
@@ -51,7 +34,7 @@ class CACell extends AgentSQ2Dunstackable<StemCellCA> {
         G.cellCts[stem?0:1]++;//add 1 to either 0th or 1st entry, depending on whether cell is stem
         //random death
         if(G.rn.Double()< G.DEATH_PROB){
-            Die();
+            Dispose();
             return;
         }
         //check if division event will occur
@@ -60,7 +43,7 @@ class CACell extends AgentSQ2Dunstackable<StemCellCA> {
             int ct=MapEmptyHood(G.mooreHood);
             if(ct>0){
                 if(divs==0){
-                    Die();
+                    Dispose();
                     return;
                 }
                 Divide(G.mooreHood[G.rn.Int(ct)]);
@@ -105,6 +88,25 @@ class StemCellCA extends AgentGrid2D<CACell> {
         this.popLabel=popLabel;
         vis.Clear(BLACK);//clear the visualization for a new round
     }
+
+    public void Draw(){
+        //draws the grid one square at a time
+        for (int i = 0; i < this.length; i++) {
+            CACell c=GetAgent(i);
+            if(c==null){
+                vis.SetPix(i,BLACK);
+            }
+            else{
+                if(c.stem){
+                    vis.SetPix(i,RED);
+                }
+                else{
+                    vis.SetPix(i,RGB(0,0,(c.divs+1.0)/(MAX_DIVS)));
+                }
+            }
+        }
+    }
+
     public void Run(){
         for (int i = 0; i < RUN_DURATION; i++) {
             if(Pop()==0){
@@ -115,6 +117,9 @@ class StemCellCA extends AgentGrid2D<CACell> {
             Arrays.fill(cellCts,0);
             for(CACell c:this){
                 c.Step();
+            }
+            if(vis!=null){
+                Draw();
             }
             if(outFile!=null&&!outFile.IsClosed()){
                 outFile.Write(Util.ArrToString(cellCts,",")+"\n");

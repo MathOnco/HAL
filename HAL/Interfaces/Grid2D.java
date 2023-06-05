@@ -149,6 +149,40 @@ public abstract interface Grid2D {
         }
         return ptCt;
     }
+    /**
+     * applies the action function to all positions in the neighborhood, includes the index in the neighborhood
+     */
+    default public int ApplyHoodWithIndex(int[] hood, int centerI, ICoords2DAction Action) {
+        return ApplyHoodWithIndex(hood, ItoX(centerI), ItoY(centerI), Action);
+    }
+
+    /**
+     * applies the action function to all positions in the neighborhood, includes the index in the neighborhood
+     */
+    default public int ApplyHoodWithIndex(int[] hood, int centerX, int centerY, ICoords2DAction Action) {
+        int ptCt = 0;
+        int iStart = hood.length / 3;
+        for (int i = iStart; i < hood.length; i += 2) {
+            int x = hood[i] + centerX;
+            int y = hood[i + 1] + centerY;
+            if (!Util.InDim(x, Xdim())) {
+                if (IsWrapX()) {
+                    x = Util.Wrap(x, Xdim());
+                } else {
+                    continue;
+                }
+            }
+            if (!Util.InDim(y, Ydim())) {
+                if (IsWrapY()) {
+                    y = Util.Wrap(y, Ydim());
+                } else {
+                    continue;
+                }
+            }
+            Action.Action((i-iStart)/2,x, y);
+        }
+        return ptCt;
+    }
 
     /**
      * This function takes a neighborhood centered around the origin, translates the set of coordinates to be centered

@@ -58,8 +58,8 @@ public class AgentGrid0D<T extends Agent0D> implements Iterable<T>,Serializable 
     /**
      * returns an umodifiable copy of the complete agentlist, including dead and just born agents
      */
-    public ArrayList<T> AllAgents() {
-        return (ArrayList<T>) this.agents.GetAllAgents();
+    public List<T> AllAgents() {
+        return (List<T>) this.agents.GetAllAgents();
     }
 
     /**

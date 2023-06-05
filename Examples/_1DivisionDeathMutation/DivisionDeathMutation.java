@@ -76,7 +76,7 @@ public class DivisionDeathMutation extends AgentGrid2D<CellEx> {
 //            c.Draw();
 //        }
     }
-    public void StepCells(){
+    public void StepCells(int tick){
         Arrays.fill(mutCounts,0);//clear the mutation counts
         for (CellEx c : this) {//iterate over all cells in the grid
             mutCounts[c.nMutations]++;//count up all cell types for this timestep
@@ -102,9 +102,9 @@ public class DivisionDeathMutation extends AgentGrid2D<CellEx> {
         GridWindow vis=new GridWindow(x,y,scaleFactor);//used for visualization
         DivisionDeathMutation grid=new DivisionDeathMutation(x,y,vis);
         grid.InitTumor(5);
-        for (int tick = 0; tick < 10000000; tick++) {
+        for (int tick = 0; tick < 2000; tick++) {
             vis.TickPause(0);//set to nonzero value to cap tick rate.
-            grid.StepCells();
+            grid.StepCells(tick);
         }
     }
 }
