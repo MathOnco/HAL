@@ -27,6 +27,9 @@ public class TemplateOffLattice2D extends AgentGrid2D<TemplateOffLatticeCell> {
     }
 
     public static void main(String[]args){
+        if(OpenGL2DWindow.MakeMacCompatible(args)){
+            return;
+        }
         TemplateOffLattice2D grid=new TemplateOffLattice2D(11,11);
         OpenGL2DWindow vis=new OpenGL2DWindow(500,500,11,11);
 

@@ -191,6 +191,9 @@ public class Example3D extends AgentGrid3D<ExCell3D> {
         }
     }
     public static void main(String[] args) {
+        if(OpenGL3DWindow.MakeMacCompatible(args)){
+            return;
+        }
         int x=80,y=80,z=20;
         Example3D ex=new Example3D(x,z,y);
         ex.GenVessels(15,0.8);

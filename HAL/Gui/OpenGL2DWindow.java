@@ -29,6 +29,13 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 /**
  * Created by rafael on 5/28/17.
  */
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.lang.management.ManagementFactory;
+import java.util.ArrayList;
+
 public class OpenGL2DWindow implements Grid2D {
     final boolean active;
     private long window;
@@ -144,26 +151,6 @@ public class OpenGL2DWindow implements Grid2D {
     }
 
     /**
-     * call this once per step of your model, and the function will ensure that your model runs at the rate provided in
-     * millis. the function will take the amount time between calls into account to ensure a consistent tick rate.
-     */
-    public void TickPause(int millis) {
-        if (active) {
-            tt.TickPause(millis);
-        }
-    }
-
-    /**
-     * usually called before any other draw commands, sets the screen to a color.
-     */
-    public void Clear(int clearColor) {
-        if (active) {
-            glClearColor((float) GetRed(clearColor), (float) GetGreen(clearColor), (float) GetBlue(clearColor), (float) GetAlpha(clearColor));
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        }
-    }
-
-    /**
      * renders all draw commands to the window
      */
     public void Update() {
@@ -199,6 +186,56 @@ public class OpenGL2DWindow implements Grid2D {
             glfwSetErrorCallback(null).free();
         }
     }
+
+    void SaveImg(String path, String mode) {
+        if (active) {
+            File out = new File(path);
+            glReadBuffer(GL_FRONT);
+            int bpp = 4; // Assuming a 32-bit display with a byte each for red, green, blue, and alpha.
+            ByteBuffer buffer = BufferUtils.createByteBuffer(widthPix * heightPix * bpp);
+            glReadPixels(0, 0, widthPix, heightPix, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+            BufferedImage image = new BufferedImage(widthPix, heightPix, BufferedImage.TYPE_INT_RGB);
+
+            for (int x = 0; x < widthPix; x++) {
+                for (int y = 0; y < heightPix; y++) {
+                    int i = (x + (widthPix * y)) * bpp;
+                    int r = buffer.get(i) & 0xFF;
+                    int g = buffer.get(i + 1) & 0xFF;
+                    int b = buffer.get(i + 2) & 0xFF;
+                    image.setRGB(x, heightPix - (y + 1), (0xFF << 24) | (r << 16) | (g << 8) | b);
+                }
+            }
+            try {
+                ImageIO.write(image, mode, out);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
+
+
+    /**
+     * call this once per step of your model, and the function will ensure that your model runs at the rate provided in
+     * millis. the function will take the amount time between calls into account to ensure a consistent tick rate.
+     */
+    public void TickPause(int millis) {
+        if (active) {
+            tt.TickPause(millis);
+        }
+    }
+
+    /**
+     * usually called before any other draw commands, sets the screen to a color.
+     */
+    public void Clear(int clearColor) {
+        if (active) {
+            glClearColor((float) GetRed(clearColor), (float) GetGreen(clearColor), (float) GetBlue(clearColor), (float) GetAlpha(clearColor));
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        }
+    }
+
+
 
     /**
      * returns whether the Gui is active (whether it exists)
@@ -356,35 +393,6 @@ public class OpenGL2DWindow implements Grid2D {
 
     //int width = Display.getDisplayMode().getWidth();
     //int height = Display.getDisplayMode().getHeight();
-    void SaveImg(String path, String mode) {
-        if (active) {
-            File out = new File(path);
-            glReadBuffer(GL_FRONT);
-//            int width = 5;
-//            int width = Display.getDisplayMode().getWidth();
-//            int height = 5;
-            int bpp = 4; // Assuming a 32-bit display with a byte each for red, green, blue, and alpha.
-            ByteBuffer buffer = BufferUtils.createByteBuffer(widthPix * heightPix * bpp);
-            glReadPixels(0, 0, widthPix, heightPix, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-            BufferedImage image = new BufferedImage(widthPix, heightPix, BufferedImage.TYPE_INT_RGB);
-
-            for (int x = 0; x < widthPix; x++) {
-                for (int y = 0; y < heightPix; y++) {
-                    int i = (x + (widthPix * y)) * bpp;
-                    int r = buffer.get(i) & 0xFF;
-                    int g = buffer.get(i + 1) & 0xFF;
-                    int b = buffer.get(i + 2) & 0xFF;
-                    image.setRGB(x, heightPix - (y + 1), (0xFF << 24) | (r << 16) | (g << 8) | b);
-                }
-            }
-            try {
-                ImageIO.write(image, mode, out);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-        }
-    }
 
     @Override
     public int Xdim() {
@@ -409,5 +417,69 @@ public class OpenGL2DWindow implements Grid2D {
     @Override
     public boolean IsWrapY() {
         return wrapY;
+    }
+
+    /**
+     * Reboot utility for JVM. to run with -XstartOnFirstThread jvm argument
+     *
+     * @author kappa
+     */
+    public static boolean MakeMacCompatible(String[] args) {
+        String osName = System.getProperty("os.name");
+        // if not a mac return false
+        if ((!osName.startsWith("Mac")) && (!osName.startsWith("Darwin"))) {
+            return false;
+        }
+        // get current jvm process pid
+        String pid = ManagementFactory.getRuntimeMXBean().getName().split("@")[0];
+        // get environment variable on whether XstartOnFirstThread is enabled
+        String env = System.getenv("JAVA_STARTED_ON_FIRST_THREAD_" + pid);
+        // if environment variable is "1" then XstartOnFirstThread is enabled
+        if ("1".equals(env)) {
+            return false;
+        }
+        // restart jvm with -XstartOnFirstThread
+        String separator = System.getProperty("file.separator");
+        String classpath = System.getProperty("java.class.path");
+//        String mainClass = System.getenv("JAVA_MAIN_CLASS_" + pid);
+        String mainClass = System.getProperty("sun.java.command");
+        String jvmPath = System.getProperty("java.home") + separator + "bin" + separator + "java";
+        ArrayList<String> jvmArgs = new ArrayList<String>(128);
+        jvmArgs.add(jvmPath);
+        jvmArgs.add("-XstartOnFirstThread");
+        jvmArgs.addAll(ManagementFactory.getRuntimeMXBean().getInputArguments());  // <-- input arguments!
+        jvmArgs.add("-cp");
+        jvmArgs.add(classpath);
+        jvmArgs.add(mainClass);
+        for (int i = 0; i < args.length; i++) {
+            jvmArgs.add(args[i]);
+        }
+        // if we want console output via same JVM
+        final boolean consoleOutputViaSameJVM = true;
+        try {
+            if (consoleOutputViaSameJVM) {
+                // with console output: the current JVM will continue & show console output...
+                ProcessBuilder processBuilder = new ProcessBuilder(jvmArgs);
+                processBuilder.redirectErrorStream(true);
+                Process process = processBuilder.start();
+                InputStream is = process.getInputStream();
+                InputStreamReader isr = new InputStreamReader(is);
+                BufferedReader br = new BufferedReader(isr);
+                String line;
+                while ((line = br.readLine()) != null) {
+                    System.out.println(line);
+                }
+                System.exit(process.waitFor());
+            }
+            else {
+                // without console output: the current JVM will terminate!
+                ProcessBuilder processBuilder = new ProcessBuilder(jvmArgs);
+                processBuilder.start();
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return true;
     }
 }

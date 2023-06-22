@@ -75,6 +75,9 @@ public class ChemotaxisModel extends AgentGrid2D<SphericalCow> {
     }
 
     public static void main(String[] args) {
+        if(OpenGL2DWindow.MakeMacCompatible(args)){
+            return;
+        }
         ChemotaxisModel m=new ChemotaxisModel(200,200);
         for (int i = 0; i < 500; i++) {
             m.NewAgentSQ(m.rng.Int(m.length)).radius=m.COW_RAD;

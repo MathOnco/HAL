@@ -70,6 +70,9 @@ public class TemplateMultiGrid {
         win.Update();
     }
     public static void main(String[] args) {
+        if(OpenGL3DWindow.MakeMacCompatible(args)){
+            return;
+        }
         TemplateMultiGrid grids=new TemplateMultiGrid(11,11,11);
         grids.cells1.NewAgentSQ(grids.cells1.xDim/2,grids.cells1.yDim/2,grids.cells1.zDim/2);
         grids.cells2.NewAgentSQ(grids.cells2.xDim/2,grids.cells2.yDim/2,grids.cells2.zDim/2);

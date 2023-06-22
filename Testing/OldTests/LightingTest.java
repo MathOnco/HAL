@@ -6,6 +6,9 @@ import HAL.Util;
 
 public class LightingTest {
     public static void main(String[] args) {
+        if(OpenGL3DWindow.MakeMacCompatible(args)){
+            return;
+        }
         OpenGL3DWindow win=new OpenGL3DWindow(1000,1000,10,10,10);
         win.AddLight(Util.RGB(0.1,0.1,0.1),Util.RGB(1.0,1.0,1.0),-100,-100,-100);
         Rand rng=new Rand();

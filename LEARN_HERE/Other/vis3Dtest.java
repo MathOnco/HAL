@@ -10,6 +10,9 @@ import static HAL.Util.RGB;
  */
 class Vis3Dtest {
     public static void main(String[] args) {
+        if(OpenGL3DWindow.MakeMacCompatible(args)){
+            return;
+        }
         OpenGL3DWindow v3d=new OpenGL3DWindow("testing", 640,480,20,10,10, true);
         float[] circ=GenCirclePoints(0.5f,100);
         while(!v3d.IsClosed()) {

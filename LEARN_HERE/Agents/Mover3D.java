@@ -21,6 +21,9 @@ public class Mover3D extends AgentGrid3D<MoveAgent> {
     }
 
     public static void main(String[] args) {
+        if(OpenGL3DWindow.MakeMacCompatible(args)){
+            return;
+        }
 
         Mover3D test=new Mover3D(10,10,10);
         OpenGL3DWindow win3D=new OpenGL3DWindow("3D",500,500,test.xDim,test.yDim,test.zDim);

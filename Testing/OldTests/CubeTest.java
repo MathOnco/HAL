@@ -5,6 +5,9 @@ import HAL.Util;
 
 public class CubeTest {
     public static void main(String[] args) {
+        if(OpenGL3DWindow.MakeMacCompatible(args)){
+            return;
+        }
         OpenGL3DWindow win =new OpenGL3DWindow(500,500,10,10,10);
         while(!win.IsClosed()){
             win.ClearBox(Util.BLACK,Util.WHITE);

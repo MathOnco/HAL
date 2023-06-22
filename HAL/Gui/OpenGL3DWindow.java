@@ -3,7 +3,6 @@ package HAL.Gui;
 import HAL.Interfaces.ColorIntGenerator;
 import HAL.Interfaces.Grid3D;
 import HAL.Interfaces.ICoords3DAction;
-import HAL.Rand;
 import HAL.Util;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFWErrorCallback;
@@ -20,13 +19,13 @@ import org.lwjgl.system.MemoryStack;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.lang.management.ManagementFactory;
 import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.Comparator;
+import java.util.ArrayList;
 import java.util.PriorityQueue;
 
 import static HAL.Util.*;
@@ -77,6 +76,8 @@ public class OpenGL3DWindow implements Grid3D {
      * @param zDim the depth that the window will represent for drawing, should match the zDim of the model
      * @param active if set to false, the OpenGL2DWindow will not actually render and its methods will be skipped (default true)
      */
+
+
     public OpenGL3DWindow(String title, int xPix, int yPix, int xDim, int yDim, int zDim, boolean active) {
         this.active = active;
         int maxDim = Math.max(xDim, yDim);
@@ -795,6 +796,71 @@ public class OpenGL3DWindow implements Grid3D {
         buff.flip();
         return buff;
     }
+
+    /**
+     * Reboot utility for JVM. to run with -XstartOnFirstThread jvm argument
+     *
+     * @author kappa
+     */
+
+    public static boolean MakeMacCompatible(String[] args) {
+        String osName = System.getProperty("os.name");
+        // if not a mac return false
+        if ((!osName.startsWith("Mac")) && (!osName.startsWith("Darwin"))) {
+            return false;
+        }
+        // get current jvm process pid
+        String pid = ManagementFactory.getRuntimeMXBean().getName().split("@")[0];
+        // get environment variable on whether XstartOnFirstThread is enabled
+        String env = System.getenv("JAVA_STARTED_ON_FIRST_THREAD_" + pid);
+        // if environment variable is "1" then XstartOnFirstThread is enabled
+        if ("1".equals(env)) {
+            return false;
+        }
+        // restart jvm with -XstartOnFirstThread
+        String separator = System.getProperty("file.separator");
+        String classpath = System.getProperty("java.class.path");
+//        String mainClass = System.getenv("JAVA_MAIN_CLASS_" + pid);
+        String mainClass = System.getProperty("sun.java.command");
+        String jvmPath = System.getProperty("java.home") + separator + "bin" + separator + "java";
+        ArrayList<String> jvmArgs = new ArrayList<String>(128);
+        jvmArgs.add(jvmPath);
+        jvmArgs.add("-XstartOnFirstThread");
+        jvmArgs.addAll(ManagementFactory.getRuntimeMXBean().getInputArguments());  // <-- input arguments!
+        jvmArgs.add("-cp");
+        jvmArgs.add(classpath);
+        jvmArgs.add(mainClass);
+        for (int i = 0; i < args.length; i++) {
+            jvmArgs.add(args[i]);
+        }
+        // if we want console output via same JVM
+        final boolean consoleOutputViaSameJVM = true;
+        try {
+            if (consoleOutputViaSameJVM) {
+                // with console output: the current JVM will continue & show console output...
+                ProcessBuilder processBuilder = new ProcessBuilder(jvmArgs);
+                processBuilder.redirectErrorStream(true);
+                Process process = processBuilder.start();
+                InputStream is = process.getInputStream();
+                InputStreamReader isr = new InputStreamReader(is);
+                BufferedReader br = new BufferedReader(isr);
+                String line;
+                while ((line = br.readLine()) != null) {
+                    System.out.println(line);
+                }
+                System.exit(process.waitFor());
+            }
+            else {
+                // without console output: the current JVM will terminate!
+                ProcessBuilder processBuilder = new ProcessBuilder(jvmArgs);
+                processBuilder.start();
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
 }
 
 
@@ -817,25 +883,6 @@ class Camera {
     public Camera(OpenGL3DWindow win){
         this.win=win;
     }
-    public static void apply() {
-        if (rotation[1] / 360 > 1) {
-            rotation[1] -= 360;
-        } else if (rotation[1] / 360 < -1) {
-            rotation[1] += 360;
-        }
-        glLoadIdentity();
-        glRotatef(rotation[0], 1, 0, 0);
-        glRotatef(rotation[1], 0, 1, 0);
-        glRotatef(rotation[2], 0, 0, 1);
-        glTranslatef(-pos[0], -pos[1], -pos[2]);
-    }
-
-    public static void acceptInput(float delta) {
-        acceptInputRotate(delta);
-        acceptInputGrab();
-        acceptInputMove(delta);
-    }
-
     public static void acceptInputRotate(float delta) {
         if(glfwGetWindowAttrib(win.window,GLFW_FOCUSED)==0||glfwGetMouseButton(win.window,GLFW_MOUSE_BUTTON_LEFT)!=1){
             prevX=-1;
@@ -863,22 +910,6 @@ class Camera {
 //            rotation[0] = Math.max(-maxLook, Math.min(maxLook, rotation[0]));
 //        }
     }
-
-    public static void acceptInputGrab() {
-//        if (Mouse.isInsideWindow() && Mouse.isButtonDown(0)) {
-//            Mouse.setGrabbed(true);
-//        }
-//        if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {
-//            Mouse.setGrabbed(false);
-//        }
-    }
-    public static boolean IsKeyDown(int key){
-        if(glfwGetKey(win.window,key)==1){
-            return true;
-        }
-        return false;
-    }
-
     public static void acceptInputMove(float delta) {
 //        boolean keyUp = Keyboard.isKeyDown(Keyboard.KEY_W);
 //        boolean keyDown = Keyboard.isKeyDown(Keyboard.KEY_S);
@@ -945,4 +976,41 @@ class Camera {
             pos[2] -= Math.cos(Math.toRadians(rotation[1] + 90)) * speed;
         }
     }
+
+
+    public static void apply() {
+        if (rotation[1] / 360 > 1) {
+            rotation[1] -= 360;
+        } else if (rotation[1] / 360 < -1) {
+            rotation[1] += 360;
+        }
+        glLoadIdentity();
+        glRotatef(rotation[0], 1, 0, 0);
+        glRotatef(rotation[1], 0, 1, 0);
+        glRotatef(rotation[2], 0, 0, 1);
+        glTranslatef(-pos[0], -pos[1], -pos[2]);
+    }
+
+    public static void acceptInput(float delta) {
+        acceptInputRotate(delta);
+        acceptInputGrab();
+        acceptInputMove(delta);
+    }
+
+
+    public static void acceptInputGrab() {
+//        if (Mouse.isInsideWindow() && Mouse.isButtonDown(0)) {
+//            Mouse.setGrabbed(true);
+//        }
+//        if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {
+//            Mouse.setGrabbed(false);
+//        }
+    }
+    public static boolean IsKeyDown(int key){
+        if(glfwGetKey(win.window,key)==1){
+            return true;
+        }
+        return false;
+    }
+
 }

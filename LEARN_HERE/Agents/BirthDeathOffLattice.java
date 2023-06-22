@@ -55,6 +55,9 @@ public class BirthDeathOffLattice extends AgentGrid2D<ExampleCell> {
     }
 
     public static void main(String[] args) {
+        if(OpenGL2DWindow.MakeMacCompatible(args)){
+            return;
+        }
         int x = 100;
         int y = 100;
         int timesteps = 1000;
