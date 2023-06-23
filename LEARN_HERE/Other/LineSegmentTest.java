@@ -6,9 +6,7 @@ import static HAL.Util.RGB;
 
 public class LineSegmentTest {
     public static void main(String[] args) {
-        if(OpenGL3DWindow.MakeMacCompatible(args)){
-            return;
-        }
+        OpenGL3DWindow.MakeMacCompatible(args);
         OpenGL3DWindow win=new OpenGL3DWindow("segment",500,500,10,10,10);
         while(!win.IsClosed()) {
             win.Clear(RGB(0,0,0));

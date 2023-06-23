@@ -71,9 +71,7 @@ public class ExampleOffLattice extends AgentGrid2D<CellOL> {
         out=new FileIO(outFileName,"w");
     }
     public static void main(String[] args) {
-        if(OpenGL2DWindow.MakeMacCompatible(args)){
-            return;
-        }
+        OpenGL2DWindow.MakeMacCompatible(args);
         int x=30,y=30;
         //to record output, call the constructor with an output filename
         ExampleOffLattice ex=new ExampleOffLattice(x,y,"PopOut.csv");

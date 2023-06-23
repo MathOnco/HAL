@@ -6,9 +6,7 @@ import HAL.Util;
 
 public class TDMAtests {
     public static void main(String[] args) {
-        if(OpenGL2DWindow.MakeMacCompatible(args)){
-            return;
-        }
+        OpenGL2DWindow.MakeMacCompatible(args);
         OpenGL2DWindow win=new OpenGL2DWindow(500,500,100,1);
         PDEGrid1D pde=new PDEGrid1D(10);
         pde.Set(pde.xDim/2,1);

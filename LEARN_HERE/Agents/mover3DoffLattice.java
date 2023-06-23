@@ -19,9 +19,7 @@ public class mover3DoffLattice extends AgentGrid3D<MoveAgentoffLattice> {
     }
 
     public static void main(String[] args) {
-        if(OpenGL3DWindow.MakeMacCompatible(args)){
-            return;
-        }
+        OpenGL3DWindow.MakeMacCompatible(args);
 
         mover3DoffLattice test=new mover3DoffLattice(10,10,10);
         OpenGL3DWindow win3D=new OpenGL3DWindow("3D",500,500,test.xDim,test.yDim,test.zDim);
