@@ -25,6 +25,20 @@ public interface Grid1D {
     }
 
     /**
+     * get the value of the given x component with wraparound
+     */
+    default public double WrapX(double x){
+        return Util.Wrap(x,Xdim());
+    }
+    /**
+     * get the value of the given x component with wraparound
+     */
+    default public int WrapX(int x){
+        return Util.Wrap(x,Xdim());
+    }
+
+
+    /**
      * returns whether the specified coordinates are inside the typeGrid bounds
      */
     default public boolean In(int x) {

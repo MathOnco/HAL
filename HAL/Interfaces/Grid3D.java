@@ -45,6 +45,42 @@ public interface Grid3D{
         //gets typeGrid index from location
         return x*Ydim()*Zdim()+y*Zdim()+z;
     }
+    /**
+     * get the value of the given x component with wraparound
+     */
+    default public double WrapX(double x){
+        return Util.Wrap(x,Xdim());
+    }
+    /**
+     * get the value of the given y component with wraparound
+     */
+    default public double WrapY(double y){
+        return Util.Wrap(y,Ydim());
+    }
+    /**
+     * get the value of the given z component with wraparound
+     */
+    default public double WrapZ(double z){
+        return Util.Wrap(z,Zdim());
+    }
+    /**
+     * get the value of the given x component with wraparound
+     */
+    default public int WrapX(int x){
+        return Util.Wrap(x,Xdim());
+    }
+    /**
+     * get the value of the given y component with wraparound
+     */
+    default public int WrapY(int y){
+        return Util.Wrap(y,Ydim());
+    }
+    /**
+     * get the value of the given z component with wraparound
+     */
+    default public int WrapZ(int z){
+        return Util.Wrap(z,Zdim());
+    }
 
     /**
      * gets the xDim component of the voxel at the specified index

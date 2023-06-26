@@ -39,6 +39,31 @@ public abstract interface Grid2D {
     }
 
     /**
+     * get the value of the given x component with wraparound
+     */
+    default public double WrapX(double x){
+        return Util.Wrap(x,Xdim());
+    }
+    /**
+     * get the value of the given y component with wraparound
+     */
+    default public double WrapY(double y){
+        return Util.Wrap(y,Ydim());
+    }
+    /**
+     * get the value of the given x component with wraparound
+     */
+    default public int WrapX(int x){
+        return Util.Wrap(x,Xdim());
+    }
+    /**
+     * get the value of the given y component with wraparound
+     */
+    default public int WrapY(int y){
+        return Util.Wrap(y,Ydim());
+    }
+
+    /**
      * gets the xDim component of the square at the specified index
      */
     default public int ItoX(int i) {
