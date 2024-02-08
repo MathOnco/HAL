@@ -1,9 +1,10 @@
-package HAL.Tools.Lenia;
+package HAL.GridsAndAgents;
 
 import HAL.GridsAndAgents.Grid2Ddouble;
 import HAL.Interfaces.Coords2DDouble;
 import HAL.Interfaces.DoubleToDouble;
 import HAL.Interfaces.Grid2D;
+import HAL.Tools.Lenia.FFTGrid;
 
 public class KernelGrid implements Grid2D {
     private final FFTGrid fftKernel;

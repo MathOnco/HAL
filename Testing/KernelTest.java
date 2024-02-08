@@ -4,7 +4,7 @@ import HAL.GridsAndAgents.Grid2Ddouble;
 import HAL.Gui.GridWindow;
 import HAL.Gui.UIGrid;
 import HAL.Util;
-import HAL.Tools.Lenia.KernelGrid;
+import HAL.GridsAndAgents.KernelGrid;
 
 import static HAL.Util.GaussianPDF;
 
