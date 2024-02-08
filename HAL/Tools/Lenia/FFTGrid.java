@@ -31,7 +31,7 @@ public class FFTGrid {
             }
         }
     }
-    FFTGrid(int xDim,int yDim){
+    public FFTGrid(int xDim, int yDim){
         REAL=new Grid2Ddouble(xDim,yDim);
         IMAG=new Grid2Ddouble(xDim,yDim);
     }
