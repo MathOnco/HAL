@@ -169,7 +169,7 @@ public class PDEequations {
                 if (yVel > 0) {
                     deltas[i] += DeltaY2D(field,centerVal, x ,y-1, xDim,yDim, wrapY, BC)*yVel;
                 } else if(yVel < 0){
-                    deltas[i] -= DeltaY2D(field,centerVal, x ,y-1, xDim,yDim, wrapY, BC)*yVel;
+                    deltas[i] -= DeltaY2D(field,centerVal, x ,y+1, xDim,yDim, wrapY, BC)*yVel;
                 }
             }
         }
